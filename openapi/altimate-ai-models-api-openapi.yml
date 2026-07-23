@@ -1,0 +1,70 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Models API
+  version: 0.1.0
+tags:
+- name: Models
+paths:
+  /agents/v1/models:
+    get:
+      tags:
+      - Models
+      summary: List Models
+      description: List available models
+      operationId: list_models_agents_v1_models_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Models'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    Model:
+      properties:
+        id:
+          type: string
+          title: Id
+        created:
+          type: integer
+          title: Created
+        object:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Object
+          default: model
+        owned_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owned By
+          default: bedrock
+      type: object
+      required:
+      - id
+      title: Model
+    Models:
+      properties:
+        object:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Object
+          default: list
+        data:
+          items:
+            $ref: '#/components/schemas/Model'
+          type: array
+          title: Data
+          default: []
+      type: object
+      title: Models
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

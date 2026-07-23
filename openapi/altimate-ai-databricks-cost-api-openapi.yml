@@ -1,0 +1,2594 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Cost API
+  version: 0.1.0
+tags:
+- name: Databricks Cost
+paths:
+  /api/v1/databricks/cost/workspaces:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get available Databricks workspaces
+      description: Get list of available Databricks workspaces.
+      operationId: get_workspaces_api_v1_databricks_cost_workspaces_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspacesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/overview:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get Databricks cost overview
+      description: 'Get cost overview with summary metrics.
+
+
+        Returns total DBUs, estimated cost, and period-over-period comparison.'
+      operationId: get_cost_overview_api_v1_databricks_cost_overview_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostOverviewResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/trends:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get Databricks cost trends over time
+      description: 'Get cost trends over time.
+
+
+        Returns time series data with DBU consumption and estimated cost per period.'
+      operationId: get_cost_trends_api_v1_databricks_cost_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/trends/by-product:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get Databricks cost trends by product over time
+      description: 'Get cost trends over time, sliced for a UI category.
+
+
+        Returns time series data with DBU consumption and estimated cost per
+
+        period, with each row labelled by the category''s chosen segment. The
+
+        ``products`` array in the response is the canonical legend for the
+
+        category (in display order, including segments with no data) so the FE
+
+        legend stays stable across date ranges.'
+      operationId: get_cost_trends_by_product_api_v1_databricks_cost_trends_by_product_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: category
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/CategoryName'
+          description: Which UI category the chart is for. Drives both the product filter and the per-row segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return the products in that spec group.
+          default: total
+        description: Which UI category the chart is for. Drives both the product filter and the per-row segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return the products in that spec group.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/trends/by-product/estimate:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get Databricks cost trends by product with projections
+      description: 'Get cost trends by product with future projections.
+
+
+        Returns monthly cost data by product (JOBS, SQL, ALL_PURPOSE, etc.) with
+
+        projections to end of period. Used for Future State visualization showing
+
+        product-level historical + projected costs.'
+      operationId: get_cost_trends_by_product_estimate_api_v1_databricks_cost_trends_by_product_estimate_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date (typically start of year)
+          title: Start Date
+        description: Start date (typically start of year)
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: End date (typically end of year)
+          title: End Date
+        description: End date (typically end of year)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductEstimateTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/breakdown/sku:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost breakdown by SKU
+      description: 'Get cost breakdown by SKU.
+
+
+        Returns DBU consumption and cost grouped by Databricks SKU type.'
+      operationId: get_cost_breakdown_by_sku_api_v1_databricks_cost_breakdown_sku_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort column: name, total_dbus, or total_cost. Default total_cost.'
+          title: Sortattribute
+        description: 'Sort column: name, total_dbus, or total_cost. Default total_cost.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc''. Default ''desc''.'
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc''. Default ''desc''.'
+      - name: sku_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter to specific SKU names (multi-value)
+          title: Sku Names
+        description: Filter to specific SKU names (multi-value)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__cost__CostBreakdownResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/breakdown/workspace:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost breakdown by workspace
+      description: 'Get cost breakdown by workspace.
+
+
+        Returns DBU consumption and cost grouped by Databricks workspace.'
+      operationId: get_cost_breakdown_by_workspace_api_v1_databricks_cost_breakdown_workspace_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__cost__CostBreakdownResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/breakdown/product:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost breakdown by product
+      description: 'Get cost breakdown by product.
+
+
+        Returns DBU consumption and cost grouped by Databricks product type.'
+      operationId: get_cost_breakdown_by_product_api_v1_databricks_cost_breakdown_product_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort column: name, total_dbus, or total_cost. Default total_cost.'
+          title: Sortattribute
+        description: 'Sort column: name, total_dbus, or total_cost. Default total_cost.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc''. Default ''desc''.'
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc''. Default ''desc''.'
+      - name: products
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter to specific billing_origin_product values
+          title: Products
+        description: Filter to specific billing_origin_product values
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__cost__CostBreakdownResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/comparison:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost comparison between periods
+      description: 'Get cost comparison between current and previous period.
+
+
+        Automatically calculates the previous period based on the duration of the current period.'
+      operationId: get_cost_comparison_api_v1_databricks_cost_comparison_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the current period
+          title: Start Date
+        description: Start date for the current period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the current period
+          title: End Date
+        description: End date for the current period
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostComparisonResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/total:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get total cost with category breakdown
+      description: 'Get total cost with category breakdown.
+
+
+        Returns total cost and DBUs with breakdown by cost category
+
+        (Compute, SQL, AI/ML, Data Platform, Infrastructure).'
+      operationId: get_cost_total_api_v1_databricks_cost_total_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostTotalResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/overall/estimate:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost trends with future projections
+      description: 'Get cost trends with future projections, segmented for a UI category.
+
+
+        Returns monthly cost data with projections to end of period — each graph
+
+        point carries the per-segment breakdown for the requested ``category``.
+
+        Used for Future State visualization showing historical + projected costs.'
+      operationId: get_cost_trends_estimate_api_v1_databricks_cost_overall_estimate_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date (typically start of year)
+          title: Start Date
+        description: Start date (typically start of year)
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: End date (typically end of year)
+          title: End Date
+        description: End date (typically end of year)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: category
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/CategoryName'
+          description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
+          default: total
+        description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostEstimateTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/total/estimate:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get total estimated cost for the year
+      description: 'Get total estimated cost for the period (actual + projected).
+
+
+        Returns the grand total plus a per-segment breakdown for the requested
+
+        ``category``. Used for Future State total cost display.'
+      operationId: get_cost_total_estimate_api_v1_databricks_cost_total_estimate_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date (typically start of year)
+          title: Start Date
+        description: Start date (typically start of year)
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: End date (typically end of year)
+          title: End Date
+        description: End date (typically end of year)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: category
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/CategoryName'
+          description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for the segmentation rules.
+          default: total
+        description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for the segmentation rules.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostTotalEstimateResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/compute-efficiency:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get compute efficiency breakdown
+      description: 'Get compute efficiency breakdown.
+
+
+        Returns efficiency metrics including:
+
+        - Jobs vs All-Purpose ratio (healthy = >70% jobs)
+
+        - Serverless vs Provisioned breakdown
+
+        - Photon vs Standard engine usage'
+      operationId: get_compute_efficiency_api_v1_databricks_cost_compute_efficiency_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComputeEfficiencyResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/trends/by-compute-type:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost trends by compute type over time
+      description: 'Get cost trends over time broken down by compute type.
+
+
+        Returns time series data grouped by compute type (jobs, all_purpose, sql, other)
+
+        for visualizing compute efficiency over time.'
+      operationId: get_cost_trends_by_compute_type_api_v1_databricks_cost_trends_by_compute_type_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComputeTypeTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/trends/by-deployment-type:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost trends by deployment type (serverless vs provisioned)
+      description: 'Get cost trends over time broken down by deployment type
+
+        (serverless vs provisioned).'
+      operationId: get_cost_trends_by_deployment_type_api_v1_databricks_cost_trends_by_deployment_type_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentTypeTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/trends/by-engine-type:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cost trends by engine type (photon vs standard)
+      description: 'Get cost trends over time broken down by engine type
+
+        (photon vs standard).'
+      operationId: get_cost_trends_by_engine_type_api_v1_databricks_cost_trends_by_engine_type_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineTypeTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/workspace-efficiency:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get efficiency metrics per workspace
+      description: 'Get efficiency metrics per workspace for chargeback and analysis.
+
+
+        Returns per-workspace metrics including:
+
+        - Total DBUs and cost
+
+        - Jobs vs All-Purpose percentage
+
+        - Serverless percentage
+
+        - Efficiency score (healthy, moderate, unhealthy)'
+      operationId: get_workspace_efficiency_api_v1_databricks_cost_workspace_efficiency_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceEfficiencyResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/cloud/trends:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cloud infrastructure cost trends by category
+      description: 'Get full cloud-bill (TCO) trends over time, stacked by infrastructure
+
+        category (Compute / Storage / Networking / Database / Security /
+
+        Analytics & Streaming, plus an ``Other`` catch-all).
+
+
+        One row per period; each category is a numeric field, plus a synthetic
+
+        ``__cloud_cost_total__`` and per-period percentage-change fields. Powers the
+
+        Summary "Cloud Costs" tab and the Jobs "Cloud Costs" group-by. Returns ``[]``
+
+        for tenants without the cloud-cost feed.'
+      operationId: get_cloud_cost_trends_api_v1_databricks_cost_cloud_trends_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the period
+          title: Start Date
+        description: Start date for the period
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the period
+          title: End Date
+        description: End date for the period
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CloudCostTrendRow'
+                title: Response Get Cloud Cost Trends Api V1 Databricks Cost Cloud Trends Get
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/cost/cloud/projection:
+    get:
+      tags:
+      - Databricks Cost
+      summary: Get cloud infrastructure cost projection (actual + month-end estimate)
+      description: 'Get the current calendar year''s cloud cost by category, month by month,
+
+        with a month-end projection.
+
+
+        Past months are fully actual; the current month is month-to-date actual plus
+
+        a run-rate projected remainder; future months are the full run-rate
+
+        projection. Used by the Future State "Cloud Costs" tab. Returns ``[]`` for
+
+        tenants without the cloud-cost feed.'
+      operationId: get_cloud_cost_projection_api_v1_databricks_cost_cloud_projection_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CloudCostProjectionRow'
+                title: Response Get Cloud Cost Projection Api V1 Databricks Cost Cloud Projection Get
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    EstimateSegmentTotalItem:
+      properties:
+        product:
+          type: string
+          title: Product
+          description: Segment label for this category
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Combined actual + projected cost for the whole period
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Share of the estimate ``total`` (0–100, one decimal). Sums to ~100 across the breakdown.
+      type: object
+      required:
+      - product
+      - estimated_cost
+      - pct_of_total
+      title: EstimateSegmentTotalItem
+      description: 'One segment''s combined (actual + projected) cost in the total estimate.
+
+        Cost-only — the projection does not forecast DBUs.'
+    DeploymentTypeTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/DeploymentTypeTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data by deployment type
+        deployment_types:
+          items:
+            type: string
+          type: array
+          title: Deployment Types
+          description: Unique deployment types for chart legend
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+      type: object
+      required:
+      - trends
+      - deployment_types
+      - granularity
+      title: DeploymentTypeTrendsResponse
+      description: Response model for deployment type trends endpoint.
+    CostComparisonResponse:
+      properties:
+        current_period_dbus:
+          type: number
+          title: Current Period Dbus
+          description: DBUs in current period
+        previous_period_dbus:
+          type: number
+          title: Previous Period Dbus
+          description: DBUs in previous period
+        current_period_cost:
+          type: number
+          title: Current Period Cost
+          description: Cost in current period
+        previous_period_cost:
+          type: number
+          title: Previous Period Cost
+          description: Cost in previous period
+        delta_dbus:
+          type: number
+          title: Delta Dbus
+          description: Change in DBUs
+        delta_cost:
+          type: number
+          title: Delta Cost
+          description: Change in cost
+        delta_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Delta Pct
+          description: Percentage change
+      type: object
+      required:
+      - current_period_dbus
+      - previous_period_dbus
+      - current_period_cost
+      - previous_period_cost
+      - delta_dbus
+      - delta_cost
+      title: CostComparisonResponse
+      description: Response model for period comparison.
+    CostEstimateTrendsResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/CostEstimateGraphItem'
+          type: array
+          title: Graph
+          description: Graph data with actual and projected costs
+        products:
+          items:
+            type: string
+          type: array
+          title: Products
+          description: Canonical segment legend for the requested ``category``, in display order — includes segments with no data so the legend stays stable across date ranges.
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/CategoryName'
+          - type: 'null'
+          description: Category the estimate was computed for
+      type: object
+      required:
+      - graph
+      title: CostEstimateTrendsResponse
+      description: Response model for cost estimate/projection endpoint.
+    CostCategory:
+      type: string
+      enum:
+      - Compute
+      - SQL
+      - AI/ML
+      - Data Platform
+      - Infrastructure
+      title: CostCategory
+      description: Cost category classification for Databricks SKUs.
+    ComputeEfficiencyResponse:
+      properties:
+        jobs_pct:
+          type: number
+          title: Jobs Pct
+          description: Percentage of compute used by Jobs
+        all_purpose_pct:
+          type: number
+          title: All Purpose Pct
+          description: Percentage of compute used by All-Purpose
+        efficiency_score:
+          type: string
+          title: Efficiency Score
+          description: 'Efficiency rating: healthy (>70% jobs), moderate (50-70%), unhealthy (<50%)'
+        compute_types:
+          items:
+            $ref: '#/components/schemas/ComputeTypeBreakdown'
+          type: array
+          title: Compute Types
+          description: Breakdown by compute type
+        deployment_types:
+          items:
+            $ref: '#/components/schemas/DeploymentTypeBreakdown'
+          type: array
+          title: Deployment Types
+          description: Breakdown by deployment type (serverless vs provisioned)
+        engine_types:
+          items:
+            $ref: '#/components/schemas/EngineTypeBreakdown'
+          type: array
+          title: Engine Types
+          description: Breakdown by engine type (photon vs standard)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBU consumption
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total estimated cost
+      type: object
+      required:
+      - jobs_pct
+      - all_purpose_pct
+      - efficiency_score
+      - compute_types
+      - deployment_types
+      - engine_types
+      - total_dbus
+      - total_cost
+      title: ComputeEfficiencyResponse
+      description: Response model for compute efficiency breakdown.
+    WorkspaceEfficiencyItem:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+          description: Databricks workspace ID
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+          description: Workspace display name
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBU consumption
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost
+        jobs_pct:
+          type: number
+          title: Jobs Pct
+          description: Percentage of compute used by Jobs
+        all_purpose_pct:
+          type: number
+          title: All Purpose Pct
+          description: Percentage of compute used by All-Purpose
+        serverless_pct:
+          type: number
+          title: Serverless Pct
+          description: Percentage of compute that is serverless
+        efficiency_score:
+          type: string
+          title: Efficiency Score
+          description: 'Efficiency rating: healthy (>70% jobs), moderate (50-70%), unhealthy (<50%)'
+      type: object
+      required:
+      - workspace_id
+      - total_dbus
+      - estimated_cost
+      - jobs_pct
+      - all_purpose_pct
+      - serverless_pct
+      - efficiency_score
+      title: WorkspaceEfficiencyItem
+      description: Efficiency metrics for a single workspace.
+    ComputeTypeBreakdown:
+      properties:
+        compute_type:
+          type: string
+          title: Compute Type
+          description: 'Compute type: jobs, all_purpose, sql, other'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this compute type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this compute type
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - compute_type
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: ComputeTypeBreakdown
+      description: Breakdown by compute type (jobs, all_purpose, sql, other).
+    ProductEstimateTrendsResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/ProductEstimateItem'
+          type: array
+          title: Graph
+          description: Graph data with actual and projected costs by product
+        products:
+          items:
+            type: string
+          type: array
+          title: Products
+          description: Unique product names for chart legend
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      required:
+      - graph
+      - products
+      title: ProductEstimateTrendsResponse
+      description: Response model for product-level cost projection endpoint.
+    WorkspaceEfficiencyResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceEfficiencyItem'
+          type: array
+          title: Workspaces
+          description: List of workspace efficiency metrics
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs across all workspaces
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total cost across all workspaces
+      type: object
+      required:
+      - workspaces
+      - total_dbus
+      - total_cost
+      title: WorkspaceEfficiencyResponse
+      description: Response model for workspace efficiency endpoint.
+    WorkspacesResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceSummary'
+          type: array
+          title: Workspaces
+          description: List of workspaces
+      type: object
+      required:
+      - workspaces
+      title: WorkspacesResponse
+      description: Response model for workspaces list endpoint.
+    app__schemas__databricks__cost__CostBreakdownResponse:
+      properties:
+        breakdown:
+          items:
+            $ref: '#/components/schemas/CostBreakdownItem'
+          type: array
+          title: Breakdown
+          description: Cost breakdown items
+        group_by:
+          type: string
+          title: Group By
+          description: Grouping dimension (sku/workspace/product)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs across all groups
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total estimated cost
+      type: object
+      required:
+      - breakdown
+      - group_by
+      - total_dbus
+      - total_cost
+      title: CostBreakdownResponse
+      description: Response model for cost breakdown endpoint.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CategoryBreakdownItem:
+      properties:
+        category:
+          $ref: '#/components/schemas/CostCategory'
+          description: Cost category
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this category
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this category
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - category
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: CategoryBreakdownItem
+      description: 'Legacy 5-bucket cost breakdown item (``Compute`` / ``SQL`` / ``AI/ML`` /
+
+        ``Data Platform`` / ``Infrastructure``). Used by ``/cost/total`` and the
+
+        Future-state estimate. Prefer ``CostCategoryItem`` for new endpoints.'
+    CostOverviewResponse:
+      properties:
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBU consumption
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost in USD
+        days_count:
+          type: integer
+          title: Days Count
+          description: Number of days in the period
+        workspace_count:
+          type: integer
+          title: Workspace Count
+          description: Number of active workspaces
+        sku_count:
+          type: integer
+          title: Sku Count
+          description: Number of distinct SKUs
+        delta_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Delta Pct
+          description: Percentage change vs previous period
+        daily_average_dbus:
+          type: number
+          title: Daily Average Dbus
+          description: Average daily DBU consumption
+        category_breakdown:
+          items:
+            $ref: '#/components/schemas/CostCategoryItem'
+          type: array
+          title: Category Breakdown
+          description: Per-category cost & DBU breakdown for the 5 spec groups, in canonical legend order (Clusters → SQL Warehouse → AI/ML → Lakehouse → Platform). Empty categories are included with zero values so the FE can keep colour ordering stable.
+      type: object
+      required:
+      - total_dbus
+      - estimated_cost
+      - days_count
+      - workspace_count
+      - sku_count
+      - daily_average_dbus
+      title: CostOverviewResponse
+      description: Response model for cost overview endpoint.
+    EngineTypeBreakdown:
+      properties:
+        engine_type:
+          type: string
+          title: Engine Type
+          description: 'Engine type: photon or standard'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this engine type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this engine type
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - engine_type
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: EngineTypeBreakdown
+      description: Breakdown by engine type (photon vs standard).
+    CostTotalResponse:
+      properties:
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBU consumption
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total cost
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+        category_breakdown:
+          items:
+            $ref: '#/components/schemas/CategoryBreakdownItem'
+          type: array
+          title: Category Breakdown
+          description: Cost breakdown by category
+        days_count:
+          type: integer
+          title: Days Count
+          description: Number of days in the period
+        delta_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Delta Pct
+          description: Percentage change vs previous period
+      type: object
+      required:
+      - total_dbus
+      - total_cost
+      - category_breakdown
+      - days_count
+      title: CostTotalResponse
+      description: Response model for total cost endpoint with category breakdown.
+    CloudCostTrendRow:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Bucket start date, ``YYYY-MM-DD``.
+      additionalProperties: true
+      type: object
+      required:
+      - period
+      title: CloudCostTrendRow
+      description: "One stacked-bar period of cloud infrastructure cost by category.\n\nBesides ``period`` the row carries, as extra keys:\n  * one float per segment in :data:`CLOUD_COST_SEGMENTS` (e.g. ``Compute``),\n  * ``percentage_<segment>`` — % change vs the previous period (or ``None``),\n  * :data:`CLOUD_TOTAL_KEY` — the row total (sum of all segments),\n  * ``percentage_total`` — % change of the total vs the previous period."
+    ProductEstimateItem:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: Period date (ISO format)
+        product:
+          type: string
+          title: Product
+          description: Product name (JOBS, SQL, etc.)
+        category:
+          type: string
+          title: Category
+          description: Category the product belongs to
+        cost:
+          type: number
+          title: Cost
+          description: Actual cost for the period
+          default: 0
+        cost_estimate:
+          type: number
+          title: Cost Estimate
+          description: Projected cost for the period
+          default: 0
+        is_estimate:
+          type: boolean
+          title: Is Estimate
+          description: Whether this is a projected period
+          default: false
+        percentage_change:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Change
+          description: Percentage change from previous period
+      type: object
+      required:
+      - date
+      - product
+      - category
+      title: ProductEstimateItem
+      description: Single data point for product-level cost projection.
+    EngineTypeTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/EngineTypeTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data by engine type
+        engine_types:
+          items:
+            type: string
+          type: array
+          title: Engine Types
+          description: Unique engine types for chart legend
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+      type: object
+      required:
+      - trends
+      - engine_types
+      - granularity
+      title: EngineTypeTrendsResponse
+      description: Response model for engine type trends endpoint.
+    WorkspaceSummary:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+          description: Databricks workspace ID
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+          description: Workspace display name
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+          description: Workspace status
+      type: object
+      required:
+      - workspace_id
+      title: WorkspaceSummary
+      description: Summary information for a workspace.
+    CostCategoryItem:
+      properties:
+        category:
+          $ref: '#/components/schemas/CategoryName'
+          description: Category identifier (e.g. ``clusters``, ``sql_warehouse``)
+        label:
+          type: string
+          title: Label
+          description: Display label for the category (e.g. ``Clusters``, ``SQL Warehouse``). Matches the legend label used by ``/cost/trends/by-product?category=total``.
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this category
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this category
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Share of the overall ``estimated_cost`` (0–100, one decimal). Sums to ~100 across the breakdown.
+      type: object
+      required:
+      - category
+      - label
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: CostCategoryItem
+      description: 'Per-category cost breakdown item used by ``/cost/overview``.
+
+
+        Mirrors the 5-spec-group categorisation that drives the tabbed cost UI.
+
+        ``category`` matches the value the FE sends to
+
+        ``/cost/trends/by-product?category=…``.'
+    CategoryName:
+      type: string
+      enum:
+      - total
+      - clusters
+      - sql_warehouse
+      - ai_ml
+      - lakehouse
+      - platform
+      title: CategoryName
+      description: "Spec-group category identifier shared across the cost APIs.\n\nUsed by:\n\n* ``GET /cost/trends/by-product?category=<value>`` — selects which\n  products get filtered in and how each row's segment label is computed.\n* ``GET /cost/overview`` — each ``category_breakdown`` item carries one\n  of these values.\n\nSee ``CATEGORY_DEFINITIONS`` in ``app.service.databricks.cost_constants``\nfor the per-category filter list, segment label expression, and canonical\nlegend order."
+    EngineTypeTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        engine_type:
+          type: string
+          title: Engine Type
+          description: 'Engine type: photon or standard'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+type
+      type: object
+      required:
+      - period
+      - engine_type
+      - total_dbus
+      - estimated_cost
+      title: EngineTypeTrendItem
+      description: Single data point for engine type trends (photon vs standard).
+    CostEstimateGraphItem:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: Period date (ISO format)
+        total:
+          type: number
+          title: Total
+          description: Actual total cost for the period
+          default: 0
+        total_estimate:
+          type: number
+          title: Total Estimate
+          description: Projected total cost for the period
+          default: 0
+        is_estimate:
+          type: boolean
+          title: Is Estimate
+          description: Whether this is a projected period
+          default: false
+        percentage_total:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Total
+          description: Percentage change in total from previous period
+        segments:
+          items:
+            $ref: '#/components/schemas/EstimateSegmentItem'
+          type: array
+          title: Segments
+          description: Per-segment actual + projected costs for the requested ``category``, in canonical legend order. The segment set matches the ``products`` array on the response.
+      type: object
+      required:
+      - date
+      title: CostEstimateGraphItem
+      description: Single data point in the cost estimate graph with actual + projected values.
+    ProductTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/ProductTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data by product
+        products:
+          items:
+            type: string
+          type: array
+          title: Products
+          description: Canonical segment labels for the chart legend, in display order. When called with a ``category``, this is the full set of expected segments for that category — empty segments are still included so the legend stays stable across date ranges.
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/CategoryName'
+          - type: 'null'
+          description: Category the response was computed for. Omitted when called without the ``category`` query param.
+      type: object
+      required:
+      - trends
+      - products
+      - granularity
+      title: ProductTrendsResponse
+      description: Response model for cost trends by product endpoint.
+    CloudCostProjectionRow:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Month start date, ``YYYY-MM-01``.
+        total:
+          type: number
+          title: Total
+          description: Sum of the actual segment values.
+        total_estimate:
+          type: number
+          title: Total Estimate
+          description: Sum of the projected (estimate) segment values.
+        is_estimate:
+          type: boolean
+          title: Is Estimate
+          description: True only for fully-future months (past + current are False).
+      additionalProperties: true
+      type: object
+      required:
+      - period
+      - total
+      - total_estimate
+      - is_estimate
+      title: CloudCostProjectionRow
+      description: 'One calendar month of actual + projected cloud cost (Future State tab).
+
+
+        Past months are fully actual (``<cat>`` = month total, ``<cat>_estimate`` =
+
+        0). The current month splits into month-to-date actual (``<cat>``) +
+
+        run-rate projected remainder (``<cat>_estimate``). Future months are fully
+
+        projected (``<cat>`` = 0, ``<cat>_estimate`` = run-rate). ``percentage_*``
+
+        fields compare each segment''s full (actual + estimate) value to the prior
+
+        month.'
+    DeploymentTypeBreakdown:
+      properties:
+        deployment_type:
+          type: string
+          title: Deployment Type
+          description: 'Deployment type: serverless or provisioned'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this deployment type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this deployment type
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - deployment_type
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: DeploymentTypeBreakdown
+      description: Breakdown by deployment type (serverless vs provisioned).
+    ProductTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        product:
+          type: string
+          title: Product
+          description: Product name (JOBS, SQL, etc.)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+product
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+product
+      type: object
+      required:
+      - period
+      - product
+      - total_dbus
+      - estimated_cost
+      title: ProductTrendItem
+      description: Single data point for product trends (period + product combination).
+    CostBreakdownItem:
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Name of the group (SKU, workspace, product)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this group
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this group
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+        record_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Record Count
+          description: Number of billing records
+      type: object
+      required:
+      - name
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: CostBreakdownItem
+      description: Single item in cost breakdown.
+    ComputeTypeTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/ComputeTypeTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data by compute type
+        compute_types:
+          items:
+            type: string
+          type: array
+          title: Compute Types
+          description: Unique compute types for chart legend
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+      type: object
+      required:
+      - trends
+      - compute_types
+      - granularity
+      title: ComputeTypeTrendsResponse
+      description: Response model for compute type trends endpoint.
+    EstimateSegmentItem:
+      properties:
+        product:
+          type: string
+          title: Product
+          description: Segment label for this category
+        cost:
+          type: number
+          title: Cost
+          description: Actual cost for the period
+          default: 0
+        cost_estimate:
+          type: number
+          title: Cost Estimate
+          description: Projected cost for the period
+          default: 0
+        percentage_change:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Change
+          description: Percentage change from the previous period
+      type: object
+      required:
+      - product
+      title: EstimateSegmentItem
+      description: 'One segment''s actual + projected cost at a single point on the estimate
+
+        graph. The segment is whatever the requested ``category`` resolves to —
+
+        a spec group (``category=total``), a product (e.g. ``category=clusters``),
+
+        or a SQL tier (``category=sql_warehouse``). ``product`` carries the same
+
+        label semantics as ``ProductTrendItem.product``.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CostTotalEstimateResponse:
+      properties:
+        total:
+          type: number
+          title: Total
+          description: Total cost (actual + projected)
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/CategoryName'
+          - type: 'null'
+          description: Category the estimate was computed for
+        segment_breakdown:
+          items:
+            $ref: '#/components/schemas/EstimateSegmentTotalItem'
+          type: array
+          title: Segment Breakdown
+          description: Per-segment combined (actual + projected) cost breakdown for the requested ``category``, in canonical legend order.
+      type: object
+      required:
+      - total
+      title: CostTotalEstimateResponse
+      description: Response model for total cost estimate endpoint.
+    DeploymentTypeTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        deployment_type:
+          type: string
+          title: Deployment Type
+          description: 'Deployment type: serverless or provisioned'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+type
+      type: object
+      required:
+      - period
+      - deployment_type
+      - total_dbus
+      - estimated_cost
+      title: DeploymentTypeTrendItem
+      description: Single data point for deployment type trends (serverless vs provisioned).
+    CostTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for the period
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for the period
+      type: object
+      required:
+      - period
+      - total_dbus
+      - estimated_cost
+      title: CostTrendItem
+      description: Single data point in cost trend.
+    CostTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/CostTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data points
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+      type: object
+      required:
+      - trends
+      - granularity
+      title: CostTrendsResponse
+      description: Response model for cost trends endpoint.
+    ComputeTypeTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        compute_type:
+          type: string
+          title: Compute Type
+          description: 'Compute type: jobs, all_purpose, sql, other'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+type
+      type: object
+      required:
+      - period
+      - compute_type
+      - total_dbus
+      - estimated_cost
+      title: ComputeTypeTrendItem
+      description: Single data point for compute type trends.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

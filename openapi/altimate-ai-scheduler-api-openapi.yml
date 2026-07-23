@@ -1,0 +1,242 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS SCHEDULER API
+  version: 0.1.0
+tags:
+- name: SCHEDULER
+paths:
+  /scheduler/{contract_id}:
+    get:
+      tags:
+      - SCHEDULER
+      summary: Fetch Scheduler Script
+      description: 'Fetches a contract by id.
+
+        :param auth: The authorization token for the request.
+
+        :param contract: The fetched contract object'
+      operationId: fetch_scheduler_script_scheduler__contract_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      - name: tool
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Tool
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulerFetchResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Fetch Scheduler Script Scheduler  Contract Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Fetch Scheduler Script Scheduler  Contract Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - SCHEDULER
+      summary: Contract Scheduler Toggle
+      description: 'Fetches a contract by id.
+
+        :param auth: The authorization token for the request.
+
+        :param contract: The fetched contract object'
+      operationId: contract_scheduler_toggle_scheduler__contract_id__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractSchedulerToggleResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Contract Scheduler Toggle Scheduler  Contract Id  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Contract Scheduler Toggle Scheduler  Contract Id  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /scheduler/sync/{data_store_id}:
+    post:
+      tags:
+      - SCHEDULER
+      summary: Datastore Sync Scheduler Toggle
+      description: 'Fetches a datastoer by id.
+
+        :param data_store: The fetched data_store object'
+      operationId: datastore_sync_scheduler_toggle_scheduler_sync__data_store_id__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatastoreSyncSchedulerToggleResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Datastore Sync Scheduler Toggle Scheduler Sync  Data Store Id  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Datastore Sync Scheduler Toggle Scheduler Sync  Data Store Id  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ContractSchedulerToggleResponse:
+      properties:
+        periodic_task_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Periodic Task Id
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: ContractSchedulerToggleResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DatastoreSyncSchedulerToggleResponse:
+      properties:
+        periodic_task_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Periodic Task Ids
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: DatastoreSyncSchedulerToggleResponse
+    SchedulerFetchResponse:
+      properties:
+        script:
+          type: string
+          title: Script
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - script
+      - message
+      title: SchedulerFetchResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

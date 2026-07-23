@@ -1,0 +1,212 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS AZURE_DATABRICKS_CONNECTIONS API
+  version: 0.1.0
+tags:
+- name: AZURE_DATABRICKS_CONNECTIONS
+paths:
+  /azure-databricks-connections/:
+    post:
+      tags:
+      - AZURE_DATABRICKS_CONNECTIONS
+      summary: Save Azure Databricks Connection
+      description: Insert a new Azure Databricks connection entry into global_config.
+      operationId: save_azure_databricks_connection_azure_databricks_connections__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AzureDatabricksConnectionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedConnectionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /azure-databricks-connections/private-link/:
+    post:
+      tags:
+      - AZURE_DATABRICKS_CONNECTIONS
+      summary: Save Azure Databricks Private Link Connection
+      description: Insert a new Azure Databricks Private Link entry into global_config.
+      operationId: save_azure_databricks_private_link_connection_azure_databricks_connections_private_link__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AzureDatabricksPrivateLinkConnectionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedConnectionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    AzureDatabricksConnectionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        azure_tenant_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Azure Tenant Id
+          default: ''
+        databricks_account_id:
+          type: string
+          title: Databricks Account Id
+        workspace_url:
+          type: string
+          title: Workspace Url
+        sp_client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sp Client Id
+          default: ''
+        sp_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sp Secret
+          default: ''
+        sql_warehouse_id:
+          type: string
+          title: Sql Warehouse Id
+        system_catalog_scope:
+          type: string
+          enum:
+          - all
+          - specific
+          title: System Catalog Scope
+        system_catalog_schemas:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Catalog Schemas
+          default: ''
+      type: object
+      required:
+      - name
+      - databricks_account_id
+      - workspace_url
+      - sql_warehouse_id
+      - system_catalog_scope
+      title: AzureDatabricksConnectionRequest
+    AzureDatabricksPrivateLinkConnectionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        workspace_resource_id:
+          type: string
+          title: Workspace Resource Id
+        workspace_url:
+          type: string
+          title: Workspace Url
+        storage_account_resource_id:
+          type: string
+          title: Storage Account Resource Id
+        storage_account_fqdn:
+          type: string
+          title: Storage Account Fqdn
+        azure_region:
+          type: string
+          title: Azure Region
+      type: object
+      required:
+      - name
+      - workspace_resource_id
+      - workspace_url
+      - storage_account_resource_id
+      - storage_account_fqdn
+      - azure_region
+      title: AzureDatabricksPrivateLinkConnectionRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SavedConnectionResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        config_type:
+          type: string
+          title: Config Type
+        saved_at:
+          type: string
+          title: Saved At
+          description: ISO timestamp when the row was created
+      type: object
+      required:
+      - id
+      - config_type
+      - saved_at
+      title: SavedConnectionResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

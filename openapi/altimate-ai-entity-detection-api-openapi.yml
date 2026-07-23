@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS ENTITY_DETECTION API
+  version: 0.1.0
+tags:
+- name: ENTITY_DETECTION
+paths:
+  /entity_detection/detect:
+    post:
+      tags:
+      - ENTITY_DETECTION
+      summary: Detect Entities
+      description: Detect entities in text using AI, then classify them using database lookups.
+      operationId: detect_entities_entity_detection_detect_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityDetectionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityDetectionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    EntityDetectionResponse:
+      properties:
+        entities:
+          items:
+            $ref: '#/components/schemas/DetectedEntity'
+          type: array
+          title: Entities
+        original_text:
+          type: string
+          title: Original Text
+      type: object
+      required:
+      - entities
+      - original_text
+      title: EntityDetectionResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DetectedEntity:
+      properties:
+        name:
+          type: string
+          title: Name
+        types_found:
+          items:
+            type: string
+          type: array
+          title: Types Found
+      type: object
+      required:
+      - name
+      - types_found
+      title: DetectedEntity
+    EntityDetectionRequest:
+      properties:
+        text:
+          type: string
+          title: Text
+        detected_entities:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Detected Entities
+      type: object
+      required:
+      - text
+      title: EntityDetectionRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

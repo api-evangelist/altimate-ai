@@ -1,0 +1,855 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS ade-bench API
+  version: 0.1.0
+tags:
+- name: ade-bench
+paths:
+  /api/ade-bench/runs:
+    get:
+      tags:
+      - ade-bench
+      summary: List Runs
+      description: 'List benchmark runs with pagination and optional filters.
+
+
+        Returns a paginated list of benchmark run metadata, sorted by start time (most recent first).'
+      operationId: list_runs_api_ade_bench_runs_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Results per page
+          default: 50
+          title: Limit
+        description: Results per page
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Offset for pagination
+          default: 0
+          title: Offset
+        description: Offset for pagination
+      - name: agent
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by agent name
+          title: Agent
+        description: Filter by agent name
+      - name: model
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by model name
+          title: Model
+        description: Filter by model name
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter runs after this date (ISO format)
+          title: Start Date
+        description: Filter runs after this date (ISO format)
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter runs before this date (ISO format)
+          title: End Date
+        description: Filter runs before this date (ISO format)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ade-bench/runs/{run_id}:
+    get:
+      tags:
+      - ade-bench
+      summary: Get Run
+      description: Get metadata for a specific benchmark run.
+      operationId: get_run_api_ade_bench_runs__run_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunMetadataResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - ade-bench
+      summary: Delete Run
+      description: Delete a benchmark run and all its associated data.
+      operationId: delete_run_api_ade_bench_runs__run_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ade-bench/runs/{run_id}/results:
+    get:
+      tags:
+      - ade-bench
+      summary: Get Run Results
+      description: 'Get full results for a specific benchmark run.
+
+
+        Includes all trial results and computed metrics like accuracy and pass@k.'
+      operationId: get_run_results_api_ade_bench_runs__run_id__results_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunResultsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ade-bench/runs/{run_id}/trials:
+    get:
+      tags:
+      - ade-bench
+      summary: List Trials
+      description: 'List all trials for a specific benchmark run.
+
+
+        Returns summary information for each trial.'
+      operationId: list_trials_api_ade_bench_runs__run_id__trials_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrialListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ade-bench/runs/{run_id}/trials/{trial_name}:
+    get:
+      tags:
+      - ade-bench
+      summary: Get Trial
+      description: Get detailed results for a specific trial.
+      operationId: get_trial_api_ade_bench_runs__run_id__trials__trial_name__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      - name: trial_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Trial Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrialResultResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ade-bench/filters:
+    get:
+      tags:
+      - ade-bench
+      summary: Get Filter Options
+      description: 'Get available filter options for the runs list.
+
+
+        Returns unique agents and models across all runs.'
+      operationId: get_filter_options_api_ade_bench_filters_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterOptionsResponse'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/ade-bench/progress:
+    get:
+      tags:
+      - ade-bench
+      summary: Get Task Progress
+      description: 'Get cumulative task progress across selected runs.
+
+
+        Shows which tasks have been solved, test pass rates, and progress metrics.
+
+        If run_ids is provided, only those runs are considered. Otherwise, all runs are included.'
+      operationId: get_task_progress_api_ade_bench_progress_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: run_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of run IDs to include
+          title: Run Ids
+        description: Comma-separated list of run IDs to include
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskProgressResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    TaskProgressItem:
+      properties:
+        task_id:
+          type: string
+          title: Task Id
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        tests_passing:
+          type: integer
+          title: Tests Passing
+          default: 0
+        tests_total:
+          type: integer
+          title: Tests Total
+          default: 0
+        attempts:
+          type: integer
+          title: Attempts
+          default: 0
+        last_failure_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Failure Mode
+        last_run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Run Id
+        last_run_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Run Time
+        first_solved_run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Solved Run Id
+        langfuse_trace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Langfuse Trace Url
+        best_input_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Best Input Tokens
+        best_output_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Best Output Tokens
+        best_cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Best Cost Usd
+      type: object
+      required:
+      - task_id
+      - status
+      title: TaskProgressItem
+      description: Progress info for a single task.
+    TrialSummary:
+      properties:
+        trial_name:
+          type: string
+          title: Trial Name
+        task_id:
+          type: string
+          title: Task Id
+        is_resolved:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Resolved
+        failure_mode:
+          type: string
+          title: Failure Mode
+          default: unset
+        input_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Input Tokens
+        output_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Output Tokens
+        runtime_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Runtime Ms
+        cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cost Usd
+        tests_passed:
+          type: integer
+          title: Tests Passed
+          default: 0
+        tests_total:
+          type: integer
+          title: Tests Total
+          default: 0
+        langfuse_trace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Langfuse Trace Url
+      type: object
+      required:
+      - trial_name
+      - task_id
+      title: TrialSummary
+      description: Summary view of a trial for list display.
+    FilterOptionsResponse:
+      properties:
+        agents:
+          items:
+            type: string
+          type: array
+          title: Agents
+          default: []
+        models:
+          items:
+            type: string
+          type: array
+          title: Models
+          default: []
+      type: object
+      title: FilterOptionsResponse
+      description: Response schema for filter dropdown options.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    TaskProgressResponse:
+      properties:
+        tasks_solved:
+          type: integer
+          title: Tasks Solved
+          default: 0
+        tasks_total:
+          type: integer
+          title: Tasks Total
+          default: 0
+        tasks_solved_pct:
+          type: number
+          title: Tasks Solved Pct
+          default: 0.0
+        tests_passing:
+          type: integer
+          title: Tests Passing
+          default: 0
+        tests_total:
+          type: integer
+          title: Tests Total
+          default: 0
+        tests_passing_pct:
+          type: number
+          title: Tests Passing Pct
+          default: 0.0
+        tasks:
+          items:
+            $ref: '#/components/schemas/TaskProgressItem'
+          type: array
+          title: Tasks
+          default: []
+      type: object
+      title: TaskProgressResponse
+      description: Response schema for task progress dashboard.
+    RunResultsResponse:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        results:
+          items:
+            $ref: '#/components/schemas/TrialResultResponse'
+          type: array
+          title: Results
+          default: []
+        pass_at_k:
+          anyOf:
+          - additionalProperties:
+              anyOf:
+              - type: number
+              - type: 'null'
+            type: object
+          - type: 'null'
+          title: Pass At K
+        n_resolved:
+          type: integer
+          title: N Resolved
+          default: 0
+        n_unresolved:
+          type: integer
+          title: N Unresolved
+          default: 0
+        accuracy:
+          type: number
+          title: Accuracy
+          default: 0.0
+        resolved_ids:
+          items:
+            type: string
+          type: array
+          title: Resolved Ids
+          default: []
+        unresolved_ids:
+          items:
+            type: string
+          type: array
+          title: Unresolved Ids
+          default: []
+      type: object
+      required:
+      - run_id
+      title: RunResultsResponse
+      description: Response schema for full run results.
+    TrialListResponse:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        trials:
+          items:
+            $ref: '#/components/schemas/TrialSummary'
+          type: array
+          title: Trials
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - run_id
+      - trials
+      - total
+      title: TrialListResponse
+      description: Response schema for list of trials in a run.
+    TrialResultResponse:
+      properties:
+        trial_name:
+          type: string
+          title: Trial Name
+        task_id:
+          type: string
+          title: Task Id
+        task_prompt:
+          type: string
+          title: Task Prompt
+        is_resolved:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Resolved
+        failure_mode:
+          type: string
+          title: Failure Mode
+          default: unset
+        parser_results:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Parser Results
+        expected_test_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expected Test Count
+        input_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Input Tokens
+        output_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Output Tokens
+        cache_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cache Tokens
+        num_turns:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Turns
+        runtime_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Runtime Ms
+        cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cost Usd
+        uuid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uuid
+        recording_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recording Path
+        langfuse_trace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Langfuse Trace Url
+        agent:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent
+        model_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Name
+        db_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Db Type
+        project_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Type
+        used_mcp:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Used Mcp
+      type: object
+      required:
+      - trial_name
+      - task_id
+      - task_prompt
+      title: TrialResultResponse
+      description: Response schema for a single trial result.
+    RunListResponse:
+      properties:
+        runs:
+          items:
+            $ref: '#/components/schemas/RunMetadataResponse'
+          type: array
+          title: Runs
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - runs
+      - total
+      - limit
+      - offset
+      - has_more
+      title: RunListResponse
+      description: Response schema for paginated run list.
+    TaskStatus:
+      type: string
+      enum:
+      - solved
+      - partial
+      - failing
+      title: TaskStatus
+      description: Status of a task based on best known result.
+    RunMetadataResponse:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        uuid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uuid
+        dataset_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dataset Path
+        output_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Output Path
+        agent_name:
+          type: string
+          title: Agent Name
+        model_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Name
+        dataset_size:
+          type: integer
+          title: Dataset Size
+          default: 0
+        n_attempts:
+          type: integer
+          title: N Attempts
+          default: 1
+        n_concurrent_trials:
+          type: integer
+          title: N Concurrent Trials
+          default: 4
+        accuracy:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Accuracy
+        pass_at_k:
+          anyOf:
+          - additionalProperties:
+              anyOf:
+              - type: number
+              - type: 'null'
+            type: object
+          - type: 'null'
+          title: Pass At K
+        start_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: End Time
+        commit_hash:
+          type: string
+          title: Commit Hash
+          default: unknown
+        username:
+          type: string
+          title: Username
+          default: unknown
+        use_mcp:
+          type: boolean
+          title: Use Mcp
+          default: false
+        n_resolved:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: N Resolved
+        n_unresolved:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: N Unresolved
+        tasks_attempted:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Tasks Attempted
+        total_cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cost Usd
+        total_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Tokens
+        avg_runtime_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Avg Runtime Ms
+      type: object
+      required:
+      - run_id
+      - agent_name
+      title: RunMetadataResponse
+      description: Response schema for run metadata.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,161 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Semantic Metrics API
+  version: 0.1.0
+tags:
+- name: Semantic Metrics
+paths:
+  /copilot/semantic-metrics/list:
+    get:
+      tags:
+      - Semantic Metrics
+      summary: List Metrics
+      description: List all available semantic metrics with dimensions.
+      operationId: list_metrics_copilot_semantic_metrics_list_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /copilot/semantic-metrics/details:
+    post:
+      tags:
+      - Semantic Metrics
+      summary: Get Details
+      description: Get detailed metric definitions including dimensions and measures.
+      operationId: get_details_copilot_semantic_metrics_details_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetricDetailsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /copilot/semantic-metrics/query:
+    post:
+      tags:
+      - Semantic Metrics
+      summary: Execute Query
+      description: Compile and execute a semantic metric query.
+      operationId: execute_query_copilot_semantic_metrics_query_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetricQueryRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MetricQueryRequest:
+      properties:
+        metrics:
+          items:
+            type: string
+          type: array
+          title: Metrics
+        group_by:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Group By
+        where:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Where
+        order_by:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Order By
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+      type: object
+      required:
+      - metrics
+      title: MetricQueryRequest
+    MetricDetailsRequest:
+      properties:
+        metric_names:
+          items:
+            type: string
+          type: array
+          title: Metric Names
+      type: object
+      required:
+      - metric_names
+      title: MetricDetailsRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,1284 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DBT_MODELS API
+  version: 0.1.0
+tags:
+- name: DBT_MODELS
+paths:
+  /dbt/models/:
+    get:
+      tags:
+      - DBT_MODELS
+      summary: Get All
+      operationId: get_all_dbt_models__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: project_rk
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          title: Project Rk
+      - name: dbt_core_integration_ids
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          title: Dbt Core Integration Ids
+      - name: dbt_core_integration_environment_ids
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          title: Dbt Core Integration Environment Ids
+      - name: resource_type
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          title: Resource Type
+      - name: materialization
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          title: Materialization
+      - name: database
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          title: Database
+      - name: schema
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          title: Schema
+      - name: is_stale
+        in: query
+        required: false
+        schema:
+          type: array
+          items: {}
+          default: []
+          title: Is Stale
+      - name: show_deleted
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Show Deleted
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          default: 10
+          title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/Page_DBTModelPageResponse_'
+                - $ref: '#/components/schemas/StandardResponse'
+                title: Response Get All Dbt Models  Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get All Dbt Models  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get All Dbt Models  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/items:
+    post:
+      tags:
+      - DBT_MODELS
+      summary: Get Node By Rk
+      description: Gets a single table by id.
+      operationId: get_node_by_rk_dbt_models_items_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBTModelDetailByRkRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBTModelFetchResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Node By Rk Dbt Models Items Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Node By Rk Dbt Models Items Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/filters:
+    get:
+      tags:
+      - DBT_MODELS
+      summary: Get Filters
+      description: Gets table filters.
+      operationId: get_filters_dbt_models_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBTModelFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Filters Dbt Models Filters Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Filters Dbt Models Filters Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/upstream:
+    post:
+      tags:
+      - DBT_MODELS
+      summary: Post Upstream Tables
+      description: Gets all upstream tables
+      operationId: post_upstream_tables_dbt_models_upstream_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FQNRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedTables'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Post Upstream Tables Dbt Models Upstream Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Post Upstream Tables Dbt Models Upstream Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/downstream:
+    post:
+      tags:
+      - DBT_MODELS
+      summary: Post Downstream Tables
+      description: Gets all downstream tables
+      operationId: post_downstream_tables_dbt_models_downstream_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FQNRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedTables'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Post Downstream Tables Dbt Models Downstream Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Post Downstream Tables Dbt Models Downstream Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/connected:
+    post:
+      tags:
+      - DBT_MODELS
+      summary: Post Connected Columns
+      description: Gets connected columns
+      operationId: post_connected_columns_dbt_models_connected_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectedColumnsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColumnLineageResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Post Connected Columns Dbt Models Connected Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Post Connected Columns Dbt Models Connected Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/terminal:
+    get:
+      tags:
+      - DBT_MODELS
+      summary: Get Terminal Node
+      operationId: get_terminal_node_dbt_models_terminal_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Table Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableNodeResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Terminal Node Dbt Models Terminal Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Terminal Node Dbt Models Terminal Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/schema:
+    get:
+      tags:
+      - DBT_MODELS
+      summary: Get Table Schema Response
+      description: Get amundsen table from altimate table
+      operationId: get_table_schema_response_dbt_models_schema_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Table Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableSchemaResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Schema Response Dbt Models Schema Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Schema Response Dbt Models Schema Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/models/sql_lineage:
+    post:
+      tags:
+      - DBT_MODELS
+      summary: Get Sql Lineage
+      operationId: get_sql_lineage_dbt_models_sql_lineage_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SQLLineageRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SQLLineageResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Sql Lineage Dbt Models Sql Lineage Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Sql Lineage Dbt Models Sql Lineage Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    TestMetadata:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: TestMetadata
+    DBTModelDetailByRkRequest:
+      properties:
+        dbt_model_rk:
+          type: string
+          title: Dbt Model Rk
+      type: object
+      required:
+      - dbt_model_rk
+      title: DBTModelDetailByRkRequest
+    DBTModelPageResponse:
+      properties:
+        project_name:
+          type: string
+          title: Project Name
+        dbt_core_integration_id:
+          type: integer
+          title: Dbt Core Integration Id
+        dbt_core_integration_environment_id:
+          type: integer
+          title: Dbt Core Integration Environment Id
+        rk:
+          type: string
+          title: Rk
+        project_rk:
+          type: string
+          title: Project Rk
+        model_name:
+          type: string
+          title: Model Name
+        unique_id:
+          type: string
+          title: Unique Id
+        resource_type:
+          type: string
+          title: Resource Type
+        alias:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alias
+        description:
+          type: string
+          title: Description
+        materialization:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Materialization
+        database:
+          type: string
+          title: Database
+        model_schema:
+          type: string
+          title: Model Schema
+        file_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Path
+        columns:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Columns
+        is_stale:
+          type: boolean
+          title: Is Stale
+        last_seen:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Seen
+      type: object
+      required:
+      - project_name
+      - dbt_core_integration_id
+      - dbt_core_integration_environment_id
+      - rk
+      - project_rk
+      - model_name
+      - unique_id
+      - resource_type
+      - description
+      - database
+      - model_schema
+      - columns
+      - is_stale
+      title: DBTModelPageResponse
+    DBTModelFilterResponse:
+      properties:
+        dbt_integrations:
+          items:
+            $ref: '#/components/schemas/IntegrationFilterOption'
+          type: array
+          title: Dbt Integrations
+        environments:
+          items:
+            $ref: '#/components/schemas/app__schemas__dbt_models__dbt_models__FilterOption'
+          type: array
+          title: Environments
+        projects:
+          items:
+            $ref: '#/components/schemas/app__schemas__dbt_models__dbt_models__FilterOption'
+          type: array
+          title: Projects
+        resource_types:
+          items:
+            $ref: '#/components/schemas/app__schemas__dbt_models__dbt_models__FilterOption'
+          type: array
+          title: Resource Types
+        materializations:
+          items:
+            $ref: '#/components/schemas/app__schemas__dbt_models__dbt_models__FilterOption'
+          type: array
+          title: Materializations
+        databases:
+          items:
+            $ref: '#/components/schemas/app__schemas__dbt_models__dbt_models__FilterOption'
+          type: array
+          title: Databases
+        schemas:
+          items:
+            $ref: '#/components/schemas/app__schemas__dbt_models__dbt_models__FilterOption'
+          type: array
+          title: Schemas
+        integrations_with_environments:
+          items:
+            $ref: '#/components/schemas/DBTModelIntegrationWithEnvironments'
+          type: array
+          title: Integrations With Environments
+      type: object
+      required:
+      - dbt_integrations
+      - environments
+      - projects
+      - resource_types
+      - materializations
+      title: DBTModelFilterResponse
+    IntegrationFilterOption:
+      properties:
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+        integration_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Type
+          default: dbt_core
+        connection_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Connection Name
+      type: object
+      title: IntegrationFilterOption
+      description: Filter option with integration type for dbt integrations (dbt_core or dbt_cloud)
+    ColumnLineageResponse:
+      properties:
+        highlight_edges:
+          items:
+            $ref: '#/components/schemas/ColumnLineageEdge'
+          type: array
+          title: Highlight Edges
+      type: object
+      required:
+      - highlight_edges
+      title: ColumnLineageResponse
+    DBTModelIntegrationWithEnvironments:
+      properties:
+        integration_value:
+          type: string
+          title: Integration Value
+        environments:
+          items:
+            $ref: '#/components/schemas/app__schemas__dbt_models__dbt_models__FilterOption'
+          type: array
+          title: Environments
+      type: object
+      required:
+      - integration_value
+      - environments
+      title: DBTModelIntegrationWithEnvironments
+    DBTModelFetchResponse:
+      properties:
+        project_name:
+          type: string
+          title: Project Name
+        dbt_core_integration_id:
+          type: integer
+          title: Dbt Core Integration Id
+        dbt_core_integration_environment_id:
+          type: integer
+          title: Dbt Core Integration Environment Id
+        rk:
+          type: string
+          title: Rk
+        project_rk:
+          type: string
+          title: Project Rk
+        model_name:
+          type: string
+          title: Model Name
+        unique_id:
+          type: string
+          title: Unique Id
+        resource_type:
+          type: string
+          title: Resource Type
+        alias:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alias
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        materialization:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Materialization
+        database:
+          type: string
+          title: Database
+        model_schema:
+          type: string
+          title: Model Schema
+        file_path:
+          type: string
+          title: File Path
+        raw_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Code
+        compiled_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compiled Code
+        columns:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Columns
+        is_stale:
+          type: boolean
+          title: Is Stale
+        last_seen:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Seen
+        insights:
+          items:
+            $ref: '#/components/schemas/DBTModelInsight'
+          type: array
+          title: Insights
+      type: object
+      required:
+      - project_name
+      - dbt_core_integration_id
+      - dbt_core_integration_environment_id
+      - rk
+      - project_rk
+      - model_name
+      - unique_id
+      - resource_type
+      - database
+      - model_schema
+      - file_path
+      - columns
+      - is_stale
+      - insights
+      title: DBTModelFetchResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ColumnLineageEdge:
+      properties:
+        source:
+          type: string
+          title: Source
+        target:
+          type: string
+          title: Target
+        extra:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra
+      type: object
+      required:
+      - source
+      - target
+      title: ColumnLineageEdge
+    SchemaMetadata:
+      properties:
+        table_schema_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Table Schema Id
+        rk:
+          type: string
+          title: Rk
+        name:
+          type: string
+          title: Name
+        datatype:
+          type: string
+          title: Datatype
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tags:
+          items:
+            $ref: '#/components/schemas/app__schemas__lineage__Tag'
+          type: array
+          title: Tags
+        can_lineage_expand:
+          type: boolean
+          title: Can Lineage Expand
+        is_transformation:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Transformation
+          default: false
+      type: object
+      required:
+      - rk
+      - name
+      - datatype
+      - tags
+      - can_lineage_expand
+      title: SchemaMetadata
+    ConnectedTables:
+      properties:
+        tables:
+          items:
+            $ref: '#/components/schemas/TableNodeResponse'
+          type: array
+          title: Tables
+      type: object
+      required:
+      - tables
+      title: ConnectedTables
+    DBTModelInsight:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        severity:
+          type: string
+          title: Severity
+        insight_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Insight Metadata
+      type: object
+      required:
+      - name
+      - type
+      - severity
+      - insight_metadata
+      title: DBTModelInsight
+    app__schemas__lineage__Tag:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        rk:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rk
+      type: object
+      required:
+      - name
+      - description
+      title: Tag
+    Edge:
+      properties:
+        src:
+          type: string
+          title: Src
+        dst:
+          type: string
+          title: Dst
+      type: object
+      required:
+      - src
+      - dst
+      title: Edge
+    Page_DBTModelPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DBTModelPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DBTModelPageResponse]
+    TableSchemaResponse:
+      properties:
+        table:
+          type: string
+          title: Table
+        columns:
+          items:
+            $ref: '#/components/schemas/SchemaMetadata'
+          type: array
+          title: Columns
+        purpose:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Purpose
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+      type: object
+      required:
+      - table
+      - columns
+      title: TableSchemaResponse
+    FQNRequest:
+      properties:
+        fqn:
+          type: string
+          title: Fqn
+      type: object
+      required:
+      - fqn
+      title: FQNRequest
+    SQLLineageResponse:
+      properties:
+        tableEdges:
+          items:
+            prefixItems:
+            - type: string
+            - type: string
+            type: array
+            maxItems: 2
+            minItems: 2
+          type: array
+          title: Tableedges
+        details:
+          additionalProperties: true
+          type: object
+          title: Details
+        nodePositions:
+          anyOf:
+          - additionalProperties:
+              prefixItems:
+              - type: number
+              - type: number
+              type: array
+              maxItems: 2
+              minItems: 2
+            type: object
+          - type: 'null'
+          title: Nodepositions
+      type: object
+      required:
+      - tableEdges
+      - details
+      title: SQLLineageResponse
+    app__schemas__dbt_models__dbt_models__FilterOption:
+      properties:
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+      type: object
+      title: FilterOption
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    SQLLineageRequest:
+      properties:
+        dbt_model_rk:
+          type: string
+          title: Dbt Model Rk
+        session_id:
+          type: string
+          title: Session Id
+      type: object
+      required:
+      - dbt_model_rk
+      - session_id
+      title: SQLLineageRequest
+    TableNodeResponse:
+      properties:
+        table:
+          type: string
+          title: Table
+        upstream_count:
+          type: integer
+          title: Upstream Count
+        downstream_count:
+          type: integer
+          title: Downstream Count
+        id:
+          anyOf:
+          - type: integer
+          - type: string
+          - type: 'null'
+          title: Id
+        materialization:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Materialization
+        label:
+          type: string
+          title: Label
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        resource_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Type
+        tests:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/TestMetadata'
+            type: array
+          - type: 'null'
+          title: Tests
+        source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
+        is_stale:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Stale
+        last_seen:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Seen
+      type: object
+      required:
+      - table
+      - upstream_count
+      - downstream_count
+      - label
+      title: TableNodeResponse
+    ConnectedColumnsRequest:
+      properties:
+        column_fqns:
+          items:
+            type: string
+          type: array
+          title: Column Fqns
+        edges:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Edge'
+            type: array
+          - type: 'null'
+          title: Edges
+          default: []
+        nodes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Nodes
+          default: []
+        upstreamExpansion:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Upstreamexpansion
+          default: false
+        showIndirectEdges:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Showindirectedges
+          default: false
+      type: object
+      required:
+      - column_fqns
+      title: ConnectedColumnsRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

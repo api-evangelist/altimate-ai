@@ -1,0 +1,1458 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS CONTRACT API
+  version: 0.1.0
+tags:
+- name: CONTRACT
+paths:
+  /registries/{registry_id}/contracts/:
+    post:
+      tags:
+      - CONTRACT
+      summary: Create Contract In Registry
+      description: 'Create a contract in the registry and database.
+
+        1. Checks if the contract already exists in the registry.
+
+        2. Validates the contract. If invalid, raise exception
+
+        3. If it does not exist, creates the contract in the registry.
+
+        4. If it exists and is same do nothing. Else create a new version.
+
+
+
+        :param db: The database session for accessing the database.
+
+        :param contract_request: The contract creation request containing the contract definition and other metadata.
+
+        :param tenant: The tenant object for the tenant associated with the request.
+
+        :param registry: The registry the contract is being created in.
+
+        :param auth: The authorization token for the request.
+
+        :return: A contract creation response containing the contract ID, version, and a message.'
+      operationId: create_contract_in_registry_registries__registry_id__contracts__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractCreationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractCreationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Create Contract In Registry Registries  Registry Id  Contracts  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Create Contract In Registry Registries  Registry Id  Contracts  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - CONTRACT
+      summary: Get Contracts By Registry
+      description: 'Fetches all the contracts for a tenant in a registry.
+
+        param db: The database session for accessing the database and the tenant schema.
+
+        param registry: The registry the contract is being fetched from
+
+        param auth: The authorization token for the request.
+
+        return: A dictionary containing all the contracts'
+      operationId: get_contracts_by_registry_registries__registry_id__contracts__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractFetchMultipleResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Contracts By Registry Registries  Registry Id  Contracts  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Contracts By Registry Registries  Registry Id  Contracts  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /registries/{registry_id}/contracts/definitions/validate:
+    post:
+      tags:
+      - CONTRACT
+      summary: Validate Contract Definition Dry Run
+      description: 'Create a contract in the registry and database.
+
+        1. Checks if the contract already exists in the registry.
+
+        2. Validates the contract. If invalid, raise exception
+
+        3. If it does not exist, creates the contract in the registry.
+
+        4. If it exists and is same do nothing. Else create a new version.
+
+
+
+        :param db: The database session for accessing the database.
+
+        :param contract_request: The contract creation request containing the contract definition and other metadata.
+
+        :param tenant: The tenant object for the tenant associated with the request.
+
+        :param registry: The registry the contract is being created in.
+
+        :param auth: The authorization token for the request.
+
+        :return: A contract creation response containing the contract ID, version, and a message.'
+      operationId: validate_contract_definition_dry_run_registries__registry_id__contracts_definitions_validate_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractCreationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractDryRunResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Validate Contract Definition Dry Run Registries  Registry Id  Contracts Definitions Validate Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Validate Contract Definition Dry Run Registries  Registry Id  Contracts Definitions Validate Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /registries/{registry_id}/contracts/{contract_id}:
+    get:
+      tags:
+      - CONTRACT
+      summary: Get Contracts By Registry And Id
+      description: 'Fetches a contract by id. Only fetches if it exists in the provided registry
+
+        param auth: The authorization token for the request.
+
+        param contract: The fetched contract object
+
+        return: A dictionary containing the contract'
+      operationId: get_contracts_by_registry_and_id_registries__registry_id__contracts__contract_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__contracts__ContractFetchResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Contracts By Registry And Id Registries  Registry Id  Contracts  Contract Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Contracts By Registry And Id Registries  Registry Id  Contracts  Contract Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - CONTRACT
+      summary: Delete Contract From Registry By Id
+      description: 'Deletes a contract from the registry
+
+
+        The contract is deleted from the db and the registry.
+
+
+        :param db: The database session to use for deleting the tenant''s data.
+
+        :param contract: The contract to delete.
+
+        :param auth: The authentication header.
+
+        :return: A dictionary containing the result of the operation.'
+      operationId: delete_contract_from_registry_by_id_registries__registry_id__contracts__contract_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Delete Contract From Registry By Id Registries  Registry Id  Contracts  Contract Id  Delete
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Delete Contract From Registry By Id Registries  Registry Id  Contracts  Contract Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /registries/{registry_id}/contracts/{contract_id}/validate:
+    post:
+      tags:
+      - CONTRACT
+      summary: Validate
+      description: 'Validates data against a contract.
+
+        param auth: The authorization token for the request.
+
+        param contract: The contract object
+
+        param validation_request: The validation request containing the data to be validated
+
+        param tenant: The tenant object for the tenant associated with the request.'
+      operationId: validate_registries__registry_id__contracts__contract_id__validate_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/ContractValidationRequest'
+              - type: 'null'
+              title: Validation Request
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/ContractValidationResponse'
+                - $ref: '#/components/schemas/ErrorResponse'
+                title: Response Validate Registries  Registry Id  Contracts  Contract Id  Validate Post
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Validate Registries  Registry Id  Contracts  Contract Id  Validate Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Validate Registries  Registry Id  Contracts  Contract Id  Validate Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /registries/{registry_id}/contracts/{contract_id}/schedule_validation:
+    post:
+      tags:
+      - CONTRACT
+      summary: Schedule Validation
+      description: 'Validates data against a contract.
+
+        param auth: The authorization token for the request.
+
+        param contract: The contract object
+
+        param validation_request: The validation request containing the data to be validated
+
+        param tenant: The tenant object for the tenant associated with the request.'
+      operationId: schedule_validation_registries__registry_id__contracts__contract_id__schedule_validation_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/StandardResponse'
+                - $ref: '#/components/schemas/ErrorResponse'
+                title: Response Schedule Validation Registries  Registry Id  Contracts  Contract Id  Schedule Validation Post
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Schedule Validation Registries  Registry Id  Contracts  Contract Id  Schedule Validation Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Schedule Validation Registries  Registry Id  Contracts  Contract Id  Schedule Validation Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /registries/{registry_id}/contracts/{contract_id}/configurations:
+    get:
+      tags:
+      - CONTRACT
+      summary: Get Contract Configuration For Profile
+      description: 'Gets the metric configuration for all the contracts of a source.
+
+        :param auth: The authentication header.
+
+        :param db_registry: The registry contains the contract.
+
+        :param db_contract: The contract to get the configuration for.
+
+        :return: A dictionary containing the profile configuration.'
+      operationId: get_contract_configuration_for_profile_registries__registry_id__contracts__contract_id__configurations_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: registry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registry Id
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileConfigResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Contract Configuration For Profile Registries  Registry Id  Contracts  Contract Id  Configurations Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Contract Configuration For Profile Registries  Registry Id  Contracts  Contract Id  Configurations Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /contracts/:
+    delete:
+      tags:
+      - CONTRACT
+      summary: Delete All Contracts
+      description: 'Deletes all contracts for a tenant.
+
+
+        The tenant is deleted by deleting all files and directories in the contract registry that are associated with the
+
+        tenant. The tenant''s data is also deleted from the database.
+
+
+        :param db: The database session to use for deleting the tenant''s data.
+
+        :param tenant: The tenant to delete.
+
+        :param auth: The authentication header.
+
+        :return: A dictionary containing the result of the operation.'
+      operationId: delete_all_contracts_contracts__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Delete All Contracts Contracts  Delete
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Delete All Contracts Contracts  Delete
+    get:
+      tags:
+      - CONTRACT
+      summary: Fetch Contracts
+      description: 'Fetches contracts by metadata. Filters based on the provided query parameters.
+
+        If None, them not filtered based on that
+
+        :param auth: The authorization token for the request.
+
+        :param db: The database session to use for fetching the contracts.
+
+        :param data_store_name: The name of the data store.
+
+        :param fqn_path: The fully qualified name path. This can be provided partially
+
+        :param contract_type: The type of the contract.
+
+        :param contract_name: The name of the contract.
+
+        :return: A dictionary containing the result of the operation.'
+      operationId: fetch_contracts_contracts__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_name
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Data Store Name
+      - name: fqn_path
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Fqn Path
+      - name: contract_type
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Contract Type
+      - name: contract_name
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Contract Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractFetchMultipleResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Fetch Contracts Contracts  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Fetch Contracts Contracts  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /contracts/list:
+    get:
+      tags:
+      - CONTRACT
+      summary: Fetch Contract List
+      description: 'Fetches contract list by conditions. Filters based on the provided query parameters.
+
+        If None, them not filtered based on that'
+      operationId: fetch_contract_list_contracts_list_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          type: string
+          default: asc
+          title: Sort Order
+      - name: sort_column
+        in: query
+        required: false
+        schema:
+          type: string
+          default: name
+          title: Sort Column
+      - name: contract_owner
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Contract Owner
+      - name: contract_status
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Contract Status
+      - name: last_violation_timestamp
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: Last Violation Timestamp
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_ContractListResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /contracts/details/{contract_id}:
+    get:
+      tags:
+      - CONTRACT
+      summary: Fetch Contract Detail
+      description: Fetches contract detail by contract_id
+      operationId: fetch_contract_detail_contracts_details__contract_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractDetailResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /contracts/{contract_id}:
+    get:
+      tags:
+      - CONTRACT
+      summary: Fetch Contracts By Id
+      description: 'Fetches a contract by id.
+
+        :param auth: The authorization token for the request.
+
+        :param contract: The fetched contract object'
+      operationId: fetch_contracts_by_id_contracts__contract_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: contract_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contract Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__contracts__ContractFetchResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Fetch Contracts By Id Contracts  Contract Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Fetch Contracts By Id Contracts  Contract Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    DeletionResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: DeletionResponse
+    ContractCreationResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        contract_location:
+          type: string
+          title: Contract Location
+        registry_name:
+          type: string
+          title: Registry Name
+        message:
+          type: string
+          title: Message
+        version:
+          type: string
+          title: Version
+      type: object
+      required:
+      - id
+      - name
+      - contract_location
+      - registry_name
+      - message
+      - version
+      title: ContractCreationResponse
+    ContractListResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        contract_id:
+          type: integer
+          title: Contract Id
+        status:
+          type: string
+          title: Status
+        last_violation_timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Violation Timestamp
+        level:
+          type: string
+          title: Level
+        filter:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filter
+        tables:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Tables
+        slack_channel:
+          type: string
+          title: Slack Channel
+        no_of_violations:
+          type: integer
+          title: No Of Violations
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        owners:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Owners
+        alias:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Alias
+      type: object
+      required:
+      - name
+      - contract_id
+      - status
+      - level
+      - tables
+      - slack_channel
+      - no_of_violations
+      title: ContractListResponse
+    Page_ContractListResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ContractListResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[ContractListResponse]
+    ContractDetailResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        status:
+          type: string
+          title: Status
+        last_violation_timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Violation Timestamp
+        last_updated:
+          type: string
+          title: Last Updated
+        version:
+          type: string
+          title: Version
+        level:
+          type: string
+          title: Level
+        filter:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filter
+        created_at:
+          type: string
+          title: Created At
+        schedule:
+          type: string
+          title: Schedule
+        registry_id:
+          type: integer
+          title: Registry Id
+        registry_name:
+          type: string
+          title: Registry Name
+        tables:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Tables
+        slack_channel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Slack Channel
+        no_of_violations:
+          type: integer
+          title: No Of Violations
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        owners:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Owners
+        alias:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Alias
+        policies:
+          items:
+            $ref: '#/components/schemas/PolicyDetail'
+          type: array
+          title: Policies
+        week_data:
+          $ref: '#/components/schemas/ContractWeekDetail'
+        code:
+          type: string
+          title: Code
+        can_validate:
+          type: boolean
+          title: Can Validate
+        is_scheduled:
+          type: boolean
+          title: Is Scheduled
+      type: object
+      required:
+      - name
+      - status
+      - last_updated
+      - version
+      - level
+      - created_at
+      - schedule
+      - registry_id
+      - registry_name
+      - tables
+      - no_of_violations
+      - policies
+      - week_data
+      - code
+      - can_validate
+      - is_scheduled
+      title: ContractDetailResponse
+    TermConfigResponse:
+      properties:
+        term_index:
+          type: integer
+          title: Term Index
+        alias:
+          type: string
+          title: Alias
+        metric:
+          type: string
+          title: Metric
+        params:
+          additionalProperties: true
+          type: object
+          title: Params
+      type: object
+      required:
+      - term_index
+      - alias
+      - metric
+      - params
+      title: TermConfigResponse
+    ProfileConfigResponse:
+      properties:
+        policies:
+          items:
+            $ref: '#/components/schemas/PolicyConfigResponse'
+          type: array
+          title: Policies
+      type: object
+      required:
+      - policies
+      title: ProfileConfigResponse
+    ContractDryRunResponse:
+      properties:
+        level:
+          type: string
+          title: Level
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - level
+      - message
+      title: ContractDryRunResponse
+    ResourceConfigResponse:
+      properties:
+        identifier:
+          type: string
+          title: Identifier
+        filters:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filters
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - identifier
+      title: ResourceConfigResponse
+    PolicyConfigResponse:
+      properties:
+        policy_index:
+          type: integer
+          title: Policy Index
+        policy_type:
+          type: string
+          title: Policy Type
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceConfigResponse'
+          type: array
+          title: Resources
+        filters:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filters
+        terms:
+          items:
+            $ref: '#/components/schemas/TermConfigResponse'
+          type: array
+          title: Terms
+      type: object
+      required:
+      - policy_index
+      - policy_type
+      - resources
+      - terms
+      title: PolicyConfigResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ContractFetchMultipleResponse:
+      properties:
+        contracts:
+          items:
+            $ref: '#/components/schemas/app__schemas__contracts__ContractFetchResponse'
+          type: array
+          title: Contracts
+      type: object
+      required:
+      - contracts
+      title: ContractFetchMultipleResponse
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        code:
+          type: integer
+          title: Code
+      type: object
+      required:
+      - message
+      - code
+      title: ErrorResponse
+    ContractValidationResponse:
+      properties:
+        is_valid:
+          type: boolean
+          title: Is Valid
+        contract_name:
+          type: string
+          title: Contract Name
+        event_id:
+          type: integer
+          title: Event Id
+        num_violations:
+          type: integer
+          title: Num Violations
+        validation_exceptions:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Violation'
+            type: array
+          - type: 'null'
+          title: Validation Exceptions
+        event_url:
+          type: string
+          title: Event Url
+      type: object
+      required:
+      - is_valid
+      - contract_name
+      - event_id
+      - num_violations
+      - event_url
+      title: ContractValidationResponse
+    app__schemas__contracts__ContractFetchResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        data_store_type:
+          type: string
+          title: Data Store Type
+        data_store_name:
+          type: string
+          title: Data Store Name
+        registry_name:
+          type: string
+          title: Registry Name
+        status:
+          type: string
+          title: Status
+        fqn_path:
+          type: string
+          title: Fqn Path
+        created_on:
+          type: string
+          title: Created On
+        updated_on:
+          type: string
+          title: Updated On
+        created_by:
+          type: string
+          title: Created By
+        last_modified_by:
+          type: string
+          title: Last Modified By
+        version:
+          type: string
+          title: Version
+      type: object
+      required:
+      - id
+      - name
+      - data_store_type
+      - data_store_name
+      - registry_name
+      - status
+      - fqn_path
+      - created_on
+      - updated_on
+      - created_by
+      - last_modified_by
+      - version
+      title: ContractFetchResponse
+    ContractWeekDetail:
+      properties:
+        error:
+          type: integer
+          title: Error
+        warning:
+          type: integer
+          title: Warning
+        policies:
+          type: integer
+          title: Policies
+        validations:
+          type: integer
+          title: Validations
+      type: object
+      required:
+      - error
+      - warning
+      - policies
+      - validations
+      title: ContractWeekDetail
+    ContractCreationRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        data_store_id:
+          type: integer
+          title: Data Store Id
+        fqn:
+          additionalProperties: true
+          type: object
+          title: Fqn
+        contract_value:
+          type: string
+          title: Contract Value
+        raise_on_warnings:
+          type: boolean
+          title: Raise On Warnings
+          default: false
+      type: object
+      required:
+      - name
+      - data_store_id
+      - fqn
+      - contract_value
+      title: ContractCreationRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    PolicyDetail:
+      properties:
+        policy_id:
+          type: integer
+          title: Policy Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        last_violation_timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Violation Timestamp
+        level:
+          type: string
+          title: Level
+        tables:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Tables
+        filter:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filter
+      type: object
+      required:
+      - policy_id
+      - name
+      - level
+      - tables
+      title: PolicyDetail
+    Violation:
+      properties:
+        policy_name:
+          type: string
+          title: Policy Name
+        term_violation_id:
+          type: string
+          title: Term Violation Id
+        level:
+          type: string
+          title: Level
+        metric:
+          type: string
+          title: Metric
+        condition:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Condition
+        actual:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actual
+        message:
+          type: string
+          title: Message
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - policy_name
+      - term_violation_id
+      - level
+      - metric
+      - message
+      - status
+      title: Violation
+    ContractValidationRequest:
+      properties:
+        data:
+          additionalProperties: true
+          type: object
+          title: Data
+      type: object
+      required:
+      - data
+      title: ContractValidationRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

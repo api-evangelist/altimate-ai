@@ -1,0 +1,189 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS SDK API
+  version: 0.1.0
+tags:
+- name: SDK
+paths:
+  /sdk/available_credits:
+    post:
+      tags:
+      - SDK
+      summary: Available Credits
+      description: 'Check if credits are available for the given dataset type.
+
+
+        Uses the same credit system as the VS Code extension.
+
+        ``verify_executions`` raises 402 if credits are exhausted.'
+      operationId: available_credits_sdk_available_credits_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /sdk/count_credits:
+    post:
+      tags:
+      - SDK
+      summary: Count Credits
+      description: Register credit usage for a successful operation.
+      operationId: count_credits_sdk_count_credits_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /sdk/failures:
+    post:
+      tags:
+      - SDK
+      summary: Report Failure
+      description: Store a lineage failure report in S3 for reproduction.
+      operationId: report_failure_sdk_failures_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FailureReportRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    FailureReportRequest:
+      properties:
+        operation:
+          type: string
+          title: Operation
+        sql:
+          type: string
+          title: Sql
+        dialect:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dialect
+        schema_json:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Schema Json
+        result_json:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Result Json
+        duration_ms:
+          type: integer
+          title: Duration Ms
+          default: 0
+        reason:
+          type: string
+          title: Reason
+        sdk_version:
+          type: string
+          title: Sdk Version
+          default: unknown
+      type: object
+      required:
+      - operation
+      - sql
+      - reason
+      title: FailureReportRequest
+    CreditRequest:
+      properties:
+        dataset_type:
+          type: string
+          title: Dataset Type
+        count:
+          type: integer
+          title: Count
+          default: 1
+      type: object
+      required:
+      - dataset_type
+      title: CreditRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

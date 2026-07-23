@@ -1,0 +1,179 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS AUDIT_TRAIL API
+  version: 0.1.0
+tags:
+- name: AUDIT_TRAIL
+paths:
+  /datamates/audit/create_batch:
+    post:
+      tags:
+      - AUDIT_TRAIL
+      summary: Post Audit Trail Batch
+      operationId: post_audit_trail_batch_datamates_audit_create_batch_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditTrailBatchPayload'
+        required: true
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamates/audit/{datamate_id}/aggregations:
+    get:
+      tags:
+      - AUDIT_TRAIL
+      summary: Get Audit Aggregations
+      operationId: get_audit_aggregations_datamates_audit__datamate_id__aggregations_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Datamate Id
+      - name: aggregation_type
+        in: query
+        required: true
+        schema:
+          enum:
+          - assist
+          - guard_rail
+          - memory_created
+          - memory_retrieved
+          type: string
+          title: Aggregation Type
+      - name: aggregateBy
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Aggregateby
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AuditTrailEventType:
+      type: string
+      enum:
+      - assist
+      - guard_rail
+      - memory_created
+      - memory_retrieved
+      title: AuditTrailEventType
+    AuditTrailPayload:
+      properties:
+        type:
+          $ref: '#/components/schemas/AuditTrailEventType'
+        tool_name:
+          type: string
+          title: Tool Name
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+        teammate_id:
+          type: string
+          title: Teammate Id
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+      type: object
+      required:
+      - type
+      - tool_name
+      - payload
+      - teammate_id
+      - timestamp
+      title: AuditTrailPayload
+    AuditTrailBatchPayload:
+      properties:
+        events:
+          items:
+            $ref: '#/components/schemas/AuditTrailPayload'
+          type: array
+          title: Events
+      type: object
+      required:
+      - events
+      title: AuditTrailBatchPayload
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

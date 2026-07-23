@@ -1,0 +1,1816 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Dashboards API
+  version: 0.1.0
+tags:
+- name: Dashboards
+paths:
+  /business_intelligence/dashboards:
+    get:
+      tags:
+      - Dashboards
+      summary: Fetch Dashboards
+      operationId: fetch_dashboards_business_intelligence_dashboards_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 10
+          title: Page Size
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: views
+          title: Sort By
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: desc
+          title: Sort
+      - name: dashboard
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Dashboard
+      - name: workbook
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Workbook
+      - name: owner
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Owner
+      - name: tableau_tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Tableau Tags
+      - name: site_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Site Name
+      - name: instance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Instance Name
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Insights
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Opportunity Name
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_BIDashboardItem_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/summary:
+    get:
+      tags:
+      - Dashboards
+      summary: Bi Summary
+      operationId: bi_summary_business_intelligence_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: site_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Site Name
+      - name: instance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Instance Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BISummaryItem'
+                title: Response Bi Summary Business Intelligence Summary Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/dashboards/get_by_id:
+    get:
+      tags:
+      - Dashboards
+      summary: Get Dashboard Details
+      operationId: get_dashboard_details_business_intelligence_dashboards_get_by_id_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: dashboard_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dashboard Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BIDashboardItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/dashboards/insights_summary_stream:
+    post:
+      tags:
+      - Dashboards
+      summary: Stream Dashboard Insight Summary
+      operationId: stream_dashboard_insight_summary_business_intelligence_dashboards_insights_summary_stream_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BIInsightStreamRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /business_intelligence/dashboards/insights_stream:
+    post:
+      tags:
+      - Dashboards
+      summary: Stream Dashboard Insight
+      operationId: stream_dashboard_insight_business_intelligence_dashboards_insights_stream_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BIInsightStreamRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /business_intelligence/filters:
+    get:
+      tags:
+      - Dashboards
+      summary: Get BI Report filters
+      operationId: get_bi_report_filters_business_intelligence_filters_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  items:
+                    type: string
+                  type: array
+                type: object
+                title: Response Get Bi Report Filters Business Intelligence Filters Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /business_intelligence/dashboards/access_activity:
+    get:
+      tags:
+      - Dashboards
+      summary: Get dashboard access activity daily counts for past 30 days
+      description: 'Get dashboard access activity for the past 30 days.
+
+        Returns daily aggregated counts of dashboard accesses by date.
+
+
+        Sorting options:
+
+        - sort_by: ''date'' (default) or ''count''
+
+        - sort: ''desc'' (default) or ''asc'''
+      operationId: get_dashboard_access_activity_endpoint_business_intelligence_dashboards_access_activity_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: dashboard_id
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Dashboard ID to get access activity for
+          title: Dashboard Id
+        description: Dashboard ID to get access activity for
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 10
+          title: Page Size
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort by: date or count'
+          default: date
+          title: Sort By
+        description: 'Sort by: date or count'
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort order: asc or desc'
+          default: desc
+          title: Sort
+        description: 'Sort order: asc or desc'
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_DashboardAccessActivity_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/dashboards/refresh_activity:
+    get:
+      tags:
+      - Dashboards
+      summary: Get dashboard refresh activity daily counts for past 30 days
+      description: 'Get dashboard refresh activity for the past 30 days.
+
+        Returns daily aggregated counts of dashboard refreshes by date.
+
+
+        Sorting options:
+
+        - sort_by: ''date'' (default) or ''count''
+
+        - sort: ''desc'' (default) or ''asc'''
+      operationId: get_dashboard_refresh_activity_endpoint_business_intelligence_dashboards_refresh_activity_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: dashboard_id
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Dashboard ID to get refresh activity for
+          title: Dashboard Id
+        description: Dashboard ID to get refresh activity for
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 10
+          title: Page Size
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort by: date or count'
+          default: date
+          title: Sort By
+        description: 'Sort by: date or count'
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort order: asc or desc'
+          default: desc
+          title: Sort
+        description: 'Sort order: asc or desc'
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_DashboardRefreshActivity_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/dashboards/download_csv:
+    get:
+      tags:
+      - Dashboards
+      summary: Download all dashboards data as CSV with flattened insights
+      description: 'Download all dashboards data as CSV with flattened insights.
+
+        Each insight type becomes a separate column with Yes/No values.
+
+        Tableau tags are formatted as comma-separated values in brackets.'
+      operationId: download_dashboards_csv_business_intelligence_dashboards_download_csv_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: views
+          title: Sort By
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: desc
+          title: Sort
+      - name: dashboard
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Dashboard
+      - name: workbook
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Workbook
+      - name: owner
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Owner
+      - name: tableau_tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Tableau Tags
+      - name: site_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Site Name
+      - name: instance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Instance Name
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Insights
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Opportunity Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/users:
+    get:
+      tags:
+      - Dashboards
+      summary: Get user activity and creation report with insights
+      description: 'Get user activity and creation patterns with insights.
+
+        Returns paginated users with filtering and sorting capabilities.
+
+
+        Available sorting fields:
+
+        - email: User email address
+
+        - views: User views for specified time period
+
+        - dashboards_created: Total dashboards created
+
+        - workbooks_created: Total workbooks created
+
+        - views_received_30d: Views received on user''s dashboards (30d)
+
+        - last_activity: Last activity date (only sorting, no filtering)
+
+
+        Filtering options:
+
+        - views_period: Time period for views column (30, 90, or 180 days, default: 90)
+
+        - start_date/end_date: Alternative to views_period - date range will be converted to period
+
+        - user: Filter by user email(s)
+
+        - license_type: Filter by license type(s)
+
+        - insights: Filter by insight types
+
+
+        Insights include:
+
+        - properly using Creator license: High creation + high views
+
+        - could be Explorer or Viewer: Low/no creation but high views
+
+        - candidate for archiving: Very low activity
+
+        - definite archiving candidate: No recent activity
+
+        - monitor for potential downgrade: High creation but declining views'
+      operationId: fetch_user_reports_business_intelligence_users_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 10
+          title: Page Size
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: email
+          title: Sort By
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: asc
+          title: Sort
+      - name: views_period
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Time period for views (30, 90, or 180 days)
+          default: 90
+          title: Views Period
+        description: Time period for views (30, 90, or 180 days)
+      - name: user
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: User
+      - name: license_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: License Type
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Insights
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: instance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Instance Name
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Opportunity Name
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_BIUserReportItem_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/users/summary:
+    get:
+      tags:
+      - Dashboards
+      summary: Get user summary statistics
+      description: 'Get summary statistics for user report including:
+
+        - Total Users: All unique users (viewers + owners)
+
+        - Active Users (30d): Users who viewed dashboards in last 30 days
+
+        - Dashboard Creators: Users who have created dashboards'
+      operationId: fetch_user_summary_business_intelligence_users_summary_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/BIUserSummaryItem'
+                type: array
+                title: Response Fetch User Summary Business Intelligence Users Summary Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /business_intelligence/users/filters:
+    get:
+      tags:
+      - Dashboards
+      summary: Get BI User report filters
+      description: 'Get available filter options for user reports.
+
+
+        Returns available values for:
+
+        - user: List of user emails
+
+        - license_type: List of license types
+
+        - insights: List of available user insight types
+
+        - instance_name: List of instance names
+
+        - opportunity_name: List of opportunity names'
+      operationId: get_bi_user_filters_business_intelligence_users_filters_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  items:
+                    type: string
+                  type: array
+                type: object
+                title: Response Get Bi User Filters Business Intelligence Users Filters Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /business_intelligence/users/get_by_rk:
+    get:
+      tags:
+      - Dashboards
+      summary: Get user by user_rk
+      description: 'Get a specific user by their user_rk.
+
+        Returns user activity and creation patterns with insights.'
+      operationId: fetch_user_by_rk_business_intelligence_users_get_by_rk_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: user_rk
+        in: query
+        required: true
+        schema:
+          type: string
+          description: User RK to retrieve
+          title: User Rk
+        description: User RK to retrieve
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BIUserReportItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/users/download:
+    get:
+      tags:
+      - Dashboards
+      summary: Download all users data as CSV
+      description: 'Download all users data as CSV.
+
+        Accepts the same filtering parameters as the /users endpoint.
+
+        Each insight type becomes a separate column with Yes/No values.'
+      operationId: download_users_csv_business_intelligence_users_download_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: email
+          title: Sort By
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: asc
+          title: Sort
+      - name: views_period
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Time period for views (30, 90, or 180 days)
+          default: 90
+          title: Views Period
+        description: Time period for views (30, 90, or 180 days)
+      - name: user
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: User
+      - name: license_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: License Type
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Insights
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: instance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Instance Name
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Opportunity Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/tableau/projects:
+    post:
+      tags:
+      - Dashboards
+      summary: Get Tableau projects using connection credentials
+      description: "Fetch all Tableau projects from a Tableau server using provided connection details.\n\nTwo modes:\n- Wizard (no ``datastore_id``): caller supplies plaintext PAT in the body.\n- Add-site modal (``datastore_id`` present, PAT omitted): falls back to\n  credentials stored on the existing data store. The caller-supplied\n  ``site_name`` lets the customer browse projects on a new site without\n  re-entering the PAT.\n\nPAT credentials are treated atomically — if the caller supplies only one\nof pat_name/pat_secret, the stored pair replaces both. This prevents a\npartial override from silently pairing the caller's new name with the\nstored secret.\n\nReturns a hierarchical list of projects."
+      operationId: get_tableau_projects_business_intelligence_tableau_projects_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauProjectsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/TableauProject'
+                type: array
+                title: Response Get Tableau Projects Business Intelligence Tableau Projects Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamates/audit/create_batch:
+    post:
+      tags:
+      - Dashboards
+      summary: Post Audit Trail Batch
+      operationId: post_audit_trail_batch_datamates_audit_create_batch_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditTrailBatchPayload'
+        required: true
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamates/audit/{datamate_id}/aggregations:
+    get:
+      tags:
+      - Dashboards
+      summary: Get Audit Aggregations
+      operationId: get_audit_aggregations_datamates_audit__datamate_id__aggregations_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Datamate Id
+      - name: aggregation_type
+        in: query
+        required: true
+        schema:
+          enum:
+          - assist
+          - guard_rail
+          - memory_created
+          - memory_retrieved
+          type: string
+          title: Aggregation Type
+      - name: aggregateBy
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Aggregateby
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Page_DashboardRefreshActivity_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DashboardRefreshActivity'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DashboardRefreshActivity]
+    BIDashboardItem:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        dashboard:
+          type: string
+          title: Dashboard
+        workbook:
+          type: string
+          title: Workbook
+        owner:
+          type: string
+          title: Owner
+        refreshFrequency:
+          type: string
+          title: Refreshfrequency
+        insights:
+          items:
+            $ref: '#/components/schemas/DashboardInsightItem'
+          type: array
+          title: Insights
+        views_30d:
+          type: integer
+          title: Views 30D
+        refreshes_30d:
+          type: integer
+          title: Refreshes 30D
+        views:
+          type: integer
+          title: Views
+          default: 0
+        refreshes:
+          type: integer
+          title: Refreshes
+          default: 0
+        tableauTags:
+          items:
+            type: string
+          type: array
+          title: Tableautags
+        site_name:
+          type: string
+          title: Site Name
+          default: Unknown Site
+        project_name:
+          type: string
+          title: Project Name
+          default: TBU
+        last_viewed:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Viewed
+        user_count:
+          type: integer
+          title: User Count
+          default: 0
+        views_heatmap:
+          anyOf:
+          - items:
+              items:
+                type: integer
+              type: array
+            type: array
+          - type: 'null'
+          title: Views Heatmap
+        refresh_heatmap:
+          anyOf:
+          - items:
+              items:
+                type: integer
+              type: array
+            type: array
+          - type: 'null'
+          title: Refresh Heatmap
+        llm_insights:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Llm Insights
+        instance_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Name
+        total_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cost
+        cost_attribution_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cost Attribution Type
+        instrumentation_snippet:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instrumentation Snippet
+        dashboard_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dashboard Url
+        opportunities:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Opportunities
+          default: []
+        has_lineage:
+          type: boolean
+          title: Has Lineage
+          default: false
+      type: object
+      required:
+      - rk
+      - dashboard
+      - workbook
+      - owner
+      - refreshFrequency
+      - insights
+      - views_30d
+      - refreshes_30d
+      - tableauTags
+      title: BIDashboardItem
+    BIUserReportItem:
+      properties:
+        email:
+          type: string
+          title: Email
+        views:
+          type: integer
+          title: Views
+        dashboards_created:
+          type: integer
+          title: Dashboards Created
+        workbooks_created:
+          type: integer
+          title: Workbooks Created
+        insights:
+          items:
+            anyOf:
+            - type: string
+            - $ref: '#/components/schemas/UserInsightItem'
+          type: array
+          title: Insights
+        last_activity:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Activity
+        full_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Full Name
+        views_received:
+          type: integer
+          title: Views Received
+          default: 0
+        current_license_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current License Type
+        instance_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Name
+        user_rk:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Rk
+        opportunities:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Opportunities
+          default: []
+      type: object
+      required:
+      - email
+      - views
+      - dashboards_created
+      - workbooks_created
+      - insights
+      title: BIUserReportItem
+      description: User report item representing user activity and creation patterns
+    DashboardRefreshActivity:
+      properties:
+        date:
+          type: string
+          title: Date
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - date
+      - count
+      title: DashboardRefreshActivity
+    BIUserSummaryItem:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: integer
+          title: Value
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+      type: object
+      required:
+      - label
+      - value
+      title: BIUserSummaryItem
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Page_DashboardAccessActivity_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DashboardAccessActivity'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DashboardAccessActivity]
+    TableauProject:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        parent_project_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Project Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        content_permissions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Permissions
+      type: object
+      required:
+      - id
+      - name
+      title: TableauProject
+      description: Response model for Tableau project information.
+    Page_BIDashboardItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BIDashboardItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[BIDashboardItem]
+    UserInsightItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        reasons:
+          items:
+            type: string
+          type: array
+          title: Reasons
+      type: object
+      required:
+      - name
+      - reasons
+      title: UserInsightItem
+      description: Structured insight with name and reasons
+    BIInsightStreamRequest:
+      properties:
+        dashboard_id:
+          type: string
+          title: Dashboard Id
+        view:
+          type: string
+          title: View
+      type: object
+      required:
+      - dashboard_id
+      - view
+      title: BIInsightStreamRequest
+    DashboardInsightItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - name
+      title: DashboardInsightItem
+      description: Dashboard insight with name and description
+    BISummaryItem:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: integer
+          title: Value
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+      type: object
+      required:
+      - label
+      - value
+      title: BISummaryItem
+    AuditTrailEventType:
+      type: string
+      enum:
+      - assist
+      - guard_rail
+      - memory_created
+      - memory_retrieved
+      title: AuditTrailEventType
+    Page_BIUserReportItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BIUserReportItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[BIUserReportItem]
+    TableauProjectsRequest:
+      properties:
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Name
+        pat_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Name
+        pat_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Secret
+        datastore_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Datastore Id
+        source_site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Site Name
+      type: object
+      title: TableauProjectsRequest
+      description: Request model for fetching Tableau projects before datastore creation.
+    DashboardAccessActivity:
+      properties:
+        date:
+          type: string
+          title: Date
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - date
+      - count
+      title: DashboardAccessActivity
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AuditTrailPayload:
+      properties:
+        type:
+          $ref: '#/components/schemas/AuditTrailEventType'
+        tool_name:
+          type: string
+          title: Tool Name
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+        teammate_id:
+          type: string
+          title: Teammate Id
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+      type: object
+      required:
+      - type
+      - tool_name
+      - payload
+      - teammate_id
+      - timestamp
+      title: AuditTrailPayload
+    AuditTrailBatchPayload:
+      properties:
+        events:
+          items:
+            $ref: '#/components/schemas/AuditTrailPayload'
+          type: array
+          title: Events
+      type: object
+      required:
+      - events
+      title: AuditTrailBatchPayload
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

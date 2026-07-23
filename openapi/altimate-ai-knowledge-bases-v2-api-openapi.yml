@@ -1,0 +1,1093 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Knowledge Bases V2 API
+  version: 0.1.0
+tags:
+- name: Knowledge Bases V2
+paths:
+  /knowledge_bases/v2/upload:
+    post:
+      tags:
+      - Knowledge Bases V2
+      summary: Upload With Kb Creation
+      description: 'Create a new knowledge base with either file upload or markdown content.
+
+
+        This endpoint supports two modes:
+
+        1. **File Upload**: Provide ''file'' parameter with document (PDF, DOCX, MD, TXT)
+
+        2. **Markdown Content**: Provide ''markdown_content'' parameter with markdown text
+
+
+        Process:
+
+        1. Validates and uploads content to S3
+
+        2. Creates a new knowledge base
+
+        3. Creates a document record (version 1)
+
+        4. Returns KB and document info for async processing
+
+
+        The document processing (chunking, vectorization) happens asynchronously via Celery.
+
+
+        Note: You must provide either ''file'' OR ''markdown_content'', but not both.'
+      operationId: upload_with_kb_creation_knowledge_bases_v2_upload_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_with_kb_creation_knowledge_bases_v2_upload_post'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseWithDocumentResponse'
+        '400':
+          description: Invalid file or upload error
+        '413':
+          description: File too large
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /knowledge_bases/v2/fork-template:
+    post:
+      tags:
+      - Knowledge Bases V2
+      summary: Fork Template V2
+      description: 'Create a new knowledge base from a template with v2 processing.
+
+
+        This endpoint:
+
+        1. Finds the template by name
+
+        2. Creates a new KB with document record (forked=True, source=template_name)
+
+        3. Uploads template content to S3
+
+        4. Queues Celery task for async processing (chunking, vectorization)
+
+
+        The document processing happens asynchronously via Celery.'
+      operationId: fork_template_v2_knowledge_bases_v2_fork_template_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForkTemplateRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseWithDocumentResponse'
+        '404':
+          description: Template not found
+        '400':
+          description: Duplicate name or invalid request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /knowledge_bases/v2/{kb_id}/upload:
+    post:
+      tags:
+      - Knowledge Bases V2
+      summary: Upload To Existing Kb
+      description: 'Upload a new document version to an existing knowledge base.
+
+
+        This endpoint supports two modes:
+
+        1. **File Upload**: Provide ''file'' parameter with document (PDF, DOCX, MD, TXT)
+
+        2. **Markdown Content**: Provide ''markdown_content'' parameter with markdown text
+
+
+        Process:
+
+        1. Validates knowledge base exists and user has access
+
+        2. Creates document record (gets version number)
+
+        3. Uploads content to S3 with kb_id/version path
+
+        4. Updates document with S3 path
+
+        5. Returns document info for async processing
+
+
+        The new version will become active only after processing completes successfully.
+
+        The previous version remains active until the new one is ready.
+
+
+        Note: You must provide either ''file'' OR ''markdown_content'', but not both.'
+      operationId: upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeDocumentUploadResponse'
+        '400':
+          description: Invalid file or upload error
+        '404':
+          description: Knowledge base not found
+        '413':
+          description: File too large
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /knowledge_bases/v2/{kb_id}:
+    get:
+      tags:
+      - Knowledge Bases V2
+      summary: Get Knowledge Base Detail
+      description: 'Get knowledge base details with current document processing status.
+
+
+        Returns:
+
+        - Knowledge base information (name, description, content, etc.)
+
+        - Current active document status and metadata
+
+        - User-friendly status message based on processing state
+
+        - Processing error details if applicable
+
+
+        The status message provides clear feedback about:
+
+        - Upload success and queuing
+
+        - Processing progress
+
+        - Completion with success indicators
+
+        - Errors with actionable information'
+      operationId: get_knowledge_base_detail_knowledge_bases_v2__kb_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseDetailResponse'
+        '404':
+          description: Knowledge base not found
+        '403':
+          description: Permission denied
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Knowledge Bases V2
+      summary: Delete Knowledge Base
+      description: 'Soft delete a knowledge base and clean up associated vector data.
+
+
+        This endpoint:
+
+        1. Verifies KB exists and user has permission
+
+        2. Soft deletes all chunks (sets is_deleted=True, deleted_at, deleted_by in lightrag_doc_chunks)
+
+        3. Deletes all vectors from Weaviate (by workspace filter)
+
+        4. Soft deletes all documents (sets is_deleted=True, deleted_at, deleted_by in knowledge_documents)
+
+        5. Soft deletes the knowledge base (sets is_deleted=True)
+
+        6. Preserves chunk access logs for analytics
+
+        7. Leaves S3 files intact (for audit/recovery purposes)
+
+
+        Note: The knowledge base can be restored by setting is_deleted=False,
+
+        but vector data will need to be re-ingested from the preserved chunks.'
+      operationId: delete_knowledge_base_knowledge_bases_v2__kb_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '404':
+          description: Knowledge base not found
+        '403':
+          description: Permission denied
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /knowledge_bases/v2/{kb_id}/documents:
+    get:
+      tags:
+      - Knowledge Bases V2
+      summary: Get Knowledge Base Documents
+      description: 'Get all document versions for a knowledge base.
+
+
+        Returns list of all documents (versions) ordered by version descending (newest first).
+
+        Each document includes:
+
+        - Basic info: filename, file type, file size, version
+
+        - Processing status and timestamps
+
+        - User who uploaded it
+
+        - Chunks information'
+      operationId: get_knowledge_base_documents_knowledge_bases_v2__kb_id__documents_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+                title: Response Get Knowledge Base Documents Knowledge Bases V2  Kb Id  Documents Get
+        '404':
+          description: Knowledge base not found
+        '403':
+          description: Access denied
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /knowledge_bases/v2/{kb_id}/documents/{doc_id}/retry:
+    post:
+      tags:
+      - Knowledge Bases V2
+      summary: Retry Document Processing
+      description: 'Retry processing for a failed document.
+
+
+        This endpoint:
+
+        1. Validates the document exists and is in a failed state
+
+        2. Resets the document status to pending_ingestion
+
+        3. Queues a new Celery task for processing
+
+
+        Only documents with status: ingestion_failed, celery_failed, or airflow_failed can be retried.'
+      operationId: retry_document_processing_knowledge_bases_v2__kb_id__documents__doc_id__retry_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      - name: doc_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Doc Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeDocumentUploadResponse'
+        '404':
+          description: Document not found
+        '403':
+          description: Access denied
+        '400':
+          description: Document is not in a failed state
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /knowledge_bases/v2/{kb_id}/documents/{doc_id}/chunks:
+    get:
+      tags:
+      - Knowledge Bases V2
+      summary: Get Document Chunks
+      description: 'Get all chunks for a specific document.
+
+
+        Returns all chunks for the specified document ordered by chunk_order_index.
+
+        Each chunk includes:
+
+        - Chunk ID and order index
+
+        - Content text
+
+        - Token count
+
+        - File path (if available)'
+      operationId: get_document_chunks_knowledge_bases_v2__kb_id__documents__doc_id__chunks_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      - name: doc_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Doc Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentChunksResponse'
+        '404':
+          description: Document not found
+        '403':
+          description: Access denied
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /knowledge_bases/v2/query:
+    post:
+      tags:
+      - Knowledge Bases V2
+      summary: Query Knowledge Bases
+      description: 'Query across one or more knowledge bases with unified results.
+
+
+        This endpoint consolidates results from multiple KBs into a single answer,
+
+        leveraging the consolidated workspace architecture for cross-workspace search.
+
+
+        Request body must include:
+
+        - question: The query to search for
+
+        - knowledge_base_ids: List of knowledge base IDs to query across'
+      operationId: query_knowledge_bases_knowledge_bases_v2_query_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeQueryRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeQueryResponse'
+        '404':
+          description: No accessible knowledge bases found
+        '403':
+          description: Access denied
+        '500':
+          description: Query failed
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /knowledge_bases/v2/{kb_id}/feedback:
+    post:
+      tags:
+      - Knowledge Bases V2
+      summary: Submit Knowledge Feedback
+      description: 'Submit feedback for a knowledge base chunk/learning.
+
+
+        Feedback is stored in the database and sent to Slack for visibility.'
+      operationId: submit_knowledge_feedback_knowledge_bases_v2__kb_id__feedback_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeFeedbackRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeFeedbackResponse'
+        '404':
+          description: Knowledge base not found
+        '403':
+          description: Access denied
+        '500':
+          description: Failed to submit feedback
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    KnowledgeQueryResponse:
+      properties:
+        answer:
+          type: string
+          title: Answer
+        chunks:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ChunkReference'
+            type: array
+          - type: 'null'
+          title: Chunks
+      type: object
+      required:
+      - answer
+      title: KnowledgeQueryResponse
+      description: Response from querying a knowledge base
+    KnowledgeFeedbackResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: KnowledgeFeedbackResponse
+      description: Response for knowledge feedback submission
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    KnowledgeBaseDetailResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        public_id:
+          type: string
+          title: Public Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        content:
+          additionalProperties: true
+          type: object
+          title: Content
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+        user_id:
+          type: integer
+          title: User Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        forked:
+          type: boolean
+          title: Forked
+          default: false
+        source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
+        current_document_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Current Document Id
+        current_document_public_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Document Public Id
+        current_version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Current Version
+        processing_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Processing Status
+        processing_started_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Processing Started At
+        processing_completed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Processing Completed At
+        processing_error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Processing Error
+        total_chunks:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Chunks
+        celery_task_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Celery Task Id
+        original_filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Original Filename
+        file_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Type
+        file_size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: File Size Bytes
+        document_user_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Document User Id
+        document_created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Document Created At
+        document_updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Document Updated At
+        status_message:
+          type: string
+          title: Status Message
+      type: object
+      required:
+      - id
+      - public_id
+      - name
+      - content
+      - privacy
+      - user_id
+      - created_at
+      - updated_at
+      - status_message
+      title: KnowledgeBaseDetailResponse
+      description: Detailed response for knowledge base with current document status
+    KnowledgeQueryRequest:
+      properties:
+        question:
+          type: string
+          title: Question
+        knowledge_base_ids:
+          items:
+            type: integer
+          type: array
+          minItems: 1
+          title: Knowledge Base Ids
+          description: List of knowledge base IDs to query across
+      type: object
+      required:
+      - question
+      - knowledge_base_ids
+      title: KnowledgeQueryRequest
+      description: Request for querying a knowledge base
+    KnowledgeBaseWithDocumentResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        knowledge_base_id:
+          type: integer
+          title: Knowledge Base Id
+        knowledge_base_public_id:
+          type: string
+          title: Knowledge Base Public Id
+        document_id:
+          type: integer
+          title: Document Id
+        document_public_id:
+          type: string
+          title: Document Public Id
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        processing_status:
+          type: string
+          title: Processing Status
+        celery_task_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Celery Task Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      - knowledge_base_id
+      - knowledge_base_public_id
+      - document_id
+      - document_public_id
+      - name
+      - version
+      - processing_status
+      title: KnowledgeBaseWithDocumentResponse
+      description: Response after creating knowledge base with document
+    KnowledgeFeedbackRequest:
+      properties:
+        chunk_id:
+          type: integer
+          title: Chunk Id
+        feedback:
+          type: string
+          pattern: ^(helpful|not_helpful)$
+          title: Feedback
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+      type: object
+      required:
+      - chunk_id
+      - feedback
+      title: KnowledgeFeedbackRequest
+      description: Request for submitting feedback on a knowledge chunk/learning
+    ChunkReference:
+      properties:
+        chunk_id:
+          type: string
+          title: Chunk Id
+        relevance_score:
+          type: number
+          title: Relevance Score
+        content:
+          type: string
+          title: Content
+        file_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Path
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        chunk_order_index:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Chunk Order Index
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      required:
+      - chunk_id
+      - relevance_score
+      - content
+      title: ChunkReference
+      description: Reference to a chunk used in query response with full content
+    ForkTemplateRequest:
+      properties:
+        template_name:
+          type: string
+          title: Template Name
+        new_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: New Name
+      type: object
+      required:
+      - template_name
+      title: ForkTemplateRequest
+    Body_upload_with_kb_creation_knowledge_bases_v2_upload_post:
+      properties:
+        name:
+          type: string
+          title: Name
+        file:
+          anyOf:
+          - type: string
+            format: binary
+          - type: 'null'
+          title: File
+        markdown_content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Markdown Content
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+        chunking_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chunking Strategy
+          default: hybrid
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+      type: object
+      required:
+      - name
+      title: Body_upload_with_kb_creation_knowledge_bases_v2_upload_post
+    KnowledgeDocumentUploadResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        document_id:
+          type: integer
+          title: Document Id
+        document_public_id:
+          type: string
+          title: Document Public Id
+        knowledge_base_id:
+          type: integer
+          title: Knowledge Base Id
+        version:
+          type: integer
+          title: Version
+        processing_status:
+          type: string
+          title: Processing Status
+        celery_task_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Celery Task Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      - document_id
+      - document_public_id
+      - knowledge_base_id
+      - version
+      - processing_status
+      title: KnowledgeDocumentUploadResponse
+      description: Response after uploading a knowledge base document
+    ChunkModel:
+      properties:
+        chunk_id:
+          type: string
+          title: Chunk Id
+        chunk_order_index:
+          type: integer
+          title: Chunk Order Index
+        content:
+          type: string
+          title: Content
+        tokens:
+          type: integer
+          title: Tokens
+        file_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Path
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        knowledge_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Knowledge Type
+        code_snippets:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Code Snippets
+        retrieval_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Retrieval Count
+          default: 0
+      type: object
+      required:
+      - chunk_id
+      - chunk_order_index
+      - content
+      - tokens
+      title: ChunkModel
+      description: Schema for a single document chunk
+    Body_upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post:
+      properties:
+        file:
+          anyOf:
+          - type: string
+            format: binary
+          - type: 'null'
+          title: File
+        markdown_content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Markdown Content
+        chunking_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chunking Strategy
+          default: hybrid
+      type: object
+      title: Body_upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post
+    DocumentChunksResponse:
+      properties:
+        document_id:
+          type: integer
+          title: Document Id
+        document_public_id:
+          type: string
+          title: Document Public Id
+        document_name:
+          type: string
+          title: Document Name
+        version:
+          type: integer
+          title: Version
+        total_chunks:
+          type: integer
+          title: Total Chunks
+        chunks:
+          items:
+            $ref: '#/components/schemas/ChunkModel'
+          type: array
+          title: Chunks
+      type: object
+      required:
+      - document_id
+      - document_public_id
+      - document_name
+      - version
+      - total_chunks
+      - chunks
+      title: DocumentChunksResponse
+      description: Response for document chunks
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

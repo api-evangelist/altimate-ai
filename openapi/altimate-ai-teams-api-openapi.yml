@@ -1,0 +1,521 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS TEAMS API
+  version: 0.1.0
+tags:
+- name: TEAMS
+paths:
+  /teams/team_rule_file:
+    post:
+      tags:
+      - TEAMS
+      summary: Upload Team Rule File
+      operationId: upload_team_rule_file_teams_team_rule_file_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_team_rule_file_teams_team_rule_file_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Upload Team Rule File Teams Team Rule File Post
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Upload Team Rule File Teams Team Rule File Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Upload Team Rule File Teams Team Rule File Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /teams/user_team_file:
+    post:
+      tags:
+      - TEAMS
+      summary: Upload User Team File
+      operationId: upload_user_team_file_teams_user_team_file_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_user_team_file_teams_user_team_file_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Upload User Team File Teams User Team File Post
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Upload User Team File Teams User Team File Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Upload User Team File Teams User Team File Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /teams/cost/graph:
+    get:
+      tags:
+      - TEAMS
+      summary: Get Cost
+      operationId: get_cost_teams_cost_graph_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: teams
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          default: []
+          title: Teams
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: End Date
+      - name: aggregate_by
+        in: query
+        required: false
+        schema:
+          type: string
+          default: day
+          title: Aggregate By
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Instance Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostGraphResponse'
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Cost Teams Cost Graph Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Cost Teams Cost Graph Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /teams/cost/period-comparison:
+    get:
+      tags:
+      - TEAMS
+      summary: Get Cost Period Comparison
+      operationId: get_cost_period_comparison_teams_cost_period_comparison_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: End Date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 10
+          title: Page Size
+      - name: teams
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          default: []
+          title: Teams
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Instance Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Order by: cost, percentage_spend, percentage_change_from_previous_period'
+          default: cost
+          title: Order By
+        description: 'Order by: cost, percentage_spend, percentage_change_from_previous_period'
+      - name: order_direction
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Order direction: asc, desc'
+          default: desc
+          title: Order Direction
+        description: 'Order direction: asc, desc'
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TeamSpend_'
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Cost Period Comparison Teams Cost Period Comparison Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Cost Period Comparison Teams Cost Period Comparison Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /teams/filters:
+    get:
+      tags:
+      - TEAMS
+      summary: Get Filters
+      operationId: get_filters_teams_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Instance Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Body_upload_team_rule_file_teams_team_rule_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_team_rule_file_teams_team_rule_file_post
+    Body_upload_user_team_file_teams_user_team_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_user_team_file_teams_user_team_file_post
+    DailyTeamSpend:
+      properties:
+        date:
+          type: string
+          title: Date
+        team_spends:
+          additionalProperties:
+            type: number
+          type: object
+          title: Team Spends
+      type: object
+      required:
+      - date
+      - team_spends
+      title: DailyTeamSpend
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CostGraphResponse:
+      properties:
+        summary:
+          $ref: '#/components/schemas/app__schemas__team__CostSummary'
+        spend_by_teams:
+          items:
+            $ref: '#/components/schemas/DailyTeamSpend'
+          type: array
+          title: Spend By Teams
+        meta:
+          additionalProperties:
+            type: string
+          type: object
+          title: Meta
+          description: Period start and end dates
+      type: object
+      required:
+      - summary
+      - spend_by_teams
+      - meta
+      title: CostGraphResponse
+    Page_TeamSpend_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TeamSpend'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TeamSpend]
+    TeamSpend:
+      properties:
+        team:
+          type: string
+          title: Team
+        team_spends:
+          type: number
+          title: Team Spends
+        percentage_spend:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Spend
+        percentage_change_from_previous_period:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Change From Previous Period
+      type: object
+      required:
+      - team
+      - team_spends
+      title: TeamSpend
+    app__schemas__team__CostSummary:
+      properties:
+        total_spend:
+          type: number
+          title: Total Spend
+        active_teams:
+          type: integer
+          title: Active Teams
+        average_daily_spend:
+          type: number
+          title: Average Daily Spend
+        unaccounted_spend:
+          type: number
+          title: Unaccounted Spend
+      type: object
+      required:
+      - total_spend
+      - active_teams
+      - average_daily_spend
+      - unaccounted_spend
+      title: CostSummary
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

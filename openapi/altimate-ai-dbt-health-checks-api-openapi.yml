@@ -1,0 +1,495 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DBT_HEALTH_CHECKS API
+  version: 0.1.0
+tags:
+- name: DBT_HEALTH_CHECKS
+paths:
+  /dbt/health-checks/latest:
+    get:
+      tags:
+      - DBT_HEALTH_CHECKS
+      summary: List Latest Health Checks
+      description: "Get the latest DBT health check run for each unique integration/environment combination.\n\nArgs:\n    integration_id: Optional filter by integration ID\n    environment_id: Optional filter by environment ID\n    start_date: Optional filter by start date (inclusive)\n    end_date: Optional filter by end date (inclusive)\n    name: Optional filter by insight name (matches model or project insights)\n\nReturns:\n    List of the most recent health check runs for each integration/environment pair"
+      operationId: list_latest_health_checks_dbt_health_checks_latest_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: integration_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Integration Id
+      - name: environment_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Environment Id
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtHealthCheckListResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 List Latest Health Checks Dbt Health Checks Latest Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Latest Health Checks Dbt Health Checks Latest Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/health-checks:
+    get:
+      tags:
+      - DBT_HEALTH_CHECKS
+      summary: List Health Checks
+      description: "Get a list of DBT health check runs with pagination.\n\nArgs:\n    integration_id: Optional filter by integration ID\n    environment_id: Optional filter by environment ID\n    start_date: Optional filter by start date (inclusive)\n    end_date: Optional filter by end date (inclusive)\n    name: Optional filter by insight name (matches model or project insights)\n    limit: Maximum number of results to return (1-1000, default 100)\n    offset: Number of results to skip (default 0)\n\nReturns:\n    Paginated list of health check runs with insights"
+      operationId: list_health_checks_dbt_health_checks_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: integration_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Integration Id
+      - name: environment_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Environment Id
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+          minimum: 1
+          default: 100
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtHealthCheckListResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 List Health Checks Dbt Health Checks Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Health Checks Dbt Health Checks Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DbtHealthCheckResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        run_id:
+          type: string
+          title: Run Id
+        integration_id:
+          type: integer
+          title: Integration Id
+        integration_environment_id:
+          type: integer
+          title: Integration Environment Id
+        run_timestamp:
+          type: string
+          format: date-time
+          title: Run Timestamp
+        dbt_project_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dbt Project Name
+        dbt_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dbt Version
+        adapter_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Adapter Type
+        manifest_generated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Manifest Generated At
+        manifest_invocation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manifest Invocation Id
+        artifacts_present:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Artifacts Present
+        config_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Hash
+        total_model_insights:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Model Insights
+        total_project_insights:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Project Insights
+        model_insights:
+          items:
+            $ref: '#/components/schemas/DbtModelInsightResponse'
+          type: array
+          title: Model Insights
+        project_insights:
+          items:
+            $ref: '#/components/schemas/DbtProjectInsightResponse'
+          type: array
+          title: Project Insights
+      type: object
+      required:
+      - rk
+      - run_id
+      - integration_id
+      - integration_environment_id
+      - run_timestamp
+      - dbt_project_name
+      - dbt_version
+      - adapter_type
+      - manifest_generated_at
+      - manifest_invocation_id
+      - artifacts_present
+      - config_hash
+      - total_model_insights
+      - total_project_insights
+      - model_insights
+      - project_insights
+      title: DbtHealthCheckResponse
+    DbtProjectInsightResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        batch_id:
+          type: string
+          title: Batch Id
+        health_check_rk:
+          type: string
+          title: Health Check Rk
+        project_name:
+          type: string
+          title: Project Name
+        package_name:
+          type: string
+          title: Package Name
+        severity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Severity
+        name:
+          type: string
+          title: Name
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        recommendation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation
+        reason_to_flag:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason To Flag
+        insight_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Insight Metadata
+      type: object
+      required:
+      - rk
+      - batch_id
+      - health_check_rk
+      - project_name
+      - package_name
+      - severity
+      - name
+      - type
+      - message
+      - recommendation
+      - reason_to_flag
+      - insight_metadata
+      title: DbtProjectInsightResponse
+    DbtHealthCheckListResponse:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/DbtHealthCheckResponse'
+          type: array
+          title: Results
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+      type: object
+      required:
+      - results
+      - total
+      - limit
+      - offset
+      title: DbtHealthCheckListResponse
+    DbtModelInsightResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        batch_id:
+          type: string
+          title: Batch Id
+        health_check_rk:
+          type: string
+          title: Health Check Rk
+        unique_id:
+          type: string
+          title: Unique Id
+        project_name:
+          type: string
+          title: Project Name
+        package_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Package Name
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        original_file_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Original File Path
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+        severity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Severity
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        recommendation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation
+        reason_to_flag:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason To Flag
+        insight_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Insight Metadata
+      type: object
+      required:
+      - rk
+      - batch_id
+      - health_check_rk
+      - unique_id
+      - project_name
+      - package_name
+      - path
+      - original_file_path
+      - name
+      - type
+      - severity
+      - message
+      - recommendation
+      - reason_to_flag
+      - insight_metadata
+      title: DbtModelInsightResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

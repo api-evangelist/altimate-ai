@@ -1,0 +1,268 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS INGESTION API
+  version: 0.1.0
+tags:
+- name: INGESTION
+paths:
+  /ingestion/request:
+    post:
+      tags:
+      - INGESTION
+      summary: Request Ingestion Url
+      operationId: request_ingestion_url_ingestion_request_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IngestionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestionUrlResponse'
+        '403':
+          description: This operation is forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Request Ingestion Url Ingestion Request Post
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Request Ingestion Url Ingestion Request Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /ingestion/complete:
+    post:
+      tags:
+      - INGESTION
+      summary: Mark Ingestion Complete
+      description: 'Marks ingestion as completed by updating the status of the specific task
+
+        identified by the task ID and nonce.'
+      operationId: mark_ingestion_complete_ingestion_complete_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IngestionCompleteRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '404':
+          description: No started task found for this dataset type
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Mark Ingestion Complete Ingestion Complete Post
+        '403':
+          description: This operation is forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Mark Ingestion Complete Ingestion Complete Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /ingestion/latest_state:
+    get:
+      tags:
+      - INGESTION
+      summary: Get Latest State
+      description: 'Retrieves the latest task state (kwargs) that is not in the STARTED status for a given
+
+        dataset type and instance_id.'
+      operationId: get_latest_state_ingestion_latest_state_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: dataset_type
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Type
+      - name: data_store_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestionStateResponse'
+        '404':
+          description: No completed task found for this dataset type and instance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Latest State Ingestion Latest State Get
+        '403':
+          description: This operation is forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Latest State Ingestion Latest State Get
+        '400':
+          description: Invalid dataset_type or missing instance_id.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Latest State Ingestion Latest State Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    IngestionStateResponse:
+      properties:
+        state:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: State
+      type: object
+      title: IngestionStateResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    IngestionRequest:
+      properties:
+        dataset_type:
+          type: string
+          title: Dataset Type
+        data_store_id:
+          type: integer
+          title: Data Store Id
+      type: object
+      required:
+      - dataset_type
+      - data_store_id
+      title: IngestionRequest
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    IngestionUrlResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+        task_id:
+          type: integer
+          title: Task Id
+        nonce:
+          type: string
+          format: uuid
+          title: Nonce
+      type: object
+      required:
+      - url
+      - task_id
+      - nonce
+      title: IngestionUrlResponse
+    IngestionCompleteRequest:
+      properties:
+        state:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: State
+        nonce:
+          type: string
+          format: uuid
+          title: Nonce
+        task_id:
+          type: integer
+          title: Task Id
+      type: object
+      required:
+      - nonce
+      - task_id
+      title: IngestionCompleteRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

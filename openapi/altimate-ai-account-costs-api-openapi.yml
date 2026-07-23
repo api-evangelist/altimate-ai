@@ -1,0 +1,273 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS API
+  version: 0.1.0
+tags:
+- name: ACCOUNT_COSTS
+paths:
+  /account_costs/accounts:
+    get:
+      tags:
+      - ACCOUNT_COSTS
+      summary: Get Accounts
+      operationId: get_accounts_account_costs_accounts_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+                title: Response Get Accounts Account Costs Accounts Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Accounts Account Costs Accounts Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Accounts Account Costs Accounts Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /account_costs/total:
+    get:
+      tags:
+      - ACCOUNT_COSTS
+      summary: Get Total Costs
+      operationId: get_total_costs_account_costs_total_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: End Date
+      - name: accounts
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Accounts
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+                title: Response Get Total Costs Account Costs Total Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Total Costs Account Costs Total Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Total Costs Account Costs Total Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /account_costs/chart:
+    get:
+      tags:
+      - ACCOUNT_COSTS
+      summary: Get Chart
+      operationId: get_chart_account_costs_chart_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: End Date
+      - name: accounts
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Accounts
+      - name: aggregation_level
+        in: query
+        required: false
+        schema:
+          type: string
+          default: day
+          title: Aggregation Level
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+                title: Response Get Chart Account Costs Chart Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Chart Account Costs Chart Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Chart Account Costs Chart Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /account_costs/table:
+    get:
+      tags:
+      - ACCOUNT_COSTS
+      summary: Get Table
+      operationId: get_table_account_costs_table_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: End Date
+      - name: accounts
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Accounts
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+                title: Response Get Table Account Costs Table Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Account Costs Table Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Account Costs Table Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

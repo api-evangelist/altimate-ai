@@ -1,0 +1,1679 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS EVALS API
+  version: 0.1.0
+tags:
+- name: EVALS
+paths:
+  /evals/test-cases:
+    get:
+      tags:
+      - EVALS
+      summary: List Test Cases
+      description: List eval test cases filtered by tenant.
+      operationId: list_test_cases_evals_test_cases_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/TestCaseResponse'
+                type: array
+                title: Response List Test Cases Evals Test Cases Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - EVALS
+      summary: Create Test Case
+      description: Create a new eval test case.
+      operationId: create_test_case_evals_test_cases_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestCaseCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /evals/test-cases/{test_case_id}:
+    get:
+      tags:
+      - EVALS
+      summary: Get Test Case
+      description: Get a specific test case by ID.
+      operationId: get_test_case_evals_test_cases__test_case_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: test_case_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Test Case Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - EVALS
+      summary: Delete Test Case
+      description: Delete a test case.
+      operationId: delete_test_case_evals_test_cases__test_case_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: test_case_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Test Case Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/test-cases/{test_case_id}/update:
+    post:
+      tags:
+      - EVALS
+      summary: Update Test Case
+      description: Update an existing test case.
+      operationId: update_test_case_evals_test_cases__test_case_id__update_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: test_case_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Test Case Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestCaseCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/run:
+    post:
+      tags:
+      - EVALS
+      summary: Run Eval
+      description: 'Run an evaluation for a test case.
+
+        This simulates the conversation by calling the /ask endpoint and evaluates responses.'
+      operationId: run_eval_evals_run_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunEvalRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvalResultResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/batch-run:
+    post:
+      tags:
+      - EVALS
+      summary: Batch Run Eval
+      description: 'Run evaluations for multiple test cases.
+
+        Allows selecting specific test cases and naming the run.'
+      operationId: batch_run_eval_evals_batch_run_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchRunEvalRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchRunResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/results:
+    get:
+      tags:
+      - EVALS
+      summary: List Results
+      description: List eval results with server-side pagination.
+      operationId: list_results_evals_results_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: test_case_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Test Case Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 5000
+          minimum: 1
+          default: 1000
+          title: Page Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEvalResultsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/results/{result_id}:
+    get:
+      tags:
+      - EVALS
+      summary: Get Result
+      description: Get a specific eval result by ID.
+      operationId: get_result_evals_results__result_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: result_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Result Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvalResultResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - EVALS
+      summary: Delete Result
+      description: Delete an eval result.
+      operationId: delete_result_evals_results__result_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: result_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Result Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/criterions:
+    get:
+      tags:
+      - EVALS
+      summary: List Criterions
+      description: List criterions filtered by tenant.
+      operationId: list_criterions_evals_criterions_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CriterionResponse'
+                type: array
+                title: Response List Criterions Evals Criterions Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - EVALS
+      summary: Create Criterion
+      description: Create a new criterion.
+      operationId: create_criterion_evals_criterions_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriterionCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CriterionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /evals/criterions/{criterion_id}:
+    get:
+      tags:
+      - EVALS
+      summary: Get Criterion
+      description: Get a specific criterion by ID.
+      operationId: get_criterion_evals_criterions__criterion_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: criterion_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Criterion Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CriterionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - EVALS
+      summary: Delete Criterion
+      description: Delete a criterion.
+      operationId: delete_criterion_evals_criterions__criterion_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: criterion_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Criterion Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/criterions/{criterion_id}/update:
+    post:
+      tags:
+      - EVALS
+      summary: Update Criterion
+      description: Update an existing criterion.
+      operationId: update_criterion_evals_criterions__criterion_id__update_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: criterion_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Criterion Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriterionCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CriterionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/agents:
+    get:
+      tags:
+      - EVALS
+      summary: Get Playground Agents
+      description: 'Get all production agents from Langfuse for evaluation playground.
+
+
+        Returns a dictionary of agents with their details including:
+
+        - name, description, version, all_versions, prompt, labels, tags
+
+
+        Also returns the list of available models for agent configuration.'
+      operationId: get_playground_agents_evals_agents_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundAgentsResponse'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /evals/agents/{agent_name}:
+    get:
+      tags:
+      - EVALS
+      summary: Get Playground Agent Details
+      description: 'Get detailed information for a specific agent from Langfuse.
+
+
+        Returns complete agent details including:
+
+        - agent_name, description, model, version, all_versions
+
+        - prompt (if include_prompt=True)
+
+        - labels, tags, config'
+      operationId: get_playground_agent_details_evals_agents__agent_name__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: agent_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Name
+      - name: include_prompt
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Include Prompt
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundAgentInfo'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/agents/{agent_name}/update:
+    post:
+      tags:
+      - EVALS
+      summary: Update Playground Agent
+      description: 'Update an agent''s configuration in Langfuse.
+
+
+        Updates the agent''s prompt and config (description, model, etc.).
+
+        Creates a new version of the agent in Langfuse.
+
+
+        Returns the updated agent details.'
+      operationId: update_playground_agent_evals_agents__agent_name__update_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: agent_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgentConfigRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundAgentInfo'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/agents/{agent_name}/versions:
+    get:
+      tags:
+      - EVALS
+      summary: Get Agent Versions
+      description: 'Get all versions of an agent from Langfuse.
+
+
+        Returns a list of all versions with their metadata (description, model, labels, tags).
+
+        Versions are sorted in descending order (newest first).'
+      operationId: get_agent_versions_evals_agents__agent_name__versions_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: agent_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentVersionsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/agents/{agent_name}/versions/{version}:
+    get:
+      tags:
+      - EVALS
+      summary: Get Agent Version
+      description: 'Get a specific version of an agent from Langfuse.
+
+
+        Returns the complete agent details for the specified version including the prompt.'
+      operationId: get_agent_version_evals_agents__agent_name__versions__version__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: agent_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Name
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Version
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundAgentInfo'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/models:
+    get:
+      tags:
+      - EVALS
+      summary: Get Available Models
+      description: 'Get list of all supported AI models for evaluation playground.
+
+
+        Returns a list of models with their IDs, names, providers, and descriptions.
+
+        Models include both OpenAI (GPT) and Anthropic (Claude) models.'
+      operationId: get_available_models_evals_models_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /evals/evaluate:
+    post:
+      tags:
+      - EVALS
+      summary: Run Batch Evaluation
+      description: 'Run evaluations for multiple test cases with all selected agents and criteria.
+
+
+        Each test case is evaluated with ALL selected agents available for use.
+
+        This is the main evaluation endpoint that accepts:
+
+        - List of agents with full configuration (all agents are available for each test case)
+
+        - List of test case IDs (reference to pool)
+
+        - List of criteria with complete data
+
+
+        Returns a job ID and status information.'
+      operationId: run_batch_evaluation_evals_evaluate_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchEvaluationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationJobResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /evals/jobs/{job_id}/status:
+    get:
+      tags:
+      - EVALS
+      summary: Get Job Status
+      description: 'Get the current status of an evaluation job.
+
+
+        Returns:
+
+        - job_id: The job identifier
+
+        - status: Current job status (submitted, running, completed, failed)
+
+        - total: Total number of test cases
+
+        - completed: Number of completed test cases
+
+        - successful: Number of successful test cases
+
+        - failed: Number of failed test cases
+
+        - test_statuses: List of individual test case statuses
+
+        - agents_count: Number of agents used
+
+        - criteria_count: Number of criteria used'
+      operationId: get_job_status_evals_jobs__job_id__status_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationJobStatus'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PlaygroundAgentInfo:
+      properties:
+        agent_name:
+          type: string
+          title: Agent Name
+        description:
+          type: string
+          title: Description
+        model:
+          type: string
+          title: Model
+        version:
+          type: integer
+          title: Version
+        all_versions:
+          items:
+            type: integer
+          type: array
+          title: All Versions
+        prompt:
+          type: string
+          title: Prompt
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Config
+      type: object
+      required:
+      - agent_name
+      - description
+      - model
+      - version
+      - all_versions
+      - prompt
+      - labels
+      - tags
+      title: PlaygroundAgentInfo
+      description: Response for GET /evals/agents/{agent_name} endpoint
+    TurnResult:
+      properties:
+        turn_number:
+          type: integer
+          title: Turn Number
+        user_message:
+          type: string
+          title: User Message
+        expected_ai_response:
+          type: string
+          title: Expected Ai Response
+        actual_ai_response:
+          type: string
+          title: Actual Ai Response
+        evaluation:
+          additionalProperties: true
+          type: object
+          title: Evaluation
+        intermediate_messages:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Intermediate Messages
+      type: object
+      required:
+      - turn_number
+      - user_message
+      - expected_ai_response
+      - actual_ai_response
+      - evaluation
+      title: TurnResult
+    CustomAgent:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        prompt:
+          type: string
+          title: Prompt
+      type: object
+      required:
+      - name
+      - description
+      - prompt
+      title: CustomAgent
+    TestCaseCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        turns:
+          items:
+            $ref: '#/components/schemas/TestTurn'
+          type: array
+          title: Turns
+        criteria:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Criteria
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+        team_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Id
+        custom_agents:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CustomAgent'
+            type: array
+          - type: 'null'
+          title: Custom Agents
+        user_view:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: User View
+      type: object
+      required:
+      - name
+      - turns
+      title: TestCaseCreate
+    TestTurn:
+      properties:
+        user_message:
+          type: string
+          title: User Message
+        expected_ai_response:
+          type: string
+          title: Expected Ai Response
+      type: object
+      required:
+      - user_message
+      - expected_ai_response
+      title: TestTurn
+    CriterionCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+      type: object
+      required:
+      - name
+      - description
+      title: CriterionCreate
+    BatchRunEvalRequest:
+      properties:
+        test_case_ids:
+          items:
+            type: string
+          type: array
+          title: Test Case Ids
+        run_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Name
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      type: object
+      required:
+      - test_case_ids
+      title: BatchRunEvalRequest
+    BatchEvaluationRequest:
+      properties:
+        agents:
+          items:
+            $ref: '#/components/schemas/app__schemas__evals__AgentConfig'
+          type: array
+          title: Agents
+        test_case_ids:
+          items:
+            type: string
+          type: array
+          title: Test Case Ids
+        criteria:
+          items:
+            $ref: '#/components/schemas/CriterionResponse'
+          type: array
+          title: Criteria
+        global_context:
+          $ref: '#/components/schemas/GlobalContext'
+        agent_context_overrides:
+          items:
+            $ref: '#/components/schemas/AgentContextOverride'
+          type: array
+          title: Agent Context Overrides
+        run_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Name
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      type: object
+      required:
+      - agents
+      - test_case_ids
+      - criteria
+      title: BatchEvaluationRequest
+      description: 'Request for running evaluations across agents, test cases, and criteria
+
+
+        This request contains agent and criteria data, with test case IDs for reference.
+
+        - Agents: Full configuration (both local and backend agents)
+
+        - Test Cases: IDs only (stored in pool, prevents duplication)
+
+        - Criteria: Full data (varies per run, stored in results for audit trail)
+
+        - Context: DataMate and Knowledge Base IDs (global and per-agent overrides)'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RunEvalRequest:
+      properties:
+        test_case_id:
+          type: string
+          title: Test Case Id
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      type: object
+      required:
+      - test_case_id
+      title: RunEvalRequest
+    app__schemas__evals__AgentConfig:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        prompt:
+          type: string
+          title: Prompt
+        model:
+          type: string
+          title: Model
+        is_local:
+          type: boolean
+          title: Is Local
+          default: false
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - prompt
+      - model
+      title: AgentConfig
+      description: Agent configuration for evaluation - can be local or backend agent
+    TestCaseStatus:
+      properties:
+        test_case_id:
+          type: string
+          title: Test Case Id
+        test_case_name:
+          type: string
+          title: Test Case Name
+        status:
+          type: string
+          title: Status
+        score:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Score
+        result_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Result Id
+      type: object
+      required:
+      - test_case_id
+      - test_case_name
+      - status
+      title: TestCaseStatus
+      description: Status of a single test case in an evaluation job
+    PaginatedEvalResultsResponse:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/EvalResultResponse'
+          type: array
+          title: Results
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+        total_pages:
+          type: integer
+          title: Total Pages
+        has_next:
+          type: boolean
+          title: Has Next
+        has_prev:
+          type: boolean
+          title: Has Prev
+      type: object
+      required:
+      - results
+      - total
+      - page
+      - page_size
+      - total_pages
+      - has_next
+      - has_prev
+      title: PaginatedEvalResultsResponse
+      description: Paginated response for eval results.
+    CriterionResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        created_at:
+          type: string
+          title: Created At
+        updated_at:
+          type: string
+          title: Updated At
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+        updated_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated By
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - created_at
+      - updated_at
+      title: CriterionResponse
+    PlaygroundAgentsResponse:
+      properties:
+        agents:
+          additionalProperties:
+            $ref: '#/components/schemas/PlaygroundAgentDetails'
+          type: object
+          title: Agents
+        available_models:
+          items:
+            type: string
+          type: array
+          title: Available Models
+      type: object
+      required:
+      - agents
+      - available_models
+      title: PlaygroundAgentsResponse
+      description: Response for GET /evals/agents endpoint
+    AgentVersionsResponse:
+      properties:
+        agent_name:
+          type: string
+          title: Agent Name
+        versions:
+          items:
+            $ref: '#/components/schemas/AgentVersionInfo'
+          type: array
+          title: Versions
+        total_versions:
+          type: integer
+          title: Total Versions
+      type: object
+      required:
+      - agent_name
+      - versions
+      - total_versions
+      title: AgentVersionsResponse
+      description: Response for GET /evals/agents/{agent_name}/versions endpoint
+    AgentContextOverride:
+      properties:
+        agent_id:
+          type: string
+          title: Agent Id
+        datamate_ids:
+          items:
+            type: string
+          type: array
+          title: Datamate Ids
+        knowledge_base_ids:
+          items:
+            type: integer
+          type: array
+          title: Knowledge Base Ids
+      type: object
+      required:
+      - agent_id
+      title: AgentContextOverride
+      description: Per-agent context override for specific agents
+    GlobalContext:
+      properties:
+        datamate_ids:
+          items:
+            type: string
+          type: array
+          title: Datamate Ids
+        knowledge_base_ids:
+          items:
+            type: integer
+          type: array
+          title: Knowledge Base Ids
+      type: object
+      title: GlobalContext
+      description: Global context applied to all agents in evaluation
+    AgentVersionInfo:
+      properties:
+        version:
+          type: integer
+          title: Version
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        model:
+          type: string
+          title: Model
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+      type: object
+      required:
+      - version
+      - name
+      - description
+      - model
+      - labels
+      - tags
+      title: AgentVersionInfo
+      description: Version information for an agent
+    EvaluationJobResponse:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        message:
+          type: string
+          title: Message
+        total_evaluations:
+          type: integer
+          title: Total Evaluations
+        agents_count:
+          type: integer
+          title: Agents Count
+        test_cases_count:
+          type: integer
+          title: Test Cases Count
+        criteria_count:
+          type: integer
+          title: Criteria Count
+        status:
+          type: string
+          title: Status
+          default: submitted
+      type: object
+      required:
+      - job_id
+      - message
+      - total_evaluations
+      - agents_count
+      - test_cases_count
+      - criteria_count
+      title: EvaluationJobResponse
+      description: Response for batch evaluation submission
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UpdateAgentConfigRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+      type: object
+      required:
+      - name
+      - prompt
+      - config
+      title: UpdateAgentConfigRequest
+      description: Request for POST /evals/agents/{agent_name}/update endpoint
+    PlaygroundAgentDetails:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        version:
+          type: integer
+          title: Version
+        all_versions:
+          items:
+            type: integer
+          type: array
+          title: All Versions
+        prompt:
+          type: string
+          title: Prompt
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+      type: object
+      required:
+      - name
+      - description
+      - version
+      - all_versions
+      - prompt
+      - labels
+      - tags
+      title: PlaygroundAgentDetails
+      description: Details of a playground agent from Langfuse
+    EvalResultResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        test_case_name:
+          type: string
+          title: Test Case Name
+        test_case_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Test Case Description
+        test_case_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Test Case Tags
+        overall_score:
+          type: number
+          title: Overall Score
+        turn_results:
+          items:
+            $ref: '#/components/schemas/TurnResult'
+          type: array
+          title: Turn Results
+        created_at:
+          type: string
+          title: Created At
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+        run_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Name
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+        trace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trace Id
+        datamate_ids_used:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Datamate Ids Used
+        knowledge_base_ids_used:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Knowledge Base Ids Used
+        tools_invoked:
+          anyOf:
+          - additionalProperties:
+              type: integer
+            type: object
+          - type: 'null'
+          title: Tools Invoked
+        knowledge_bases_queried:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Knowledge Bases Queried
+      type: object
+      required:
+      - id
+      - test_case_name
+      - overall_score
+      - turn_results
+      - created_at
+      title: EvalResultResponse
+    BatchRunResponse:
+      properties:
+        run_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Name
+        total:
+          type: integer
+          title: Total
+        successful:
+          type: integer
+          title: Successful
+        failed:
+          type: integer
+          title: Failed
+        results:
+          items:
+            $ref: '#/components/schemas/EvalResultResponse'
+          type: array
+          title: Results
+      type: object
+      required:
+      - total
+      - successful
+      - failed
+      - results
+      title: BatchRunResponse
+    TestCaseResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        turns:
+          items:
+            additionalProperties:
+              type: string
+            type: object
+          type: array
+          title: Turns
+        criteria:
+          additionalProperties:
+            type: string
+          type: object
+          title: Criteria
+        created_at:
+          type: string
+          title: Created At
+        updated_at:
+          type: string
+          title: Updated At
+        updated_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated By
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+        team_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Id
+        custom_agents:
+          anyOf:
+          - items:
+              additionalProperties:
+                type: string
+              type: object
+            type: array
+          - type: 'null'
+          title: Custom Agents
+        user_view:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: User View
+      type: object
+      required:
+      - id
+      - name
+      - turns
+      - criteria
+      - created_at
+      - updated_at
+      title: TestCaseResponse
+    EvaluationJobStatus:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        status:
+          type: string
+          title: Status
+        total:
+          type: integer
+          title: Total
+        completed:
+          type: integer
+          title: Completed
+        successful:
+          type: integer
+          title: Successful
+        failed:
+          type: integer
+          title: Failed
+        test_statuses:
+          items:
+            $ref: '#/components/schemas/TestCaseStatus'
+          type: array
+          title: Test Statuses
+        agents_count:
+          type: integer
+          title: Agents Count
+        criteria_count:
+          type: integer
+          title: Criteria Count
+      type: object
+      required:
+      - job_id
+      - status
+      - total
+      - completed
+      - successful
+      - failed
+      - test_statuses
+      - agents_count
+      - criteria_count
+      title: EvaluationJobStatus
+      description: Current status of an evaluation job
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

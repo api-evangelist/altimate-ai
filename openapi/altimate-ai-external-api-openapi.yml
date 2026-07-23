@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS EXTERNAL API
+  version: 0.1.0
+tags:
+- name: EXTERNAL
+paths:
+  /external/stripe/webhook:
+    post:
+      tags:
+      - EXTERNAL
+      summary: Stripe Payment Webhook
+      operationId: stripe_payment_webhook_external_stripe_webhook_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stripe-signature
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Stripe-Signature
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Stripe Payment Webhook External Stripe Webhook Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /external/calendly/webhook:
+    post:
+      tags:
+      - EXTERNAL
+      summary: Calendly Webhook
+      description: Handle Calendly invitee.created webhooks and grant feedback-call credits.
+      operationId: calendly_webhook_external_calendly_webhook_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Calendly Webhook External Calendly Webhook Post
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

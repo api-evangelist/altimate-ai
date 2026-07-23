@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS CONTRACTS_DASHBOARDS API
+  version: 0.1.0
+tags:
+- name: CONTRACTS_DASHBOARDS
+paths:
+  /contracts/summary:
+    get:
+      tags:
+      - CONTRACTS_DASHBOARDS
+      summary: Contracts Summary
+      operationId: contracts_summary_contracts_summary_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractsSummary'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /contracts/active:
+    get:
+      tags:
+      - CONTRACTS_DASHBOARDS
+      summary: Active Contracts
+      operationId: active_contracts_contracts_active_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveContractsResponse'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    ContractItem:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        contract_number:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Contract Number
+        start_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Start Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: End Date
+        expiration_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expiration Date
+        contract_item:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contract Item
+        currency:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Currency
+        amount:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Amount
+        contract_modified_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Contract Modified Date
+      type: object
+      required:
+      - rk
+      title: ContractItem
+    ActiveContractsResponse:
+      properties:
+        contracts:
+          items:
+            $ref: '#/components/schemas/ContractItem'
+          type: array
+          title: Contracts
+      type: object
+      required:
+      - contracts
+      title: ActiveContractsResponse
+    ContractsSummary:
+      properties:
+        total_amount:
+          type: number
+          title: Total Amount
+        total_spend_till_now:
+          type: number
+          title: Total Spend Till Now
+        estimated_total_spend:
+          type: number
+          title: Estimated Total Spend
+        average_daily_spend:
+          type: number
+          title: Average Daily Spend
+      type: object
+      required:
+      - total_amount
+      - total_spend_till_now
+      - estimated_total_spend
+      - average_daily_spend
+      title: ContractsSummary
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

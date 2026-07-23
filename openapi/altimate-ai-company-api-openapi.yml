@@ -1,0 +1,623 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS COMPANY API
+  version: 0.1.0
+tags:
+- name: COMPANY
+paths:
+  /companies/:
+    get:
+      tags:
+      - COMPANY
+      summary: Company Get All
+      description: Get all companies. This operation is allowed only in the root domain.
+      operationId: company_get_all_companies__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Search
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          type: string
+          default: asc
+          title: Sortorder
+      - name: sortColumn
+        in: query
+        required: false
+        schema:
+          type: string
+          default: name
+          title: Sortcolumn
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CompanyIndexResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Company Get All Companies  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Company Get All Companies  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - COMPANY
+      summary: Company Add
+      description: Add a company. This operation is allowed only in the root domain.
+      operationId: company_add_companies__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyCreateIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyIndexResponse'
+        '403':
+          description: This operation is forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Company Add Companies  Post
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Company Add Companies  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /companies/{company_uuid}:
+    get:
+      tags:
+      - COMPANY
+      summary: Company Get One
+      description: Get a company. This operation is allowed only in the root domain.
+      operationId: company_get_one_companies__company_uuid__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: company_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Company Uuid
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyIndexResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Company Get One Companies  Company Uuid  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Company Get One Companies  Company Uuid  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - COMPANY
+      summary: Company Edit
+      description: Edit a company. This operation is allowed only in the root domain.
+      operationId: company_edit_companies__company_uuid__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: company_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Company Uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyCreateIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - COMPANY
+      summary: Company Delete
+      description: Delete a company. This operation is allowed only in the root domain.
+      operationId: company_delete_companies__company_uuid__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: company_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Company Uuid
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Company Delete Companies  Company Uuid  Delete
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Company Delete Companies  Company Uuid  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /companies/available/{company}:
+    get:
+      tags:
+      - COMPANY
+      summary: Company Available
+      operationId: company_available_companies_available__company__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: company
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Company
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: This operation is forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Company Available Companies Available  Company  Get
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Company Available Companies Available  Company  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /companies/register:
+    post:
+      tags:
+      - COMPANY
+      summary: Company Register
+      operationId: company_register_companies_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyRegister'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: This operation is forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Company Register Companies Register Post
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Company Register Companies Register Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /companies/verify-user:
+    post:
+      tags:
+      - COMPANY
+      summary: Company Verify User
+      operationId: company_verify_user_companies_verify_user_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteVerifyIn'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: This operation is forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Company Verify User Companies Verify User Post
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Company Verify User Companies Verify User Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /companies/get-all-companies/{email}:
+    get:
+      tags:
+      - COMPANY
+      summary: Get All Companies By Email
+      operationId: get_all_companies_by_email_companies_get_all_companies__email__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Email
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllCompaniesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    GetAllCompaniesResponse:
+      properties:
+        companies:
+          items:
+            $ref: '#/components/schemas/GetCompanyByEmailResponse'
+          type: array
+          title: Companies
+          default: []
+      type: object
+      title: GetAllCompaniesResponse
+    CompanyIndexResponse:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        country:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Country
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        existence_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Existence Time
+      type: object
+      required:
+      - uuid
+      title: CompanyIndexResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Page_CompanyIndexResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CompanyIndexResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CompanyIndexResponse]
+    GetCompanyByEmailResponse:
+      properties:
+        company:
+          anyOf:
+          - $ref: '#/components/schemas/CompanyIndexResponse'
+          - type: 'null'
+        company_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Company Url
+      type: object
+      title: GetCompanyByEmailResponse
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    CompanyCreateIn:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        country:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Country
+      type: object
+      title: CompanyCreateIn
+    InviteVerifyIn:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: InviteVerifyIn
+    CompanyRegister:
+      properties:
+        company:
+          type: string
+          title: Company
+        name:
+          type: string
+          title: Name
+        email:
+          type: string
+          format: email
+          title: Email
+        password:
+          type: string
+          title: Password
+        newsletter:
+          type: boolean
+          title: Newsletter
+        source_insight:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Insight
+        referral_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Referral Code
+        survey_responses:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Survey Responses
+      type: object
+      required:
+      - company
+      - name
+      - email
+      - password
+      - newsletter
+      title: CompanyRegister
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

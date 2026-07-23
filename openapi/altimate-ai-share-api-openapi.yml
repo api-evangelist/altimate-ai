@@ -1,0 +1,706 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS SHARE API
+  version: 0.1.0
+tags:
+- name: SHARE
+paths:
+  /studio/share/shared/{share_id}:
+    get:
+      tags:
+      - SHARE
+      summary: View Shared Session
+      description: 'View a shared playground session.
+
+
+        This is the public endpoint for viewing shared content.
+
+        - ''anyone'' links: No authentication required
+
+        - ''specific_people'' links: User must be authenticated and in the allowed list'
+      operationId: view_shared_session_studio_share_shared__share_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedSessionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share:
+    post:
+      tags:
+      - SHARE
+      summary: Create Share
+      description: 'Create a new share link for a playground session.
+
+
+        - **session_id**: The session to share
+
+        - **access_type**: ''anyone'' (public) or ''specific_people'' (restricted)
+
+        - **expires_in_days**: Optional expiration (1-365 days)
+
+        - **user_ids**: Required for ''specific_people'' access type
+
+        - **title**: Optional title for the share link'
+      operationId: create_share_studio_share_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareLinkCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - SHARE
+      summary: List Shares
+      description: 'List share links.
+
+
+        - If session_id is provided, returns share links for that session
+
+        - Otherwise, returns all share links created by the current user'
+      operationId: list_shares_studio_share_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share/session/{session_id}:
+    get:
+      tags:
+      - SHARE
+      summary: List Shares For Session
+      description: List share links for a specific session.
+      operationId: list_shares_for_session_studio_share_session__session_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share/{share_id}:
+    get:
+      tags:
+      - SHARE
+      summary: Get Share
+      description: Get details of a specific share link.
+      operationId: get_share_studio_share__share_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - SHARE
+      summary: Delete Share
+      description: Delete a share link.
+      operationId: delete_share_studio_share__share_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share/slack:
+    post:
+      tags:
+      - SHARE
+      summary: Share To Slack
+      description: Share a Studio session to Slack via incoming webhook.
+      operationId: share_to_slack_studio_share_slack_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareToSlackRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareToSlackResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /playground/share/shared/{share_id}:
+    get:
+      tags:
+      - SHARE
+      summary: View Shared Session
+      description: 'View a shared playground session.
+
+
+        This is the public endpoint for viewing shared content.
+
+        - ''anyone'' links: No authentication required
+
+        - ''specific_people'' links: User must be authenticated and in the allowed list'
+      operationId: view_shared_session_playground_share_shared__share_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedSessionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/share:
+    post:
+      tags:
+      - SHARE
+      summary: Create Share
+      description: 'Create a new share link for a playground session.
+
+
+        - **session_id**: The session to share
+
+        - **access_type**: ''anyone'' (public) or ''specific_people'' (restricted)
+
+        - **expires_in_days**: Optional expiration (1-365 days)
+
+        - **user_ids**: Required for ''specific_people'' access type
+
+        - **title**: Optional title for the share link'
+      operationId: create_share_playground_share_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareLinkCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - SHARE
+      summary: List Shares
+      description: 'List share links.
+
+
+        - If session_id is provided, returns share links for that session
+
+        - Otherwise, returns all share links created by the current user'
+      operationId: list_shares_playground_share_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/share/session/{session_id}:
+    get:
+      tags:
+      - SHARE
+      summary: List Shares For Session
+      description: List share links for a specific session.
+      operationId: list_shares_for_session_playground_share_session__session_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/share/{share_id}:
+    get:
+      tags:
+      - SHARE
+      summary: Get Share
+      description: Get details of a specific share link.
+      operationId: get_share_playground_share__share_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - SHARE
+      summary: Delete Share
+      description: Delete a share link.
+      operationId: delete_share_playground_share__share_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/share/slack:
+    post:
+      tags:
+      - SHARE
+      summary: Share To Slack
+      description: Share a Studio session to Slack via incoming webhook.
+      operationId: share_to_slack_playground_share_slack_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareToSlackRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareToSlackResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    ShareToSlackRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Studio session ID to share
+        webhook_id:
+          type: integer
+          title: Webhook Id
+          description: Notification ID (from notifications table) for webhook delivery
+      type: object
+      required:
+      - session_id
+      - webhook_id
+      title: ShareToSlackRequest
+      description: Request to share a Studio session to Slack via webhook.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ShareLinkListResponse:
+      properties:
+        share_links:
+          items:
+            $ref: '#/components/schemas/ShareLinkResponse'
+          type: array
+          title: Share Links
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - share_links
+      - total
+      title: ShareLinkListResponse
+      description: Response containing a list of share links.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ShareAccessType:
+      type: string
+      enum:
+      - anyone
+      - specific_people
+      - all_altimate_users
+      - team
+      title: ShareAccessType
+      description: Access type for share links.
+    ShareToSlackResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ShareToSlackResponse
+      description: Response after sharing to Slack.
+    SharedSessionResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        session_name:
+          type: string
+          title: Session Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        share_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Title
+        turns:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Turns
+        is_read_only:
+          type: boolean
+          title: Is Read Only
+          default: true
+      type: object
+      required:
+      - session_id
+      - session_name
+      - created_at
+      - share_title
+      - turns
+      title: SharedSessionResponse
+      description: Response when viewing a shared session.
+    ShareLinkCreateRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Session ID to share
+        access_type:
+          $ref: '#/components/schemas/ShareAccessType'
+          description: Who can access this link
+          default: anyone
+        expires_in_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Expires In Days
+          description: Number of days until expiration. None = never expires
+        user_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: User Ids
+          description: User IDs allowed to access (only for 'specific_people' access type)
+        team_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Team Ids
+          description: Team (UserGroup) IDs allowed to access (only for 'team' access type)
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+          description: Optional title for the share link
+      type: object
+      required:
+      - session_id
+      title: ShareLinkCreateRequest
+      description: Request to create a new share link.
+    ShareLinkResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        session_id:
+          type: string
+          title: Session Id
+        access_type:
+          $ref: '#/components/schemas/ShareAccessType'
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        share_url:
+          type: string
+          title: Share Url
+        allowed_users:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Allowed Users
+        allowed_teams:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Allowed Teams
+      type: object
+      required:
+      - id
+      - session_id
+      - access_type
+      - expires_at
+      - created_by
+      - created_at
+      - updated_at
+      - title
+      - share_url
+      title: ShareLinkResponse
+      description: Response containing share link details.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,43 @@
+generated: '2026-07-17'
+method: derived
+source: openapi/altimate-ai-openapi-original.json
+# Cross-cutting request/response semantics for the Altimate AI API (api.myaltimate.com).
+# Derived from the published OpenAPI (FastAPI 3.1.0, 1004 operations) and the
+# setup/configuration docs at help.altimate.ai.
+authentication:
+  style: bearer-token
+  scheme: HTTPBearer
+  header: Authorization
+  format: "Authorization: Bearer <API_KEY>"
+  tenancy_header: x-tenant
+  notes: >-
+    Requests authenticate with an Altimate API key as a bearer token. Clients also
+    supply the instance/tenant (altimateInstanceName), surfaced on many endpoints as
+    the optional `x-tenant` header. API keys are generated in the Altimate dashboard
+    (Settings -> API Key). See authentication/altimate-ai-authentication.yml.
+idempotency:
+  supported: false
+  notes: No Idempotency-Key header or idempotency contract is documented or present in the OpenAPI.
+pagination:
+  style: page-number
+  notes: >-
+    Many list endpoints accept page/size or skip/limit style query parameters
+    (FastAPI-generated). Not a single uniform envelope across all products.
+versioning:
+  scheme: path-embedded
+  notes: >-
+    Product areas are versioned in the path (e.g. QUERIES_V2, SUMMARY_V2, DBT_V2/V3/V4,
+    knowledge_bases_v2). There is no global API version header; info.version is 0.1.0.
+error_envelope:
+  field: detail
+  media_type: application/json
+  reference: errors/altimate-ai-problem-types.yml
+  notes: FastAPI detail envelope; 422 returns structured field errors (HTTPValidationError).
+rate_limiting:
+  documented: false
+tracing:
+  documented: false
+cross_links:
+  authentication: authentication/altimate-ai-authentication.yml
+  errors: errors/altimate-ai-problem-types.yml
+  lifecycle: lifecycle/altimate-ai-lifecycle.yml

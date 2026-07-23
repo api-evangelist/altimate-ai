@@ -1,0 +1,56 @@
+generated: '2026-07-17'
+method: derived
+source: openapi/altimate-ai-openapi-original.json
+# Altimate AI's API is a FastAPI application. Error responses use the standard
+# FastAPI error envelope `{ "detail": ... }` (a string for handled HTTPExceptions,
+# or a list of field errors for 422 validation). Not RFC 9457 problem+json.
+format: fastapi-detail
+envelope:
+  field: detail
+  media_type: application/json
+  notes: >-
+    Handled errors return {"detail": "<message>"}. 422 validation errors return
+    {"detail": [{"loc": [...], "msg": "...", "type": "..."}]} per the
+    HTTPValidationError schema.
+problems:
+  - status: 400
+    title: Bad request
+    description: Invalid request, invalid data, or an operation not supported for the caller (e.g. public user).
+    occurrences: 536
+    source_operation: openapi/altimate-ai-openapi-original.json#register_new_user_sso_auth_register_sso_post
+  - status: 401
+    title: Unauthorized
+    description: Authentication required, or incorrect username or password.
+    occurrences: 3
+    source_operation: openapi/altimate-ai-openapi-original.json#auth_login_auth_login_post
+  - status: 403
+    title: Forbidden
+    description: Caller is not authorized for the operation (not authorized / forbidden / not supported for public user).
+    occurrences: 667
+    source_operation: openapi/altimate-ai-openapi-original.json#auth_login_auth_login_post
+  - status: 404
+    title: Not found
+    description: The referenced resource does not exist (user, tenant, ClickHouse database, etc.).
+    occurrences: 195
+    source_operation: openapi/altimate-ai-openapi-original.json#user_get_one_users__user_uuid__get
+  - status: 413
+    title: Payload too large
+    description: Uploaded file exceeds the allowed size (e.g. knowledge-base upload).
+    occurrences: 2
+    source_operation: openapi/altimate-ai-openapi-original.json#upload_with_kb_creation_knowledge_bases_v2_upload_post
+  - status: 422
+    title: Validation error
+    description: Request failed schema validation; `detail[]` lists offending fields (HTTPValidationError).
+    occurrences: 939
+    schema: '#/components/schemas/HTTPValidationError'
+    source_operation: openapi/altimate-ai-openapi-original.json#auth_login_auth_login_post
+  - status: 500
+    title: Internal server error
+    description: Unknown/internal error while processing the request.
+    occurrences: 11
+    source_operation: openapi/altimate-ai-openapi-original.json#create_demo_session_demo_create_demo_session_post
+  - status: 501
+    title: Not implemented
+    description: Requested functionality is not implemented.
+    occurrences: 1
+    source_operation: openapi/altimate-ai-openapi-original.json#get_initial_questions_summary_v2_datapilot_initial_questions_chart_chat_get

@@ -1,0 +1,123 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS SMART_CONTRACTS API
+  version: 0.1.0
+tags:
+- name: SMART_CONTRACTS
+paths:
+  /templates/:
+    post:
+      tags:
+      - SMART_CONTRACTS
+      summary: Get Templates
+      description: 'Get templates for a given table schema and data store type
+
+        :param fetch_template_request: FetchTemplateRequest
+
+        :param auth: Depends(has_token)
+
+        :return: Dict containing templates'
+      operationId: get_templates_templates__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FetchTemplateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchTemplateResponse'
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Templates Templates  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Templates Templates  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    FetchTemplateRequest:
+      properties:
+        identifier:
+          type: string
+          title: Identifier
+        data_store_type:
+          type: string
+          title: Data Store Type
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - identifier
+      - data_store_type
+      title: FetchTemplateRequest
+    FetchTemplateResponse:
+      properties:
+        contract:
+          type: string
+          title: Contract
+      type: object
+      required:
+      - contract
+      title: FetchTemplateResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

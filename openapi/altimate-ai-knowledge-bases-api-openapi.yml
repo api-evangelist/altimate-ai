@@ -1,0 +1,476 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Knowledge Bases API
+  version: 0.1.0
+tags:
+- name: Knowledge Bases
+paths:
+  /knowledge_bases/fork-template:
+    post:
+      tags:
+      - Knowledge Bases
+      summary: Fork Template
+      description: Create a new knowledge base from a template
+      operationId: fork_template_knowledge_bases_fork_template_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForkTemplateRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseResponse'
+        '404':
+          description: Template not found
+        '400':
+          description: Duplicate name
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /knowledge_bases/templates:
+    get:
+      tags:
+      - Knowledge Bases
+      summary: Get Templates
+      description: Get available knowledge base templates from markdown files
+      operationId: get_templates_knowledge_bases_templates_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/TemplateResponse'
+                type: array
+                title: Response Get Templates Knowledge Bases Templates Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /knowledge_bases/:
+    get:
+      tags:
+      - Knowledge Bases
+      summary: List Knowledge Bases
+      description: List all active knowledge bases for current user
+      operationId: list_knowledge_bases_knowledge_bases__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/KnowledgeBaseResponse'
+                type: array
+                title: Response List Knowledge Bases Knowledge Bases  Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - Knowledge Bases
+      summary: Create Kb
+      description: Create a new knowledge base
+      operationId: create_kb_knowledge_bases__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseResponse'
+        '400':
+          description: Duplicate name
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /knowledge_bases/{kb_id}:
+    get:
+      tags:
+      - Knowledge Bases
+      summary: Get Kb
+      description: Get a specific knowledge base
+      operationId: get_kb_knowledge_bases__kb_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Knowledge Bases
+      summary: Update Kb
+      description: Update a knowledge base
+      operationId: update_kb_knowledge_bases__kb_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Knowledge Bases
+      summary: Delete Kb
+      description: Soft delete a knowledge base
+      operationId: delete_kb_knowledge_bases__kb_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /knowledge_bases/private/{public_id}:
+    get:
+      tags:
+      - Knowledge Bases
+      summary: Get Private Kb
+      description: Get a knowledge base by its public ID (authenticated access)
+      operationId: get_private_kb_knowledge_bases_private__public_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /knowledge_bases/private-link-setting:
+    get:
+      tags:
+      - Knowledge Bases
+      summary: Get Private Link Setting
+      description: Get the private link setting configuration
+      operationId: get_private_link_setting_knowledge_bases_private_link_setting_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Get Private Link Setting Knowledge Bases Private Link Setting Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    KnowledgeBaseResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        content:
+          $ref: '#/components/schemas/ContentModel'
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+          default: private
+        id:
+          type: integer
+          title: Id
+        public_id:
+          type: string
+          title: Public Id
+        user_id:
+          type: integer
+          title: User Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        forked:
+          type: boolean
+          title: Forked
+        is_deleted:
+          type: boolean
+          title: Is Deleted
+        source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
+      type: object
+      required:
+      - name
+      - content
+      - id
+      - public_id
+      - user_id
+      - created_at
+      - updated_at
+      - forked
+      - is_deleted
+      title: KnowledgeBaseResponse
+    KnowledgeBaseCreateRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        content:
+          $ref: '#/components/schemas/ContentModel'
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+      type: object
+      required:
+      - name
+      - content
+      title: KnowledgeBaseCreateRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PageModel:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - content
+      title: PageModel
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    KnowledgeBaseUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        content:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Content
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+      type: object
+      title: KnowledgeBaseUpdateRequest
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    TemplateResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        icon:
+          type: string
+          title: Icon
+        content:
+          $ref: '#/components/schemas/ContentModel'
+      type: object
+      required:
+      - name
+      - description
+      - icon
+      - content
+      title: TemplateResponse
+    ContentModel:
+      properties:
+        pages:
+          items:
+            $ref: '#/components/schemas/PageModel'
+          type: array
+          title: Pages
+      type: object
+      required:
+      - pages
+      title: ContentModel
+    ForkTemplateRequest:
+      properties:
+        template_name:
+          type: string
+          title: Template Name
+        new_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: New Name
+      type: object
+      required:
+      - template_name
+      title: ForkTemplateRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

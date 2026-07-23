@@ -1,0 +1,254 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS WORKLOAD API
+  version: 0.1.0
+tags:
+- name: WORKLOAD
+paths:
+  /workload/attributes:
+    get:
+      tags:
+      - WORKLOAD
+      summary: Get Workload Attributes
+      description: 'Get available workload attributes for grouping and filtering.
+
+
+        Returns default attributes (project_id, app_id) plus any custom tags
+
+        configured in the workload settings.'
+      operationId: get_workload_attributes_workload_attributes_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkloadAttributes'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Workload Attributes Workload Attributes Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Workload Attributes Workload Attributes Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /workload/attributes/{attribute_key}/values:
+    get:
+      tags:
+      - WORKLOAD
+      summary: Get Workload Attribute Values
+      description: 'Get distinct values for a specific workload attribute with pagination.
+
+
+        This endpoint extracts distinct values from the query_tag column in ClickHouse
+
+        based on the specified attribute_key. Used for populating filter dropdowns
+
+        when a workload attribute is selected for grouping.'
+      operationId: get_workload_attribute_values_workload_attributes__attribute_key__values_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: attribute_key
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Attribute Key
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          default: '2026-06-17T12:35:39.834881'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          default: '2026-07-17T12:35:39.834965'
+          title: End Date
+      - name: workflow_type
+        in: query
+        required: false
+        schema:
+          type: string
+          default: custom
+          title: Workflow Type
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 50
+          title: Size
+        description: Items per page
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search string to filter values
+          title: Search
+        description: Search string to filter values
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkloadAttributeValues'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Workload Attribute Values Workload Attributes  Attribute Key  Values Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Workload Attribute Values Workload Attributes  Attribute Key  Values Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    WorkloadAttributeValues:
+      properties:
+        attribute_key:
+          type: string
+          title: Attribute Key
+        values:
+          items:
+            type: string
+          type: array
+          title: Values
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - attribute_key
+      - values
+      - total
+      - page
+      - size
+      title: WorkloadAttributeValues
+      description: Response schema for distinct values of a workload attribute (for filter dropdowns).
+    WorkloadAttribute:
+      properties:
+        key:
+          type: string
+          title: Key
+        label:
+          type: string
+          title: Label
+        is_custom:
+          type: boolean
+          title: Is Custom
+          default: false
+      type: object
+      required:
+      - key
+      - label
+      title: WorkloadAttribute
+      description: Represents a single workload attribute for grouping and filtering.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WorkloadAttributes:
+      properties:
+        options:
+          items:
+            $ref: '#/components/schemas/WorkloadAttribute'
+          type: array
+          title: Options
+      type: object
+      required:
+      - options
+      title: WorkloadAttributes
+      description: Response schema for available workload attributes.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

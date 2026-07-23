@@ -1,0 +1,319 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS RECOMMENDATIONS API
+  version: 0.1.0
+tags:
+- name: RECOMMENDATIONS
+paths:
+  /recommendations/rules/:
+    post:
+      tags:
+      - RECOMMENDATIONS
+      summary: Generate Rules
+      operationId: generate_rules_recommendations_rules__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleRecommendationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleRecommendationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Generate Rules Recommendations Rules  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Generate Rules Recommendations Rules  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /recommendations/terms/:
+    post:
+      tags:
+      - RECOMMENDATIONS
+      summary: Generate Terms
+      operationId: generate_terms_recommendations_terms__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TermGenerationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TermGenerationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Generate Terms Recommendations Terms  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Generate Terms Recommendations Terms  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /recommendations/purpose/{data_store_id}:
+    post:
+      tags:
+      - RECOMMENDATIONS
+      summary: Generate Purpose
+      operationId: generate_purpose_recommendations_purpose__data_store_id__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Generate Purpose Recommendations Purpose  Data Store Id  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Generate Purpose Recommendations Purpose  Data Store Id  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /recommendations/description/{resource_id}:
+    post:
+      tags:
+      - RECOMMENDATIONS
+      summary: Generate Description
+      operationId: generate_description_recommendations_description__resource_id__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: resource_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Resource Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Generate Description Recommendations Description  Resource Id  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Generate Description Recommendations Description  Resource Id  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CrossColumn:
+      properties:
+        columns:
+          items:
+            type: string
+          type: array
+          title: Columns
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+      type: object
+      required:
+      - columns
+      - rules
+      title: CrossColumn
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RuleRecommendationRequest:
+      properties:
+        resource_id:
+          type: integer
+          title: Resource Id
+        column_ids:
+          items:
+            type: integer
+          type: array
+          title: Column Ids
+      type: object
+      required:
+      - resource_id
+      - column_ids
+      title: RuleRecommendationRequest
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    TermGenerationResponse:
+      properties:
+        term_generation_id:
+          type: string
+          title: Term Generation Id
+        term:
+          type: string
+          title: Term
+      type: object
+      required:
+      - term_generation_id
+      - term
+      title: TermGenerationResponse
+    RuleRecommendationResponse:
+      properties:
+        rule_recommendation_id:
+          type: string
+          title: Rule Recommendation Id
+        column_rules:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Column Rules
+        cross_column_rules:
+          items:
+            $ref: '#/components/schemas/CrossColumn'
+          type: array
+          title: Cross Column Rules
+        table_rules:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Table Rules
+      type: object
+      required:
+      - rule_recommendation_id
+      - column_rules
+      - cross_column_rules
+      - table_rules
+      title: RuleRecommendationResponse
+    TermGenerationRequest:
+      properties:
+        rule:
+          type: string
+          title: Rule
+        data_store_type:
+          type: string
+          title: Data Store Type
+      type: object
+      required:
+      - rule
+      - data_store_type
+      title: TermGenerationRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

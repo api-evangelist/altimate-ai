@@ -1,0 +1,200 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS PUBLIC_PROMPT_LIBRARY API
+  version: 0.1.0
+tags:
+- name: PUBLIC_PROMPT_LIBRARY
+paths:
+  /public/prompts:
+    post:
+      tags:
+      - PUBLIC_PROMPT_LIBRARY
+      summary: Create Public Prompt
+      description: 'Create a public prompt (service user only).
+
+        This endpoint is specifically for service users to create public prompts.'
+      operationId: create_public_prompt_public_prompts_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePublicPromptRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromptResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /public/prompts/{prompt_id}:
+    delete:
+      tags:
+      - PUBLIC_PROMPT_LIBRARY
+      summary: Delete Public Prompt
+      description: 'Delete a public prompt (service user only).
+
+        This endpoint is specifically for service users to delete public prompts.'
+      operationId: delete_public_prompt_public_prompts__prompt_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prompt_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Prompt Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PromptResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        prompt_text:
+          type: string
+          title: Prompt Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        teams:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Teams
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        last_used_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Used At
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+        is_public:
+          type: boolean
+          title: Is Public
+          default: false
+      type: object
+      required:
+      - id
+      - title
+      - prompt_text
+      - created_by
+      - created_at
+      - updated_at
+      title: PromptResponse
+      description: Response schema for a single prompt
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CreatePublicPromptRequest:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        prompt_text:
+          type: string
+          minLength: 1
+          title: Prompt Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+      type: object
+      required:
+      - prompt_text
+      title: CreatePublicPromptRequest
+      description: Request schema for creating public prompts (service user only)
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,128 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Access Rules API
+  version: 0.1.0
+tags:
+- name: Databricks Access Rules
+paths:
+  /api/v1/databricks/access-rules/options:
+    get:
+      tags:
+      - Databricks Access Rules
+      summary: List Databricks accounts/workspaces grantable in access rules
+      description: Return the catalog of accounts/workspaces for the access-rule picker.
+      operationId: get_access_rule_options_api_v1_databricks_access_rules_options_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessRuleOptionsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AccountOption:
+      properties:
+        account_id:
+          type: string
+          title: Account Id
+        workspace_count:
+          type: integer
+          title: Workspace Count
+      type: object
+      required:
+      - account_id
+      - workspace_count
+      title: AccountOption
+      description: A grantable Databricks account (grants cover all its workspaces).
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WorkspaceOption:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          type: string
+          title: Workspace Name
+        account_id:
+          type: string
+          title: Account Id
+      type: object
+      required:
+      - workspace_id
+      - workspace_name
+      - account_id
+      title: WorkspaceOption
+      description: A grantable Databricks workspace, with its parent account.
+    AccessRuleOptionsResponse:
+      properties:
+        accounts:
+          items:
+            $ref: '#/components/schemas/AccountOption'
+          type: array
+          title: Accounts
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceOption'
+          type: array
+          title: Workspaces
+      type: object
+      required:
+      - accounts
+      - workspaces
+      title: AccessRuleOptionsResponse
+      description: Catalog of accounts/workspaces a team's access rules can target.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

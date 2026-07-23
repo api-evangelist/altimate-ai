@@ -1,0 +1,1056 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS CREDITS_USAGE API
+  version: 0.1.0
+tags:
+- name: CREDITS_USAGE
+paths:
+  /credits/my-usage/table-data:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Get My Usage
+      description: 'Get credit usage for the current user (audit log style)
+
+        All users can access this endpoint'
+      operationId: get_my_usage_credits_my_usage_table_data_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Start Date
+          default: '2026-06-17T12:35:27.097497'
+          title: Start Date
+        description: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: End Date
+          default: '2026-07-17T12:35:27.097568'
+          title: End Date
+        description: End Date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CreditTransaction_'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get My Usage Credits My Usage Table Data Get
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get My Usage Credits My Usage Table Data Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /credits/my-usage/trends:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Get My Usage Trends
+      description: 'Get credit usage for the current user (audit log style)
+
+        All users can access this endpoint'
+      operationId: get_my_usage_trends_credits_my_usage_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Start Date
+          default: '2026-06-17T12:35:27.102915'
+          title: Start Date
+        description: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: End Date
+          default: '2026-07-17T12:35:27.102997'
+          title: End Date
+        description: End Date
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get My Usage Trends Credits My Usage Trends Get
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get My Usage Trends Credits My Usage Trends Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /credits/org-usage/trends:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Get Org Usage
+      description: 'Get organization-wide credit usage
+
+        Requires Admin or Owner role'
+      operationId: get_org_usage_credits_org_usage_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Start Date
+          default: '2026-06-17T12:35:27.106167'
+          title: Start Date
+        description: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: End Date
+          default: '2026-07-17T12:35:27.106244'
+          title: End Date
+        description: End Date
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgUsageResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Org Usage Credits Org Usage Trends Get
+        '403':
+          description: Access denied. Admin or Owner role required.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Org Usage Credits Org Usage Trends Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /credits/org-usage/table-data:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Get Org Usage Transactions
+      description: 'Get organization-wide credit transactions (raw audit logs) with pagination
+
+        Requires Admin or Owner role'
+      operationId: get_org_usage_transactions_credits_org_usage_table_data_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Start Date
+          default: '2026-06-17T12:35:27.110722'
+          title: Start Date
+        description: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: End Date
+          default: '2026-07-17T12:35:27.110801'
+          title: End Date
+        description: End Date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CreditTransactionWithUser_'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Org Usage Transactions Credits Org Usage Table Data Get
+        '403':
+          description: Access denied. Admin or Owner role required.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Org Usage Transactions Credits Org Usage Table Data Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /credits/org-usage/table-data/by-users:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Get Org Usage Transactions Group By User
+      description: 'Get organization-wide credit transactions grouped by user with pagination
+
+        Requires Admin or Owner role'
+      operationId: get_org_usage_transactions_group_by_user_credits_org_usage_table_data_by_users_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Start Date
+          default: '2026-06-17T12:35:27.116251'
+          title: Start Date
+        description: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: End Date
+          default: '2026-07-17T12:35:27.116331'
+          title: End Date
+        description: End Date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CreditTransactionGroupedByUser_'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Org Usage Transactions Group By User Credits Org Usage Table Data By Users Get
+        '403':
+          description: Access denied. Admin or Owner role required.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Org Usage Transactions Group By User Credits Org Usage Table Data By Users Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /credits/org-usage/table-data/aggregated-by-task:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Get Org Usage Transactions Aggregated By Task
+      description: 'Get organization-wide credit transactions aggregated by task with pagination
+
+        Requires Admin or Owner role'
+      operationId: get_org_usage_transactions_aggregated_by_task_credits_org_usage_table_data_aggregated_by_task_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Start Date
+          default: '2026-06-17T12:35:27.122268'
+          title: Start Date
+        description: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: End Date
+          default: '2026-07-17T12:35:27.122348'
+          title: End Date
+        description: End Date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CreditTransactionAggregatedByTask_'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Org Usage Transactions Aggregated By Task Credits Org Usage Table Data Aggregated By Task Get
+        '403':
+          description: Access denied. Admin or Owner role required.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Org Usage Transactions Aggregated By Task Credits Org Usage Table Data Aggregated By Task Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /credits/plans:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Get Plans
+      description: 'Get current credits summary and subscription details
+
+        Requires Admin role'
+      operationId: get_plans_credits_plans_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__credits__PlansResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Plans Credits Plans Get
+        '403':
+          description: Access denied. Admin role required.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Plans Credits Plans Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /credits/export/csv:
+    get:
+      tags:
+      - CREDITS_USAGE
+      summary: Export Usage Csv
+      description: Export usage data as CSV
+      operationId: export_usage_csv_credits_export_csv_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: filter_period
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Filter period: this_month, this_year, all_time'
+          default: this_month
+          title: Filter Period
+        description: 'Filter period: this_month, this_year, all_time'
+      - name: export_type
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Export type: my_usage, org_usage'
+          default: my_usage
+          title: Export Type
+        description: 'Export type: my_usage, org_usage'
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Export Usage Csv Credits Export Csv Get
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Export Usage Csv Credits Export Csv Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Page_CreditTransactionWithUser_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransactionWithUser'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransactionWithUser]
+    CreditTransactionAggregatedByTask:
+      properties:
+        task_name:
+          type: string
+          title: Task Name
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+        users:
+          additionalProperties:
+            type: number
+          type: object
+          title: Users
+        last_used_on:
+          type: string
+          format: date-time
+          title: Last Used On
+      type: object
+      required:
+      - task_name
+      - total_credits_consumed
+      - users
+      - last_used_on
+      title: CreditTransactionAggregatedByTask
+      description: Credit transaction aggregated by task with users as dictionary
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    OrgUsageResponse:
+      properties:
+        graph_data:
+          items:
+            $ref: '#/components/schemas/UsageTrend'
+          type: array
+          title: Graph Data
+        top_users:
+          $ref: '#/components/schemas/TopUsers'
+        top_ai_teammates:
+          $ref: '#/components/schemas/TopAITeammates'
+      type: object
+      required:
+      - graph_data
+      - top_users
+      - top_ai_teammates
+      title: OrgUsageResponse
+      description: Response for Org Usage API
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UsageTrend:
+      properties:
+        date:
+          type: string
+          title: Date
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+        breakdown:
+          additionalProperties:
+            type: number
+          type: object
+          title: Breakdown
+      type: object
+      required:
+      - date
+      - total_credits_consumed
+      - breakdown
+      title: UsageTrend
+      description: Usage trend data point
+    CreditTransactionGroupedByUser:
+      properties:
+        user_email:
+          type: string
+          title: User Email
+        display_name:
+          type: string
+          title: Display Name
+        ai_teammates:
+          items:
+            $ref: '#/components/schemas/TopAITeammate'
+          type: array
+          title: Ai Teammates
+        last_used_on:
+          type: string
+          format: date-time
+          title: Last Used On
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - user_email
+      - display_name
+      - ai_teammates
+      - last_used_on
+      - credits_consumed
+      title: CreditTransactionGroupedByUser
+      description: Credit transaction with user details for org usage
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    Page_CreditTransactionAggregatedByTask_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransactionAggregatedByTask'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransactionAggregatedByTask]
+    app__schemas__credits__TopUser:
+      properties:
+        user_email:
+          type: string
+          title: User Email
+        display_name:
+          type: string
+          title: Display Name
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - user_email
+      - display_name
+      - credits_consumed
+      title: TopUser
+      description: Top user by credit consumption
+    TopAITeammate:
+      properties:
+        teammate:
+          type: string
+          title: Teammate
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - teammate
+      - credits_consumed
+      title: TopAITeammate
+      description: Top AI teammate by credit consumption
+    Page_CreditTransaction_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransaction'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransaction]
+    CreditTransactionWithUser:
+      properties:
+        task_name:
+          type: string
+          title: Task Name
+        user_email:
+          type: string
+          title: User Email
+        ai_teammates:
+          items:
+            type: string
+          type: array
+          title: Ai Teammates
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - task_name
+      - user_email
+      - ai_teammates
+      - timestamp
+      - credits_consumed
+      title: CreditTransactionWithUser
+      description: Credit transaction with user details for org usage
+    CreditTransaction:
+      properties:
+        task_name:
+          type: string
+          title: Task Name
+        user_email:
+          type: string
+          title: User Email
+        ai_teammates:
+          items:
+            type: string
+          type: array
+          title: Ai Teammates
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - task_name
+      - user_email
+      - ai_teammates
+      - timestamp
+      - credits_consumed
+      title: CreditTransaction
+      description: Individual credit transaction entry
+    TopAITeammates:
+      properties:
+        teammates:
+          items:
+            $ref: '#/components/schemas/TopAITeammate'
+          type: array
+          title: Teammates
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+      type: object
+      required:
+      - teammates
+      - total_credits_consumed
+      title: TopAITeammates
+    app__schemas__credits__PlansResponse:
+      properties:
+        used_credits:
+          type: number
+          title: Used Credits
+        remaining_credits:
+          type: number
+          title: Remaining Credits
+        extra_credits:
+          type: number
+          title: Extra Credits
+        total_credits:
+          type: number
+          title: Total Credits
+        grant_remaining:
+          type: number
+          title: Grant Remaining
+        subscription_details:
+          additionalProperties: true
+          type: object
+          title: Subscription Details
+        expiry_projection:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Expiry Projection
+      type: object
+      required:
+      - used_credits
+      - remaining_credits
+      - extra_credits
+      - total_credits
+      - grant_remaining
+      - subscription_details
+      title: PlansResponse
+      description: Response for Plans API
+    TopUsers:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/app__schemas__credits__TopUser'
+          type: array
+          title: Users
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+      type: object
+      required:
+      - users
+      - total_credits_consumed
+      title: TopUsers
+    Page_CreditTransactionGroupedByUser_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransactionGroupedByUser'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransactionGroupedByUser]
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

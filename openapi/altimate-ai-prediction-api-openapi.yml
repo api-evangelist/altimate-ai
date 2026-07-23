@@ -1,0 +1,168 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS PREDICTION API
+  version: 0.1.0
+tags:
+- name: PREDICTION
+paths:
+  /predict/query-time-estimate:
+    post:
+      tags:
+      - PREDICTION
+      summary: Predict Query Time
+      description: 'Predict query execution time with confidence intervals.
+
+
+        Returns median prediction with 80% confidence interval.
+
+        Uses model_with_historical for repeated queries or model_without_historical for new queries.'
+      operationId: predict_query_time_predict_query_time_estimate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryTimeEstimateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryTimeEstimateResponse'
+        '400':
+          description: Invalid request
+        '500':
+          description: Prediction failed
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    QueryTimeEstimateResponse:
+      properties:
+        predicted_ms:
+          type: number
+          title: Predicted Ms
+          description: Median prediction (q50) in milliseconds
+        confidence_80:
+          $ref: '#/components/schemas/ConfidenceInterval'
+          description: 80% confidence interval (q10-q90)
+        quantiles:
+          additionalProperties:
+            type: number
+          type: object
+          title: Quantiles
+          description: 'All quantile predictions: q10, q50, q90'
+        model_used:
+          type: string
+          enum:
+          - with_historical
+          - without_historical
+          title: Model Used
+          description: with_historical (repeated query) or without_historical (new query)
+        query_hash:
+          type: string
+          title: Query Hash
+          description: Computed query hash
+      type: object
+      required:
+      - predicted_ms
+      - confidence_80
+      - quantiles
+      - model_used
+      - query_hash
+      title: QueryTimeEstimateResponse
+      description: Response schema for query time estimation.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ConfidenceInterval:
+      properties:
+        lower:
+          type: number
+          title: Lower
+          description: Lower bound in milliseconds
+        upper:
+          type: number
+          title: Upper
+          description: Upper bound in milliseconds
+      type: object
+      required:
+      - lower
+      - upper
+      title: ConfidenceInterval
+      description: Confidence interval for predictions.
+    QueryTimeEstimateRequest:
+      properties:
+        query_text:
+          type: string
+          title: Query Text
+          description: SQL query text to predict execution time for
+        warehouse_size:
+          type: string
+          enum:
+          - X-Small
+          - Small
+          - Medium
+          - Large
+          - X-Large
+          - 2X-Large
+          - 3X-Large
+          - 4X-Large
+          title: Warehouse Size
+          description: Snowflake warehouse size
+          default: Medium
+        warehouse_type:
+          type: string
+          enum:
+          - UNKNOWN
+          - STANDARD_GEN_1
+          - STANDARD_GEN_2
+          - MEMORY_16X
+          title: Warehouse Type
+          description: Warehouse generation/type
+          default: UNKNOWN
+      type: object
+      required:
+      - query_text
+      title: QueryTimeEstimateRequest
+      description: Request schema for query time estimation.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

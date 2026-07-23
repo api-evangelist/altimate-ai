@@ -1,0 +1,1305 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DATA_STORE API
+  version: 0.1.0
+tags:
+- name: DATA_STORE
+paths:
+  /data_stores/:
+    get:
+      tags:
+      - DATA_STORE
+      summary: Get Data Stores
+      description: 'Gets all data stores from db
+
+        :param db: database session
+
+        :param auth: auth token.'
+      operationId: get_data_stores_data_stores__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataStoreFetchAllResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Data Stores Data Stores  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Data Stores Data Stores  Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - DATA_STORE
+      summary: Create Data Store
+      description: 'Create a data store in the database.
+
+        :param db: The database session for accessing the database.
+
+        :param data_store_creation_request: The data store creation request containing the data store definition and other
+
+        metadata.
+
+        :param auth: The authorization token for the request.
+
+        :return: A data store creation response containing the data store ID, and a message.'
+      operationId: create_data_store_data_stores__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataStoreCreationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataStoreCreationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Create Data Store Data Stores  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Create Data Store Data Stores  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /data_stores/{data_store_id}:
+    get:
+      tags:
+      - DATA_STORE
+      summary: Get Data Store
+      description: 'Gets the data store by id
+
+        :param data_store: data_store object fetched from db
+
+        :param auth: auth token.
+
+        :return: A data store fetch response containing the data store definition and other metadata.'
+      operationId: get_data_store_data_stores__data_store_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataStoreWithMetadata'
+        '400':
+          description: Invalid data store id
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Data Store Data Stores  Data Store Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Data Store Data Stores  Data Store Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - DATA_STORE
+      summary: Update Data Store
+      description: 'Update the data store by the provided information
+
+        :param db: database session
+
+        :param data_store: DataStore object fetched from db. This checks if the data store exists.
+
+        :param data_store_update_request: Data Store update request
+
+        :param auth: auth token. Also gets the user_id from the token
+
+        :param id: data store id. This is the path param'
+      operationId: update_data_store_data_stores__data_store_id__put
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataStoreUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataStoreUpdateResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Data Store Data Stores  Data Store Id  Put
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Data Store Data Stores  Data Store Id  Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - DATA_STORE
+      summary: Delete Data Store
+      description: 'Deletes a data store. If not exists, returns 404
+
+        db: Session = Depends(get_db) is a dependency injection which returns the db session with the tenant
+
+        data_store: DataStore to delete
+
+        id: data store id
+
+        auth=Depends(has_token) is a dependency injection which validates and returns the user_id'
+      operationId: delete_data_store_data_stores__data_store_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataStoreDeletionResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Delete Data Store Data Stores  Data Store Id  Delete
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Delete Data Store Data Stores  Data Store Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /data_stores/types/:
+    get:
+      tags:
+      - DATA_STORE
+      summary: Get Data Store Types
+      description: 'Gets all data store types from db
+
+        :param db: database session
+
+        :param auth: auth token.'
+      operationId: get_data_store_types_data_stores_types__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DataStoreTypesResponse'
+                type: array
+                title: Response Get Data Store Types Data Stores Types  Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Data Store Types Data Stores Types  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Data Store Types Data Stores Types  Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /data_stores/{data_store_id}/validate:
+    get:
+      tags:
+      - DATA_STORE
+      summary: Validate Data Store
+      operationId: validate_data_store_data_stores__data_store_id__validate_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Validate Data Store Data Stores  Data Store Id  Validate Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Validate Data Store Data Stores  Data Store Id  Validate Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /data_stores/form/:
+    post:
+      tags:
+      - DATA_STORE
+      summary: Create Data Store Using Form
+      description: 'Create data stores using form in frontend, in the database.
+
+        :param db: The database session for accessing the database.
+
+        :param data_store_creation_request: The data store creation request containing the data store definition and other
+
+        metadata.
+
+        :param auth: The authorization token for the request.
+
+        :return: A list of data store creation responses, one for each database processed.'
+      operationId: create_data_store_using_form_data_stores_form__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataStoreCreationUsingFormRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DataStoreCreationResponse'
+                type: array
+                title: Response Create Data Store Using Form Data Stores Form  Post
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Create Data Store Using Form Data Stores Form  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Create Data Store Using Form Data Stores Form  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /data_stores/form/test_connection/:
+    post:
+      tags:
+      - DATA_STORE
+      summary: Test Data Store Using Form
+      description: 'Test a data store connection using form in frontend.
+
+        :param db: The database session for accessing the database.
+
+        :param data_store_test_connection_request: The data store test connection request containing the data store definition and other
+
+        metadata.
+
+        :param auth: The authorization token for the request.
+
+        :return: A data store test connection response containing the ok status and a message.'
+      operationId: test_data_store_using_form_data_stores_form_test_connection__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataStoreTestConnectionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataStoreTestConnectionResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Test Data Store Using Form Data Stores Form Test Connection  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Test Data Store Using Form Data Stores Form Test Connection  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /data_stores/form/fetch_databases/:
+    post:
+      tags:
+      - DATA_STORE
+      summary: Fetch Databases Using Form
+      description: 'Fetch databases using form in frontend.
+
+        :param db: The database session for accessing the database.
+
+        :param data_store_fetch_databases_request: The data store test connection request containing the data store definition and other
+
+        metadata.
+
+        :param auth: The authorization token for the request.
+
+        :return: A data store test connection response containing the ok status and a message.'
+      operationId: fetch_databases_using_form_data_stores_form_fetch_databases__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataStoreFetchDatabasesRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  additionalProperties: true
+                  type: object
+                type: array
+                title: Response Fetch Databases Using Form Data Stores Form Fetch Databases  Post
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Fetch Databases Using Form Data Stores Form Fetch Databases  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Fetch Databases Using Form Data Stores Form Fetch Databases  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /data_stores/{data_store_id}/available_databases:
+    get:
+      tags:
+      - DATA_STORE
+      summary: Get Available Databases
+      description: 'Gets available databases for a data store by id.
+
+        This endpoint fetches all databases from the data store''s connection and filters out
+
+        the ones that are already in use by other data stores of the same type.
+
+
+        :param data_store_id: The ID of the data store to fetch databases for
+
+        :return: A dictionary containing used and unused databases'
+      operationId: get_available_databases_data_stores__data_store_id__available_databases_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableDatabasesResponse'
+        '400':
+          description: Invalid data store id
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Available Databases Data Stores  Data Store Id  Available Databases Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Available Databases Data Stores  Data Store Id  Available Databases Get
+        '404':
+          description: Data store not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Available Databases Data Stores  Data Store Id  Available Databases Get
+        '500':
+          description: Failed to fetch available databases
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 500 Get Available Databases Data Stores  Data Store Id  Available Databases Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /data_stores/basic/:
+    post:
+      tags:
+      - DATA_STORE
+      summary: Create Basic Data Store
+      description: 'Create a basic data store in the database with just name, type and description.
+
+        :param db: The database session for accessing the database.
+
+        :param data_store_creation_request: The data store creation request containing basic information.
+
+        :param auth: The authorization token for the request.
+
+        :return: A data store creation response containing the data store ID, and a message.'
+      operationId: create_basic_data_store_data_stores_basic__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicDataStoreCreationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataStoreCreationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Create Basic Data Store Data Stores Basic  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Create Basic Data Store Data Stores Basic  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    DataStoreTestConnectionResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        site_role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Role
+        can_publish_workbooks:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Can Publish Workbooks
+      type: object
+      required:
+      - ok
+      title: DataStoreTestConnectionResponse
+    InstanceEdition:
+      type: string
+      enum:
+      - ENTERPRISE
+      - STANDARD
+      - BUSINESS_CRITICAL
+      - NA
+      title: InstanceEdition
+    DataStoreTypesResponse:
+      properties:
+        value:
+          type: string
+          title: Value
+        enabled:
+          type: boolean
+          title: Enabled
+        is_standalone:
+          type: boolean
+          title: Is Standalone
+      type: object
+      required:
+      - value
+      - enabled
+      - is_standalone
+      title: DataStoreTypesResponse
+    DataStoreWithMetadata:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Created By
+        connection_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Connection Info
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+        can_sync:
+          type: boolean
+          title: Can Sync
+          default: false
+        auto_sync:
+          type: boolean
+          title: Auto Sync
+          default: false
+        last_synced_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Synced At
+        last_sync_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Sync Status
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        instance_edition:
+          anyOf:
+          - $ref: '#/components/schemas/InstanceEdition'
+          - type: 'null'
+        is_organization_admin:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Organization Admin
+        auth_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auth Type
+      type: object
+      required:
+      - id
+      - name
+      - type
+      title: DataStoreWithMetadata
+    DataStoreCreationUsingFormRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          type: string
+          title: Description
+        account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account
+        user:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User
+        password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Password
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
+        databases:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Databases
+        warehouse:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse
+        key_pair:
+          anyOf:
+          - $ref: '#/components/schemas/KeyPair'
+          - type: 'null'
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/AuthType'
+          - type: 'null'
+          default: password
+        host:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Host
+        port:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Port
+        pat_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Secret
+        pat_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Name
+        site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Name
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        worksheet_location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worksheet Location
+        datastore_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Datastore Id
+        source_site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Site Name
+      type: object
+      required:
+      - name
+      - type
+      - description
+      title: DataStoreCreationUsingFormRequest
+    PrivateKeyType:
+      type: string
+      enum:
+      - pem
+      - der
+      title: PrivateKeyType
+    DataStoreUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        connection_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Connection Hash
+        key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key
+      type: object
+      title: DataStoreUpdateRequest
+    AvailableDatabasesResponse:
+      properties:
+        used_databases:
+          items:
+            type: string
+          type: array
+          title: Used Databases
+        unused_databases:
+          items:
+            type: string
+          type: array
+          title: Unused Databases
+      type: object
+      required:
+      - used_databases
+      - unused_databases
+      title: AvailableDatabasesResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DataStoreCreationResponse:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: DataStoreCreationResponse
+    AuthType:
+      type: string
+      enum:
+      - password
+      - key_pair
+      title: AuthType
+    BasicDataStoreCreationRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - name
+      - type
+      - description
+      title: BasicDataStoreCreationRequest
+    KeyPair:
+      properties:
+        type:
+          $ref: '#/components/schemas/PrivateKeyType'
+          default: pem
+        private_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Private Key
+        passphrase:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Passphrase
+      type: object
+      title: KeyPair
+    DataStoreDeletionResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: DataStoreDeletionResponse
+    DataStoreFetchDatabasesRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          type: string
+          title: Description
+        account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account
+        user:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User
+        password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Password
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        warehouse:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse
+        key_pair:
+          anyOf:
+          - $ref: '#/components/schemas/KeyPair'
+          - type: 'null'
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/AuthType'
+          - type: 'null'
+          default: password
+        host:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Host
+        port:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Port
+      type: object
+      required:
+      - name
+      - type
+      - description
+      title: DataStoreFetchDatabasesRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DataStoreUpdateResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Created By
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - id
+      - name
+      - type
+      - message
+      title: DataStoreUpdateResponse
+    DataStoreCreationRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          type: string
+          title: Description
+        connection_hash:
+          type: string
+          title: Connection Hash
+        connection_info:
+          type: string
+          title: Connection Info
+        key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key
+        jump_info:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Jump Info
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/AuthType'
+          - type: 'null'
+          default: password
+        key_pair:
+          anyOf:
+          - $ref: '#/components/schemas/KeyPair'
+          - type: 'null'
+      type: object
+      required:
+      - name
+      - type
+      - description
+      - connection_hash
+      - connection_info
+      title: DataStoreCreationRequest
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    DataStoreTestConnectionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          type: string
+          title: Description
+        account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account
+        user:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User
+        password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Password
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        warehouse:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse
+        host:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Host
+        port:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Port
+        pat_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Secret
+        pat_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Name
+        site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Name
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        key_pair:
+          anyOf:
+          - $ref: '#/components/schemas/KeyPair'
+          - type: 'null'
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/AuthType'
+          - type: 'null'
+          default: password
+        datastore_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Datastore Id
+        source_site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Site Name
+      type: object
+      required:
+      - name
+      - type
+      - description
+      title: DataStoreTestConnectionRequest
+    DataStoreFetchAllResponse:
+      properties:
+        data_stores:
+          items:
+            $ref: '#/components/schemas/DataStoreWithMetadata'
+          type: array
+          title: Data Stores
+      type: object
+      required:
+      - data_stores
+      title: DataStoreFetchAllResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

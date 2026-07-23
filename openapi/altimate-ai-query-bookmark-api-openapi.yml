@@ -1,0 +1,697 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS QUERY_BOOKMARK API
+  version: 0.1.0
+tags:
+- name: QUERY_BOOKMARK
+paths:
+  /query/bookmark/list:
+    get:
+      tags:
+      - QUERY_BOOKMARK
+      summary: Get Query Bookmark List
+      operationId: get_query_bookmark_list_query_bookmark_list_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tags_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: integer
+          - type: 'null'
+          title: Tags Ids
+      - name: tags_list
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Tags List
+      - name: privacy
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+          title: Privacy
+      - name: search_query
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search Query
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AllQueryBookmarkResponse'
+                title: Response Get Query Bookmark List Query Bookmark List Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Query Bookmark List Query Bookmark List Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Query Bookmark List Query Bookmark List Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /query/bookmark/:
+    get:
+      tags:
+      - QUERY_BOOKMARK
+      summary: Get Query Bookmark Pages
+      operationId: get_query_bookmark_pages_query_bookmark__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tags_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: integer
+          - type: 'null'
+          title: Tags Ids
+      - name: tags_list
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Tags List
+      - name: privacy
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+          title: Privacy
+      - name: search_query
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search Query
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_AllQueryBookmarkResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Query Bookmark Pages Query Bookmark  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Query Bookmark Pages Query Bookmark  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - QUERY_BOOKMARK
+      summary: Add Query Bookmark
+      operationId: add_query_bookmark_query_bookmark__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddQueryBookmarkRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Add Query Bookmark Query Bookmark  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Add Query Bookmark Query Bookmark  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /query/bookmark/{query_bookmark_id}:
+    delete:
+      tags:
+      - QUERY_BOOKMARK
+      summary: Remove Query Bookmark
+      operationId: remove_query_bookmark_query_bookmark__query_bookmark_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: query_bookmark_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Query Bookmark Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Remove Query Bookmark Query Bookmark  Query Bookmark Id  Delete
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Remove Query Bookmark Query Bookmark  Query Bookmark Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /query/bookmark/privacy/{altimate_bookmark_query_id}:
+    put:
+      tags:
+      - QUERY_BOOKMARK
+      summary: Update Privacy Query Bookmark
+      operationId: update_privacy_query_bookmark_query_bookmark_privacy__altimate_bookmark_query_id__put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: altimate_bookmark_query_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Altimate Bookmark Query Id
+      - name: privacy
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/PrivacySetting'
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Privacy Query Bookmark Query Bookmark Privacy  Altimate Bookmark Query Id  Put
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Privacy Query Bookmark Query Bookmark Privacy  Altimate Bookmark Query Id  Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /query/bookmark/tags:
+    get:
+      tags:
+      - QUERY_BOOKMARK
+      summary: Get Bookmark Tags
+      operationId: get_bookmark_tags_query_bookmark_tags_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueryBookmarkTagResponse'
+                title: Response Get Bookmark Tags Query Bookmark Tags Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Bookmark Tags Query Bookmark Tags Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Bookmark Tags Query Bookmark Tags Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    AddQueryBookmarkRequest:
+      properties:
+        bookmark_name:
+          type: string
+          title: Bookmark Name
+        raw_sql:
+          type: string
+          title: Raw Sql
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        adapter_type:
+          type: string
+          title: Adapter Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        tags_list:
+          items:
+            type: string
+          type: array
+          title: Tags List
+          default: []
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+        is_editable:
+          type: boolean
+          title: Is Editable
+          default: false
+      type: object
+      required:
+      - bookmark_name
+      - raw_sql
+      - compiled_sql
+      - adapter_type
+      title: AddQueryBookmarkRequest
+    Page_AllQueryBookmarkResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AllQueryBookmarkResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[AllQueryBookmarkResponse]
+    UserIndexResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        email:
+          type: string
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        is_active:
+          type: boolean
+          title: Is Active
+        is_verified:
+          type: boolean
+          title: Is Verified
+        is_invited:
+          type: boolean
+          title: Is Invited
+        is_onboarded:
+          type: boolean
+          title: Is Onboarded
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+        role_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role Title
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
+        deleted_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deleted At
+        last_login_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Login At
+        role_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role Source
+        has_role_conflict:
+          type: boolean
+          title: Has Role Conflict
+          default: false
+        sso_resolved_role_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sso Resolved Role Id
+        sso_resolved_role_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sso Resolved Role Title
+      type: object
+      required:
+      - id
+      - uuid
+      - email
+      - is_active
+      - is_verified
+      - is_invited
+      - is_onboarded
+      - created_at
+      title: UserIndexResponse
+    AllQueryBookmarkResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        description:
+          type: string
+          title: Description
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        raw_sql:
+          type: string
+          title: Raw Sql
+        name:
+          type: string
+          title: Name
+        adapter_type:
+          type: string
+          title: Adapter Type
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+        updated_on:
+          type: string
+          format: date-time
+          title: Updated On
+        tags:
+          items:
+            $ref: '#/components/schemas/QueryBookmarkTagResponse'
+          type: array
+          title: Tags
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+        created_by_user:
+          $ref: '#/components/schemas/UserIndexResponse'
+      type: object
+      required:
+      - id
+      - description
+      - compiled_sql
+      - raw_sql
+      - name
+      - adapter_type
+      - created_on
+      - updated_on
+      - tags
+      - privacy
+      - created_by_user
+      title: AllQueryBookmarkResponse
+    QueryBookmarkTagResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        tag:
+          type: string
+          title: Tag
+      type: object
+      required:
+      - id
+      - tag
+      title: QueryBookmarkTagResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

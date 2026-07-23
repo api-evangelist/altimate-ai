@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS SYNC API
+  version: 0.1.0
+tags:
+- name: SYNC
+paths:
+  /sync/{data_store_id}:
+    post:
+      tags:
+      - SYNC
+      summary: Sync Data Store
+      description: 'Sync metadata of a data store in the database.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :return: standard response.'
+      operationId: sync_data_store_sync__data_store_id__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: data_store_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Data Store Id
+      - name: sync_event_type
+        in: query
+        required: false
+        schema:
+          type: string
+          default: metadata
+          title: Sync Event Type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Sync Data Store Sync  Data Store Id  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Sync Data Store Sync  Data Store Id  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

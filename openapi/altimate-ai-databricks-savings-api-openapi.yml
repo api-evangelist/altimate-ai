@@ -1,0 +1,603 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Savings API
+  version: 0.1.0
+tags:
+- name: Databricks Savings
+paths:
+  /api/v1/databricks/savings/autonomous:
+    get:
+      tags:
+      - Databricks Savings
+      summary: Get autonomous savings
+      description: 'Get autonomous savings data.
+
+
+        Note: For Databricks, autonomous savings is always zero as there are
+
+        no automated optimization agents.'
+      operationId: get_autonomous_savings_api_v1_databricks_savings_autonomous_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutonomousSavingsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/savings/assisted:
+    get:
+      tags:
+      - Databricks Savings
+      summary: Get assisted savings
+      description: 'Get assisted savings from opportunities.
+
+
+        Shows potential savings from implementing identified opportunities.'
+      operationId: get_assisted_savings_api_v1_databricks_savings_assisted_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__savings__AssistedSavingsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/savings/assisted/tracked:
+    get:
+      tags:
+      - Databricks Savings
+      summary: Get tracked assisted savings from PostgreSQL
+      description: 'Get tracked assisted savings from PostgreSQL opportunity_saving_attribution table.
+
+
+        This endpoint provides actual realized savings from implemented opportunities,
+
+        following the same pattern as Snowflake''s assisted savings calculation.'
+      operationId: get_tracked_assisted_savings_api_v1_databricks_savings_assisted_tracked_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID (maps to instance_id)
+          title: Workspace Id
+        description: Filter by workspace ID (maps to instance_id)
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackedAssistedSavingsResponse'
+        '403':
+          description: Not authorized
+        '500':
+          description: Failed to get savings
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/savings/overall:
+    get:
+      tags:
+      - Databricks Savings
+      summary: Get overall savings summary
+      description: 'Get overall savings summary.
+
+
+        Combines autonomous (always 0 for Databricks) and assisted savings.'
+      operationId: get_overall_savings_api_v1_databricks_savings_overall_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsOverallResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/savings/overall/estimate:
+    get:
+      tags:
+      - Databricks Savings
+      summary: Get overall savings estimate with projections
+      description: 'Get overall savings estimate with future projections.
+
+
+        Projects potential savings based on current opportunity analysis.'
+      operationId: get_overall_savings_estimate_api_v1_databricks_savings_overall_estimate_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: savings_period
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Projection period: thisYear or next1Year'
+          default: next1Year
+          title: Savings Period
+        description: 'Projection period: thisYear or next1Year'
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsOverallEstimateResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    SavingsGraphItem:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: Period date (ISO format)
+        autonomous_savings:
+          type: number
+          title: Autonomous Savings
+          description: Autonomous savings (always 0 for Databricks)
+          default: 0
+        assisted_savings:
+          type: number
+          title: Assisted Savings
+          description: Assisted savings from opportunities
+          default: 0
+      type: object
+      required:
+      - date
+      title: SavingsGraphItem
+      description: Single data point in savings graph.
+    TrackedAssistedSavingsResponse:
+      properties:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Total money saved from implemented opportunities
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          description: Human-readable time savings
+          default: 0 days
+        opportunities:
+          type: integer
+          title: Opportunities
+          description: Count of opportunities contributing to savings
+          default: 0
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: TrackedAssistedSavingsResponse
+      description: Response model for tracked assisted savings from PostgreSQL (parity with Snowflake).
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SavingsOverallResponse:
+      properties:
+        total_savings:
+          type: number
+          title: Total Savings
+          description: Total savings (autonomous + assisted)
+        total_autonomous_savings:
+          type: number
+          title: Total Autonomous Savings
+          description: Autonomous savings (always 0 for Databricks)
+          default: 0
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Assisted savings from opportunities
+          default: 0
+        min_total_autonomous_savings:
+          type: number
+          title: Min Total Autonomous Savings
+          description: Min autonomous savings range
+          default: 0
+        max_total_autonomous_savings:
+          type: number
+          title: Max Total Autonomous Savings
+          description: Max autonomous savings range
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          description: Total time saved
+          default: 0 days
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      required:
+      - total_savings
+      title: SavingsOverallResponse
+      description: Response model for overall savings endpoint.
+    AutonomousSavingsResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/SavingsGraphItem'
+          type: array
+          title: Graph
+          description: Graph data (always empty for Databricks)
+          default: []
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: AutonomousSavingsResponse
+      description: Response model for autonomous savings endpoint.
+    SavingsOverallEstimateResponse:
+      properties:
+        total_savings:
+          type: number
+          title: Total Savings
+          description: Total per-month savings
+        total_autonomous_savings:
+          type: number
+          title: Total Autonomous Savings
+          description: Per-month autonomous savings
+          default: 0
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Per-month assisted savings
+          default: 0
+        min_total_autonomous_savings:
+          type: number
+          title: Min Total Autonomous Savings
+          description: Min autonomous savings
+          default: 0
+        max_total_autonomous_savings:
+          type: number
+          title: Max Total Autonomous Savings
+          description: Max autonomous savings
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          description: Per-month time saved
+          default: 0 days
+        total_savings_estimate:
+          type: number
+          title: Total Savings Estimate
+          description: Projected total savings
+          default: 0
+        total_autonomous_savings_estimate:
+          type: number
+          title: Total Autonomous Savings Estimate
+          description: Projected autonomous savings
+          default: 0
+        total_assisted_savings_estimate:
+          type: number
+          title: Total Assisted Savings Estimate
+          description: Projected assisted savings
+          default: 0
+        total_time_saved_estimate:
+          type: string
+          title: Total Time Saved Estimate
+          description: Projected time saved
+          default: 0 days
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      required:
+      - total_savings
+      title: SavingsOverallEstimateResponse
+      description: Response model for overall savings estimate endpoint (future projections).
+    app__schemas__databricks__savings__AssistedSavingsResponse:
+      properties:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Total money saved from implemented opportunities
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          description: Human-readable time savings
+          default: 0 days
+        opportunities:
+          type: integer
+          title: Opportunities
+          description: Count of opportunities contributing to savings
+          default: 0
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: AssistedSavingsResponse
+      description: Response model for assisted savings endpoint.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

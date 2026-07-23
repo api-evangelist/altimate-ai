@@ -1,0 +1,548 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Datamate Integrations API
+  version: 0.1.0
+tags:
+- name: Datamate Integrations
+paths:
+  /datamate_integrations/custom:
+    get:
+      tags:
+      - Datamate Integrations
+      summary: Get Custom Datamate Integrations Paginated
+      operationId: get_custom_datamate_integrations_paginated_datamate_integrations_custom_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CustomDatamateIntegrationModel_'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Datamate Integrations
+      summary: Create Custom Datamate Integration
+      operationId: create_custom_datamate_integration_datamate_integrations_custom_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDatamateIntegrationModel'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDatamateIntegrationModel'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamate_integrations/custom/{integration_id}:
+    post:
+      tags:
+      - Datamate Integrations
+      summary: Update Custom Datamate Integration
+      operationId: update_custom_datamate_integration_datamate_integrations_custom__integration_id__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: integration_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Integration Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDatamateIntegrationModel'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Datamate Integrations
+      summary: Delete Custom Datamate Integration
+      operationId: delete_custom_datamate_integration_datamate_integrations_custom__integration_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: integration_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Integration Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Integration not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamate_integrations/:
+    get:
+      tags:
+      - Datamate Integrations
+      summary: Get Datamate Integrations
+      description: 'Get all available datamate integrations.
+
+        Returns a list of integration types and their configurations.
+
+        Filters out DBT integration if not enabled for the tenant.'
+      operationId: get_datamate_integrations_datamate_integrations__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DatamateIntegrationResponse'
+                type: array
+                title: Response Get Datamate Integrations Datamate Integrations  Get
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    InputParameter:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        required:
+          type: boolean
+          title: Required
+        key:
+          type: string
+          title: Key
+        description:
+          type: string
+          title: Description
+        encrypted:
+          type: boolean
+          title: Encrypted
+          default: false
+        options:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Options
+        defaultValue:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Defaultvalue
+      type: object
+      required:
+      - name
+      - type
+      - required
+      - key
+      - description
+      title: InputParameter
+    CustomDatamateIntegrationModel:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        type:
+          $ref: '#/components/schemas/app__constants__IntegrationType'
+        config:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/InputParameter'
+            type: array
+          - type: 'null'
+          title: Config
+        tools:
+          items:
+            $ref: '#/components/schemas/DatamateToolInfo'
+          type: array
+          title: Tools
+          default: []
+        toolConfig:
+          items:
+            $ref: '#/components/schemas/IntegrationConfigItem'
+          type: array
+          title: Toolconfig
+        inputs:
+          items:
+            $ref: '#/components/schemas/IntegrationInput'
+          type: array
+          title: Inputs
+      type: object
+      required:
+      - name
+      - type
+      - toolConfig
+      - inputs
+      title: CustomDatamateIntegrationModel
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Page_CustomDatamateIntegrationModel_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CustomDatamateIntegrationModel'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CustomDatamateIntegrationModel]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    IntegrationConfigItem:
+      properties:
+        key:
+          type: string
+          title: Key
+        value:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Value
+      type: object
+      required:
+      - key
+      title: IntegrationConfigItem
+    ConfigVariant:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        config:
+          items:
+            $ref: '#/components/schemas/InputParameter'
+          type: array
+          title: Config
+      type: object
+      required:
+      - id
+      - name
+      - config
+      title: ConfigVariant
+    SupportedTechStacks:
+      type: string
+      enum:
+      - dbt
+      - snowflake
+      - bigquery
+      - postgresql
+      - github
+      - jira
+      - altimate
+      - airflow
+      - databricks
+      - dagster
+      title: SupportedTechStacks
+    MCPIntegrationType:
+      type: string
+      enum:
+      - api
+      - code
+      - extension
+      - tool
+      - mcp
+      title: MCPIntegrationType
+    IntegrationInput:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        required:
+          type: boolean
+          title: Required
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - name
+      - type
+      - required
+      title: IntegrationInput
+    app__constants__IntegrationType:
+      type: string
+      enum:
+      - code
+      - api
+      - mcp
+      title: IntegrationType
+    DatamateIntegrationResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        id:
+          type: string
+          title: Id
+        type:
+          $ref: '#/components/schemas/MCPIntegrationType'
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        tools:
+          items:
+            $ref: '#/components/schemas/DatamateToolInfo'
+          type: array
+          title: Tools
+        techStacks:
+          items:
+            $ref: '#/components/schemas/SupportedTechStacks'
+          type: array
+          title: Techstacks
+        description:
+          type: string
+          title: Description
+        url:
+          type: string
+          title: Url
+        config:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/InputParameter'
+            type: array
+          - type: 'null'
+          title: Config
+        toolConfig:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/IntegrationConfigItem'
+              - $ref: '#/components/schemas/InputParameter'
+            type: array
+          - type: 'null'
+          title: Toolconfig
+        additionalConfigVariants:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ConfigVariant'
+            type: array
+          - type: 'null'
+          title: Additionalconfigvariants
+        inputs:
+          anyOf:
+          - items: {}
+            type: array
+          - type: 'null'
+          title: Inputs
+        supportsLocalConnectionTest:
+          type: boolean
+          title: Supportslocalconnectiontest
+          default: false
+        supportsSaasConnectionTest:
+          type: boolean
+          title: Supportssaasconnectiontest
+          default: false
+      type: object
+      required:
+      - name
+      - id
+      - type
+      - tools
+      - techStacks
+      - description
+      - url
+      title: DatamateIntegrationResponse
+    DatamateToolInfo:
+      properties:
+        key:
+          type: string
+          title: Key
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        enable_all:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Enable All
+      type: object
+      required:
+      - key
+      - name
+      title: DatamateToolInfo
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

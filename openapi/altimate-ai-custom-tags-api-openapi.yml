@@ -1,0 +1,531 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS CUSTOM_TAGS API
+  version: 0.1.0
+tags:
+- name: CUSTOM_TAGS
+paths:
+  /custom/tags/:
+    post:
+      tags:
+      - CUSTOM_TAGS
+      summary: Create Custom Tag
+      description: Create a new custom tag
+      operationId: create_custom_tag_custom_tags__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTagCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTagResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - CUSTOM_TAGS
+      summary: Get Custom Tags
+      description: "Get all custom tags with optional entity filter and pagination\n\nArgs:\n    search: Optional search string to filter tags by display_name"
+      operationId: get_custom_tags_custom_tags__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CustomTagResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /custom/tags/{tag_rk}:
+    get:
+      tags:
+      - CUSTOM_TAGS
+      summary: Get Custom Tag
+      description: Get a specific custom tag by ID
+      operationId: get_custom_tag_custom_tags__tag_rk__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tag_rk
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Tag Rk
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTagResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - CUSTOM_TAGS
+      summary: Delete Custom Tag
+      description: Delete a custom tag by rk
+      operationId: delete_custom_tag_custom_tags__tag_rk__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tag_rk
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Tag Rk
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - CUSTOM_TAGS
+      summary: Update Custom Tag
+      description: Update a custom tag by rk
+      operationId: update_custom_tag_custom_tags__tag_rk__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tag_rk
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Tag Rk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTagUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTagResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /custom/tags/associate:
+    post:
+      tags:
+      - CUSTOM_TAGS
+      summary: Create Tag Association
+      description: Associate a tag with a user and entity
+      operationId: create_tag_association_custom_tags_associate_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTagAssociationCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Create Tag Association Custom Tags Associate Post
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Create Tag Association Custom Tags Associate Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Create Tag Association Custom Tags Associate Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /custom/tags/entity/:
+    get:
+      tags:
+      - CUSTOM_TAGS
+      summary: Get Entity Tags
+      description: Get all tags associated with a specific entity based on EntityAssociation
+      operationId: get_entity_tags_custom_tags_entity__get
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityAssociation'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CustomTagResponse'
+                type: array
+                title: Response Get Entity Tags Custom Tags Entity  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /custom/tags/associate/{tag_rk}:
+    delete:
+      tags:
+      - CUSTOM_TAGS
+      summary: Delete Tag Association
+      description: Delete a tag association from a user and entity
+      operationId: delete_tag_association_custom_tags_associate__tag_rk__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tag_rk
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Tag Rk
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityAssociation'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Delete Tag Association Custom Tags Associate  Tag Rk  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CustomTagAssociationCreate:
+      properties:
+        tag_rk:
+          type: string
+          title: Tag Rk
+        entity:
+          $ref: '#/components/schemas/EntityAssociation'
+      type: object
+      required:
+      - tag_rk
+      - entity
+      title: CustomTagAssociationCreate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Page_CustomTagResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CustomTagResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CustomTagResponse]
+    CustomTagResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        date_created:
+          type: string
+          format: date-time
+          title: Date Created
+        tag_type:
+          type: string
+          title: Tag Type
+        is_deleted:
+          type: boolean
+          title: Is Deleted
+        created_by:
+          type: integer
+          title: Created By
+        updated_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Updated By
+        usage:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Usage
+          default: 0
+      type: object
+      required:
+      - rk
+      - date_created
+      - tag_type
+      - is_deleted
+      - created_by
+      title: CustomTagResponse
+    CustomTagCreate:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tag_type:
+          type: string
+          title: Tag Type
+      type: object
+      required:
+      - rk
+      - tag_type
+      title: CustomTagCreate
+    CustomTagUpdate:
+      properties:
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tag_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tag Type
+        is_deleted:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Deleted
+      type: object
+      title: CustomTagUpdate
+    EntityAssociation:
+      properties:
+        datastore_rk:
+          type: string
+          title: Datastore Rk
+        cluster_rk:
+          type: string
+          title: Cluster Rk
+        schema_rk:
+          type: string
+          title: Schema Rk
+        table_rk:
+          type: string
+          title: Table Rk
+        column_rk:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Column Rk
+      type: object
+      title: EntityAssociation
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,249 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DEMO API
+  version: 0.1.0
+tags:
+- name: DEMO
+paths:
+  /demo/create-demo-session:
+    post:
+      tags:
+      - DEMO
+      summary: Create Demo Session
+      description: "Create or retrieve a demo user and generate a temporary session ID.\n\nThis endpoint creates a dedicated demo user in the demo tenant for the calling tenant.\nEach tenant gets exactly one demo user (1-to-1 mapping) with email: demo@{calling_tenant}.\nReturns a session ID that expires in 30 minutes and can be used once to authenticate.\n\nReturns:\n    DemoSessionResponse: Contains the demo tenant frontend URL and session ID"
+      operationId: create_demo_session_demo_create_demo_session_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoSessionResponse'
+        '404':
+          description: Demo tenant not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Create Demo Session Demo Create Demo Session Post
+        '500':
+          description: Failed to create demo session
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 500 Create Demo Session Demo Create Demo Session Post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /demo/authenticate:
+    post:
+      tags:
+      - DEMO
+      summary: Authenticate Demo Session
+      description: "Authenticate a demo session using session_id.\n\nThis endpoint validates the session_id and returns the demo user with auth token\nif the session is valid (created within last 30 minutes).\nThe session is deleted after successful authentication.\nCan only be called from the demo tenant and only works for demo accounts.\n\nArgs:\n    session_id: The session ID returned from create-demo-session\n\nReturns:\n    UserLoginOut: User information with auth token (same as /login)"
+      operationId: authenticate_demo_session_demo_authenticate_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '403':
+          description: Forbidden - only accessible from demo tenant or not a demo account
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Authenticate Demo Session Demo Authenticate Post
+        '404':
+          description: Session not found or user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Authenticate Demo Session Demo Authenticate Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    UserLoginOut:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        email:
+          type: string
+          title: Email
+        auth_token:
+          type: string
+          title: Auth Token
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        is_onboarded:
+          type: boolean
+          title: Is Onboarded
+        tz:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tz
+        lang:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lang
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        role_FK:
+          anyOf:
+          - $ref: '#/components/schemas/RolePermissionFull'
+          - type: 'null'
+        has_role_conflict:
+          type: boolean
+          title: Has Role Conflict
+          default: false
+        sso_resolved_role_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sso Resolved Role Title
+      type: object
+      required:
+      - email
+      - auth_token
+      - is_onboarded
+      - uuid
+      title: UserLoginOut
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RolePermissionFull:
+      properties:
+        role_name:
+          type: string
+          title: Role Name
+        role_description:
+          type: string
+          title: Role Description
+        role_title:
+          type: string
+          title: Role Title
+        is_custom:
+          type: boolean
+          title: Is Custom
+        permission:
+          items:
+            $ref: '#/components/schemas/PermissionsFull'
+          type: array
+          title: Permission
+      type: object
+      required:
+      - role_name
+      - role_description
+      - role_title
+      - is_custom
+      - permission
+      title: RolePermissionFull
+    DemoSessionResponse:
+      properties:
+        demoUrl:
+          type: string
+          title: Demourl
+        sessionId:
+          type: string
+          title: Sessionid
+      type: object
+      required:
+      - demoUrl
+      - sessionId
+      title: DemoSessionResponse
+    PermissionsFull:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
+      type: object
+      required:
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

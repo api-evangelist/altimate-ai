@@ -1,0 +1,99 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS PROMPT_ENHANCER API
+  version: 0.1.0
+tags:
+- name: PROMPT_ENHANCER
+paths:
+  /prompt_enhancer/enhance-prompt:
+    post:
+      tags:
+      - PROMPT_ENHANCER
+      summary: Enhance a user prompt with agent context
+      description: Takes a user question and agent name, returns an enhanced prompt with agent-specific context for preview.
+      operationId: enhance_prompt_endpoint_prompt_enhancer_enhance_prompt_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnhancePromptRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnhancePromptResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    EnhancePromptRequest:
+      properties:
+        user_prompt:
+          type: string
+          title: User Prompt
+          description: The original user question to enhance
+        agent_name:
+          type: string
+          title: Agent Name
+          description: Type of the agent for enhancement
+      type: object
+      required:
+      - user_prompt
+      - agent_name
+      title: EnhancePromptRequest
+      description: Request schema for enhancing a prompt.
+    EnhancePromptResponse:
+      properties:
+        enhanced_prompt:
+          type: string
+          title: Enhanced Prompt
+          description: The enhanced/clarified question
+      type: object
+      required:
+      - enhanced_prompt
+      title: EnhancePromptResponse
+      description: Response schema for enhanced prompt.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

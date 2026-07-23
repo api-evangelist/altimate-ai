@@ -1,0 +1,592 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Users API
+  version: 0.1.0
+tags:
+- name: Users
+paths:
+  /business_intelligence/users:
+    get:
+      tags:
+      - Users
+      summary: Get user activity and creation report with insights
+      description: 'Get user activity and creation patterns with insights.
+
+        Returns paginated users with filtering and sorting capabilities.
+
+
+        Available sorting fields:
+
+        - email: User email address
+
+        - views: User views for specified time period
+
+        - dashboards_created: Total dashboards created
+
+        - workbooks_created: Total workbooks created
+
+        - views_received_30d: Views received on user''s dashboards (30d)
+
+        - last_activity: Last activity date (only sorting, no filtering)
+
+
+        Filtering options:
+
+        - views_period: Time period for views column (30, 90, or 180 days, default: 90)
+
+        - start_date/end_date: Alternative to views_period - date range will be converted to period
+
+        - user: Filter by user email(s)
+
+        - license_type: Filter by license type(s)
+
+        - insights: Filter by insight types
+
+
+        Insights include:
+
+        - properly using Creator license: High creation + high views
+
+        - could be Explorer or Viewer: Low/no creation but high views
+
+        - candidate for archiving: Very low activity
+
+        - definite archiving candidate: No recent activity
+
+        - monitor for potential downgrade: High creation but declining views'
+      operationId: fetch_user_reports_business_intelligence_users_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 10
+          title: Page Size
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: email
+          title: Sort By
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: asc
+          title: Sort
+      - name: views_period
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Time period for views (30, 90, or 180 days)
+          default: 90
+          title: Views Period
+        description: Time period for views (30, 90, or 180 days)
+      - name: user
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: User
+      - name: license_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: License Type
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Insights
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: instance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Instance Name
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Opportunity Name
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_BIUserReportItem_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/users/summary:
+    get:
+      tags:
+      - Users
+      summary: Get user summary statistics
+      description: 'Get summary statistics for user report including:
+
+        - Total Users: All unique users (viewers + owners)
+
+        - Active Users (30d): Users who viewed dashboards in last 30 days
+
+        - Dashboard Creators: Users who have created dashboards'
+      operationId: fetch_user_summary_business_intelligence_users_summary_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/BIUserSummaryItem'
+                type: array
+                title: Response Fetch User Summary Business Intelligence Users Summary Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /business_intelligence/users/filters:
+    get:
+      tags:
+      - Users
+      summary: Get BI User report filters
+      description: 'Get available filter options for user reports.
+
+
+        Returns available values for:
+
+        - user: List of user emails
+
+        - license_type: List of license types
+
+        - insights: List of available user insight types
+
+        - instance_name: List of instance names
+
+        - opportunity_name: List of opportunity names'
+      operationId: get_bi_user_filters_business_intelligence_users_filters_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  items:
+                    type: string
+                  type: array
+                type: object
+                title: Response Get Bi User Filters Business Intelligence Users Filters Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /business_intelligence/users/get_by_rk:
+    get:
+      tags:
+      - Users
+      summary: Get user by user_rk
+      description: 'Get a specific user by their user_rk.
+
+        Returns user activity and creation patterns with insights.'
+      operationId: fetch_user_by_rk_business_intelligence_users_get_by_rk_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: user_rk
+        in: query
+        required: true
+        schema:
+          type: string
+          description: User RK to retrieve
+          title: User Rk
+        description: User RK to retrieve
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BIUserReportItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /business_intelligence/users/download:
+    get:
+      tags:
+      - Users
+      summary: Download all users data as CSV
+      description: 'Download all users data as CSV.
+
+        Accepts the same filtering parameters as the /users endpoint.
+
+        Each insight type becomes a separate column with Yes/No values.'
+      operationId: download_users_csv_business_intelligence_users_download_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: email
+          title: Sort By
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: asc
+          title: Sort
+      - name: views_period
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Time period for views (30, 90, or 180 days)
+          default: 90
+          title: Views Period
+        description: Time period for views (30, 90, or 180 days)
+      - name: user
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: User
+      - name: license_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: License Type
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Insights
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: instance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Instance Name
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Opportunity Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    UserInsightItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        reasons:
+          items:
+            type: string
+          type: array
+          title: Reasons
+      type: object
+      required:
+      - name
+      - reasons
+      title: UserInsightItem
+      description: Structured insight with name and reasons
+    BIUserSummaryItem:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: integer
+          title: Value
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+      type: object
+      required:
+      - label
+      - value
+      title: BIUserSummaryItem
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Page_BIUserReportItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BIUserReportItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[BIUserReportItem]
+    BIUserReportItem:
+      properties:
+        email:
+          type: string
+          title: Email
+        views:
+          type: integer
+          title: Views
+        dashboards_created:
+          type: integer
+          title: Dashboards Created
+        workbooks_created:
+          type: integer
+          title: Workbooks Created
+        insights:
+          items:
+            anyOf:
+            - type: string
+            - $ref: '#/components/schemas/UserInsightItem'
+          type: array
+          title: Insights
+        last_activity:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Activity
+        full_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Full Name
+        views_received:
+          type: integer
+          title: Views Received
+          default: 0
+        current_license_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current License Type
+        instance_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Name
+        user_rk:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Rk
+        opportunities:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Opportunities
+          default: []
+      type: object
+      required:
+      - email
+      - views
+      - dashboards_created
+      - workbooks_created
+      - insights
+      title: BIUserReportItem
+      description: User report item representing user activity and creation patterns
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

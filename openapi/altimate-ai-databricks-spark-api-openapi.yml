@@ -1,0 +1,658 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Spark API
+  version: 0.1.0
+tags:
+- name: Databricks Spark
+paths:
+  /api/v1/databricks/spark:
+    get:
+      tags:
+      - Databricks Spark
+      summary: Get all Spark applications
+      description: Get list of all Spark applications with flag counts.
+      operationId: get_spark_applications_api_v1_databricks_spark_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkApplicationsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/spark/{application_id}:
+    get:
+      tags:
+      - Databricks Spark
+      summary: Get Spark application details
+      description: Get detailed information for a specific Spark application.
+      operationId: get_spark_application_api_v1_databricks_spark__application_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Application Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkApplicationSummary'
+        '403':
+          description: Not authorized
+        '404':
+          description: Application not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/spark/{application_id}/stages:
+    get:
+      tags:
+      - Databricks Spark
+      summary: Get Spark application stages
+      description: Get stages for a Spark application with aggregated task metrics.
+      operationId: get_spark_stages_api_v1_databricks_spark__application_id__stages_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Application Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkStagesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/spark/{application_id}/task-stats:
+    get:
+      tags:
+      - Databricks Spark
+      summary: Get per-stage task statistics
+      description: Get per-stage task statistics with percentiles.
+      operationId: get_spark_task_stats_api_v1_databricks_spark__application_id__task_stats_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Application Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkTaskStatsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/spark/{application_id}/config:
+    get:
+      tags:
+      - Databricks Spark
+      summary: Get Spark application configuration
+      description: Get Spark configuration key-values for an application.
+      operationId: get_spark_config_api_v1_databricks_spark__application_id__config_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Application Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkConfigResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/spark/{application_id}/plan-analysis:
+    get:
+      tags:
+      - Databricks Spark
+      summary: Get Spark plan analysis flags
+      description: Get plan analysis flags and summary for a Spark application.
+      operationId: get_spark_plan_analysis_api_v1_databricks_spark__application_id__plan_analysis_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Application Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkPlanAnalysisResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SparkTaskStats:
+      properties:
+        stage_id:
+          type: integer
+          title: Stage Id
+        task_count:
+          type: integer
+          title: Task Count
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        min_duration_ms:
+          type: number
+          title: Min Duration Ms
+          default: 0
+        q1_duration_ms:
+          type: number
+          title: Q1 Duration Ms
+          default: 0
+        p50_duration_ms:
+          type: number
+          title: P50 Duration Ms
+          default: 0
+        q3_duration_ms:
+          type: number
+          title: Q3 Duration Ms
+          default: 0
+        p90_duration_ms:
+          type: number
+          title: P90 Duration Ms
+          default: 0
+        max_duration_ms:
+          type: number
+          title: Max Duration Ms
+          default: 0
+        gc_ratio_pct:
+          type: number
+          title: Gc Ratio Pct
+          default: 0
+        shuffle_read_bytes:
+          type: number
+          title: Shuffle Read Bytes
+          default: 0
+        shuffle_write_bytes:
+          type: number
+          title: Shuffle Write Bytes
+          default: 0
+        spill_memory_bytes:
+          type: number
+          title: Spill Memory Bytes
+          default: 0
+        spill_disk_bytes:
+          type: number
+          title: Spill Disk Bytes
+          default: 0
+        skew_ratio:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Skew Ratio
+      type: object
+      required:
+      - stage_id
+      title: SparkTaskStats
+      description: Per-stage task statistics with percentiles.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SparkApplicationsResponse:
+      properties:
+        applications:
+          items:
+            $ref: '#/components/schemas/SparkApplicationSummary'
+          type: array
+          title: Applications
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of applications
+      type: object
+      required:
+      - applications
+      - total_count
+      title: SparkApplicationsResponse
+      description: Response for listing Spark applications.
+    SparkPlanFlag:
+      properties:
+        sql_execution_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sql Execution Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        flag_name:
+          type: string
+          title: Flag Name
+      type: object
+      required:
+      - flag_name
+      title: SparkPlanFlag
+      description: A single plan analysis flag.
+    SparkStagesResponse:
+      properties:
+        stages:
+          items:
+            $ref: '#/components/schemas/SparkStage'
+          type: array
+          title: Stages
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of stages
+      type: object
+      required:
+      - stages
+      - total_count
+      title: SparkStagesResponse
+      description: Response for listing Spark stages.
+    SparkApplicationSummary:
+      properties:
+        application_id:
+          type: string
+          title: Application Id
+        cluster_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Id
+        total_jobs:
+          type: integer
+          title: Total Jobs
+          default: 0
+        total_stages:
+          type: integer
+          title: Total Stages
+          default: 0
+        total_tasks:
+          type: integer
+          title: Total Tasks
+          default: 0
+        duration_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Duration Ms
+        success:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Success
+        spark_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spark Version
+        log_date:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Log Date
+        flag_count:
+          type: integer
+          title: Flag Count
+          default: 0
+      type: object
+      required:
+      - application_id
+      title: SparkApplicationSummary
+      description: Summary information for a Spark application.
+    SparkConfigItem:
+      properties:
+        config_category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Category
+        config_key:
+          type: string
+          title: Config Key
+        config_value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Value
+      type: object
+      required:
+      - config_key
+      title: SparkConfigItem
+      description: A single Spark configuration key-value pair.
+    SparkTaskStatsResponse:
+      properties:
+        stages:
+          items:
+            $ref: '#/components/schemas/SparkTaskStats'
+          type: array
+          title: Stages
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of stages
+      type: object
+      required:
+      - stages
+      - total_count
+      title: SparkTaskStatsResponse
+      description: Response for per-stage task statistics.
+    SparkStage:
+      properties:
+        stage_id:
+          type: integer
+          title: Stage Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        num_tasks:
+          type: integer
+          title: Num Tasks
+          default: 0
+        submission_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Submission Time
+        completion_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completion Time
+        duration_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Duration Ms
+        gc_time_ms:
+          type: number
+          title: Gc Time Ms
+          default: 0
+        shuffle_read_bytes:
+          type: number
+          title: Shuffle Read Bytes
+          default: 0
+        shuffle_write_bytes:
+          type: number
+          title: Shuffle Write Bytes
+          default: 0
+        spill_memory_bytes:
+          type: number
+          title: Spill Memory Bytes
+          default: 0
+        spill_disk_bytes:
+          type: number
+          title: Spill Disk Bytes
+          default: 0
+        failed_tasks:
+          type: integer
+          title: Failed Tasks
+          default: 0
+        skew_ratio:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Skew Ratio
+      type: object
+      required:
+      - stage_id
+      title: SparkStage
+      description: Stage information with aggregated task metrics.
+    SparkPlanAnalysisSummary:
+      properties:
+        flag_name:
+          type: string
+          title: Flag Name
+        count:
+          type: integer
+          title: Count
+          default: 0
+      type: object
+      required:
+      - flag_name
+      title: SparkPlanAnalysisSummary
+      description: Summary counts for plan analysis flags.
+    SparkConfigResponse:
+      properties:
+        configs:
+          items:
+            $ref: '#/components/schemas/SparkConfigItem'
+          type: array
+          title: Configs
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of config items
+      type: object
+      required:
+      - configs
+      - total_count
+      title: SparkConfigResponse
+      description: Response for Spark application configuration.
+    SparkPlanAnalysisResponse:
+      properties:
+        flags:
+          items:
+            $ref: '#/components/schemas/SparkPlanFlag'
+          type: array
+          title: Flags
+        summary:
+          items:
+            $ref: '#/components/schemas/SparkPlanAnalysisSummary'
+          type: array
+          title: Summary
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of flags
+      type: object
+      required:
+      - flags
+      - summary
+      - total_count
+      title: SparkPlanAnalysisResponse
+      description: Response for Spark plan analysis flags.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

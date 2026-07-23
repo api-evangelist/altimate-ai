@@ -1,0 +1,586 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Connections API
+  version: 0.1.0
+tags:
+- name: Databricks Connections
+paths:
+  /api/v1/databricks/connections/test:
+    post:
+      tags:
+      - Databricks Connections
+      summary: Test Databricks connection credentials
+      operationId: test_connection_api_v1_databricks_connections_test_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/DatabricksConnectionTestRequestPAT'
+              - $ref: '#/components/schemas/DatabricksConnectionTestRequestOAuthM2M'
+              discriminator:
+                propertyName: auth_type
+                mapping:
+                  pat: '#/components/schemas/DatabricksConnectionTestRequestPAT'
+                  oauth_m2m: '#/components/schemas/DatabricksConnectionTestRequestOAuthM2M'
+              title: Request
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksConnectionTestResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/connections:
+    post:
+      tags:
+      - Databricks Connections
+      summary: Create a new Databricks connection
+      operationId: create_connection_api_v1_databricks_connections_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/DatabricksConnectionCreatePAT'
+              - $ref: '#/components/schemas/DatabricksConnectionCreateOAuthM2M'
+              discriminator:
+                propertyName: auth_type
+                mapping:
+                  pat: '#/components/schemas/DatabricksConnectionCreatePAT'
+                  oauth_m2m: '#/components/schemas/DatabricksConnectionCreateOAuthM2M'
+              title: Request
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksConnectionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Databricks Connections
+      summary: List all Databricks connections
+      operationId: list_connections_api_v1_databricks_connections_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatabricksConnectionResponse'
+                title: Response List Connections Api V1 Databricks Connections Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/connections/{connection_id}:
+    get:
+      tags:
+      - Databricks Connections
+      summary: Get a Databricks connection by ID
+      operationId: get_connection_api_v1_databricks_connections__connection_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksConnectionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Databricks Connections
+      summary: Delete a Databricks connection
+      operationId: delete_connection_api_v1_databricks_connections__connection_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/connections/{connection_id}/validate:
+    post:
+      tags:
+      - Databricks Connections
+      summary: Re-validate an existing connection
+      operationId: validate_connection_api_v1_databricks_connections__connection_id__validate_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksConnectionTestResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    DatabricksConnectionResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        server_hostname:
+          type: string
+          title: Server Hostname
+        http_path:
+          type: string
+          title: Http Path
+        auth_type:
+          $ref: '#/components/schemas/DatabricksAuthType'
+          default: pat
+        azure_tenant_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Azure Tenant Id
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        metastore_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Metastore Id
+        is_valid:
+          type: boolean
+          title: Is Valid
+        last_validated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Validated At
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+        created_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Created By
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+      type: object
+      required:
+      - id
+      - name
+      - server_hostname
+      - http_path
+      - is_valid
+      - created_at
+      - last_modified_at
+      title: DatabricksConnectionResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DatabricksConnectionCreateOAuthM2M:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        auth_type:
+          type: string
+          const: oauth_m2m
+          title: Auth Type
+        client_id:
+          type: string
+          minLength: 1
+          title: Client Id
+        client_secret:
+          type: string
+          minLength: 1
+          title: Client Secret
+        azure_tenant_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Azure Tenant Id
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - name
+      - auth_type
+      - client_id
+      - client_secret
+      title: DatabricksConnectionCreateOAuthM2M
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DatabricksConnectionTestRequestPAT:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path
+        name:
+          type: string
+          title: Name
+          default: connection_test
+        auth_type:
+          type: string
+          const: pat
+          title: Auth Type
+          default: pat
+        access_token:
+          type: string
+          minLength: 1
+          title: Access Token
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - access_token
+      title: DatabricksConnectionTestRequestPAT
+    DatabricksConnectionCreatePAT:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        auth_type:
+          type: string
+          const: pat
+          title: Auth Type
+          default: pat
+        access_token:
+          type: string
+          minLength: 1
+          title: Access Token
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - name
+      - access_token
+      title: DatabricksConnectionCreatePAT
+    DatabricksConnectionTestResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        catalogs:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Catalogs
+        current_catalog:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Catalog
+        metastore_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Metastore Id
+      type: object
+      required:
+      - ok
+      title: DatabricksConnectionTestResponse
+    DatabricksAuthType:
+      type: string
+      enum:
+      - pat
+      - oauth_m2m
+      title: DatabricksAuthType
+      description: 'Stored auth methods for Databricks connections.
+
+
+        Entra-managed service principals are not a separate type — they are
+
+        ``oauth_m2m`` rows whose ``azure_tenant_id`` lives in
+
+        ``connection_info``; its presence routes token minting to Microsoft
+
+        Entra ID instead of the workspace OIDC endpoint.'
+    DatabricksConnectionTestRequestOAuthM2M:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path
+        name:
+          type: string
+          title: Name
+          default: connection_test
+        auth_type:
+          type: string
+          const: oauth_m2m
+          title: Auth Type
+        client_id:
+          type: string
+          minLength: 1
+          title: Client Id
+        client_secret:
+          type: string
+          minLength: 1
+          title: Client Secret
+        azure_tenant_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Azure Tenant Id
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - auth_type
+      - client_id
+      - client_secret
+      title: DatabricksConnectionTestRequestOAuthM2M
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

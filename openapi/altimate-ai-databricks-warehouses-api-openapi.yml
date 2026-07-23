@@ -1,0 +1,2117 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Warehouses API
+  version: 0.1.0
+tags:
+- name: Databricks Warehouses
+paths:
+  /api/v1/databricks/warehouses/filters:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get filter options for warehouses
+      description: Get distinct filter values for warehouse filtering.
+      operationId: get_warehouse_filters_api_v1_databricks_warehouses_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search prefix for name filters
+          title: Prefix
+        description: Search prefix for name filters
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseFilterOptions'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get all Databricks warehouses
+      description: Get list of all warehouses.
+      operationId: get_warehouses_api_v1_databricks_warehouses_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start date (inclusive) for cost / utilization metrics. Defaults to 30 days before `end_date`.
+          title: Start Date
+        description: Start date (inclusive) for cost / utilization metrics. Defaults to 30 days before `end_date`.
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date (inclusive). Defaults to today.
+          title: End Date
+        description: End date (inclusive). Defaults to today.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort column name. Valid columns: warehouse_name, workspace_name, warehouse_type, warehouse_size, min_num_clusters, max_num_clusters, auto_stop_mins, last_state_change, estimated_cost, auto_tune_savings (both sorted with nulls last).'
+          title: Sortattribute
+        description: 'Sort column name. Valid columns: warehouse_name, workspace_name, warehouse_type, warehouse_size, min_num_clusters, max_num_clusters, auto_stop_mins, last_state_change, estimated_cost, auto_tune_savings (both sorted with nulls last).'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'''
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'''
+      - name: warehouse_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by warehouse names
+          title: Warehouse Names
+        description: Filter by warehouse names
+      - name: warehouse_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by warehouse types (CLASSIC, PRO, SERVERLESS)
+          title: Warehouse Types
+        description: Filter by warehouse types (CLASSIC, PRO, SERVERLESS)
+      - name: warehouse_sizes
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by warehouse sizes
+          title: Warehouse Sizes
+        description: Filter by warehouse sizes
+      - name: workspace_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more workspace IDs
+          title: Workspace Ids
+        description: Filter by one or more workspace IDs
+      - name: auto_tune_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Filter by auto-tune status: ''enabled'' or ''disabled''.'
+          title: Auto Tune Status
+        description: 'Filter by auto-tune status: ''enabled'' or ''disabled''.'
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehousesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/total-savings:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get total auto-tune savings across SQL warehouses
+      description: 'Get the SQL warehouses list page''s "Total Savings" cards — Realised
+
+        Savings, Estimated Annual Savings, and Total Opportunities.
+
+
+        Declared before `/{warehouse_id}` so FastAPI''s declaration-order route
+
+        matching doesn''t swallow this path as a warehouse_id lookup.
+
+
+        Note: unlike the warehouses list, this aggregate only supports a single
+
+        ``workspace_id`` — ``get_warehouse_savings_totals_by_type`` (the
+
+        underlying repo method, shared with ``DatabricksSavingsService``''s
+
+        other overall-savings endpoints) takes one workspace, not a list.'
+      operationId: get_warehouses_total_savings_api_v1_databricks_warehouses_total_savings_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehousesTotalSavingsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/cost-trends:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get warehouse cost trends by SKU
+      description: Get warehouse (SQL) cost trends over time broken down by SKU.
+      operationId: get_warehouse_cost_trends_api_v1_databricks_warehouses_cost_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Time granularity (day, week, month)
+          default: day
+          title: Granularity
+        description: Time granularity (day, week, month)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseCostTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/serverless-candidates:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get serverless migration candidates
+      description: Get warehouses that are candidates for serverless migration.
+      operationId: get_serverless_candidates_api_v1_databricks_warehouses_serverless_candidates_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: max_auto_stop_mins
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Maximum auto-stop time (minutes) for candidates. Warehouses with `auto_stop_mins <= this value` are returned — lower values yield a stricter filter. Defaults to 10 when neither this nor the deprecated `min_auto_stop_mins` alias is sent.
+          title: Max Auto Stop Mins
+        description: Maximum auto-stop time (minutes) for candidates. Warehouses with `auto_stop_mins <= this value` are returned — lower values yield a stricter filter. Defaults to 10 when neither this nor the deprecated `min_auto_stop_mins` alias is sent.
+      - name: min_auto_stop_mins
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: DEPRECATED — use `max_auto_stop_mins`. Kept for backward compat.
+          deprecated: true
+          title: Min Auto Stop Mins
+        description: DEPRECATED — use `max_auto_stop_mins`. Kept for backward compat.
+        deprecated: true
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__warehouse__ServerlessCandidatesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get warehouse details
+      description: Get detailed information for a specific warehouse.
+      operationId: get_warehouse_detail_api_v1_databricks_warehouses__warehouse_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseDetail'
+        '403':
+          description: Not authorized
+        '404':
+          description: Warehouse not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/events:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get warehouse events
+      description: Get events for a specific warehouse.
+      operationId: get_warehouse_events_api_v1_databricks_warehouses__warehouse_id__events_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: event_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by event type (e.g., SCALED_UP, SCALED_DOWN)
+          title: Event Type
+        description: Filter by event type (e.g., SCALED_UP, SCALED_DOWN)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseEventsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/state-history:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get warehouse state history
+      description: Get state change history for a specific warehouse.
+      operationId: get_warehouse_state_history_api_v1_databricks_warehouses__warehouse_id__state_history_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseStateHistoryResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/cost:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get warehouse cost data
+      description: Get cost data for a specific warehouse.
+      operationId: get_warehouse_cost_api_v1_databricks_warehouses__warehouse_id__cost_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for cost data
+          title: Start Date
+        description: Start date for cost data
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for cost data
+          title: End Date
+        description: End date for cost data
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Time granularity (day, week, month)
+          default: day
+          title: Granularity
+        description: Time granularity (day, week, month)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__warehouse__WarehouseCostResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/auto-tune/savings-trends:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get per-day auto-tune savings (realized + potential) for a SQL warehouse
+      description: 'Get realized and potential auto-tune savings per day for a SQL
+
+        warehouse, scoped to the warehouse''s auto-stop tuning.'
+      operationId: get_warehouse_auto_tune_savings_trends_api_v1_databricks_warehouses__warehouse_id__auto_tune_savings_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Databricks instance id
+          title: Instance Id
+        description: Databricks instance id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseAutoTuneSavingsTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/auto-tune/savings-summary:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get realised savings range and estimated annual savings for a SQL warehouse
+      description: 'Get the "Realised Savings" range and "Estimated Annual Savings"
+
+        figure shown above a SQL warehouse''s detail tabs. Realised savings are
+
+        summed over ``[start_date, end_date]``; the annual estimate annualizes a
+
+        trailing 29-day actual+potential run-rate independent of that range.'
+      operationId: get_warehouse_auto_tune_savings_summary_api_v1_databricks_warehouses__warehouse_id__auto_tune_savings_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Databricks instance id
+          title: Instance Id
+        description: Databricks instance id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseAutoTuneSavingsSummaryResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/running-stats-trends:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get warehouse running stats trends
+      description: Get daily active/idle time trends for a specific warehouse.
+      operationId: get_warehouse_running_stats_trends_api_v1_databricks_warehouses__warehouse_id__running_stats_trends_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__warehouse__WarehouseRunningStatsTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/utilization-efficiency:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get warehouse utilization efficiency
+      description: Get daily utilization efficiency (0-1) for a specific warehouse.
+      operationId: get_warehouse_utilization_efficiency_api_v1_databricks_warehouses__warehouse_id__utilization_efficiency_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseUtilizationEfficiencyResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/warehouses/{warehouse_id}/query-metrics-timeline:
+    get:
+      tags:
+      - Databricks Warehouses
+      summary: Get time-bucketed query metrics timeline for a warehouse
+      description: 'Get the time-bucketed metrics timeline powering the SQL warehouse
+
+        Monitoring page''s stacked charts (latency, queueing, scan size, cache
+
+        hit rate, spill).
+
+
+        Hybrid-sourced: historical buckets come from the ClickHouse mirror,
+
+        and the fresh tail the mirror hasn''t ingested yet (up to ~24h) is
+
+        read live from Databricks system tables via the Statement Execution
+
+        API against the tenant''s ingestion SQL warehouse — this will
+
+        auto-start that warehouse if it is currently suspended. A live-tail
+
+        failure degrades to a ClickHouse-only response rather than erroring.
+
+
+        The lookback window is capped at ``MAX_MONITORING_LOOKBACK_DAYS`` days
+
+        regardless of what''s requested — ``end_date`` is clamped to today and
+
+        ``start_date`` is clamped to ``end_date - MAX_MONITORING_LOOKBACK_DAYS``
+
+        (silently, not a 400; the frontend''s date-range picker clamps to the
+
+        same bound).'
+      operationId: get_warehouse_query_metrics_timeline_api_v1_databricks_warehouses__warehouse_id__query_metrics_timeline_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Warehouse Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''hour'' or ''day'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''hour'' or ''day'''
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Databricks instance id
+          title: Instance Id
+        description: Databricks instance id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseQueryMetricsTimelineResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    WarehouseRunningStatsPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        active_seconds:
+          type: integer
+          title: Active Seconds
+          default: 0
+        idle_seconds:
+          type: integer
+          title: Idle Seconds
+          default: 0
+      type: object
+      required:
+      - period
+      title: WarehouseRunningStatsPoint
+      description: Single data point for warehouse running stats timeseries.
+    WarehouseAutoTuneSavingsTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        cost_saved:
+          type: number
+          title: Cost Saved
+          default: 0.0
+        dbus_saved:
+          type: number
+          title: Dbus Saved
+          default: 0.0
+        min_cost_saved:
+          type: number
+          title: Min Cost Saved
+          default: 0.0
+        max_cost_saved:
+          type: number
+          title: Max Cost Saved
+          default: 0.0
+      type: object
+      required:
+      - period
+      title: WarehouseAutoTuneSavingsTrendPoint
+      description: 'One period''s auto-tune savings for a SQL warehouse.
+
+
+        ``min_cost_saved``/``max_cost_saved`` are the range underlying
+
+        ``cost_saved`` for this period+savings_type — used to render a min-max
+
+        range in the Auto Tune chart tooltip (e.g. "$128.91 - $154.2"). They
+
+        default to 0.0 so existing callers that don''t need the range are
+
+        unaffected.'
+    WarehousesResponse:
+      properties:
+        warehouses:
+          items:
+            $ref: '#/components/schemas/WarehouseSummary'
+          type: array
+          title: Warehouses
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of warehouses
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Items per page
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - warehouses
+      - total_count
+      title: WarehousesResponse
+      description: Response for listing warehouses.
+    app__schemas__databricks__warehouse__ServerlessCandidatesResponse:
+      properties:
+        candidates:
+          items:
+            $ref: '#/components/schemas/ServerlessCandidate'
+          type: array
+          title: Candidates
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - candidates
+      - total_count
+      title: ServerlessCandidatesResponse
+      description: Response for serverless candidates.
+    WarehouseAutoTuneSavingsSummaryResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        realized_savings:
+          $ref: '#/components/schemas/WarehouseRealizedSavings'
+        estimated_annual_savings:
+          type: number
+          title: Estimated Annual Savings
+          default: 0.0
+        currency:
+          type: string
+          title: Currency
+          default: USD
+      type: object
+      required:
+      - warehouse_id
+      - realized_savings
+      title: WarehouseAutoTuneSavingsSummaryResponse
+      description: 'Realised savings range + a derived annualized estimate for the two
+
+        stat blocks shown above the SQL warehouse detail tabs.
+
+
+        ``realized_savings`` sums ``actual`` savings over the caller''s
+
+        ``start_date``/``end_date`` window. ``estimated_annual_savings`` is
+
+        independent of that window: it annualizes a trailing 29-day
+
+        actual+potential run-rate (capped at today), mirroring
+
+        ``DatabricksSavingsService.get_overall_savings_estimate``''s
+
+        methodology, scoped to this one warehouse. Sourced entirely from
+
+        ClickHouse ``dbx_auto_tune_cost_savings`` — no Postgres insights table.'
+    WarehouseFilterOptions:
+      properties:
+        warehouse_names:
+          items:
+            type: string
+          type: array
+          title: Warehouse Names
+        warehouse_types:
+          items:
+            type: string
+          type: array
+          title: Warehouse Types
+        warehouse_sizes:
+          items:
+            type: string
+          type: array
+          title: Warehouse Sizes
+      type: object
+      title: WarehouseFilterOptions
+      description: Filter options for SQL warehouses.
+    app__schemas__databricks__warehouse__WarehouseRunningStatsTrendsResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        trends:
+          items:
+            $ref: '#/components/schemas/WarehouseRunningStatsPoint'
+          type: array
+          title: Trends
+          description: Daily active/idle time data points
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day)
+        total_active_seconds:
+          type: integer
+          title: Total Active Seconds
+          description: Total active time
+          default: 0
+        total_idle_seconds:
+          type: integer
+          title: Total Idle Seconds
+          description: Total idle time
+          default: 0
+      type: object
+      required:
+      - warehouse_id
+      - trends
+      - granularity
+      title: WarehouseRunningStatsTrendsResponse
+      description: Response for warehouse running stats trends over time.
+    WarehouseSummary:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        warehouse_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Type
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        min_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Num Clusters
+        max_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Num Clusters
+        auto_stop_mins:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Auto Stop Mins
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Clusters
+        num_active_sessions:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Active Sessions
+        last_state_change:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last State Change
+        total_dbus:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Dbus
+        estimated_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Cost
+        tags:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Tags
+        median_queueing_time_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Median Queueing Time Ms
+        median_execution_time_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Median Execution Time Ms
+        median_total_time_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Median Total Time Ms
+        active_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Active Seconds
+        idle_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Idle Seconds
+        query_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Query Count
+        realized_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Realized Savings
+        estimated_annualized_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Annualized Savings
+        is_auto_tune_enabled:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Is Auto Tune Enabled
+      type: object
+      required:
+      - warehouse_id
+      - warehouse_name
+      - workspace_id
+      title: WarehouseSummary
+      description: Summary information for a warehouse.
+    UtilizationEfficiencyPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        utilization:
+          type: number
+          title: Utilization
+          description: Utilization efficiency (0-1 scale)
+          default: 0
+      type: object
+      required:
+      - period
+      title: UtilizationEfficiencyPoint
+      description: Single data point for utilization efficiency timeseries.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WarehouseDetail:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        warehouse_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Type
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        min_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Num Clusters
+        max_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Num Clusters
+        auto_stop_mins:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Auto Stop Mins
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Clusters
+        num_active_sessions:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Active Sessions
+        last_state_change:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last State Change
+        creator_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator Name
+        spot_instance_policy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spot Instance Policy
+        enable_photon:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Photon
+        enable_serverless_compute:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Serverless Compute
+        is_auto_tune_enabled:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Is Auto Tune Enabled
+      type: object
+      required:
+      - warehouse_id
+      - warehouse_name
+      - workspace_id
+      title: WarehouseDetail
+      description: Detailed information for a warehouse.
+    WarehouseEventsResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        events:
+          items:
+            $ref: '#/components/schemas/WarehouseEvent'
+          type: array
+          title: Events
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - warehouse_id
+      - events
+      - total_count
+      title: WarehouseEventsResponse
+      description: Response for warehouse events.
+    ServerlessCandidate:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Type
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        auto_stop_mins:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Auto Stop Mins
+        enable_serverless_compute:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Serverless Compute
+      type: object
+      required:
+      - warehouse_id
+      - warehouse_name
+      - workspace_id
+      title: ServerlessCandidate
+      description: A warehouse that is a candidate for serverless migration.
+    WarehouseAutoTuneSavingsTrendsResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        actual:
+          items:
+            $ref: '#/components/schemas/WarehouseAutoTuneSavingsTrendPoint'
+          type: array
+          title: Actual
+          default: []
+        potential:
+          items:
+            $ref: '#/components/schemas/WarehouseAutoTuneSavingsTrendPoint'
+          type: array
+          title: Potential
+          default: []
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - warehouse_id
+      - granularity
+      title: WarehouseAutoTuneSavingsTrendsResponse
+      description: 'Per-period auto-tune savings for a SQL warehouse, split into realized
+
+        and potential.
+
+
+        ``actual`` holds savings while an applied auto-tune recommendation (e.g.
+
+        a lowered auto-stop) was in effect; ``potential`` holds the savings an
+
+        active, not-yet-applied recommendation would have earned over the same
+
+        window. Sourced from ClickHouse ``dbx_auto_tune_cost_savings``.'
+    WarehouseEvent:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        event_type:
+          type: string
+          title: Event Type
+        event_time:
+          type: string
+          format: date-time
+          title: Event Time
+        cluster_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cluster Count
+      type: object
+      required:
+      - warehouse_id
+      - event_type
+      - event_time
+      title: WarehouseEvent
+      description: A single warehouse event.
+    SavingsStatValue:
+      properties:
+        value:
+          type: number
+          title: Value
+          default: 0.0
+        display:
+          type: boolean
+          title: Display
+          default: true
+      type: object
+      title: SavingsStatValue
+      description: 'A single stat-card value with a display-gate flag.
+
+
+        Mirrors the Snowflake infra page''s ``top_info`` item shape
+
+        (``TopInfoItem`` in ``app/schemas/summary_page.py``) so the FE''s
+
+        existing stat-card component logic ports over unchanged: ``display``
+
+        lets a backend that can''t cleanly compute a figure hide the card
+
+        instead of showing a misleading 0.'
+    WarehouseRealizedSavings:
+      properties:
+        total:
+          type: number
+          title: Total
+          default: 0.0
+        min:
+          type: number
+          title: Min
+          default: 0.0
+        max:
+          type: number
+          title: Max
+          default: 0.0
+      type: object
+      title: WarehouseRealizedSavings
+      description: 'Realised (``actual``) auto-tune savings for a SQL warehouse over a
+
+        date range: a total plus the min/max range across the underlying
+
+        per-period estimates.'
+    WarehouseUtilizationEfficiencyResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        trends:
+          items:
+            $ref: '#/components/schemas/UtilizationEfficiencyPoint'
+          type: array
+          title: Trends
+          description: Daily utilization efficiency data points
+        average_utilization:
+          type: number
+          title: Average Utilization
+          description: Average utilization efficiency over the period
+          default: 0
+      type: object
+      required:
+      - warehouse_id
+      - trends
+      title: WarehouseUtilizationEfficiencyResponse
+      description: Response for warehouse utilization efficiency over time.
+    WarehouseQueryMetricsTimelineResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        granularity:
+          type: string
+          title: Granularity
+        timeline:
+          items:
+            $ref: '#/components/schemas/WarehouseQueryMetricsTimelinePoint'
+          type: array
+          title: Timeline
+          default: []
+        ch_data_through:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ch Data Through
+        live_tail_used:
+          type: boolean
+          title: Live Tail Used
+          default: false
+      type: object
+      required:
+      - warehouse_id
+      - granularity
+      title: WarehouseQueryMetricsTimelineResponse
+      description: 'Response for the SQL warehouse Monitoring page''s metrics timeline.
+
+
+        ``ch_data_through`` is the observed ClickHouse-mirror freshness cutover
+
+        used to route the query-history source between ClickHouse and a live
+
+        Databricks-system-tables tail (``None`` if that mirror has never
+
+        ingested a row for this tenant). ``live_tail_used`` is true if the
+
+        query-metrics source actually pulled rows from the live tail for this
+
+        response. Additive fields — the frontend schema tolerates extra
+
+        optional keys.'
+    WarehouseCostTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/WarehouseCostTrendItem'
+          type: array
+          title: Trends
+          description: Cost trends broken down by warehouse type
+        warehouse_types:
+          items:
+            type: string
+          type: array
+          title: Warehouse Types
+          description: List of warehouse types present in the data
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day, week, month)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs in period
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total estimated cost
+          default: 0
+      type: object
+      required:
+      - trends
+      - warehouse_types
+      - granularity
+      title: WarehouseCostTrendsResponse
+      description: Response for warehouse cost trends (aggregated across all warehouses).
+    WarehouseStateChange:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        state:
+          type: string
+          title: State
+        change_time:
+          type: string
+          format: date-time
+          title: Change Time
+        num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Clusters
+      type: object
+      required:
+      - warehouse_id
+      - warehouse_name
+      - state
+      - change_time
+      title: WarehouseStateChange
+      description: A single state change record.
+    WarehouseCostPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      title: WarehouseCostPoint
+      description: Single data point for warehouse cost timeseries.
+    WarehouseQueryMetricsTimelinePoint:
+      properties:
+        bucket_start:
+          type: string
+          title: Bucket Start
+        query_count:
+          type: integer
+          title: Query Count
+          default: 0
+        latency_p50_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Latency P50 Ms
+        latency_p95_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Latency P95 Ms
+        exec_time_avg_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Exec Time Avg Ms
+        exec_time_p90_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Exec Time P90 Ms
+        queue_cold_start_p95_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Queue Cold Start P95 Ms
+        queue_at_capacity_p95_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Queue At Capacity P95 Ms
+        bytes_scanned:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Bytes Scanned
+        result_cache_hit_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Result Cache Hit Pct
+        disk_cache_hit_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Disk Cache Hit Pct
+        spilled_query_count:
+          type: integer
+          title: Spilled Query Count
+          default: 0
+        spilled_bytes:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Spilled Bytes
+      type: object
+      required:
+      - bucket_start
+      title: WarehouseQueryMetricsTimelinePoint
+      description: 'One time bucket of the SQL warehouse Monitoring page''s charts.
+
+
+        Sourced from the query-history timeline only — DBU/cost and
+
+        config-change (audit) events were both dropped from this endpoint
+
+        (the Monitoring page''s DBUs chart and config-change markers were
+
+        removed) so every bucket here comes from exactly one source; there''s
+
+        no more "billing-only bucket" concept to null-fill.'
+    app__schemas__databricks__warehouse__WarehouseCostResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+        daily_average_dbus:
+          type: number
+          title: Daily Average Dbus
+          default: 0
+        daily_average_cost:
+          type: number
+          title: Daily Average Cost
+          default: 0
+        timeseries:
+          items:
+            $ref: '#/components/schemas/WarehouseCostPoint'
+          type: array
+          title: Timeseries
+          default: []
+      type: object
+      required:
+      - warehouse_id
+      title: WarehouseCostResponse
+      description: Response for warehouse cost data.
+    WarehouseCostTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+        warehouse_type:
+          type: string
+          title: Warehouse Type
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      - warehouse_type
+      title: WarehouseCostTrendItem
+      description: Single data point for warehouse cost trends by warehouse type.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WarehouseStateHistoryResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        history:
+          items:
+            $ref: '#/components/schemas/WarehouseStateChange'
+          type: array
+          title: History
+      type: object
+      required:
+      - warehouse_id
+      - history
+      title: WarehouseStateHistoryResponse
+      description: Response for warehouse state history.
+    WarehousesTotalSavingsResponse:
+      properties:
+        realised_savings:
+          $ref: '#/components/schemas/SavingsStatValue'
+        estimated_annual_savings:
+          $ref: '#/components/schemas/SavingsStatValue'
+        total_opportunities:
+          $ref: '#/components/schemas/SavingsStatValue'
+      type: object
+      required:
+      - realised_savings
+      - estimated_annual_savings
+      - total_opportunities
+      title: WarehousesTotalSavingsResponse
+      description: 'Response for the SQL warehouses list page''s "Total Savings" section
+
+        — the Databricks counterpart to Snowflake''s warehouse cost summary
+
+        cards (Realised Savings / Estimated Annual Savings / Total
+
+        Opportunities).'
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

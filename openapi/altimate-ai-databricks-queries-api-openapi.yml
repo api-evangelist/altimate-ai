@@ -1,0 +1,2711 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Queries API
+  version: 0.1.0
+tags:
+- name: Databricks Queries
+paths:
+  /api/v1/databricks/queries/filters:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get filter options for queries
+      description: Get distinct filter values for query filtering.
+      operationId: get_query_filters_api_v1_databricks_queries_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search prefix for name filters
+          title: Prefix
+        description: Search prefix for name filters
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Start date for filtering (YYYY-MM-DD)
+          title: Start Date
+        description: Start date for filtering (YYYY-MM-DD)
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: End date for filtering (YYYY-MM-DD)
+          title: End Date
+        description: End date for filtering (YYYY-MM-DD)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryFilterOptions'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/filters/users:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Search query-history user names by prefix
+      description: 'Server-side search for query-history user names — a dedicated single
+
+        list so the typed prefix only scans user names, never the other
+
+        ``/queries/filters`` lists.'
+      operationId: search_query_users_api_v1_databricks_queries_filters_users_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Substring to match user names against
+          title: Prefix
+        description: Substring to match user names against
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date
+          title: End Date
+        description: End date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryUserNamesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/filters/computes:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Search the unified compute list by prefix
+      description: 'Server-side search for the unified compute list (warehouse + cluster +
+
+        pipeline) — a dedicated single list so the typed prefix only scans
+
+        computes, never the other ``/queries/filters`` lists.'
+      operationId: search_query_computes_api_v1_databricks_queries_filters_computes_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Substring to match compute display labels against
+          title: Prefix
+        description: Substring to match compute display labels against
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date
+          title: End Date
+        description: End date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryComputesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/filters/workspaces:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Search query-history workspaces by name prefix
+      description: 'Server-side search for query-history workspaces — a dedicated single
+
+        list so the typed prefix only scans workspaces, never the other
+
+        ``/queries/filters`` lists. A tenant can have thousands of workspaces.'
+      operationId: search_query_workspaces_api_v1_databricks_queries_filters_workspaces_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Substring to match workspace names against
+          title: Prefix
+        description: Substring to match workspace names against
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date
+          title: End Date
+        description: End date
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryWorkspacesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/filters/statement-ids:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Search statement IDs for the Query ID filter dropdown
+      description: 'Server-side search for statement IDs — backs the Query ID filter dropdown.
+
+
+        Matches statement IDs by substring so the dropdown never loads the full
+
+        ID list; results are paginated.'
+      operationId: search_query_statement_ids_api_v1_databricks_queries_filters_statement_ids_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Substring to match statement IDs against. Searches kick in once the typed text reaches 2 characters; shorter inputs return an empty list without scanning ClickHouse so the dropdown's open-with-empty-prefix probe is free.
+          title: Prefix
+        description: Substring to match statement IDs against. Searches kick in once the typed text reaches 2 characters; shorter inputs return an empty list without scanning ClickHouse so the dropdown's open-with-empty-prefix probe is free.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Number of IDs per page
+          default: 25
+          title: Page Size
+        description: Number of IDs per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryStatementIdsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/summary:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get query summary metrics
+      description: 'Get summary metrics for queries.
+
+
+        Accepts the same filter set as ``GET /queries/unified`` so the summary
+
+        cards reflect the exact rows the queries table renders for a given
+
+        filter selection.'
+      operationId: get_query_summary_api_v1_databricks_queries_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by single workspace ID (legacy URL pre-selection)
+          title: Workspace Id
+        description: Filter by single workspace ID (legacy URL pre-selection)
+      - name: workspace_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more workspace IDs (column multi-select)
+          title: Workspace Ids
+        description: Filter by one or more workspace IDs (column multi-select)
+      - name: warehouse_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more warehouse IDs (legacy column multi-select). Prefer ``compute_id`` for new FE bindings — it covers warehouse + cluster + pipeline in one parameter. Entries here are merged with any ``compute_id`` warehouse selections before the BE applies the filter.
+          title: Warehouse Id
+        description: Filter by one or more warehouse IDs (legacy column multi-select). Prefer ``compute_id`` for new FE bindings — it covers warehouse + cluster + pipeline in one parameter. Entries here are merged with any ``compute_id`` warehouse selections before the BE applies the filter.
+      - name: compute_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 'Unified Compute filter: one or more ``{kind}:{id}`` selections from the dropdown, where ``kind`` is ``warehouse``, ``cluster``, or ``pipeline``. A mixed selection is ORed (rows of any selected kind match). Entries with an unknown ``kind`` or empty id are silently skipped so this stays forward-compatible if the FE adopts a new kind ahead of the BE.'
+          title: Compute Id
+        description: 'Unified Compute filter: one or more ``{kind}:{id}`` selections from the dropdown, where ``kind`` is ``warehouse``, ``cluster``, or ``pipeline``. A mixed selection is ORed (rows of any selected kind match). Entries with an unknown ``kind`` or empty id are silently skipped so this stays forward-compatible if the FE adopts a new kind ahead of the BE.'
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by insight tags (slow_query, disk_spill, full_table_scan, failed)
+          title: Insights
+        description: Filter by insight tags (slow_query, disk_spill, full_table_scan, failed)
+      - name: statement_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by statement type
+          title: Statement Type
+        description: Filter by statement type
+      - name: user_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more user names. Single-value calls (e.g. the User-list drilldown URL ``?user_name=alice``) continue to work — FastAPI parses the single value as a one-element list and the BE applies the matching IN-clause filter. Multi-select dropdowns send ``?user_name=alice&user_name=bob``.
+          title: User Name
+        description: Filter by one or more user names. Single-value calls (e.g. the User-list drilldown URL ``?user_name=alice``) continue to work — FastAPI parses the single value as a one-element list and the BE applies the matching IN-clause filter. Multi-select dropdowns send ``?user_name=alice&user_name=bob``.
+      - name: statement_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more exact query (statement) IDs
+          title: Statement Ids
+        description: Filter by one or more exact query (statement) IDs
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuerySummaryResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/trends:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get query trends
+      description: Get query trends over time.
+      operationId: get_query_trends_api_v1_databricks_queries_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/trends/cost-by-user:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get query cost trends by user
+      description: Get query cost trends over time broken down by user.
+      operationId: get_query_cost_trends_by_user_api_v1_databricks_queries_trends_cost_by_user_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: top_n
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 10
+          minimum: 1
+          description: Number of top users to show
+          default: 5
+          title: Top N
+        description: Number of top users to show
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryCostTrendsByUserResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get queries
+      description: Get queries with filters.
+      operationId: get_queries_api_v1_databricks_queries_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: statement_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by statement type
+          title: Statement Type
+        description: Filter by statement type
+      - name: execution_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by execution status (FINISHED, FAILED)
+          title: Execution Status
+        description: Filter by execution status (FINISHED, FAILED)
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of queries
+          default: 100
+          title: Limit
+        description: Maximum number of queries
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/slow:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get slow queries
+      description: Get slow queries (queries exceeding duration threshold).
+      operationId: get_slow_queries_api_v1_databricks_queries_slow_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: min_duration_ms
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Minimum duration in milliseconds
+          default: 60000
+          title: Min Duration Ms
+        description: Minimum duration in milliseconds
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of queries
+          default: 100
+          title: Limit
+        description: Maximum number of queries
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SlowQueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/spills:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get queries with memory spills
+      description: Get queries with memory spills.
+      operationId: get_spill_queries_api_v1_databricks_queries_spills_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: min_spill_bytes
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Minimum spill bytes (default 1MB)
+          default: 1048576
+          title: Min Spill Bytes
+        description: Minimum spill bytes (default 1MB)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of queries
+          default: 100
+          title: Limit
+        description: Maximum number of queries
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpillQueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/full-scans:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get queries with large data reads
+      description: Get queries with large data reads (potential full scans).
+      operationId: get_full_scan_queries_api_v1_databricks_queries_full_scans_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: min_read_bytes
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Minimum bytes read (default 1GB)
+          default: 1073741824
+          title: Min Read Bytes
+        description: Minimum bytes read (default 1GB)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of queries
+          default: 100
+          title: Limit
+        description: Maximum number of queries
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullScanQueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/failed:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get failed queries
+      description: Get failed queries.
+      operationId: get_failed_queries_api_v1_databricks_queries_failed_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of queries
+          default: 100
+          title: Limit
+        description: Maximum number of queries
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedQueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/breakdown/statement-type:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get query breakdown by statement type
+      description: Get query counts and stats grouped by statement type.
+      operationId: get_statement_type_breakdown_api_v1_databricks_queries_breakdown_statement_type_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementTypeBreakdownResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/breakdown/user:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get query breakdown by user
+      description: Get query counts and stats grouped by user.
+      operationId: get_user_query_breakdown_api_v1_databricks_queries_breakdown_user_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of users
+          default: 50
+          title: Limit
+        description: Maximum number of users
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserQueryBreakdownResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/unified:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get unified queries with insights
+      description: 'Get unified queries with computed insight tags.
+
+
+        Each query is automatically tagged with applicable insights:
+
+        - slow_query: Query duration >= 60 seconds
+
+        - disk_spill: Memory spill >= 1MB
+
+        - full_table_scan: Data read >= 1GB
+
+        - failed: Query failed to execute'
+      operationId: get_unified_queries_api_v1_databricks_queries_unified_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by single workspace ID (legacy URL pre-selection)
+          title: Workspace Id
+        description: Filter by single workspace ID (legacy URL pre-selection)
+      - name: workspace_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more workspace IDs (column multi-select)
+          title: Workspace Ids
+        description: Filter by one or more workspace IDs (column multi-select)
+      - name: warehouse_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more warehouse IDs (legacy column multi-select). Prefer ``compute_id`` for new FE bindings — it covers warehouse + cluster + pipeline in one parameter. Entries here are merged with any ``compute_id`` warehouse selections before the BE applies the filter.
+          title: Warehouse Id
+        description: Filter by one or more warehouse IDs (legacy column multi-select). Prefer ``compute_id`` for new FE bindings — it covers warehouse + cluster + pipeline in one parameter. Entries here are merged with any ``compute_id`` warehouse selections before the BE applies the filter.
+      - name: compute_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 'Unified Compute filter: one or more ``{kind}:{id}`` selections from the dropdown, where ``kind`` is ``warehouse``, ``cluster``, or ``pipeline``. A mixed selection is ORed (rows of any selected kind match). Entries with an unknown ``kind`` or empty id are silently skipped so this stays forward-compatible if the FE adopts a new kind ahead of the BE.'
+          title: Compute Id
+        description: 'Unified Compute filter: one or more ``{kind}:{id}`` selections from the dropdown, where ``kind`` is ``warehouse``, ``cluster``, or ``pipeline``. A mixed selection is ORed (rows of any selected kind match). Entries with an unknown ``kind`` or empty id are silently skipped so this stays forward-compatible if the FE adopts a new kind ahead of the BE.'
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by insight tags (slow_query, disk_spill, full_table_scan, failed)
+          title: Insights
+        description: Filter by insight tags (slow_query, disk_spill, full_table_scan, failed)
+      - name: statement_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by statement type
+          title: Statement Type
+        description: Filter by statement type
+      - name: user_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more user names. Single-value calls (e.g. the User-list drilldown URL ``?user_name=alice``) continue to work — FastAPI parses the single value as a one-element list and the BE applies the matching IN-clause filter. Multi-select dropdowns send ``?user_name=alice&user_name=bob``.
+          title: User Name
+        description: Filter by one or more user names. Single-value calls (e.g. the User-list drilldown URL ``?user_name=alice``) continue to work — FastAPI parses the single value as a one-element list and the BE applies the matching IN-clause filter. Multi-select dropdowns send ``?user_name=alice&user_name=bob``.
+      - name: statement_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by one or more exact query (statement) IDs
+          title: Statement Ids
+        description: Filter by one or more exact query (statement) IDs
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Number of items per page
+          default: 100
+          title: Page Size
+        description: Number of items per page
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Column to sort by. Allowed: estimated_cost_usd, start_time, total_duration_ms, read_bytes, spilled_local_bytes, statement_type, user_name, warehouse_name, workspace_name.'
+          default: estimated_cost_usd
+          title: Sort By
+        description: 'Column to sort by. Allowed: estimated_cost_usd, start_time, total_duration_ms, read_bytes, spilled_local_bytes, statement_type, user_name, warehouse_name, workspace_name.'
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Sort order: ''asc'' or ''desc'''
+          default: desc
+          title: Sort Order
+        description: 'Sort order: ''asc'' or ''desc'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnifiedQueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/{statement_id}:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get query detail by statement ID
+      description: Get detailed information for a specific query by statement ID.
+      operationId: get_query_detail_api_v1_databricks_queries__statement_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: statement_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Statement Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryDetailResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: Query not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/queries/{statement_id}/sql-lineage:
+    get:
+      tags:
+      - Databricks Queries
+      summary: Get SQL lineage visualization for a query
+      description: Get SQL lineage visualization data for a specific query.
+      operationId: get_query_sql_lineage_api_v1_databricks_queries__statement_id__sql_lineage_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: statement_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Statement Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__query__QuerySqlLineageResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: Query not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    SlowQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        min_duration_ms:
+          type: integer
+          title: Min Duration Ms
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - queries
+      - min_duration_ms
+      - total_count
+      title: SlowQueriesResponse
+      description: Response for slow queries.
+    QueryStatementIdsResponse:
+      properties:
+        statement_ids:
+          items:
+            type: string
+          type: array
+          title: Statement Ids
+          default: []
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: 'Forward-looking page upper bound for the FE filter dropdown''s ``page < pages`` check. NOT a true total (no COUNT runs): equals the current page when no further results remain, current page + 1 while more do. The FE''s ``FilterInput`` reads this field by convention (same name as other paginated dropdowns) — renaming it would break shared dropdown pagination wiring.'
+          default: 1
+      type: object
+      title: QueryStatementIdsResponse
+      description: Statement IDs matching a Query ID filter search (server-side, paged).
+    QueryRecord:
+      properties:
+        statement_id:
+          type: string
+          title: Statement Id
+        statement_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statement Type
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        total_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Duration Ms
+        read_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Read Bytes
+        spilled_local_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Spilled Local Bytes
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Id
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+      type: object
+      required:
+      - statement_id
+      title: QueryRecord
+      description: A single query record.
+    UnifiedQueryRecord:
+      properties:
+        statement_id:
+          type: string
+          title: Statement Id
+        statement_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statement Text
+        statement_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statement Type
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        total_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Duration Ms
+        read_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Read Bytes
+        spilled_local_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Spilled Local Bytes
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Id
+        cluster_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Id
+        cluster_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Name
+        warehouse_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Name
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        pipeline_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pipeline Id
+        pipeline_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pipeline Name
+        job_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Id
+        compute_display:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compute Display
+          description: 'Resolved compute label for the UI''s Compute column. Priority: warehouse_name -> warehouse_id -> cluster_name -> cluster_id -> ''DLT Pipeline: <pipeline_name|pipeline_id>'' -> ''Job: <job_id>'' -> ''-''. Composed in SQL.'
+        dbus:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Dbus
+          description: DBUs consumed by this query
+        estimated_cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Cost Usd
+          description: Estimated cost in USD from dbx_query_cost table
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        insights:
+          items:
+            type: string
+          type: array
+          title: Insights
+          description: List of insight tags (slow_query, disk_spill, full_table_scan, failed)
+      type: object
+      required:
+      - statement_id
+      title: UnifiedQueryRecord
+      description: A query record with computed insight tags.
+    QueryComputesResponse:
+      properties:
+        computes:
+          items:
+            $ref: '#/components/schemas/ComputeFilterOption'
+          type: array
+          title: Computes
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      title: QueryComputesResponse
+      description: 'Paginated unified compute options (warehouse + cluster + pipeline).
+
+
+        Dedicated single-list response (separate from the aggregate
+
+        ``/queries/filters``) so the typed ``prefix`` only ever scans the
+
+        compute list, never the other filter lists.'
+    QueryTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+      type: object
+      required:
+      - period
+      title: QueryTrendPoint
+      description: A single point in query trends.
+    StatementTypeStats:
+      properties:
+        statement_type:
+          type: string
+          title: Statement Type
+        query_count:
+          type: integer
+          title: Query Count
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+      type: object
+      required:
+      - statement_type
+      - query_count
+      - avg_duration_ms
+      - total_read_bytes
+      title: StatementTypeStats
+      description: Statistics for a statement type.
+    QueryDetailResponse:
+      properties:
+        query:
+          $ref: '#/components/schemas/QueryDetail'
+      type: object
+      required:
+      - query
+      title: QueryDetailResponse
+      description: Response for query detail.
+    SpillQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        min_spill_bytes:
+          type: integer
+          title: Min Spill Bytes
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - queries
+      - min_spill_bytes
+      - total_count
+      title: SpillQueriesResponse
+      description: Response for queries with memory spills.
+    ComputeFilterOption:
+      properties:
+        kind:
+          type: string
+          title: Kind
+          description: 'Which compute inventory the id belongs to. One of: ``warehouse``, ``cluster``, ``pipeline``.'
+        id:
+          type: string
+          title: Id
+          description: Raw compute id (warehouse_id / cluster_id / pipeline_id).
+        display:
+          type: string
+          title: Display
+          description: 'Human-readable label matching the Queries list''s ``Compute`` column rendering (e.g. ``Analytics Warehouse``, ``DLT Pipeline: events-dlt``). FE uses this verbatim as the dropdown option label.'
+      type: object
+      required:
+      - kind
+      - id
+      - display
+      title: ComputeFilterOption
+      description: 'One entry in the unified Compute filter dropdown.
+
+
+        Covers warehouse, all-purpose / job cluster, and serverless DLT
+
+        pipeline — every query row in the Queries list carries at least
+
+        one of these three. ``job`` is intentionally excluded: job-only
+
+        rows are high-cardinality and largely repetitive, so listing them
+
+        bloats the dropdown without adding signal. They still render in
+
+        the table''s ``Compute`` column via the same ``compute_display``
+
+        cascade.
+
+
+        ``kind`` namespaces ``id`` to avoid cross-type collisions;
+
+        ``display`` matches the column rendering verbatim so the dropdown
+
+        and the table cell read identically.'
+    app__schemas__databricks__filters__FilterOption:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - id
+      - name
+      title: FilterOption
+      description: Generic id/name pair for filter dropdowns.
+    UserQueryStats:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        query_count:
+          type: integer
+          title: Query Count
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+      type: object
+      required:
+      - user_name
+      - query_count
+      - avg_duration_ms
+      - total_read_bytes
+      title: UserQueryStats
+      description: Query statistics for a user.
+    QueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of queries returned
+      type: object
+      required:
+      - queries
+      - total_count
+      title: QueriesResponse
+      description: Response for listing queries.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    app__schemas__databricks__query__QuerySqlLineageResponse:
+      properties:
+        tableEdges:
+          items:
+            items: {}
+            type: array
+          type: array
+          title: Tableedges
+          description: List of [source, target] table edges
+        details:
+          additionalProperties: true
+          type: object
+          title: Details
+          description: Details about each node (tables/CTEs) in the lineage
+        nodePositions:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Nodepositions
+          description: Positions for each node in the visualization
+        is_lineage:
+          type: boolean
+          title: Is Lineage
+          description: Whether lineage data is available
+          default: false
+        is_error:
+          type: boolean
+          title: Is Error
+          description: Whether there was an error parsing the SQL
+          default: false
+      type: object
+      title: QuerySqlLineageResponse
+      description: Response for SQL lineage visualization.
+    StatementTypeBreakdownResponse:
+      properties:
+        breakdown:
+          items:
+            $ref: '#/components/schemas/StatementTypeStats'
+          type: array
+          title: Breakdown
+      type: object
+      required:
+      - breakdown
+      title: StatementTypeBreakdownResponse
+      description: Response for statement type breakdown.
+    QueryDetail:
+      properties:
+        statement_id:
+          type: string
+          title: Statement Id
+        statement_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statement Text
+        statement_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statement Type
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        total_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Duration Ms
+        waiting_for_compute_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Waiting For Compute Duration Ms
+        waiting_at_capacity_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Waiting At Capacity Duration Ms
+        execution_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Execution Duration Ms
+        compilation_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Compilation Duration Ms
+        read_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Read Bytes
+        written_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Written Bytes
+        read_rows:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Read Rows
+        produced_rows:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Produced Rows
+        read_partitions:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Read Partitions
+        total_partitions:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Partitions
+        read_files:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Read Files
+        spilled_local_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Spilled Local Bytes
+        spilled_remote_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Spilled Remote Bytes
+        result_fetch_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Result Fetch Duration Ms
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Id
+        warehouse_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Name
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        cluster_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Id
+        cluster_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Name
+        pipeline_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pipeline Id
+        pipeline_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pipeline Name
+        job_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Id
+        compute_display:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compute Display
+          description: Resolved compute label for the detail-page Compute metric. Same composition rule as the unified queries list — see ``UnifiedQueryRecord.compute_display`` for details.
+        dbus:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Dbus
+          description: DBUs consumed by this query
+        estimated_cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Cost Usd
+          description: Estimated cost in USD from dbx_query_cost table
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        canUseResultCache:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Canuseresultcache
+        resultFetchedFromCache:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Resultfetchedfromcache
+        insights:
+          items:
+            type: string
+          type: array
+          title: Insights
+          description: List of insight tags (slow_query, disk_spill, full_table_scan, failed)
+      type: object
+      required:
+      - statement_id
+      title: QueryDetail
+      description: Detailed query information.
+    QueryUserNamesResponse:
+      properties:
+        user_names:
+          items:
+            type: string
+          type: array
+          title: User Names
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      title: QueryUserNamesResponse
+      description: 'Paginated distinct query-history user names.
+
+
+        Dedicated single-list response (separate from the aggregate
+
+        ``/queries/filters``) so the typed ``prefix`` only ever scans the user
+
+        list, never the other filter lists.'
+    FullScanQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        min_read_bytes:
+          type: integer
+          title: Min Read Bytes
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - queries
+      - min_read_bytes
+      - total_count
+      title: FullScanQueriesResponse
+      description: Response for queries with full scans.
+    FailedQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - queries
+      - total_count
+      title: FailedQueriesResponse
+      description: Response for failed queries.
+    QueryWorkspacesResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
+          type: array
+          title: Workspaces
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      title: QueryWorkspacesResponse
+      description: 'Paginated distinct query-history workspaces (id + name).
+
+
+        Dedicated single-list response (separate from the aggregate
+
+        ``/queries/filters``) so the typed ``prefix`` only ever scans the
+
+        workspace list. A tenant can have thousands of workspaces, so this is
+
+        searchable rather than a capped list.'
+    QueryCostTrendByUserPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        user_name:
+          type: string
+          title: User Name
+        estimated_cost_usd:
+          type: number
+          title: Estimated Cost Usd
+          default: 0
+      type: object
+      required:
+      - period
+      - user_name
+      title: QueryCostTrendByUserPoint
+      description: A single point in query cost trends by user.
+    QuerySummary:
+      properties:
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        unique_statement_types:
+          type: integer
+          title: Unique Statement Types
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+        total_spilled_bytes:
+          type: integer
+          title: Total Spilled Bytes
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          default: 0
+      type: object
+      title: QuerySummary
+      description: Summary metrics for queries.
+    QueryCostTrendsByUserResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/QueryCostTrendByUserPoint'
+          type: array
+          title: Trends
+        granularity:
+          type: string
+          title: Granularity
+        users:
+          items:
+            type: string
+          type: array
+          title: Users
+          description: List of unique users in the data (for chart legend)
+      type: object
+      required:
+      - trends
+      - granularity
+      title: QueryCostTrendsByUserResponse
+      description: Response for query cost trends broken down by user.
+    QueryTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/QueryTrendPoint'
+          type: array
+          title: Trends
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - trends
+      - granularity
+      title: QueryTrendsResponse
+      description: Response for query trends.
+    UnifiedQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/UnifiedQueryRecord'
+          type: array
+          title: Queries
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of queries matching filters
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items per page
+          default: 100
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - queries
+      - total_count
+      title: UnifiedQueriesResponse
+      description: Response for unified queries with insights.
+    UserQueryBreakdownResponse:
+      properties:
+        breakdown:
+          items:
+            $ref: '#/components/schemas/UserQueryStats'
+          type: array
+          title: Breakdown
+      type: object
+      required:
+      - breakdown
+      title: UserQueryBreakdownResponse
+      description: Response for user query breakdown.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    QuerySummaryResponse:
+      properties:
+        summary:
+          $ref: '#/components/schemas/QuerySummary'
+      type: object
+      required:
+      - summary
+      title: QuerySummaryResponse
+      description: Response for query summary.
+    QueryFilterOptions:
+      properties:
+        statement_types:
+          items:
+            type: string
+          type: array
+          title: Statement Types
+        user_names:
+          items:
+            type: string
+          type: array
+          title: User Names
+        warehouses:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
+          type: array
+          title: Warehouses
+        computes:
+          items:
+            $ref: '#/components/schemas/ComputeFilterOption'
+          type: array
+          title: Computes
+        workspaces:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
+          type: array
+          title: Workspaces
+      type: object
+      title: QueryFilterOptions
+      description: Filter options for queries.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

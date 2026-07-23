@@ -1,0 +1,1014 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Users API
+  version: 0.1.0
+tags:
+- name: Databricks Users
+paths:
+  /api/v1/databricks/users/filters:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get filter options for users
+      description: Get distinct filter values for user filtering.
+      operationId: get_user_filters_api_v1_databricks_users_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search prefix for name filters
+          title: Prefix
+        description: Search prefix for name filters
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFilterOptions'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/users:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get all users with query statistics
+      description: Get all users with query statistics.
+      operationId: get_users_api_v1_databricks_users_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start date (inclusive) for query / cost statistics. Defaults to 30 days before `end_date`.
+          title: Start Date
+        description: Start date (inclusive) for query / cost statistics. Defaults to 30 days before `end_date`.
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date (inclusive). Defaults to today.
+          title: End Date
+        description: End date (inclusive). Defaults to today.
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort column name. Valid columns: user_name, total_queries, successful_queries, failed_queries, avg_duration_ms, max_duration_ms, total_duration_ms, total_read_bytes, total_spilled_bytes, last_query_time, total_dbus, total_cost (cost columns sorted with zeros/nulls last).'
+          title: Sortattribute
+        description: 'Sort column name. Valid columns: user_name, total_queries, successful_queries, failed_queries, avg_duration_ms, max_duration_ms, total_duration_ms, total_read_bytes, total_spilled_bytes, last_query_time, total_dbus, total_cost (cost columns sorted with zeros/nulls last).'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'''
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'''
+      - name: user_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by user names
+          title: User Names
+        description: Filter by user names
+      - name: user_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/DatabricksUserType'
+          - type: 'null'
+          description: 'Filter by identity type(s). Repeat to combine: ''USER'', ''SERVICE_PRINCIPAL'''
+          title: User Types
+        description: 'Filter by identity type(s). Repeat to combine: ''USER'', ''SERVICE_PRINCIPAL'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__user__UsersResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/users/top/queries:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get top users by query count
+      description: Get top users by query count.
+      operationId: get_top_users_by_queries_api_v1_databricks_users_top_queries_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of days for statistics
+          default: 30
+          title: Days
+        description: Number of days for statistics
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of users
+          default: 10
+          title: Limit
+        description: Maximum number of users
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopUsersByQueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/users/top/data-read:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get top users by data read
+      description: Get top users by data read.
+      operationId: get_top_users_by_data_read_api_v1_databricks_users_top_data_read_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of days for statistics
+          default: 30
+          title: Days
+        description: Number of days for statistics
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum number of users
+          default: 10
+          title: Limit
+        description: Maximum number of users
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopUsersByDataReadResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/users/service-principal-config:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get service-principal classification config
+      description: 'Return the tenant''s prefix/regex patterns used to classify service principals.
+
+
+        The built-in application-id UUID rule is always applied in addition to
+
+        these. Returns empty lists when no config has been saved.'
+      operationId: get_service_principal_config_api_v1_databricks_users_service_principal_config_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksServicePrincipalConfig'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Databricks Users
+      summary: Upsert service-principal classification config
+      description: 'Save the prefix/regex patterns used to classify Databricks service principals.
+
+
+        Replaces any existing config. Invalid regexes are rejected at validation time.'
+      operationId: upsert_service_principal_config_api_v1_databricks_users_service_principal_config_put
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatabricksServicePrincipalConfig'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksServicePrincipalConfig'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/users/{user_name}:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get user details
+      description: Get detailed information for a specific user.
+      operationId: get_user_detail_api_v1_databricks_users__user_name__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: user_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: User Name
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of days for statistics
+          default: 30
+          title: Days
+        description: Number of days for statistics
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: User not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/users/{user_name}/trends:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get user query trends
+      description: Get query trends for a specific user.
+      operationId: get_user_trends_api_v1_databricks_users__user_name__trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: user_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: User Name
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/users/{user_name}/statement-breakdown:
+    get:
+      tags:
+      - Databricks Users
+      summary: Get user statement breakdown
+      description: Get statement type breakdown for a specific user.
+      operationId: get_user_statement_breakdown_api_v1_databricks_users__user_name__statement_breakdown_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: user_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: User Name
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of days for statistics
+          default: 30
+          title: Days
+        description: Number of days for statistics
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatementBreakdownResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    app__schemas__databricks__user__TopUser:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+      type: object
+      required:
+      - user_name
+      title: TopUser
+      description: Top user summary.
+    UserStatementBreakdown:
+      properties:
+        statement_type:
+          type: string
+          title: Statement Type
+        query_count:
+          type: integer
+          title: Query Count
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+      type: object
+      required:
+      - statement_type
+      title: UserStatementBreakdown
+      description: Statement type breakdown for a user.
+    DatabricksUserType:
+      type: string
+      enum:
+      - USER
+      - SERVICE_PRINCIPAL
+      title: DatabricksUserType
+      description: Type of Databricks user identity.
+    UserDetail:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        max_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Duration Ms
+        min_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Duration Ms
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+        total_spilled_bytes:
+          type: integer
+          title: Total Spilled Bytes
+          default: 0
+        last_query_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Query Time
+        first_query_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: First Query Time
+        unique_statement_types:
+          type: integer
+          title: Unique Statement Types
+          default: 0
+        workspaces_used:
+          type: integer
+          title: Workspaces Used
+          default: 0
+      type: object
+      required:
+      - user_name
+      title: UserDetail
+      description: Detailed user information.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UserDetailResponse:
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDetail'
+      type: object
+      required:
+      - user
+      title: UserDetailResponse
+      description: Response for user detail.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    app__schemas__databricks__user__UsersResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/DatabricksUser'
+          type: array
+          title: Users
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of users
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Items per page
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - users
+      - total_count
+      title: UsersResponse
+      description: Response for listing users.
+    UserFilterOptions:
+      properties:
+        user_names:
+          items:
+            type: string
+          type: array
+          title: User Names
+      type: object
+      title: UserFilterOptions
+      description: Filter options for users.
+    UserStatementBreakdownResponse:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        breakdown:
+          items:
+            $ref: '#/components/schemas/UserStatementBreakdown'
+          type: array
+          title: Breakdown
+      type: object
+      required:
+      - user_name
+      - breakdown
+      title: UserStatementBreakdownResponse
+      description: Response for user statement breakdown.
+    TopUsersByDataReadResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/TopUserByDataRead'
+          type: array
+          title: Users
+      type: object
+      required:
+      - users
+      title: TopUsersByDataReadResponse
+      description: Response for top users by data read.
+    UserTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+      type: object
+      required:
+      - period
+      title: UserTrendPoint
+      description: A single point in user query trends.
+    UserTrendsResponse:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        trends:
+          items:
+            $ref: '#/components/schemas/UserTrendPoint'
+          type: array
+          title: Trends
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - user_name
+      - trends
+      - granularity
+      title: UserTrendsResponse
+      description: Response for user query trends.
+    TopUserByDataRead:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+      type: object
+      required:
+      - user_name
+      title: TopUserByDataRead
+      description: Top user by data read.
+    DatabricksServicePrincipalConfig:
+      properties:
+        prefixes:
+          items:
+            type: string
+          type: array
+          maxItems: 20
+          title: Prefixes
+          description: Identifier prefixes (e.g. 'svc', 'sa_') that mark a service principal.
+        regexes:
+          items:
+            type: string
+          type: array
+          maxItems: 20
+          title: Regexes
+          description: Regexes (RE2-compatible) that mark a service principal. The same pattern runs in Python `re` and ClickHouse `match()`, so RE2-only-incompatible syntax (lookaround, backreferences, possessive quantifiers) is rejected. Should be self-anchored if exact match is desired.
+      type: object
+      title: DatabricksServicePrincipalConfig
+      description: 'Tenant-configured patterns for classifying service-principal identities.
+
+
+        The built-in application-id UUID rule is always applied in addition to
+
+        these. An identity is treated as SERVICE_PRINCIPAL if it matches the UUID
+
+        pattern, starts with any of ``prefixes``, or fully matches any of
+
+        ``regexes``.'
+    DatabricksUser:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        user_type:
+          $ref: '#/components/schemas/DatabricksUserType'
+          default: USER
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        max_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Duration Ms
+        total_duration_ms:
+          type: integer
+          title: Total Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+        total_spilled_bytes:
+          type: integer
+          title: Total Spilled Bytes
+          default: 0
+        last_query_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Query Time
+        unique_statement_types:
+          type: integer
+          title: Unique Statement Types
+          default: 0
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          default: 0
+      type: object
+      required:
+      - user_name
+      title: DatabricksUser
+      description: User statistics from query history with actual billing data.
+    TopUsersByQueriesResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__user__TopUser'
+          type: array
+          title: Users
+      type: object
+      required:
+      - users
+      title: TopUsersByQueriesResponse
+      description: Response for top users by queries.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

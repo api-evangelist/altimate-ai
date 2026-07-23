@@ -1,0 +1,97 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DATA_AVAILABILITY API
+  version: 0.1.0
+tags:
+- name: DATA_AVAILABILITY
+paths:
+  /data_availability/{page}:
+    get:
+      tags:
+      - DATA_AVAILABILITY
+      summary: Get Data Availability
+      description: "Retrieves data availability information for a specified page.\n\nReturns the maximum available data date based on the minimum of all required\ndataset types for the given page.\n\nArgs:\n    page: The page identifier for data availability lookup\n\nReturns:\n    dict: Contains max_date field with the earliest completion date among all required datasets\n\nRaises:\n    HTTPException: 400 if page is not supported, 404 if no data found"
+      operationId: get_data_availability_data_availability__page__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Page
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid page parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Data Availability Data Availability  Page  Get
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Get Data Availability Data Availability  Page  Get
+        '404':
+          description: Page not found or no data available
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Data Availability Data Availability  Page  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

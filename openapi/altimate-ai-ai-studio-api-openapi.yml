@@ -1,0 +1,2205 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS AI_STUDIO API
+  version: 0.1.0
+tags:
+- name: AI_STUDIO
+paths:
+  /studio/share/shared/{share_id}:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: View Shared Session
+      description: 'View a shared playground session.
+
+
+        This is the public endpoint for viewing shared content.
+
+        - ''anyone'' links: No authentication required
+
+        - ''specific_people'' links: User must be authenticated and in the allowed list'
+      operationId: view_shared_session_studio_share_shared__share_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedSessionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Create Share
+      description: 'Create a new share link for a playground session.
+
+
+        - **session_id**: The session to share
+
+        - **access_type**: ''anyone'' (public) or ''specific_people'' (restricted)
+
+        - **expires_in_days**: Optional expiration (1-365 days)
+
+        - **user_ids**: Required for ''specific_people'' access type
+
+        - **title**: Optional title for the share link'
+      operationId: create_share_studio_share_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareLinkCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - AI_STUDIO
+      summary: List Shares
+      description: 'List share links.
+
+
+        - If session_id is provided, returns share links for that session
+
+        - Otherwise, returns all share links created by the current user'
+      operationId: list_shares_studio_share_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share/session/{session_id}:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: List Shares For Session
+      description: List share links for a specific session.
+      operationId: list_shares_for_session_studio_share_session__session_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share/{share_id}:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: Get Share
+      description: Get details of a specific share link.
+      operationId: get_share_studio_share__share_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - AI_STUDIO
+      summary: Delete Share
+      description: Delete a share link.
+      operationId: delete_share_studio_share__share_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: share_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Share Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/share/slack:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Share To Slack
+      description: Share a Studio session to Slack via incoming webhook.
+      operationId: share_to_slack_studio_share_slack_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareToSlackRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareToSlackResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /studio/schedules:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Create Schedule Endpoint
+      description: 'Create a new scheduled report.
+
+
+        - **name**: Name for this schedule
+
+        - **session_id**: Session to report on
+
+        - **content_scope**: ''last_answer'' or ''full_chat''
+
+        - **frequency**: ''daily'', ''weekly'', ''monthly'', or ''custom''
+
+        - **hour**: Hour to run (0-23 UTC)
+
+        - **emails**: Recipients'
+      operationId: create_schedule_endpoint_studio_schedules_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - AI_STUDIO
+      summary: List Schedules
+      description: 'List schedules.
+
+
+        - If session_id is provided, returns schedules for that session
+
+        - Otherwise, returns all schedules created by the current user'
+      operationId: list_schedules_studio_schedules_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: Get Schedule Endpoint
+      description: Get details of a specific schedule.
+      operationId: get_schedule_endpoint_studio_schedules__schedule_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - AI_STUDIO
+      summary: Update Schedule Endpoint
+      description: Update a schedule.
+      operationId: update_schedule_endpoint_studio_schedules__schedule_id__put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - AI_STUDIO
+      summary: Delete Schedule Endpoint
+      description: Delete a schedule.
+      operationId: delete_schedule_endpoint_studio_schedules__schedule_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/toggle:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Toggle Schedule
+      description: Enable or disable a schedule.
+      operationId: toggle_schedule_studio_schedules__schedule_id__toggle_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/refresh-snapshot:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Refresh Snapshot
+      description: Refresh the snapshot content for a schedule.
+      operationId: refresh_snapshot_studio_schedules__schedule_id__refresh_snapshot_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/send-now:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Send Now Endpoint
+      description: 'Trigger a scheduled report to be sent immediately with fresh execution.
+
+
+        Returns 202 Accepted immediately; the report is generated and emailed
+
+        in the background. Check the schedule''s runs endpoint for status.'
+      operationId: send_now_endpoint_studio_schedules__schedule_id__send_now_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/runs:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: Get Schedule Runs Endpoint
+      description: Get recent runs for a schedule.
+      operationId: get_schedule_runs_endpoint_studio_schedules__schedule_id__runs_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          default: 10
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleRunsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/sessions:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: Get Sessions
+      description: Get all AI playground sessions for a user with pagination support for infinite scroll
+      operationId: get_sessions_studio_sessions_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: search_text
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search Text
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number starting from 1
+          default: 1
+          title: Page
+        description: Page number starting from 1
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Number of items per page
+          default: 20
+          title: Page Size
+        description: Number of items per page
+      - name: status
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/SessionLifecycleListFilter'
+          description: active (default), archived, or all (active+archived)
+          default: active
+        description: active (default), archived, or all (active+archived)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllSessionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/sessions/{session_id}:
+    patch:
+      tags:
+      - AI_STUDIO
+      summary: Update Session Status
+      description: 'Archive (``archived``), restore (``active``), or soft-delete
+
+        (``deleted``) a single session owned by the authenticated user.
+
+        Soft-deleted sessions remain in the database. It will be backed
+
+        into s3 later.'
+      operationId: update_session_status_studio_sessions__session_id__patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionStatusUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStatusUpdateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - AI_STUDIO
+      summary: Get Session By Id
+      description: Get a specific AI playground session by ID with its turns
+      operationId: get_session_by_id_studio_sessions__session_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/ask:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Ask Session
+      description: 'Ask a question in an AI playground session and get streaming response.
+
+
+        The actual pipeline (security scan, output guard, service invocation,
+
+        streaming) lives in ``app.service.ai_playground.ask_pipeline.run_ask_pipeline``
+
+        so it can be reused by the playground scheduler worker without an HTTP
+
+        callback. This endpoint is now a thin transport wrapper.'
+      operationId: ask_session_studio_ask_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionAskRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/prompt/enhance:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Enhance Prompt
+      description: Enhance a user prompt - Temporary proxy to actual prompt enhancer
+      operationId: enhance_prompt_studio_prompt_enhance_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptEnhancementRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromptEnhancementResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /studio/session_to_pdf:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Session To Pdf
+      description: 'Generate a PDF report from the full conversation thread of a session.
+
+        Includes all user questions and assistant answers.'
+      operationId: session_to_pdf_studio_session_to_pdf_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionToPdfRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/session_to_email_mailing_list:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Session To Email Mailing List
+      description: 'Generate a PDF from the full conversation thread and send via email.
+
+
+        Recipients are resolved from ``recipient_type``:
+
+        - ``specific_emails``: the explicit, regex-validated ``emails`` list (To)
+
+        - ``all_altimate_users``: every active tenant user (BCC fan-out)
+
+        - ``team``: active members of the selected teams (BCC fan-out)'
+      operationId: session_to_email_mailing_list_studio_session_to_email_mailing_list_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionToEmailRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/cancel:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Cancel Session
+      description: Cancel an active AI playground session
+      operationId: cancel_session_studio_cancel_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Request
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/agents:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: List Agents
+      description: 'List all production agents from Langfuse.
+
+
+        Fetches the agent names from the ''agent-names'' prompt config,
+
+        then retrieves full details (name, version, prompt, config, labels) for each agent.'
+      operationId: list_agents_studio_agents_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAgentsResponse'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Create Or Update Agent
+      description: 'Create or update an agent definition in Langfuse.
+
+
+        Note: We use create_prompt for both create and update because:
+
+        - create_prompt automatically creates a new version if the name exists
+
+        - update_prompt only modifies labels on existing versions, not content'
+      operationId: create_or_update_agent_studio_agents_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAgentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+    delete:
+      tags:
+      - AI_STUDIO
+      summary: Delete Agent
+      description: Deprecate an agent by removing it from production and marking as deprecated.
+      operationId: delete_agent_studio_agents_delete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAgentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+  /studio/agents/{agent_name}:
+    get:
+      tags:
+      - AI_STUDIO
+      summary: Get Agent
+      description: Get an agent definition from Langfuse.
+      operationId: get_agent_studio_agents__agent_name__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: agent_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAgentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/agents/production/add:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Add Agent To Production
+      description: Add an agent to the production agents list (agent-names config.agents).
+      operationId: add_agent_to_production_studio_agents_production_add_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddAgentToProductionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+  /studio/agents/production/remove:
+    post:
+      tags:
+      - AI_STUDIO
+      summary: Remove Agent From Production
+      description: Remove an agent from the production agents list (agent-names config.agents).
+      operationId: remove_agent_from_production_studio_agents_production_remove_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveAgentFromProductionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    SessionToPdfRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+      type: object
+      required:
+      - session_id
+      title: SessionToPdfRequest
+    RemoveAgentFromProductionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: RemoveAgentFromProductionRequest
+    ListAgentsResponse:
+      properties:
+        agents:
+          items:
+            $ref: '#/components/schemas/AgentListItem'
+          type: array
+          title: Agents
+      type: object
+      required:
+      - agents
+      title: ListAgentsResponse
+    DestinationType:
+      type: string
+      enum:
+      - email
+      - slack
+      - multi
+      title: DestinationType
+      description: 'How to deliver the scheduled report.
+
+
+        Derived from `destination_config` at save time — `MULTI` means both
+
+        emails and a Slack webhook are configured on the same schedule.'
+    Session:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        name:
+          type: string
+          title: Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        knowledge:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Knowledge
+        datamates:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Datamates
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/SessionStatusEnum'
+          - type: 'null'
+        session_intent:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Intent
+      type: object
+      required:
+      - session_id
+      - name
+      - created_at
+      - updated_at
+      title: Session
+    ChatBlock:
+      properties:
+        id:
+          type: integer
+          title: Id
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        content:
+          items:
+            $ref: '#/components/schemas/Content'
+          type: array
+          title: Content
+        attachments:
+          items:
+            $ref: '#/components/schemas/Attachment'
+          type: array
+          title: Attachments
+          default: []
+      type: object
+      required:
+      - id
+      - role
+      - timestamp
+      - content
+      title: ChatBlock
+    SessionAskRequest:
+      properties:
+        message:
+          type: string
+          title: Message
+        context:
+          $ref: '#/components/schemas/Context'
+        session_id:
+          type: string
+          title: Session Id
+        mode:
+          type: string
+          title: Mode
+        datamates:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Datamates
+      type: object
+      required:
+      - message
+      - context
+      - session_id
+      - mode
+      title: SessionAskRequest
+    app__schemas__ai_playground__schedules__ScheduleUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+        content_scope:
+          anyOf:
+          - $ref: '#/components/schemas/ContentScope'
+          - type: 'null'
+        frequency:
+          anyOf:
+          - $ref: '#/components/schemas/ScheduleFrequency'
+          - type: 'null'
+        custom_cron:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Custom Cron
+        hour:
+          anyOf:
+          - type: integer
+            maximum: 23.0
+            minimum: 0.0
+          - type: 'null'
+          title: Hour
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Day of week for weekly frequency (0=Sunday … 6=Saturday). Only meaningful when the patched frequency is 'weekly'. When the patched frequency stays/becomes 'weekly' and this field is omitted, the existing weekday is preserved.
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: Day of month for monthly frequency (1-31). Only meaningful when the patched frequency is 'monthly'.
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Slack Webhook Id
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+      type: object
+      title: ScheduleUpdateRequest
+      description: "Request to update an existing schedule.\n\n``slack_webhook_id``:\n  - ``None`` (omitted) → leave webhook unchanged\n  - ``0`` → clear the current webhook\n  - any positive integer → set the webhook to that notification id"
+    ContentType:
+      type: string
+      enum:
+      - tool_result
+      - write
+      - custom
+      - bash
+      - read
+      - tool_use
+      - tool_call
+      - agent_outcome
+      - text
+      - error
+      title: ContentType
+    app__schemas__ai_playground__ai_playground__AgentConfig:
+      properties:
+        description:
+          type: string
+          title: Description
+        tools:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tools
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        agents:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Agents
+      type: object
+      required:
+      - description
+      title: AgentConfig
+    RoleEnum:
+      type: string
+      enum:
+      - user
+      - assistant
+      - system
+      title: RoleEnum
+    CreateAgentRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          $ref: '#/components/schemas/app__schemas__ai_playground__ai_playground__AgentConfig'
+      type: object
+      required:
+      - name
+      - prompt
+      - config
+      title: CreateAgentRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    app__schemas__ai_playground__schedules__ScheduleResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        session_id:
+          type: string
+          title: Session Id
+        content_scope:
+          $ref: '#/components/schemas/ContentScope'
+        cron_expr:
+          type: string
+          title: Cron Expr
+        destination_type:
+          $ref: '#/components/schemas/DestinationType'
+        emails:
+          items:
+            type: string
+          type: array
+          title: Emails
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Slack Webhook Id
+        enabled:
+          type: boolean
+          title: Enabled
+        last_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Run
+        next_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Next Run
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Cron weekday (0=Sunday … 6=Saturday) when frequency is weekly
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: Cron day-of-month (1-31) when frequency is monthly
+      type: object
+      required:
+      - id
+      - name
+      - session_id
+      - content_scope
+      - cron_expr
+      - destination_type
+      - emails
+      - enabled
+      - last_run
+      - next_run
+      - created_by
+      - created_at
+      - updated_at
+      title: ScheduleResponse
+      description: Response containing schedule details.
+    SessionResponse:
+      properties:
+        session:
+          $ref: '#/components/schemas/Session'
+        turns:
+          items:
+            $ref: '#/components/schemas/ChatBlock'
+          type: array
+          title: Turns
+      type: object
+      required:
+      - session
+      - turns
+      title: SessionResponse
+    ShareToSlackResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ShareToSlackResponse
+      description: Response after sharing to Slack.
+    SessionStatusEnum:
+      type: string
+      enum:
+      - failed
+      - completed
+      - pending
+      - cancelled
+      title: SessionStatusEnum
+    SharedSessionResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        session_name:
+          type: string
+          title: Session Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        share_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Title
+        turns:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Turns
+        is_read_only:
+          type: boolean
+          title: Is Read Only
+          default: true
+      type: object
+      required:
+      - session_id
+      - session_name
+      - created_at
+      - share_title
+      - turns
+      title: SharedSessionResponse
+      description: Response when viewing a shared session.
+    SessionLifecycleListFilter:
+      type: string
+      enum:
+      - active
+      - archived
+      - all
+      title: SessionLifecycleListFilter
+    Attachment:
+      properties:
+        id:
+          type: string
+          title: Id
+        attachment_name:
+          type: string
+          title: Attachment Name
+        file_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Type
+        s3_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: S3 Url
+        extracted_content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extracted Content
+        order:
+          type: integer
+          title: Order
+        attachment_type:
+          type: string
+          title: Attachment Type
+        attachment_reference_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Attachment Reference Id
+        file_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: File Size
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+      type: object
+      required:
+      - id
+      - attachment_name
+      - order
+      - attachment_type
+      - created_on
+      title: Attachment
+    AddAgentToProductionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: AddAgentToProductionRequest
+    ShareToSlackRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Studio session ID to share
+        webhook_id:
+          type: integer
+          title: Webhook Id
+          description: Notification ID (from notifications table) for webhook delivery
+      type: object
+      required:
+      - session_id
+      - webhook_id
+      title: ShareToSlackRequest
+      description: Request to share a Studio session to Slack via webhook.
+    ScheduleFrequency:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      - custom
+      title: ScheduleFrequency
+      description: Predefined schedule frequencies.
+    PromptEnhancementRequest:
+      properties:
+        user_prompt:
+          type: string
+          title: User Prompt
+        agent_name:
+          type: string
+          title: Agent Name
+      type: object
+      required:
+      - user_prompt
+      - agent_name
+      title: PromptEnhancementRequest
+    ShareLinkListResponse:
+      properties:
+        share_links:
+          items:
+            $ref: '#/components/schemas/ShareLinkResponse'
+          type: array
+          title: Share Links
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - share_links
+      - total
+      title: ShareLinkListResponse
+      description: Response containing a list of share links.
+    app__schemas__ai_playground__schedules__ScheduleCreateRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+          description: Name for this schedule
+        session_id:
+          type: string
+          title: Session Id
+          description: Session ID to schedule reports for
+        content_scope:
+          $ref: '#/components/schemas/ContentScope'
+          description: What content to include
+          default: first_query
+        frequency:
+          $ref: '#/components/schemas/ScheduleFrequency'
+          description: Schedule frequency
+          default: weekly
+        custom_cron:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Custom Cron
+          description: Custom cron expression (only for 'custom' frequency)
+        hour:
+          type: integer
+          maximum: 23.0
+          minimum: 0.0
+          title: Hour
+          description: Hour to run (0-23 UTC)
+          default: 9
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Day of week for weekly frequency (0=Sunday … 6=Saturday). Only valid when frequency='weekly'. When omitted, defaults to Monday (1) to preserve existing behaviour.
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: 'Day of month for monthly frequency (1-31). Only valid when frequency=''monthly''. When omitted, defaults to the 1st. Follows standard cron semantics: schedules with day_of_month=29/30/31 only fire in months that contain that day (so day=31 skips February, April, June, September, November). Matches APScheduler''s CronTrigger.from_crontab so the polled next_run and the registered periodic task stay in agreement.'
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+          description: Email addresses to send reports to
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Slack Webhook Id
+          description: Notification ID for Slack webhook delivery. Must be a positive integer; 0 is reserved for the update path (clear selection).
+      type: object
+      required:
+      - name
+      - session_id
+      title: ScheduleCreateRequest
+      description: Request to create a new scheduled report.
+    AllSessionResponse:
+      properties:
+        sessions:
+          items:
+            $ref: '#/components/schemas/Session'
+          type: array
+          title: Sessions
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - sessions
+      - total
+      - page
+      - page_size
+      - has_more
+      title: AllSessionResponse
+    CreateAgentResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - name
+      - version
+      - status
+      title: CreateAgentResponse
+    PromptEnhancementResponse:
+      properties:
+        enhanced_prompt:
+          type: string
+          title: Enhanced Prompt
+      type: object
+      required:
+      - enhanced_prompt
+      title: PromptEnhancementResponse
+    BaseResponse:
+      properties: {}
+      type: object
+      title: BaseResponse
+    AgentListItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+      type: object
+      required:
+      - name
+      - version
+      - prompt
+      - config
+      - labels
+      title: AgentListItem
+    SessionStatusUpdateResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        status:
+          $ref: '#/components/schemas/SessionLifecycleStatus'
+      type: object
+      required:
+      - session_id
+      - status
+      title: SessionStatusUpdateResponse
+    ScheduleRunsListResponse:
+      properties:
+        runs:
+          items:
+            $ref: '#/components/schemas/ScheduleRunResponse'
+          type: array
+          title: Runs
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - runs
+      - total
+      title: ScheduleRunsListResponse
+      description: Response containing a list of schedule runs.
+    ScheduleRunResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        schedule_id:
+          type: string
+          format: uuid
+          title: Schedule Id
+        run_at:
+          type: string
+          format: date-time
+          title: Run At
+        status:
+          type: string
+          title: Status
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        recipients_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Recipients Count
+        sent_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sent Count
+        failed_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Failed Count
+      type: object
+      required:
+      - id
+      - schedule_id
+      - run_at
+      - status
+      - error_message
+      - recipients_count
+      - sent_count
+      - failed_count
+      title: ScheduleRunResponse
+      description: Response for a single schedule run.
+    ShareLinkCreateRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Session ID to share
+        access_type:
+          $ref: '#/components/schemas/ShareAccessType'
+          description: Who can access this link
+          default: anyone
+        expires_in_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Expires In Days
+          description: Number of days until expiration. None = never expires
+        user_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: User Ids
+          description: User IDs allowed to access (only for 'specific_people' access type)
+        team_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Team Ids
+          description: Team (UserGroup) IDs allowed to access (only for 'team' access type)
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+          description: Optional title for the share link
+      type: object
+      required:
+      - session_id
+      title: ShareLinkCreateRequest
+      description: Request to create a new share link.
+    ShareLinkResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        session_id:
+          type: string
+          title: Session Id
+        access_type:
+          $ref: '#/components/schemas/ShareAccessType'
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        share_url:
+          type: string
+          title: Share Url
+        allowed_users:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Allowed Users
+        allowed_teams:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Allowed Teams
+      type: object
+      required:
+      - id
+      - session_id
+      - access_type
+      - expires_at
+      - created_by
+      - created_at
+      - updated_at
+      - title
+      - share_url
+      title: ShareLinkResponse
+      description: Response containing share link details.
+    SessionToEmailRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        recipient_type:
+          $ref: '#/components/schemas/EmailRecipientType'
+          default: specific_emails
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+        team_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Team Ids
+      type: object
+      required:
+      - session_id
+      title: SessionToEmailRequest
+    Context:
+      properties:
+        connections:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Connections
+        knowledge:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Knowledge
+        uploaded_files:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UploadedFile'
+            type: array
+          - type: 'null'
+          title: Uploaded Files
+        notifications:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Notifications
+      additionalProperties: true
+      type: object
+      title: Context
+    GetAgentResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+      type: object
+      required:
+      - name
+      - version
+      - prompt
+      - config
+      - labels
+      title: GetAgentResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    EmailRecipientType:
+      type: string
+      enum:
+      - specific_emails
+      - all_altimate_users
+      - team
+      title: EmailRecipientType
+    SessionLifecycleStatus:
+      type: string
+      enum:
+      - active
+      - archived
+      - deleted
+      title: SessionLifecycleStatus
+    DeleteAgentRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: DeleteAgentRequest
+    ShareAccessType:
+      type: string
+      enum:
+      - anyone
+      - specific_people
+      - all_altimate_users
+      - team
+      title: ShareAccessType
+      description: Access type for share links.
+    Content:
+      properties:
+        id:
+          type: integer
+          title: Id
+        type:
+          $ref: '#/components/schemas/ContentType'
+        content:
+          anyOf:
+          - type: string
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Content
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        error_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Type
+      type: object
+      required:
+      - id
+      - type
+      - timestamp
+      title: Content
+    UploadedFile:
+      properties:
+        filename:
+          type: string
+          title: Filename
+        content:
+          type: string
+          title: Content
+        content_type:
+          type: string
+          title: Content Type
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - filename
+      - content
+      - content_type
+      - size
+      title: UploadedFile
+    SessionStatusUpdateRequest:
+      properties:
+        status:
+          $ref: '#/components/schemas/SessionLifecycleStatus'
+      type: object
+      required:
+      - status
+      title: SessionStatusUpdateRequest
+    app__schemas__ai_playground__schedules__ScheduleListResponse:
+      properties:
+        schedules:
+          items:
+            $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+          type: array
+          title: Schedules
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - schedules
+      - total
+      title: ScheduleListResponse
+      description: Response containing a list of schedules.
+    ContentScope:
+      type: string
+      enum:
+      - first_query
+      - last_answer
+      - full_chat
+      title: ContentScope
+      description: What content to include in the scheduled report.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

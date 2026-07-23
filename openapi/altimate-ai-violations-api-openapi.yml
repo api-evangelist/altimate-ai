@@ -1,0 +1,492 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS VIOLATIONS API
+  version: 0.1.0
+tags:
+- name: VIOLATIONS
+paths:
+  /violations/summary:
+    get:
+      tags:
+      - VIOLATIONS
+      summary: Get Summary
+      description: 'Gets all violations.
+
+        - table_id: search parameter'
+      operationId: get_summary_violations_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Table Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViolationSummaryResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Summary Violations Summary Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Summary Violations Summary Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /violations/:
+    get:
+      tags:
+      - VIOLATIONS
+      summary: Get All
+      description: 'Gets all violations.
+
+        - table_id: search parameter
+
+        - timestamp: ''24h'', ''1w''
+
+        - levels: search level(can be multiple)
+
+        - contract_ids: search contract(can be multiple)
+
+        - sortColumn: ''incident_id'', ''policy_name''
+
+        - sortOrder: ''asc'', ''desc'''
+      operationId: get_all_violations__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Table Id
+      - name: timestamp
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Timestamp
+      - name: levels
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Levels
+      - name: contract_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: integer
+          - type: 'null'
+          title: Contract Ids
+      - name: event_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Event Id
+      - name: sortColumn
+        in: query
+        required: false
+        schema:
+          type: string
+          default: id
+          title: Sortcolumn
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          type: string
+          default: asc
+          title: Sortorder
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_ViolationFetchResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get All Violations  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get All Violations  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /violations/id/{violation_id}:
+    get:
+      tags:
+      - VIOLATIONS
+      summary: Get One
+      description: Gets the violation by id.
+      operationId: get_one_violations_id__violation_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: violation_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Violation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViolationFetchResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get One Violations Id  Violation Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get One Violations Id  Violation Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /violations/{violation_id}/snooze/{snoozed_till}:
+    post:
+      tags:
+      - VIOLATIONS
+      summary: Snooze Validation For Violation
+      description: '- Finds the term by the violation_id
+
+        - Updates the status, snoozed_till param for the term in the db
+
+        - snoozed_till can have only two values: ''24h'', ''1w'''
+      operationId: snooze_validation_for_violation_violations__violation_id__snooze__snoozed_till__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: violation_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Violation Id
+      - name: snoozed_till
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snoozed Till
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViolationSnoozeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Snooze Validation For Violation Violations  Violation Id  Snooze  Snoozed Till  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Snooze Validation For Violation Violations  Violation Id  Snooze  Snoozed Till  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ViolationSummaryResponse:
+      properties:
+        last_violation_timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Violation Timestamp
+        total_error_count:
+          type: integer
+          title: Total Error Count
+        total_warning_count:
+          type: integer
+          title: Total Warning Count
+        total_policy_violation_count:
+          type: integer
+          title: Total Policy Violation Count
+        total_validation_count:
+          type: integer
+          title: Total Validation Count
+      type: object
+      required:
+      - total_error_count
+      - total_warning_count
+      - total_policy_violation_count
+      - total_validation_count
+      title: ViolationSummaryResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ViolationFetchResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        term_message:
+          type: string
+          title: Term Message
+        policy_id:
+          type: integer
+          title: Policy Id
+        policy_name:
+          type: string
+          title: Policy Name
+        policy_term:
+          type: string
+          title: Policy Term
+        timestamp:
+          type: string
+          title: Timestamp
+        level:
+          type: string
+          title: Level
+        scope:
+          items:
+            items:
+              type: string
+            type: array
+          type: array
+          title: Scope
+        contract_id:
+          type: integer
+          title: Contract Id
+        contract_name:
+          type: string
+          title: Contract Name
+        last_violations_for_term:
+          anyOf:
+          - items: {}
+            type: array
+          - type: 'null'
+          title: Last Violations For Term
+        datastore_name:
+          type: string
+          title: Datastore Name
+        datastore_type:
+          type: string
+          title: Datastore Type
+        status:
+          type: string
+          title: Status
+        snoozed_till:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Snoozed Till
+        filters:
+          type: string
+          title: Filters
+        actual:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actual
+        debug_copilot:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Debug Copilot
+      type: object
+      required:
+      - id
+      - term_message
+      - policy_id
+      - policy_name
+      - policy_term
+      - timestamp
+      - level
+      - scope
+      - contract_id
+      - contract_name
+      - datastore_name
+      - datastore_type
+      - status
+      - filters
+      title: ViolationFetchResponse
+    ViolationSnoozeResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - id
+      - status
+      title: ViolationSnoozeResponse
+    Page_ViolationFetchResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ViolationFetchResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[ViolationFetchResponse]
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

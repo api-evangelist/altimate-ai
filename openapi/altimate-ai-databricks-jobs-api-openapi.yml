@@ -1,0 +1,4885 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Jobs API
+  version: 0.1.0
+tags:
+- name: Databricks Jobs
+paths:
+  /api/v1/databricks/jobs/filters:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get filter options for jobs
+      description: Get distinct filter values for job filtering.
+      operationId: get_job_filters_api_v1_databricks_jobs_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search prefix for name filters
+          title: Prefix
+        description: Search prefix for name filters
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobFilterOptions'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/filters/job_names:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get paginated distinct job names for filtering
+      description: Get a paginated list of distinct job names for the job-name filter dropdown.
+      operationId: get_job_name_filters_api_v1_databricks_jobs_filters_job_names_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search substring for job names (case-insensitive)
+          title: Prefix
+        description: Search substring for job names (case-insensitive)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobNamesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/filters/workspaces:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get paginated distinct job workspaces for filtering
+      description: Get a paginated list of distinct job workspaces for the workspace filter dropdown.
+      operationId: get_job_workspace_filters_api_v1_databricks_jobs_filters_workspaces_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search substring for workspace names (case-insensitive)
+          title: Prefix
+        description: Search substring for workspace names (case-insensitive)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobNamesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/filters/creators:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get paginated distinct job creators for filtering
+      description: Get a paginated list of distinct job creators with display names.
+      operationId: get_job_creator_filters_api_v1_databricks_jobs_filters_creators_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search substring against creator id or display name (case-insensitive)
+          title: Prefix
+        description: Search substring against creator id or display name (case-insensitive)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobCreatorsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get all Databricks jobs
+      description: Get list of all jobs with run statistics.
+      operationId: get_jobs_api_v1_databricks_jobs_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for run statistics
+          title: Start Date
+        description: Start date for run statistics
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for run statistics
+          title: End Date
+        description: End date for run statistics
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort column name. Valid columns: job_name, workspace_name, total_runs, successful_runs, failed_runs, success_rate, avg_duration_seconds, last_run_time, total_dbus, total_cost, annualized_total_cost, auto_tune_savings.'
+          title: Sortattribute
+        description: 'Sort column name. Valid columns: job_name, workspace_name, total_runs, successful_runs, failed_runs, success_rate, avg_duration_seconds, last_run_time, total_dbus, total_cost, annualized_total_cost, auto_tune_savings.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'''
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'''
+      - name: job_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by job names
+          title: Job Names
+        description: Filter by job names
+      - name: creators
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by creator user names
+          title: Creators
+        description: Filter by creator user names
+      - name: workspaces
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by workspace display names
+          title: Workspaces
+        description: Filter by workspace display names
+      - name: auto_tune_enabled
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: 'Filter by Auto Tune state: true for On, false for Off'
+          title: Auto Tune Enabled
+        description: 'Filter by Auto Tune state: true for On, false for Off'
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/summary:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get aggregate cost summary for the Jobs list
+      description: 'Aggregate cost summary feeding the Jobs page hero cards.
+
+
+        Returns Total Cost, Total DBU Cost (equal to Total Cost — DBU is the
+
+        only cost component), Total Cloud Cost (``null`` — infrastructure cost
+
+        is not ingested), and Total Realized Savings (summed from the
+
+        ``dbx_jobs_cost_savings`` cost mart).'
+      operationId: get_jobs_summary_api_v1_databricks_jobs_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for the cost window
+          title: Start Date
+        description: Start date for the cost window
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for the cost window
+          title: End Date
+        description: End date for the cost window
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobsSummaryResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/failing:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get jobs with high failure rates
+      description: Get jobs with high failure rates.
+      operationId: get_failing_jobs_api_v1_databricks_jobs_failing_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: min_failure_rate
+        in: query
+        required: false
+        schema:
+          type: number
+          description: Minimum failure rate percentage
+          default: 20.0
+          title: Min Failure Rate
+        description: Minimum failure rate percentage
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for statistics
+          title: Start Date
+        description: Start date for statistics
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for statistics
+          title: End Date
+        description: End date for statistics
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailingJobsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/recent-failures:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get recent job failures
+      description: Get recent job failures.
+      operationId: get_recent_failures_api_v1_databricks_jobs_recent_failures_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 720
+          exclusiveMinimum: 0
+          description: Hours to look back (1-720).
+          default: 24
+          title: Hours
+        description: Hours to look back (1-720).
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecentFailuresResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/trends:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get job run trends
+      description: Get job run trends over time.
+      operationId: get_job_run_trends_api_v1_databricks_jobs_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRunTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/trends/cost:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get job cost trends by job
+      description: 'Get job cost trends over time broken down by job.
+
+
+        Returns every job with billing activity; top-N selection and the
+
+        "Others" bucket are applied client-side.'
+      operationId: get_job_cost_trends_api_v1_databricks_jobs_trends_cost_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCostTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get job details
+      description: Get detailed information for a specific job.
+      operationId: get_job_detail_api_v1_databricks_jobs__job_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDetail'
+        '403':
+          description: Not authorized
+        '404':
+          description: Job not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/runs:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get job runs
+      description: Get runs for a specific job.
+      operationId: get_job_runs_api_v1_databricks_jobs__job_id__runs_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: result_state
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 'Filter by result state. Repeat the query param to pass multiple values (e.g. ?result_state=FAILED&result_state=TIMED_OUT). Valid values: SUCCEEDED, FAILED, SKIPPED, CANCELLED, TIMED_OUT, ERROR, BLOCKED.'
+          title: Result State
+        description: 'Filter by result state. Repeat the query param to pass multiple values (e.g. ?result_state=FAILED&result_state=TIMED_OUT). Valid values: SUCCEEDED, FAILED, SKIPPED, CANCELLED, TIMED_OUT, ERROR, BLOCKED.'
+      - name: run_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by specific run IDs
+          title: Run Ids
+        description: Filter by specific run IDs
+      - name: trigger_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by trigger types
+          title: Trigger Types
+        description: Filter by trigger types
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort column name. Valid columns: run_id, start_time, duration_seconds, trigger_type, result_state, cost_cents.'
+          title: Sortattribute
+        description: 'Sort column name. Valid columns: run_id, start_time, duration_seconds, trigger_type, result_state, cost_cents.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'''
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'''
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRunsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/stats:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get job run statistics
+      description: Get run statistics for a specific job.
+      operationId: get_job_stats_api_v1_databricks_jobs__job_id__stats_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/trends:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get job run trends over time
+      description: Get run trends over time for a specific job.
+      operationId: get_single_job_run_trends_api_v1_databricks_jobs__job_id__trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRunTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/auto-tune/savings-trends:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get per-day auto-tune savings (realized + potential) for a job
+      description: 'Get realized and potential auto-tune savings per day for a job,
+
+        each split into DBU and infra components and scoped to the run window.'
+      operationId: get_job_auto_tune_savings_trends_api_v1_databricks_jobs__job_id__auto_tune_savings_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Databricks instance id
+          title: Instance Id
+        description: Databricks instance id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoTuneSavingsTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/task-runs:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get the job-level task summary (one row per task on the DAG)
+      description: 'Job-level task list: one aggregated row per task on the job''s DAG.'
+      operationId: get_job_tasks_api_v1_databricks_jobs__job_id__task_runs_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Column name to sort by. Valid columns: task_key, result_state, start_time, total_duration_seconds, cost_cents.'
+          title: Sortattribute
+        description: 'Column name to sort by. Valid columns: task_key, result_state, start_time, total_duration_seconds, cost_cents.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobTaskRunsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/task-runs/detail:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get run/task-scoped task runs (requires run_id or task_key)
+      description: 'Run/task-scoped task runs: one row per ``(task_key, job_run_id)``.
+
+
+        Requires ``run_id`` (the tasks of a specific run) or ``task_key`` (one
+
+        task''s runs over time).'
+      operationId: get_job_task_run_detail_api_v1_databricks_jobs__job_id__task_runs_detail_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: run_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by specific run ID
+          title: Run Id
+        description: Filter by specific run ID
+      - name: task_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by specific task key
+          title: Task Key
+        description: Filter by specific task key
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Column name to sort by. Valid columns: task_key, result_state, start_time, total_duration_seconds, cost_cents.'
+          title: Sortattribute
+        description: 'Column name to sort by. Valid columns: task_key, result_state, start_time, total_duration_seconds, cost_cents.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobTaskRunsResponse'
+        '400':
+          description: run_id or task_key required
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/tasks/{task_key}/runs-graph:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get chart-ready time series of runs for a single task
+      description: 'Return one chart point per run of ``task_key`` on this job.
+
+
+        Shape mirrors ``/query/v2/snowflake_jobs/runs_graph/{workflow_id}``
+
+        so the FE chart component is reusable: ``query_cost`` is USD and
+
+        ``execution_time`` is milliseconds. Annotations are intentionally
+
+        omitted for the Databricks chart.'
+      operationId: get_task_runs_graph_api_v1_databricks_jobs__job_id__tasks__task_key__runs_graph_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: task_key
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Task Key
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date (inclusive)
+          title: Start Date
+        description: Start date (inclusive)
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date (inclusive)
+          title: End Date
+        description: End date (inclusive)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatabricksTaskRunGraphPoint'
+                title: Response Get Task Runs Graph Api V1 Databricks Jobs  Job Id  Tasks  Task Key  Runs Graph Get
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/tasks/{task_key}/stats:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get aggregate run stats for a single task in a date window
+      description: 'Return total/succeeded/failed run counts and mean duration for
+
+        ``task_key`` on this job. Counts ignore pagination.'
+      operationId: get_task_stats_api_v1_databricks_jobs__job_id__tasks__task_key__stats_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: task_key
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Task Key
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date (inclusive)
+          title: Start Date
+        description: Start date (inclusive)
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date (inclusive)
+          title: End Date
+        description: End date (inclusive)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksTaskStatsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/runs/{run_id}/spark-ui:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get the Databricks Spark UI URL for a job run
+      description: 'Build the deep link to the Databricks Spark UI for a job run.
+
+
+        Thin pass-through to ``DatabricksJobService.resolve_spark_ui``; that
+
+        method does the lookup → cred-resolve → runs/get → URL-compose flow
+
+        and maps the expected failure modes to ``state`` values on the
+
+        always-200 response.'
+      operationId: get_job_run_spark_ui_api_v1_databricks_jobs__job_id__runs__run_id__spark_ui_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      - name: task_run_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: When set, return the Spark UI for this specific task run (matched against tasks[*].run_id in the Databricks runs/get response). Use the top-level run's driver UI when omitted.
+          title: Task Run Id
+        description: When set, return the Spark UI for this specific task run (matched against tasks[*].run_id in the Databricks runs/get response). Use the top-level run's driver UI when omitted.
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID — required for multi-workspace tenants to route credential lookup to the correct workspace.
+          title: Workspace Id
+        description: Workspace ID — required for multi-workspace tenants to route credential lookup to the correct workspace.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRunSparkUiResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/tasks-inventory:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get the static task list for a Databricks job
+      description: 'Return every task defined on the job''s workflow DAG (regardless
+
+        of whether the task has been run or has an Auto Tune
+
+        recommendation). Sourced from ``dbx_job_tasks_inventory``.
+
+
+        The Auto Tune drawer DAG and the overview "Tasks" tile use this as
+
+        the authoritative task list so they don''t depend on the recs feed
+
+        or task-runs windowing for the denominator.'
+      operationId: get_job_tasks_inventory_api_v1_databricks_jobs__job_id__tasks_inventory_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Databricks instance id
+          title: Instance Id
+        description: Databricks instance id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobTasksInventoryResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/spark-analysis:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get Spark analysis for job's latest run
+      description: Get Spark-level analysis for a job's latest successful/failed run.
+      operationId: get_spark_analysis_api_v1_databricks_jobs__job_id__spark_analysis_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: run_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Specific run ID (defaults to latest)
+          title: Run Id
+        description: Specific run ID (defaults to latest)
+      - name: task_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Task key to scope cost to a specific task
+          title: Task Key
+        description: Task key to scope cost to a specific task
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkAnalysisSummaryResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/spark-analysis/stage-metrics:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get paginated stage metrics for a job's Spark run
+      description: Get paginated stage-level task metrics with server-side sorting.
+      operationId: get_spark_stage_metrics_api_v1_databricks_jobs__job_id__spark_analysis_stage_metrics_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: run_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Specific run ID (defaults to latest)
+          title: Run Id
+        description: Specific run ID (defaults to latest)
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Column name to sort by. Valid columns: stage_id, task_count, total_run_ms, max_run_ms, avg_run_ms, min_run_ms, median_run_ms, q1_run_ms, q3_run_ms, stddev_run_ms, total_gc_ms, total_mem_spill, total_disk_spill, total_shuffle_read, total_shuffle_write, skew.'
+          title: Sortattribute
+        description: 'Column name to sort by. Valid columns: stage_id, task_count, total_run_ms, max_run_ms, avg_run_ms, min_run_ms, median_run_ms, q1_run_ms, q3_run_ms, stddev_run_ms, total_gc_ms, total_mem_spill, total_disk_spill, total_shuffle_read, total_shuffle_write, skew.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: stage_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated stage IDs to filter by (e.g., '0,1,2')
+          title: Stage Ids
+        description: Comma-separated stage IDs to filter by (e.g., '0,1,2')
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkStageMetricsPaginatedResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/spark-analysis/tasks:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get paginated individual Spark tasks for a job's Spark run
+      description: Get paginated individual Spark tasks with server-side sorting.
+      operationId: get_spark_tasks_api_v1_databricks_jobs__job_id__spark_analysis_tasks_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: run_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Specific run ID (defaults to latest)
+          title: Run Id
+        description: Specific run ID (defaults to latest)
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Column name to sort by. Valid columns: task_id, stage_id, executor_run_time, duration_ms, jvm_gc_time, memory_bytes_spilled, disk_bytes_spilled, shuffle_read_bytes, shuffle_write_bytes.'
+          title: Sortattribute
+        description: 'Column name to sort by. Valid columns: task_id, stage_id, executor_run_time, duration_ms, jvm_gc_time, memory_bytes_spilled, disk_bytes_spilled, shuffle_read_bytes, shuffle_write_bytes.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'' (defaults to ''desc'').'
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: stage_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated stage IDs to filter by (e.g., '0,1,2')
+          title: Stage Ids
+        description: Comma-separated stage IDs to filter by (e.g., '0,1,2')
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkTasksPaginatedResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/spark-analysis/opportunities:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get optimization opportunities for a job's Spark run with code linkage
+      description: Get optimization opportunities for a Spark job with linked source code.
+      operationId: get_spark_opportunities_api_v1_databricks_jobs__job_id__spark_analysis_opportunities_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: cluster_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparkOpportunitiesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/auto-recommendations:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Get Databricks auto right-sizing recommendations for a job
+      description: 'Return rows from `dbx_auto_recommendation` scoped to this job.
+
+
+        Each row carries ``auto_tune_mode`` projected via LEFT JOIN on
+
+        ``databricks_auto_tune_configuration`` (PRD §6 Option A — single
+
+        source of truth for the toggle position) plus a server-computed
+
+        ``monthly_savings_usd``.
+
+
+        Each item also carries ``depends_on`` (upstream task DAG edges from
+
+        ``dbx_job_tasks_inventory.depends_on_keys``) and
+
+        ``latest_action_event_type`` (most recent audit event_type per
+
+        task_key — drives the FE status pill).'
+      operationId: get_job_auto_recommendations_api_v1_databricks_jobs__job_id__auto_recommendations_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace) to scope the lookup
+          title: Instance Id
+        description: Tenant instance ID (workspace) to scope the lookup
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start of the window the savings figures are summed over. Matches the shape of /auto-tune/savings-trends so the FE's date-range picker can drive both the chart and this drawer consistently. Defaults to 30 days before end_date when omitted.
+          title: Start Date
+        description: Start of the window the savings figures are summed over. Matches the shape of /auto-tune/savings-trends so the FE's date-range picker can drive both the chart and this drawer consistently. Defaults to 30 days before end_date when omitted.
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End of the savings window (inclusive). Defaults to today (UTC) when omitted.
+          title: End Date
+        description: End of the savings window (inclusive). Defaults to today (UTC) when omitted.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbxAutoRecommendationsResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/auto-tune/toggle:
+    patch:
+      tags:
+      - Databricks Jobs
+      summary: Toggle auto-tune on/off for a job's recommendation
+      description: "Enable or disable auto-tune for a recommendation.\n\nThree flows behind one endpoint (v2.5 §15):\n\n1. **Enable** — write APPLY_REQUESTED + flip config to enabled.\n   Worker picks up async and calls Databricks.\n2. **Disable when never applied** — fast-path. Write APPLY_REQUESTED\n   (mode=disable) + flip the per-role cfg rows to disabled. No\n   Databricks call needed.\n3. **Disable when previously APPLIED** — sync rollback.\n   BE preflight → optionally cancel active runs (with ``force=true``)\n   → POST /api/2.2/jobs/update with attributes.from of the most\n   recent APPLIED → write APPLIED audit row + update config in one\n   Postgres tx. On Databricks failure: NO audit row, surface error."
+      operationId: toggle_job_auto_tune_api_v1_databricks_jobs__job_id__auto_tune_toggle_patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace) the job runs in
+          title: Instance Id
+        description: Tenant instance ID (workspace) the job runs in
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+      - name: task_key
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Task key when toggling a per-task recommendation. Empty string for job-level recommendations (default).
+          default: ''
+          title: Task Key
+        description: Task key when toggling a per-task recommendation. Empty string for job-level recommendations (default).
+      - name: force
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Only meaningful for sync rollback (disable on an applied rec). When the job has active runs, force=true cancels them before reverting the cluster config. Defaults to false; the BE returns rollback.needs_confirmation=true and the FE shows an interstitial.
+          default: false
+          title: Force
+        description: Only meaningful for sync rollback (disable on an applied rec). When the job has active runs, force=true cancels them before reverting the cluster config. Defaults to false; the BE returns rollback.needs_confirmation=true and the FE shows an interstitial.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleAutoTuneRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToggleAutoTuneResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No recommendation found for this job
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/auto-tune/status:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Page-level Auto Tune status for a job
+      description: 'Read-only status endpoint consumed by the Auto Tune tab on mount.
+
+
+        Aggregates ``auto_tune_mode`` across every (entity_id, task_key) row
+
+        for this job: master is "enabled" if ANY task is enabled. Surfaces a
+
+        job-level preflight result so the FE can disable the master Switch
+
+        when the SP can''t act on the workspace, with the exact actionable
+
+        message we''d show on a real toggle attempt. Also returns
+
+        ``recommendation_count`` so the FE can gate the Auto Tune tab.
+
+        Savings figures are not computed here — the FE derives its overall
+
+        savings tiles from the per-day ``/auto-tune/savings-trends`` series
+
+        (ClickHouse ``dbx_jobs_cost_savings``).
+
+
+        No DB writes — the preflight result is a snapshot for UI gating only.'
+      operationId: get_job_auto_tune_status_api_v1_databricks_jobs__job_id__auto_tune_status_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace) the job runs in
+          title: Instance Id
+        description: Tenant instance ID (workspace) the job runs in
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoTuneStatusResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/jobs/{job_id}/auto-tune/history:
+    get:
+      tags:
+      - Databricks Jobs
+      summary: Paginated Auto Tune audit history for a job
+      description: 'Read-only audit history for the Auto Tune tab.
+
+
+        Returns the most-recent events first. Each row carries
+
+        ``event_message`` composed server-side from event_type + mode + actor
+
+        + payload via ``DBX_AUTO_TUNE_EVENT_UI_MAPPING`` so the FE renders
+
+        one string verbatim.
+
+
+        User resolution is manual (PR #5070 hasn''t merged): we batch-load
+
+        ``altimate_users`` rows for the non-null ``changed_by`` ids on the
+
+        page and attach ``changed_by_name`` before serialization.'
+      operationId: get_job_auto_tune_history_api_v1_databricks_jobs__job_id__auto_tune_history_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace) the job runs in
+          title: Instance Id
+        description: Tenant instance ID (workspace) the job runs in
+      - name: event_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of event_type values to include (APPLY_REQUESTED, APPLIED, FAILED). Empty/omitted = all.
+          title: Event Types
+        description: Comma-separated list of event_type values to include (APPLY_REQUESTED, APPLIED, FAILED). Empty/omitted = all.
+      - name: period
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+          description: Look-back window in days. Excludes audit rows whose ``change_timestamp`` is older than now - period days.
+          title: Period
+        description: Look-back window in days. Excludes audit rows whose ``change_timestamp`` is older than now - period days.
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope queries to a specific workspace within the tenant's Databricks account. Defends against cross-workspace job_id collisions. When None, falls back to (instance_id, entity_id) lookup.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoTuneHistoryResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    JobTaskRunsResponse:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        task_runs:
+          items:
+            $ref: '#/components/schemas/JobTaskRun'
+          type: array
+          title: Task Runs
+        total_count:
+          type: integer
+          title: Total Count
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      required:
+      - job_id
+      - task_runs
+      - total_count
+      title: JobTaskRunsResponse
+      description: Response for job task runs.
+    SparkOpportunitiesResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/SparkOpportunity'
+          type: array
+          title: Opportunities
+          default: []
+        summary:
+          $ref: '#/components/schemas/SparkOpportunitySummary'
+          default:
+            total: 0
+            by_severity: {}
+            by_type: {}
+            total_time_savings_min: 0.0
+            total_time_savings_max: 0.0
+            total_cost_savings_min: 0.0
+            total_cost_savings_max: 0.0
+      type: object
+      title: SparkOpportunitiesResponse
+      description: Response for spark opportunities endpoint.
+    AutoTuneHistoryResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AutoTuneHistoryEvent'
+          type: array
+          title: Items
+        total_count:
+          type: integer
+          title: Total Count
+          default: 0
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      required:
+      - items
+      title: AutoTuneHistoryResponse
+      description: 'Paginated response wrapper for the Auto Tune history endpoint.
+
+
+        Matches the existing Databricks response convention
+
+        (``total_count`` / ``page`` / ``page_size`` / ``total_pages``)
+
+        rather than ``fastapi_pagination.Page[T]`` — none of the other
+
+        Databricks endpoints in this router use the latter.'
+    SparkJobSummary:
+      properties:
+        job_id:
+          type: integer
+          title: Job Id
+        duration_ms:
+          type: integer
+          title: Duration Ms
+          default: 0
+        failed:
+          type: boolean
+          title: Failed
+          default: false
+        sql_execution_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sql Execution Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        cost_cents:
+          type: number
+          title: Cost Cents
+          default: 0.0
+      type: object
+      required:
+      - job_id
+      title: SparkJobSummary
+      description: Summary of a single Spark job within an application.
+    ToggleAutoTunePreflight:
+      properties:
+        blocked:
+          type: boolean
+          title: Blocked
+          default: false
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        actionable_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actionable Message
+      type: object
+      title: ToggleAutoTunePreflight
+      description: 'Surfaced to the FE so it can render an actionable error inline.
+
+
+        When ``blocked=False`` the toggle pipeline ran. When ``blocked=True``
+
+        no DB writes happened and ``actionable_message`` should be shown to
+
+        the user verbatim (e.g. "ask your workspace admin to add r5.xlarge
+
+        to the policy allowlist").'
+    SparkApplicationInfo:
+      properties:
+        application_id:
+          type: string
+          title: Application Id
+        cluster_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Id
+        application_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Application Name
+        start_time:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: End Time
+        duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Duration Ms
+        spark_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spark Version
+        total_jobs:
+          type: integer
+          title: Total Jobs
+          default: 0
+        total_stages:
+          type: integer
+          title: Total Stages
+          default: 0
+        total_tasks:
+          type: integer
+          title: Total Tasks
+          default: 0
+        total_sql_executions:
+          type: integer
+          title: Total Sql Executions
+          default: 0
+        run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Id
+        run_start_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Start Time
+      type: object
+      required:
+      - application_id
+      title: SparkApplicationInfo
+      description: Information about the resolved Spark application.
+    DatabricksTaskStatsResponse:
+      properties:
+        total_runs:
+          type: integer
+          title: Total Runs
+          default: 0
+        succeeded_runs:
+          type: integer
+          title: Succeeded Runs
+          default: 0
+        failed_runs:
+          type: integer
+          title: Failed Runs
+          default: 0
+        avg_duration_seconds:
+          type: number
+          title: Avg Duration Seconds
+          default: 0.0
+      type: object
+      title: DatabricksTaskStatsResponse
+      description: 'Aggregate stats for runs of a single (job, task) in a date window.
+
+
+        Buckets ``result_state`` per the FE contract: SUCCEEDED → succeeded,
+
+        {FAILED, ERROR} → failed. Other states (TIMED_OUT, CANCELLED,
+
+        SKIPPED, in-flight) count toward ``total_runs`` but neither bucket.'
+    JobCostTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+        job_name:
+          type: string
+          title: Job Name
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost_usd:
+          type: number
+          title: Estimated Cost Usd
+          default: 0
+      type: object
+      required:
+      - period
+      - job_name
+      title: JobCostTrendItem
+      description: A single point in job cost trends by job.
+    SparkOpportunity:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        insight_type:
+          type: string
+          title: Insight Type
+          default: ''
+        name:
+          type: string
+          title: Name
+          default: ''
+        description:
+          type: string
+          title: Description
+          default: ''
+        severity:
+          type: string
+          title: Severity
+          default: medium
+        application_id:
+          type: string
+          title: Application Id
+          default: ''
+        cluster_id:
+          type: string
+          title: Cluster Id
+          default: ''
+        cost_savings_min:
+          type: number
+          title: Cost Savings Min
+          default: 0.0
+        cost_savings_max:
+          type: number
+          title: Cost Savings Max
+          default: 0.0
+        time_savings_min:
+          type: number
+          title: Time Savings Min
+          default: 0.0
+        time_savings_max:
+          type: number
+          title: Time Savings Max
+          default: 0.0
+        stage_ids:
+          items:
+            type: integer
+          type: array
+          title: Stage Ids
+          default: []
+        code_links:
+          items:
+            $ref: '#/components/schemas/SparkOpportunityCodeLink'
+          type: array
+          title: Code Links
+          default: []
+      type: object
+      required:
+      - opportunity_id
+      title: SparkOpportunity
+      description: A single optimization opportunity for a Spark job with code linkage.
+    SparkTasksPaginatedResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SparkTaskDetail'
+          type: array
+          title: Items
+          default: []
+        total_count:
+          type: integer
+          title: Total Count
+          default: 0
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      title: SparkTasksPaginatedResponse
+      description: Paginated response for individual Spark tasks.
+    ComputeNodeTimeSeries:
+      properties:
+        node_id:
+          type: string
+          title: Node Id
+        is_driver:
+          type: boolean
+          title: Is Driver
+          default: false
+        node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Node Type
+        label:
+          type: string
+          title: Label
+          default: ''
+        cpu_user:
+          items:
+            type: number
+          type: array
+          title: Cpu User
+          default: []
+        cpu_system:
+          items:
+            type: number
+          type: array
+          title: Cpu System
+          default: []
+        mem_used:
+          items:
+            type: number
+          type: array
+          title: Mem Used
+          default: []
+        mem_swap:
+          items:
+            type: number
+          type: array
+          title: Mem Swap
+          default: []
+        gc_pct:
+          items:
+            type: number
+          type: array
+          title: Gc Pct
+          default: []
+      type: object
+      required:
+      - node_id
+      title: ComputeNodeTimeSeries
+      description: Time-series metrics for a single compute node (driver or worker).
+    PaginatedJobCreatorsResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/JobCreatorOption'
+          type: array
+          title: Items
+        page:
+          type: integer
+          title: Page
+          description: Current page number (1-indexed)
+          default: 1
+        size:
+          type: integer
+          title: Size
+          description: Items per page
+          default: 20
+        total:
+          type: integer
+          title: Total
+          description: Total number of matching creators
+          default: 0
+      type: object
+      title: PaginatedJobCreatorsResponse
+      description: Paginated list of distinct job creators with display names.
+    RecentFailuresResponse:
+      properties:
+        failures:
+          items:
+            $ref: '#/components/schemas/RecentFailure'
+          type: array
+          title: Failures
+        hours:
+          type: integer
+          title: Hours
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - failures
+      - hours
+      - total_count
+      title: RecentFailuresResponse
+      description: Response for recent failures.
+    JobRunTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/JobRunTrendPoint'
+          type: array
+          title: Trends
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - trends
+      - granularity
+      title: JobRunTrendsResponse
+      description: Response for job run trends.
+    SparkOpportunityCodeLink:
+      properties:
+        source_path:
+          type: string
+          title: Source Path
+          default: ''
+        cell_number:
+          type: integer
+          title: Cell Number
+          default: 0
+        confidence:
+          type: number
+          title: Confidence
+          default: 0.0
+        original_code:
+          type: string
+          title: Original Code
+          default: ''
+      type: object
+      title: SparkOpportunityCodeLink
+      description: Source code linked to an opportunity.
+    SparkPlanNode:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        category:
+          type: string
+          title: Category
+          default: other
+        depth:
+          type: integer
+          title: Depth
+          default: 0
+        parent_id:
+          type: integer
+          title: Parent Id
+          default: -1
+        detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - id
+      - name
+      title: SparkPlanNode
+      description: A node in the physical execution plan tree.
+    RecentFailure:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        job_id:
+          type: string
+          title: Job Id
+        job_name:
+          type: string
+          title: Job Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        run_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Name
+        result_state:
+          type: string
+          title: Result State
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        duration_seconds:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Duration Seconds
+      type: object
+      required:
+      - run_id
+      - job_id
+      - job_name
+      - workspace_id
+      - result_state
+      - start_time
+      title: RecentFailure
+      description: A recent job failure.
+    JobCostTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/JobCostTrendItem'
+          type: array
+          title: Trends
+        job_names:
+          items:
+            type: string
+          type: array
+          title: Job Names
+        granularity:
+          type: string
+          title: Granularity
+        total_cost:
+          type: number
+          title: Total Cost
+          default: 0
+      type: object
+      required:
+      - trends
+      - job_names
+      - granularity
+      title: JobCostTrendsResponse
+      description: Response for job cost trends by job.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    JobRunStats:
+      properties:
+        total_runs:
+          type: integer
+          title: Total Runs
+          default: 0
+        successful_runs:
+          type: integer
+          title: Successful Runs
+          default: 0
+        failed_runs:
+          type: integer
+          title: Failed Runs
+          default: 0
+        success_rate:
+          type: number
+          title: Success Rate
+          default: 0
+        failure_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Failure Rate
+        avg_duration_seconds:
+          type: number
+          title: Avg Duration Seconds
+          default: 0
+        min_duration_seconds:
+          type: number
+          title: Min Duration Seconds
+          default: 0
+        max_duration_seconds:
+          type: number
+          title: Max Duration Seconds
+          default: 0
+        estimated_cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Cost Usd
+      type: object
+      title: JobRunStats
+      description: Run statistics for a job.
+    JobsResponse:
+      properties:
+        jobs:
+          items:
+            $ref: '#/components/schemas/JobSummary'
+          type: array
+          title: Jobs
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of jobs
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Items per page
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - jobs
+      - total_count
+      title: JobsResponse
+      description: Response for listing jobs.
+    ComputeMetrics:
+      properties:
+        times:
+          items:
+            type: string
+          type: array
+          title: Times
+          default: []
+        driver:
+          anyOf:
+          - $ref: '#/components/schemas/ComputeNodeTimeSeries'
+          - type: 'null'
+        workers:
+          items:
+            $ref: '#/components/schemas/ComputeNodeTimeSeries'
+          type: array
+          title: Workers
+          default: []
+        node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Node Type
+        worker_count:
+          type: integer
+          title: Worker Count
+          default: 0
+      type: object
+      title: ComputeMetrics
+      description: Aggregated compute node metrics for the cluster.
+    FailingJob:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        job_name:
+          type: string
+          title: Job Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        total_runs:
+          type: integer
+          title: Total Runs
+        failed_runs:
+          type: integer
+          title: Failed Runs
+        failure_rate:
+          type: number
+          title: Failure Rate
+        last_failure_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Failure Time
+      type: object
+      required:
+      - job_id
+      - job_name
+      - workspace_id
+      - total_runs
+      - failed_runs
+      - failure_rate
+      title: FailingJob
+      description: A job with high failure rate.
+    DatabricksTaskRunGraphPoint:
+      properties:
+        run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Id
+        timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Timestamp
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        query_cost:
+          type: number
+          title: Query Cost
+          default: 0.0
+        execution_time:
+          type: number
+          title: Execution Time
+          default: 0.0
+      type: object
+      title: DatabricksTaskRunGraphPoint
+      description: 'One point on the task-runs graph for a single (job, task) pair.
+
+
+        Field names + units mirror the Snowflake ``JobRunGraphResponse``
+
+        (``app/schemas/queries.py``) so the FE chart component renders
+
+        Databricks task runs without unit conversions. ``run_id`` is the
+
+        Databricks ``job_run_id``; ``query_cost`` is in USD;
+
+        ``execution_time`` is in milliseconds. Annotations are intentionally
+
+        omitted — Databricks task runs are graphed without the
+
+        warehouse/code-change overlay used on Snowflake.'
+    SparkAnalysisSummaryResponse:
+      properties:
+        application:
+          $ref: '#/components/schemas/SparkApplicationInfo'
+        jobs:
+          items:
+            $ref: '#/components/schemas/SparkJobSummary'
+          type: array
+          title: Jobs
+          default: []
+        job_sql_map:
+          additionalProperties:
+            anyOf:
+            - type: integer
+            - type: 'null'
+          type: object
+          title: Job Sql Map
+          default: {}
+        job_stages:
+          additionalProperties:
+            items:
+              type: integer
+            type: array
+          type: object
+          title: Job Stages
+          default: {}
+        sql_flags:
+          additionalProperties:
+            $ref: '#/components/schemas/SparkSqlFlags'
+          type: object
+          title: Sql Flags
+          default: {}
+        sql_plan_dag:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/SparkPlanNode'
+            type: array
+          type: object
+          title: Sql Plan Dag
+          default: {}
+        sql_stage_dag:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/SparkSqlStageDagEntry'
+            type: array
+          type: object
+          title: Sql Stage Dag
+          default: {}
+        stages:
+          items:
+            $ref: '#/components/schemas/SparkStageSummary'
+          type: array
+          title: Stages
+          default: []
+        stage_metrics:
+          additionalProperties:
+            $ref: '#/components/schemas/SparkStageMetrics'
+          type: object
+          title: Stage Metrics
+          default: {}
+        config:
+          additionalProperties:
+            type: string
+          type: object
+          title: Config
+          default: {}
+        summary:
+          $ref: '#/components/schemas/SparkSummaryStats'
+          default:
+            total_jobs: 0
+            total_stages: 0
+            total_tasks: 0
+            unique_sqls: 0
+            failed_jobs: 0
+            total_duration_ms: 0
+            total_cost_cents: 0.0
+        compute_metrics:
+          anyOf:
+          - $ref: '#/components/schemas/ComputeMetrics'
+          - type: 'null'
+      type: object
+      required:
+      - application
+      title: SparkAnalysisSummaryResponse
+      description: Complete Spark analysis response for a job run.
+    JobStatsResponse:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        stats:
+          $ref: '#/components/schemas/JobRunStats'
+      type: object
+      required:
+      - job_id
+      - stats
+      title: JobStatsResponse
+      description: Response for job run statistics.
+    SparkTaskDetail:
+      properties:
+        task_id:
+          type: integer
+          title: Task Id
+        stage_id:
+          type: integer
+          title: Stage Id
+        index:
+          type: integer
+          title: Index
+          default: 0
+        attempt_id:
+          type: integer
+          title: Attempt Id
+          default: 0
+        executor_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Executor Id
+        executor_run_time:
+          type: integer
+          title: Executor Run Time
+          default: 0
+        duration_ms:
+          type: integer
+          title: Duration Ms
+          default: 0
+        jvm_gc_time:
+          type: integer
+          title: Jvm Gc Time
+          default: 0
+        memory_bytes_spilled:
+          type: integer
+          title: Memory Bytes Spilled
+          default: 0
+        disk_bytes_spilled:
+          type: integer
+          title: Disk Bytes Spilled
+          default: 0
+        shuffle_read_bytes:
+          type: integer
+          title: Shuffle Read Bytes
+          default: 0
+        shuffle_write_bytes:
+          type: integer
+          title: Shuffle Write Bytes
+          default: 0
+        launch_time:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Launch Time
+        finish_time:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Finish Time
+        failed:
+          type: boolean
+          title: Failed
+          default: false
+        killed:
+          type: boolean
+          title: Killed
+          default: false
+        speculative:
+          type: boolean
+          title: Speculative
+          default: false
+      type: object
+      required:
+      - task_id
+      - stage_id
+      title: SparkTaskDetail
+      description: Individual Spark task detail.
+    SparkOpportunitySummary:
+      properties:
+        total:
+          type: integer
+          title: Total
+          default: 0
+        by_severity:
+          additionalProperties:
+            type: integer
+          type: object
+          title: By Severity
+          default: {}
+        by_type:
+          additionalProperties:
+            type: integer
+          type: object
+          title: By Type
+          default: {}
+        total_time_savings_min:
+          type: number
+          title: Total Time Savings Min
+          default: 0.0
+        total_time_savings_max:
+          type: number
+          title: Total Time Savings Max
+          default: 0.0
+        total_cost_savings_min:
+          type: number
+          title: Total Cost Savings Min
+          default: 0.0
+        total_cost_savings_max:
+          type: number
+          title: Total Cost Savings Max
+          default: 0.0
+      type: object
+      title: SparkOpportunitySummary
+      description: Aggregate summary of opportunities.
+    AutoTuneHistoryEvent:
+      properties:
+        event_id:
+          type: integer
+          title: Event Id
+        event_type:
+          type: string
+          title: Event Type
+        mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Mode
+        change_timestamp:
+          type: string
+          format: date-time
+          title: Change Timestamp
+        task_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Key
+        recommendation_from:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From
+        recommendation_to:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To
+        recommendation_from_workers:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From Workers
+        recommendation_to_workers:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To Workers
+        recommendation_from_worker_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From Worker Instance
+        recommendation_to_worker_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To Worker Instance
+        recommendation_from_driver_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From Driver Instance
+        recommendation_to_driver_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To Driver Instance
+        changed_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Changed By
+        changed_by_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Changed By Name
+        actionable_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actionable Message
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        event_message:
+          type: string
+          title: Event Message
+          default: ''
+      type: object
+      required:
+      - event_id
+      - event_type
+      - change_timestamp
+      title: AutoTuneHistoryEvent
+      description: 'One row in the Auto Tune history panel.
+
+
+        Mirrors the shape the FE renders directly. ``event_message`` is
+
+        pre-composed in the API layer via
+
+        ``app.service.databricks.auto_tune.history.compose_event_message`` so
+
+        the schema stays a dumb data carrier and the templating logic lives
+
+        in the service layer.
+
+
+        ``changed_by_name`` is resolved by the API layer (manual lookup in
+
+        ``altimate_users``) since the audit ORM model does not currently
+
+        carry a relationship to the user model — see PR #5070 for the future
+
+        relationship-based approach.'
+    JobRun:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        job_id:
+          type: string
+          title: Job Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        run_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Name
+        result_state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Result State
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        duration_seconds:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Duration Seconds
+        trigger_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trigger Type
+        trigger_display:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trigger Display
+        run_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Type
+        cost_cents:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cost Cents
+      type: object
+      required:
+      - run_id
+      - job_id
+      - workspace_id
+      - start_time
+      title: JobRun
+      description: A single job run.
+    JobRunTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_runs:
+          type: integer
+          title: Total Runs
+          default: 0
+        successful_runs:
+          type: integer
+          title: Successful Runs
+          default: 0
+        failed_runs:
+          type: integer
+          title: Failed Runs
+          default: 0
+        avg_duration_seconds:
+          type: number
+          title: Avg Duration Seconds
+          default: 0
+        estimated_cost_usd:
+          type: number
+          title: Estimated Cost Usd
+          default: 0
+        dbu_cost:
+          type: number
+          title: Dbu Cost
+          default: 0
+        cloud_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cloud Cost
+      type: object
+      required:
+      - period
+      title: JobRunTrendPoint
+      description: A single point in job run trends.
+    SparkSqlStageDagEntry:
+      properties:
+        stg:
+          type: integer
+          title: Stg
+        parents:
+          items:
+            type: integer
+          type: array
+          title: Parents
+          default: []
+        tasks:
+          type: integer
+          title: Tasks
+          default: 0
+        ms:
+          type: integer
+          title: Ms
+          default: 0
+        name:
+          type: string
+          title: Name
+          default: ''
+      type: object
+      required:
+      - stg
+      title: SparkSqlStageDagEntry
+      description: A stage entry in the SQL-to-stage DAG.
+    RollbackInfo:
+      properties:
+        performed:
+          type: boolean
+          title: Performed
+          default: false
+        needs_confirmation:
+          type: boolean
+          title: Needs Confirmation
+          default: false
+        active_run_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Active Run Ids
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+      type: object
+      title: RollbackInfo
+      description: "Surfaced on the toggle response when the user disables an APPLIED\nrecommendation (sync rollback path, v2.5 §15).\n\n- ``performed=True`` → the cluster was reverted and audit/config were\n  updated. The toggle is now OFF.\n- ``needs_confirmation=True`` → the BE detected active runs on the\n  job. No DB writes happened. The FE should show an interstitial\n  (\"kill {N} running runs and roll back?\"); on confirm, re-call the\n  endpoint with ``force=true``."
+    PaginatedJobNamesResponse:
+      properties:
+        items:
+          items:
+            type: string
+          type: array
+          title: Items
+        page:
+          type: integer
+          title: Page
+          description: Current page number (1-indexed)
+          default: 1
+        size:
+          type: integer
+          title: Size
+          description: Items per page
+          default: 20
+        total:
+          type: integer
+          title: Total
+          description: Total number of matching job names
+          default: 0
+      type: object
+      title: PaginatedJobNamesResponse
+      description: Paginated list of distinct job names.
+    SparkStageMetricsPaginatedResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SparkStageMetrics'
+          type: array
+          title: Items
+          default: []
+        total_count:
+          type: integer
+          title: Total Count
+          default: 0
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      title: SparkStageMetricsPaginatedResponse
+      description: Paginated response for stage metrics.
+    ToggleAutoTuneRequest:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          description: Desired auto-tune state for the recommendation.
+        scope:
+          anyOf:
+          - type: string
+            enum:
+            - all_tasks
+            - specific_tasks
+          - type: 'null'
+          title: Scope
+          description: Optional whole-job cascade. 'all_tasks' cascade-writes the toggle to every (entity_id, task_key) row under this job. 'specific_tasks' enables the recs whose ``task_key`` appears in ``enabled_task_keys`` and DISABLES every other rec on the job — the config row converges to the exact set the user chose. When omitted, the toggle behaves per-task (legacy behavior — only the (job_id, task_key) row from the URL/query is mutated).
+        enabled_task_keys:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Enabled Task Keys
+          description: Required (and must be non-empty) when ``scope='specific_tasks'``. Rejected for any other scope. The list of task_keys the user has chosen to enable; every other rec on the job is disabled.
+      type: object
+      required:
+      - enabled
+      title: ToggleAutoTuneRequest
+      description: Request body for ``PATCH /databricks/jobs/{id}/auto-tune/toggle``.
+    FailingJobsResponse:
+      properties:
+        jobs:
+          items:
+            $ref: '#/components/schemas/FailingJob'
+          type: array
+          title: Jobs
+        min_failure_rate:
+          type: number
+          title: Min Failure Rate
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - jobs
+      - min_failure_rate
+      - total_count
+      title: FailingJobsResponse
+      description: Response for failing jobs.
+    JobsSummaryResponse:
+      properties:
+        total_cost:
+          type: number
+          title: Total Cost
+          default: 0
+        total_dbu_cost:
+          type: number
+          title: Total Dbu Cost
+          default: 0
+        total_cloud_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cloud Cost
+        total_realized_savings:
+          type: number
+          title: Total Realized Savings
+          default: 0
+      type: object
+      title: JobsSummaryResponse
+      description: 'Aggregate cost summary for the Jobs list hero cards.
+
+
+        ``total_cost`` equals ``total_dbu_cost`` because DBU consumption is
+
+        the only modelled cost component. ``total_cloud_cost`` is ``None``
+
+        because cloud-provider infrastructure cost is not ingested.'
+    JobTaskRun:
+      properties:
+        task_key:
+          type: string
+          title: Task Key
+        job_run_id:
+          type: string
+          title: Job Run Id
+        task_run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Run Id
+        result_state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Result State
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        total_duration_seconds:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Duration Seconds
+        run_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Run Count
+        cost_cents:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cost Cents
+        cluster_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Name
+      type: object
+      required:
+      - task_key
+      - job_run_id
+      title: JobTaskRun
+      description: A single task run within a job run.
+    JobDetail:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        job_name:
+          type: string
+          title: Job Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        creator_user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator User Name
+        run_as_user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run As User Name
+        created_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created Time
+        settings:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Settings
+      type: object
+      required:
+      - job_id
+      - job_name
+      - workspace_id
+      title: JobDetail
+      description: Detailed information for a job.
+    JobTaskInventoryItem:
+      properties:
+        task_key:
+          type: string
+          title: Task Key
+        depends_on_keys:
+          items:
+            type: string
+          type: array
+          title: Depends On Keys
+          default: []
+        current_worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Worker Node Type
+        current_driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Driver Node Type
+        current_min_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Current Min Workers
+        current_max_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Current Max Workers
+        cluster_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Name
+      type: object
+      required:
+      - task_key
+      title: JobTaskInventoryItem
+      description: 'Static task definition entry from ``dbx_job_tasks_inventory``,
+
+        enriched with the most-recent observed cluster spec joined from
+
+        ``dbx_job_task_run_timeline`` × ``dbx_compute_clusters``.
+
+
+        All ``current_*`` fields are optional — tasks that have never run
+
+        (or whose latest run carried no compute_id) come back without a
+
+        cluster spec, and the FE renders the no-change card without a
+
+        Current panel.'
+    AutoTuneSavingsTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        dbu_savings:
+          type: number
+          title: Dbu Savings
+          default: 0.0
+        infra_savings:
+          type: number
+          title: Infra Savings
+          default: 0.0
+      type: object
+      required:
+      - period
+      title: AutoTuneSavingsTrendPoint
+      description: One day's auto-tune savings, split into DBU and infra components.
+    JobRunsResponse:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        runs:
+          items:
+            $ref: '#/components/schemas/JobRun'
+          type: array
+          title: Runs
+        total_count:
+          type: integer
+          title: Total Count
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      required:
+      - job_id
+      - runs
+      - total_count
+      title: JobRunsResponse
+      description: Response for job runs.
+    SparkStageSummary:
+      properties:
+        stage_id:
+          type: integer
+          title: Stage Id
+        tasks:
+          type: integer
+          title: Tasks
+          default: 0
+        duration_ms:
+          type: integer
+          title: Duration Ms
+          default: 0
+      type: object
+      required:
+      - stage_id
+      title: SparkStageSummary
+      description: Summary of a single Spark stage.
+    DbxAutoRecommendationsResponse:
+      properties:
+        recommendations:
+          items:
+            $ref: '#/components/schemas/DbxAutoRecommendationItem'
+          type: array
+          title: Recommendations
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of recommendations returned
+          default: 0
+      type: object
+      required:
+      - recommendations
+      title: DbxAutoRecommendationsResponse
+      description: List response for Databricks auto-recommendations.
+    JobCreatorOption:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Creator principal id (creator_id)
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+          description: Display name (creator_user_name); falls back to id when missing
+      type: object
+      required:
+      - id
+      title: JobCreatorOption
+      description: A creator filter option exposing both the principal id and a display name.
+    AutoTuneStatusResponse:
+      properties:
+        auto_tune_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Tune Mode
+          description: '"enabled" if any task on the job has Auto Tune turned on. "disabled" if all tasks are off or no config exists. None when there are no recommendations for this job at all.'
+        preflight:
+          $ref: '#/components/schemas/ToggleAutoTunePreflight'
+        recommendation_count:
+          type: integer
+          title: Recommendation Count
+          default: 0
+        at_scoped_spend_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: At Scoped Spend Usd
+        tasks_enabled:
+          type: integer
+          title: Tasks Enabled
+          default: 0
+        tasks_total:
+          type: integer
+          title: Tasks Total
+          default: 0
+      type: object
+      title: AutoTuneStatusResponse
+      description: "Page-level status for the Auto Tune tab.\n\nReturned by GET /databricks/jobs/{job_id}/auto-tune/status. The FE\nuses this on JobDetail page mount to drive:\n\n- Master toggle position in the page header (auto_tune_mode).\n- Whether the toggle is interactive or disabled with a HoverCard\n  explaining why (preflight.blocked + actionable_message).\n- Whether the Auto Tune tab content renders the full panel or the\n  empty state (recommendation_count + auto_tune_mode).\n\nRead-only — no DB writes happen on this call."
+    SparkStageMetrics:
+      properties:
+        stage_id:
+          type: integer
+          title: Stage Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        tasks:
+          type: integer
+          title: Tasks
+          default: 0
+        run_ms:
+          type: integer
+          title: Run Ms
+          default: 0
+        max_ms:
+          type: integer
+          title: Max Ms
+          default: 0
+        avg_ms:
+          type: integer
+          title: Avg Ms
+          default: 0
+        min_ms:
+          type: integer
+          title: Min Ms
+          default: 0
+        median_ms:
+          type: integer
+          title: Median Ms
+          default: 0
+        q1_ms:
+          type: integer
+          title: Q1 Ms
+          default: 0
+        q3_ms:
+          type: integer
+          title: Q3 Ms
+          default: 0
+        stddev_ms:
+          type: number
+          title: Stddev Ms
+          default: 0.0
+        gc_ms:
+          type: integer
+          title: Gc Ms
+          default: 0
+        mem_spill:
+          type: integer
+          title: Mem Spill
+          default: 0
+        disk_spill:
+          type: integer
+          title: Disk Spill
+          default: 0
+        shuffle_read:
+          type: integer
+          title: Shuffle Read
+          default: 0
+        shuffle_write:
+          type: integer
+          title: Shuffle Write
+          default: 0
+        skew:
+          type: number
+          title: Skew
+          default: 0.0
+      type: object
+      required:
+      - stage_id
+      title: SparkStageMetrics
+      description: Detailed task-level metrics aggregated per stage.
+    CascadePartialFailure:
+      properties:
+        task_key:
+          type: string
+          title: Task Key
+          description: The recommendation's ``task_key`` that failed to apply.
+        error:
+          type: string
+          title: Error
+          description: Stringified exception message. The cascade catches all exceptions to keep the loop going; the original type is lost.
+      type: object
+      required:
+      - task_key
+      - error
+      title: CascadePartialFailure
+      description: 'One ``(task_key, error)`` entry in the cascade response.
+
+
+        Surfaced when ``scope`` is ``all_tasks`` or ``specific_tasks`` and
+
+        one or more per-task applies threw mid-cascade. The cascade
+
+        continues past the failure (so a single broken task doesn''t poison
+
+        the whole job toggle), but the FE needs to know which tasks didn''t
+
+        flip so it can render a per-task error toast or row-level badge.'
+    AutoTuneSavingsTrendsResponse:
+      properties:
+        actual:
+          items:
+            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
+          type: array
+          title: Actual
+        potential:
+          items:
+            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
+          type: array
+          title: Potential
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - actual
+      - potential
+      - granularity
+      title: AutoTuneSavingsTrendsResponse
+      description: 'Per-day auto-tune savings for a job, split into realized and potential.
+
+
+        ``actual`` holds savings on runs where an applied recommendation was in
+
+        effect; ``potential`` holds the savings those runs would have earned from
+
+        the active recommendation had it been applied. Each series is bucketed by
+
+        the run window (``period_start_time``).'
+    JobSummary:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        job_name:
+          type: string
+          title: Job Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        creator_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator Id
+        creator_user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator User Name
+        total_runs:
+          type: integer
+          title: Total Runs
+          default: 0
+        successful_runs:
+          type: integer
+          title: Successful Runs
+          default: 0
+        failed_runs:
+          type: integer
+          title: Failed Runs
+          default: 0
+        success_rate:
+          type: number
+          title: Success Rate
+          default: 0
+        avg_duration_seconds:
+          type: number
+          title: Avg Duration Seconds
+          default: 0
+        last_run_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Run Time
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost_usd:
+          type: number
+          title: Estimated Cost Usd
+          default: 0
+        total_cloud_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cloud Cost
+        annualized_total_cost:
+          type: number
+          title: Annualized Total Cost
+          default: 0
+        auto_tune_enabled:
+          type: boolean
+          title: Auto Tune Enabled
+          default: false
+        realized_savings:
+          type: number
+          title: Realized Savings
+          default: 0.0
+        estimated_annualized_savings:
+          type: number
+          title: Estimated Annualized Savings
+          default: 0.0
+      type: object
+      required:
+      - job_id
+      - job_name
+      - workspace_id
+      title: JobSummary
+      description: Summary information for a job.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    JobTasksInventoryResponse:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        tasks:
+          items:
+            $ref: '#/components/schemas/JobTaskInventoryItem'
+          type: array
+          title: Tasks
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - job_id
+      - tasks
+      - total_count
+      title: JobTasksInventoryResponse
+      description: 'Full static task list of a Databricks job — every task in the
+
+        workflow, including ones that have not run yet. Sourced from
+
+        ``dbx_job_tasks_inventory`` (Type-2 SCD; latest row per task).'
+    JobFilterOptions:
+      properties:
+        job_names:
+          items:
+            type: string
+          type: array
+          title: Job Names
+        creators:
+          items:
+            type: string
+          type: array
+          title: Creators
+        workspaces:
+          items:
+            type: string
+          type: array
+          title: Workspaces
+      type: object
+      title: JobFilterOptions
+      description: Filter options for jobs.
+    SparkSummaryStats:
+      properties:
+        total_jobs:
+          type: integer
+          title: Total Jobs
+          default: 0
+        total_stages:
+          type: integer
+          title: Total Stages
+          default: 0
+        total_tasks:
+          type: integer
+          title: Total Tasks
+          default: 0
+        unique_sqls:
+          type: integer
+          title: Unique Sqls
+          default: 0
+        failed_jobs:
+          type: integer
+          title: Failed Jobs
+          default: 0
+        total_duration_ms:
+          type: integer
+          title: Total Duration Ms
+          default: 0
+        total_cost_cents:
+          type: number
+          title: Total Cost Cents
+          default: 0.0
+      type: object
+      title: SparkSummaryStats
+      description: Aggregate summary statistics.
+    DbxAutoRecommendationItem:
+      properties:
+        entity_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Id
+        entity_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Name
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+        task_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Key
+        owned_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owned By
+        current_worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Worker Node Type
+        current_driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Driver Node Type
+        current_min_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Current Min Workers
+        current_max_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Current Max Workers
+        current_cost_per_hr:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Current Cost Per Hr
+        recommended_worker_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommended Worker Instance
+        recommended_driver_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommended Driver Instance
+        recommended_min_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Recommended Min Workers
+        recommended_max_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Recommended Max Workers
+        recommended_cost_per_hr:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Recommended Cost Per Hr
+        estimated_savings_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Savings Pct
+        efficiency_score:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Efficiency Score
+        reasoning:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reasoning
+        model_confidence:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Model Confidence
+        model_profile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Profile
+        inference_start_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Inference Start Date
+        inference_end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Inference End Date
+        instance_id:
+          type: integer
+          title: Instance Id
+        updated_on:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated On
+        monthly_savings_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Monthly Savings Usd
+        monthly_savings_min_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Monthly Savings Min Usd
+        realized_savings_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Realized Savings Usd
+        monthly_dbu_savings_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Monthly Dbu Savings Usd
+        current_cost_per_hr_low:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Current Cost Per Hr Low
+        recommended_cost_per_hr_low:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Recommended Cost Per Hr Low
+        auto_tune_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Tune Mode
+        depends_on:
+          items:
+            type: string
+          type: array
+          title: Depends On
+        latest_action_event_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Action Event Type
+      type: object
+      required:
+      - instance_id
+      title: DbxAutoRecommendationItem
+      description: 'A single right-sizing recommendation for a Databricks entity.
+
+
+        The FE renders this directly. ``auto_tune_mode`` is the single source
+
+        of truth for the toggle position (see PRD §6 Option A — comes from a
+
+        LEFT JOIN on ``databricks_auto_tune_configuration``). The legacy
+
+        ``action`` column was removed from ``dbx_auto_recommendation`` per
+
+        team decision; all enable/disable state lives on the configuration
+
+        table.'
+    JobRunSparkUiResponse:
+      properties:
+        state:
+          type: string
+          title: State
+        spark_ui_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spark Ui Url
+        workspace_host:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Host
+        cluster_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Id
+        spark_context_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spark Context Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - state
+      title: JobRunSparkUiResponse
+      description: "Deep link to the Databricks Spark UI for a job run.\n\nEndpoint always returns 200; ``state`` is the discriminator. Real\nHTTP errors (auth failures, server crashes) still surface as their\nnatural status codes and bypass this shape.\n\n``state`` values:\n\n- ``available``: happy path — render the link.\n- ``no_spark_context``: serverless / SQL warehouse / queued run — no\n  Spark UI to deep-link to. FE disables the action with a tooltip.\n- ``not_found``: job or ``task_run_id`` does not exist. FE hides the\n  action.\n- ``workspace_mismatch``: caller-supplied ``workspace_id`` does not\n  match the workspace that owns this job. FE surfaces a toast.\n- ``permission_denied``: the workspace's Service Principal lacks\n  View / Manage Run / Admin permission on this specific job. Won't\n  resolve until an admin grants permission, so FE should surface a\n  toast distinct from the transient upstream-error one.\n- ``upstream_error``: Databricks credentials missing, or the upstream\n  ``runs/get`` call failed for any other reason. FE surfaces a toast.\n\nThe four URL fields are present **only** when ``state == \"available\"``.\n``message`` carries a human-readable detail for the error states.\n``spark_context_id`` is fetched live from the Databricks Jobs API\n(``runs/get``) because it is not ingested into ClickHouse."
+    ToggleAutoTuneResponse:
+      properties:
+        auto_tune_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Tune Mode
+        audit_event_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Audit Event Id
+        entity_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Name
+        preflight:
+          $ref: '#/components/schemas/ToggleAutoTunePreflight'
+        rollback:
+          $ref: '#/components/schemas/RollbackInfo'
+        partial_failures:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CascadePartialFailure'
+            type: array
+          - type: 'null'
+          title: Partial Failures
+          description: Populated only on cascade calls (``scope=all_tasks`` or ``scope=specific_tasks``) when one or more per-task applies raised. ``None`` for single-task toggles or fully-successful cascades. Empty list is never returned — None means no failures occurred.
+      type: object
+      title: ToggleAutoTuneResponse
+      description: 'Response body for the toggle endpoint.
+
+
+        Returns the resolved ``auto_tune_mode`` so the FE can re-render the
+
+        toggle position from the response without a second round-trip
+
+        (though the FE still invalidates and refetches the list query so the
+
+        full row state stays consistent).'
+    SparkSqlFlags:
+      properties:
+        sql_id:
+          type: integer
+          title: Sql Id
+        aqe:
+          type: boolean
+          title: Aqe
+          default: false
+        joins:
+          type: integer
+          title: Joins
+          default: 0
+        scans:
+          type: integer
+          title: Scans
+          default: 0
+        exchanges:
+          type: integer
+          title: Exchanges
+          default: 0
+        collect_to_driver:
+          type: boolean
+          title: Collect To Driver
+          default: false
+        no_partition_pruning:
+          type: boolean
+          title: No Partition Pruning
+          default: false
+        duplicate_scan:
+          type: boolean
+          title: Duplicate Scan
+          default: false
+        excessive_shuffle:
+          type: boolean
+          title: Excessive Shuffle
+          default: false
+        cartesian_join:
+          type: boolean
+          title: Cartesian Join
+          default: false
+        broadcast_nested_loop:
+          type: boolean
+          title: Broadcast Nested Loop
+          default: false
+        global_sort:
+          type: boolean
+          title: Global Sort
+          default: false
+      type: object
+      required:
+      - sql_id
+      title: SparkSqlFlags
+      description: Flags/anti-patterns detected for a SQL execution.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

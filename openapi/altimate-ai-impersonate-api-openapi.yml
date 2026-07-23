@@ -1,0 +1,203 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS IMPERSONATE API
+  version: 0.1.0
+tags:
+- name: IMPERSONATE
+paths:
+  /impersonate:
+    post:
+      tags:
+      - IMPERSONATE
+      summary: Impersonate
+      operationId: impersonate_impersonate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserImpersonateInfo'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Impersonate Impersonate Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    UserLoginOut:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        email:
+          type: string
+          title: Email
+        auth_token:
+          type: string
+          title: Auth Token
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        is_onboarded:
+          type: boolean
+          title: Is Onboarded
+        tz:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tz
+        lang:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lang
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        role_FK:
+          anyOf:
+          - $ref: '#/components/schemas/RolePermissionFull'
+          - type: 'null'
+        has_role_conflict:
+          type: boolean
+          title: Has Role Conflict
+          default: false
+        sso_resolved_role_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sso Resolved Role Title
+      type: object
+      required:
+      - email
+      - auth_token
+      - is_onboarded
+      - uuid
+      title: UserLoginOut
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UserImpersonateInfo:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+      - email
+      title: UserImpersonateInfo
+    RolePermissionFull:
+      properties:
+        role_name:
+          type: string
+          title: Role Name
+        role_description:
+          type: string
+          title: Role Description
+        role_title:
+          type: string
+          title: Role Title
+        is_custom:
+          type: boolean
+          title: Is Custom
+        permission:
+          items:
+            $ref: '#/components/schemas/PermissionsFull'
+          type: array
+          title: Permission
+      type: object
+      required:
+      - role_name
+      - role_description
+      - role_title
+      - is_custom
+      - permission
+      title: RolePermissionFull
+    PermissionsFull:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
+      type: object
+      required:
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

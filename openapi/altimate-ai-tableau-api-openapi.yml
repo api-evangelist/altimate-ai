@@ -1,0 +1,144 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Tableau API
+  version: 0.1.0
+tags:
+- name: Tableau
+paths:
+  /business_intelligence/tableau/projects:
+    post:
+      tags:
+      - Tableau
+      summary: Get Tableau projects using connection credentials
+      description: "Fetch all Tableau projects from a Tableau server using provided connection details.\n\nTwo modes:\n- Wizard (no ``datastore_id``): caller supplies plaintext PAT in the body.\n- Add-site modal (``datastore_id`` present, PAT omitted): falls back to\n  credentials stored on the existing data store. The caller-supplied\n  ``site_name`` lets the customer browse projects on a new site without\n  re-entering the PAT.\n\nPAT credentials are treated atomically — if the caller supplies only one\nof pat_name/pat_secret, the stored pair replaces both. This prevents a\npartial override from silently pairing the caller's new name with the\nstored secret.\n\nReturns a hierarchical list of projects."
+      operationId: get_tableau_projects_business_intelligence_tableau_projects_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauProjectsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/TableauProject'
+                type: array
+                title: Response Get Tableau Projects Business Intelligence Tableau Projects Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    TableauProject:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        parent_project_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Project Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        content_permissions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Permissions
+      type: object
+      required:
+      - id
+      - name
+      title: TableauProject
+      description: Response model for Tableau project information.
+    TableauProjectsRequest:
+      properties:
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Name
+        pat_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Name
+        pat_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Secret
+        datastore_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Datastore Id
+        source_site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Site Name
+      type: object
+      title: TableauProjectsRequest
+      description: Request model for fetching Tableau projects before datastore creation.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

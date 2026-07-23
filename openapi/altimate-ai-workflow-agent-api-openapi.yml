@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS WORKFLOW_AGENT API
+  version: 0.1.0
+tags:
+- name: WORKFLOW_AGENT
+paths:
+  /api/v1/workflow/agent/heartbeat:
+    post:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Post Heartbeat
+      description: Agent posts health ping. Returns pending commands.
+      operationId: post_heartbeat_api_v1_workflow_agent_heartbeat_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeartbeatRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/workflow/agent/commands/{command_id}/ack:
+    post:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Acknowledge Command
+      description: Agent reports command execution result.
+      operationId: acknowledge_command_api_v1_workflow_agent_commands__command_id__ack_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: command_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Command Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommandAckRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflow/agent/config/{namespace}:
+    get:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Pull Config
+      description: Agent pulls all configs for a namespace.
+      operationId: pull_config_api_v1_workflow_agent_config__namespace__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: namespace
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Namespace
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflow/agent/config:
+    get:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Pull All Configs
+      description: Agent pulls all configs across all namespaces.
+      operationId: pull_all_configs_api_v1_workflow_agent_config_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/workflow/agent/commands:
+    get:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Pull Pending Commands
+      description: Agent pulls pending commands.
+      operationId: pull_pending_commands_api_v1_workflow_agent_commands_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/workflow/agent/sessions:
+    post:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Report Session
+      description: Agent reports a new or updated session.
+      operationId: report_session_api_v1_workflow_agent_sessions_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionReportRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/workflow/agent/messages:
+    post:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Report Message
+      description: 'Agent appends a message to a session''s conversation log.
+
+
+        session_id can be either a workflow_sessions UUID or an openclaw_session_id.
+
+        If the session doesn''t exist yet, auto-create it from the openclaw_session_id.'
+      operationId: report_message_api_v1_workflow_agent_messages_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageReportRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/workflow/agent/cron/sync:
+    post:
+      tags:
+      - WORKFLOW_AGENT
+      summary: Sync Cron Jobs
+      description: Agent syncs its cron job state.
+      operationId: sync_cron_jobs_api_v1_workflow_agent_cron_sync_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CronSyncRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    CommandAckRequest:
+      properties:
+        status:
+          type: string
+          title: Status
+          default: executed
+        result:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Result
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      title: CommandAckRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CronSyncRequest:
+      properties:
+        jobs:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Jobs
+      type: object
+      required:
+      - jobs
+      title: CronSyncRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HeartbeatRequest:
+      properties:
+        instance_id:
+          type: string
+          title: Instance Id
+        status:
+          type: string
+          title: Status
+          default: healthy
+        vitals:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Vitals
+        llm_usage:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Llm Usage
+        capacity:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Capacity
+      type: object
+      required:
+      - instance_id
+      title: HeartbeatRequest
+    SessionReportRequest:
+      properties:
+        openclaw_session_id:
+          type: string
+          title: Openclaw Session Id
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        channel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Channel
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        current_agent_slug:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Agent Slug
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      required:
+      - openclaw_session_id
+      title: SessionReportRequest
+    MessageReportRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        role:
+          type: string
+          title: Role
+        content:
+          type: string
+          title: Content
+        tool_calls:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Tool Calls
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      required:
+      - session_id
+      - role
+      - content
+      title: MessageReportRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,401 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS COACH API
+  version: 0.1.0
+tags:
+- name: COACH
+paths:
+  /coach/training:
+    post:
+      tags:
+      - COACH
+      summary: Submit Training Doc
+      operationId: submit_training_doc_coach_training_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitTrainingDocRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input provided
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Submit Training Doc Coach Training Post
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Submit Training Doc Coach Training Post
+        '500':
+          description: Failed to process training document
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 500 Submit Training Doc Coach Training Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - COACH
+      summary: Read Training Docs
+      operationId: read_training_docs_coach_training_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: category
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ContentCategory'
+          - type: 'null'
+          title: Category
+      - name: personalizationScope
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/PersonalizationScope'
+          - type: 'null'
+          title: Personalizationscope
+      - name: taskLabel
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/TaskLabel'
+          - type: 'null'
+          title: Tasklabel
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: List of training documents
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 200 Read Training Docs Coach Training Get
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 500 Read Training Docs Coach Training Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /coach/training/confirm:
+    post:
+      tags:
+      - COACH
+      summary: Confirm Training Doc
+      operationId: confirm_training_doc_coach_training_confirm_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmTrainingDocRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input provided
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Confirm Training Doc Coach Training Confirm Post
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Confirm Training Doc Coach Training Confirm Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /coach/training/{train_doc_uid}:
+    patch:
+      tags:
+      - COACH
+      summary: Update Training Doc
+      operationId: update_training_doc_coach_training__train_doc_uid__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: train_doc_uid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Train Doc Uid
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTrainingDocRequest'
+      responses:
+        '200':
+          description: Training doc updated successfully
+          content:
+            application/json:
+              schema: {}
+              example:
+                status: success
+                message: Training doc updated successfully.
+                new_uuid: Optional new UUID if content was updated
+        '400':
+          description: Invalid input provided
+        '403':
+          description: Access forbidden
+        '404':
+          description: Training doc not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - COACH
+      summary: Delete Training Doc
+      operationId: delete_training_doc_coach_training__train_doc_uid__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: train_doc_uid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Train Doc Uid
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Training doc deleted successfully
+          content:
+            application/json:
+              schema: {}
+              example:
+                status: success
+                message: Training doc deleted successfully.
+        '403':
+          description: Access forbidden
+        '404':
+          description: Training doc not found
+        '500':
+          description: Internal server error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TaskLabel:
+      type: string
+      enum:
+      - DocGen
+      - LineageExplorer
+      - ChartBot
+      - SqlExpert
+      title: TaskLabel
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PersonalizationScope:
+      type: string
+      enum:
+      - UserSpecific
+      - AllUsers
+      title: PersonalizationScope
+    SubmitTrainingDocRequest:
+      properties:
+        content:
+          type: string
+          title: Content
+        taskLabel:
+          $ref: '#/components/schemas/TaskLabel'
+      type: object
+      required:
+      - content
+      - taskLabel
+      title: SubmitTrainingDocRequest
+    ConfirmTrainingDocRequest:
+      properties:
+        content:
+          type: string
+          title: Content
+        category:
+          $ref: '#/components/schemas/ContentCategory'
+        taskLabel:
+          $ref: '#/components/schemas/TaskLabel'
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        isModelDoc:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ismodeldoc
+          default: false
+      type: object
+      required:
+      - content
+      - category
+      - taskLabel
+      title: ConfirmTrainingDocRequest
+    UpdateTrainingDocRequest:
+      properties:
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        taskLabel:
+          anyOf:
+          - $ref: '#/components/schemas/TaskLabel'
+          - type: 'null'
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/ContentCategory'
+          - type: 'null'
+        personalizationScope:
+          anyOf:
+          - $ref: '#/components/schemas/PersonalizationScope'
+          - type: 'null'
+        isActive:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isactive
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      title: UpdateTrainingDocRequest
+    ContentCategory:
+      type: string
+      enum:
+      - TermClarification
+      - GeneralGuidelines
+      - BusinessExplanation
+      title: ContentCategory
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,1074 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DBT_V3 API
+  version: 0.1.0
+tags:
+- name: DBT_V3
+paths:
+  /dbt/v3/lineage:
+    post:
+      tags:
+      - DBT_V3
+      summary: Get Column Level Lineage
+      description: Generates lineage analysis for a dbt_model
+      operationId: get_column_level_lineage_dbt_v3_lineage_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBTColumnLineageRequestV3'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBTColumnLineageResponseV3'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Column Level Lineage Dbt V3 Lineage Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Column Level Lineage Dbt V3 Lineage Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/v3/sql_lineage:
+    post:
+      tags:
+      - DBT_V3
+      summary: Get Sql Lineage
+      operationId: get_sql_lineage_dbt_v3_sql_lineage_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBTSQLLineageRequestV3'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SQLLineageResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Sql Lineage Dbt V3 Sql Lineage Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Sql Lineage Dbt V3 Sql Lineage Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/v3/validate-credentials:
+    get:
+      tags:
+      - DBT_V3
+      summary: Validate Credentials
+      operationId: validate_credentials_dbt_v3_validate_credentials_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Validate Credentials Dbt V3 Validate Credentials Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Validate Credentials Dbt V3 Validate Credentials Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Validate Credentials Dbt V3 Validate Credentials Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/v3/query-result/share:
+    post:
+      tags:
+      - DBT_V3
+      summary: Share Query Result
+      operationId: share_query_result_dbt_v3_query_result_share_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBTShareQueryRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBTShareQueryItemResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Share Query Result Dbt V3 Query Result Share Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Share Query Result Dbt V3 Query Result Share Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/v3/query-result/list:
+    get:
+      tags:
+      - DBT_V3
+      summary: List Query Result
+      operationId: list_query_result_dbt_v3_query_result_list_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_DBTShareQueryItem_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 List Query Result Dbt V3 Query Result List Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Query Result Dbt V3 Query Result List Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/v3/query-result/list/{item_id}:
+    get:
+      tags:
+      - DBT_V3
+      summary: Get Query Result By Id
+      operationId: get_query_result_by_id_dbt_v3_query_result_list__item_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBTShareQueryItemResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Query Result By Id Dbt V3 Query Result List  Item Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Query Result By Id Dbt V3 Query Result List  Item Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - DBT_V3
+      summary: Delete Query Result
+      operationId: delete_query_result_dbt_v3_query_result_list__item_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Delete Query Result Dbt V3 Query Result List  Item Id  Delete
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Delete Query Result Dbt V3 Query Result List  Item Id  Delete
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Delete Query Result Dbt V3 Query Result List  Item Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - DBT_V3
+      summary: Patch Query Result
+      operationId: patch_query_result_dbt_v3_query_result_list__item_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBTShareQueryPatchRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Patch Query Result Dbt V3 Query Result List  Item Id  Patch
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Patch Query Result Dbt V3 Query Result List  Item Id  Patch
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Patch Query Result Dbt V3 Query Result List  Item Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/v3/translate:
+    post:
+      tags:
+      - DBT_V3
+      summary: Get Translate
+      description: Generates lineage analysis for a dbt_model
+      operationId: get_translate_dbt_v3_translate_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBTTranslateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBTTranslateResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Translate Dbt V3 Translate Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Translate Dbt V3 Translate Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /dbt/v3/translate-explanation:
+    post:
+      tags:
+      - DBT_V3
+      summary: Get Translate Explain
+      description: Generates explanation for query translation
+      operationId: get_translate_explain_dbt_v3_translate_explanation_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBTTranslateExplainRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBTTranslateExplainRequest'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Translate Explain Dbt V3 Translate Explanation Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Translate Explain Dbt V3 Translate Explanation Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    DBTColumnLineageResponseV3:
+      properties:
+        column_lineage:
+          items:
+            $ref: '#/components/schemas/ColumnLineageLink'
+          type: array
+          title: Column Lineage
+        confidence:
+          anyOf:
+          - $ref: '#/components/schemas/Confidence'
+          - type: 'null'
+      type: object
+      required:
+      - column_lineage
+      title: DBTColumnLineageResponseV3
+    DBTShareQueryItemResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        model_name:
+          type: string
+          title: Model Name
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        share_url:
+          type: string
+          title: Share Url
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+        sharing_status:
+          type: boolean
+          title: Sharing Status
+        created_by:
+          type: integer
+          title: Created By
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+        csv_result:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Csv Result
+      type: object
+      required:
+      - id
+      - name
+      - model_name
+      - compiled_sql
+      - share_url
+      - attributes
+      - sharing_status
+      - created_by
+      - created_on
+      title: DBTShareQueryItemResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SelectedColumn:
+      properties:
+        model_node:
+          anyOf:
+          - $ref: '#/components/schemas/ModelNode'
+          - type: 'null'
+        column:
+          type: string
+          title: Column
+      type: object
+      required:
+      - column
+      title: SelectedColumn
+    DBTShareQueryRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        csv_result:
+          type: string
+          title: Csv Result
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+        model_name:
+          type: string
+          title: Model Name
+      type: object
+      required:
+      - name
+      - compiled_sql
+      - csv_result
+      - attributes
+      - model_name
+      title: DBTShareQueryRequest
+    DBTTranslateExplainRequest:
+      properties:
+        user_sql:
+          type: string
+          title: User Sql
+        translated_sql:
+          type: string
+          title: Translated Sql
+        source_dialect:
+          type: string
+          title: Source Dialect
+        target_dialect:
+          type: string
+          title: Target Dialect
+      type: object
+      required:
+      - user_sql
+      - translated_sql
+      - source_dialect
+      - target_dialect
+      title: DBTTranslateExplainRequest
+    ModelNode:
+      properties:
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        package_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Package Name
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        alias:
+          type: string
+          title: Alias
+        uniqueId:
+          type: string
+          title: Uniqueid
+        columns:
+          additionalProperties:
+            $ref: '#/components/schemas/ModelColumn'
+          type: object
+          title: Columns
+      type: object
+      required:
+      - alias
+      - uniqueId
+      - columns
+      title: ModelNode
+    Page_DBTShareQueryItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DBTShareQueryItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DBTShareQueryItem]
+    DBTSQLLineageRequestV3:
+      properties:
+        model_dialect:
+          type: string
+          title: Model Dialect
+        model_info:
+          items:
+            $ref: '#/components/schemas/ModelInfo'
+          type: array
+          title: Model Info
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        session_id:
+          type: string
+          title: Session Id
+      type: object
+      required:
+      - model_dialect
+      - model_info
+      - compiled_sql
+      - session_id
+      title: DBTSQLLineageRequestV3
+    ColumnLineageLink:
+      properties:
+        source:
+          $ref: '#/components/schemas/ColumnIdentifier'
+        target:
+          $ref: '#/components/schemas/ColumnIdentifier'
+        type:
+          type: string
+          title: Type
+        views_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Views Type
+        views_code:
+          items:
+            prefixItems:
+            - type: string
+            - type: string
+            type: array
+            maxItems: 2
+            minItems: 2
+          type: array
+          title: Views Code
+      type: object
+      required:
+      - source
+      - target
+      - type
+      - views_code
+      title: ColumnLineageLink
+    SQLLineageResponse:
+      properties:
+        tableEdges:
+          items:
+            prefixItems:
+            - type: string
+            - type: string
+            type: array
+            maxItems: 2
+            minItems: 2
+          type: array
+          title: Tableedges
+        details:
+          additionalProperties: true
+          type: object
+          title: Details
+        nodePositions:
+          anyOf:
+          - additionalProperties:
+              prefixItems:
+              - type: number
+              - type: number
+              type: array
+              maxItems: 2
+              minItems: 2
+            type: object
+          - type: 'null'
+          title: Nodepositions
+      type: object
+      required:
+      - tableEdges
+      - details
+      title: SQLLineageResponse
+    DBTShareQueryPatchRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        sharing_status:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Sharing Status
+      type: object
+      title: DBTShareQueryPatchRequest
+    ModelInfo:
+      properties:
+        model_node:
+          $ref: '#/components/schemas/ModelNode'
+        compiled_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compiled Sql
+        raw_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Sql
+      type: object
+      required:
+      - model_node
+      title: ModelInfo
+    Schemas:
+      properties:
+        model_name:
+          additionalProperties: true
+          type: object
+          title: Model Name
+      type: object
+      required:
+      - model_name
+      title: Schemas
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ColumnIdentifier:
+      properties:
+        uniqueId:
+          type: string
+          title: Uniqueid
+        column_name:
+          type: string
+          title: Column Name
+      type: object
+      required:
+      - uniqueId
+      - column_name
+      title: ColumnIdentifier
+    DBTColumnLineageRequestV3:
+      properties:
+        targets:
+          items:
+            $ref: '#/components/schemas/ColumnIdentifier'
+          type: array
+          title: Targets
+        model_dialect:
+          type: string
+          title: Model Dialect
+        model_info:
+          items:
+            $ref: '#/components/schemas/ModelInfo'
+          type: array
+          title: Model Info
+        model_schemas:
+          anyOf:
+          - $ref: '#/components/schemas/Schemas'
+          - type: 'null'
+        upstream_expansion:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Upstream Expansion
+        selected_column:
+          anyOf:
+          - $ref: '#/components/schemas/SelectedColumn'
+          - type: 'null'
+        parent_models:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ModelInfo'
+            type: array
+          - type: 'null'
+          title: Parent Models
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      type: object
+      required:
+      - targets
+      - model_dialect
+      - model_info
+      title: DBTColumnLineageRequestV3
+    DBTTranslateResponse:
+      properties:
+        translated_sql:
+          type: string
+          title: Translated Sql
+      type: object
+      required:
+      - translated_sql
+      title: DBTTranslateResponse
+    DBTTranslateRequest:
+      properties:
+        sql:
+          type: string
+          title: Sql
+        source_dialect:
+          type: string
+          title: Source Dialect
+        target_dialect:
+          type: string
+          title: Target Dialect
+      type: object
+      required:
+      - sql
+      - source_dialect
+      - target_dialect
+      title: DBTTranslateRequest
+    ModelColumn:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        data_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Data Type
+      type: object
+      required:
+      - name
+      title: ModelColumn
+    Confidence:
+      properties:
+        confidence:
+          type: string
+          title: Confidence
+        operator_list:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Operator List
+      type: object
+      required:
+      - confidence
+      title: Confidence
+    DBTShareQueryItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        model_name:
+          type: string
+          title: Model Name
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        share_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Url
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+        sharing_status:
+          type: boolean
+          title: Sharing Status
+        created_by:
+          type: integer
+          title: Created By
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+      type: object
+      required:
+      - id
+      - name
+      - model_name
+      - compiled_sql
+      - attributes
+      - sharing_status
+      - created_by
+      - created_on
+      title: DBTShareQueryItem
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

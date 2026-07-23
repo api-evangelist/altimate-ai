@@ -1,0 +1,73 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Test Email API
+  version: 0.1.0
+tags:
+- name: Test Email
+paths:
+  /test-email:
+    post:
+      summary: Test Email
+      description: Test emails.
+      operationId: test_email_test_email_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: email_to
+        in: query
+        required: true
+        schema:
+          type: string
+          format: email
+          title: Email To
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Test Email
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

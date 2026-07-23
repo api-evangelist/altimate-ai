@@ -1,0 +1,212 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS REFERRAL API
+  version: 0.1.0
+tags:
+- name: REFERRAL
+paths:
+  /referral-codes:
+    get:
+      tags:
+      - REFERRAL
+      summary: List Codes
+      description: List every referral code with its usage stats (ordered newest first).
+      operationId: list_codes_referral_codes_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ReferralCodeWithStats'
+                type: array
+                title: Response List Codes Referral Codes Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - REFERRAL
+      summary: Create Code
+      operationId: create_code_referral_codes_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferralCodeCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferralCodeOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    ReferralCodeOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        code:
+          type: string
+          title: Code
+        is_active:
+          type: boolean
+          title: Is Active
+        max_uses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Uses
+        used_count:
+          type: integer
+          title: Used Count
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - code
+      - is_active
+      - max_uses
+      - used_count
+      - expires_at
+      - created_by
+      - created_at
+      title: ReferralCodeOut
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ReferralCodeCreate:
+      properties:
+        code:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 4
+            pattern: ^[A-Za-z0-9_-]+$
+          - type: 'null'
+          title: Code
+          description: If omitted, a 16-char URL-safe code is generated. Stored lowercase.
+        max_uses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Uses
+          description: Maximum redemptions. null = unlimited.
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+          description: null = never expires. Must be timezone-aware if provided.
+      type: object
+      title: ReferralCodeCreate
+    ReferralCodeWithStats:
+      properties:
+        id:
+          type: integer
+          title: Id
+        code:
+          type: string
+          title: Code
+        is_active:
+          type: boolean
+          title: Is Active
+        max_uses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Uses
+        used_count:
+          type: integer
+          title: Used Count
+        remaining_uses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Remaining Uses
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - code
+      - is_active
+      - max_uses
+      - used_count
+      - remaining_uses
+      - expires_at
+      - created_by
+      - created_at
+      title: ReferralCodeWithStats
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,1469 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS WAREHOUSE_SCHEDULE API
+  version: 0.1.0
+tags:
+- name: WAREHOUSE_SCHEDULE
+paths:
+  /warehouse/schedules/:
+    post:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Create Schedule
+      description: Create a new warehouse schedule
+      operationId: create_schedule_warehouse_schedules__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Create Schedule Warehouse Schedules  Post
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Create Schedule Warehouse Schedules  Post
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Create Schedule Warehouse Schedules  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Get Schedules
+      description: Get schedules with optional filters
+      operationId: get_schedules_warehouse_schedules__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Name
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Id
+      - name: start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+      - name: end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+      - name: schedule_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schedule Type
+      - name: filter_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filter Type
+      - name: combine_consecutive
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+          title: Combine Consecutive
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleListResponse'
+                title: Response Get Schedules Warehouse Schedules  Get
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Schedules Warehouse Schedules  Get
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Schedules Warehouse Schedules  Get
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Schedules Warehouse Schedules  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/bulk-approve:
+    post:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Bulk Approve Schedules
+      description: 'Approve pending schedules in a date range, reporting skipped conflicts.
+
+
+        Successor of /approve-recommendations: conflicted schedules (e.g. inside
+
+        an approved Blocked window) are skipped and returned with user-readable
+
+        conflict details instead of being silently approved.'
+      operationId: bulk_approve_schedules_warehouse_schedules_bulk_approve_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyRecommendedEventsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkApprovalResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Bulk Approve Schedules Warehouse Schedules Bulk Approve Post
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Bulk Approve Schedules Warehouse Schedules Bulk Approve Post
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Bulk Approve Schedules Warehouse Schedules Bulk Approve Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/approve-recommendations:
+    post:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Approve Recommendations
+      description: 'Approve all recommended and pending manual schedules for a warehouse within a date range.
+
+
+        Deprecated in favor of /bulk-approve, which also reports skipped
+
+        conflicts. This endpoint keeps its original response shape (approved
+
+        list only) but no longer approves schedules that conflict with an
+
+        approved Blocked schedule — those are silently skipped.'
+      operationId: approve_recommendations_warehouse_schedules_approve_recommendations_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyRecommendedEventsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+                title: Response Approve Recommendations Warehouse Schedules Approve Recommendations Post
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Approve Recommendations Warehouse Schedules Approve Recommendations Post
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Approve Recommendations Warehouse Schedules Approve Recommendations Post
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Approve Recommendations Warehouse Schedules Approve Recommendations Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/{schedule_id}:
+    post:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Update Schedule
+      description: Update an existing schedule
+      operationId: update_schedule_warehouse_schedules__schedule_id__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Schedule Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Schedule Warehouse Schedules  Schedule Id  Post
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Schedule Warehouse Schedules  Schedule Id  Post
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Update Schedule Warehouse Schedules  Schedule Id  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Delete Schedule
+      description: Delete a schedule
+      operationId: delete_schedule_warehouse_schedules__schedule_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Schedule Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Delete Schedule Warehouse Schedules  Schedule Id  Delete
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Delete Schedule Warehouse Schedules  Schedule Id  Delete
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Delete Schedule Warehouse Schedules  Schedule Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/{schedule_id}/approve:
+    post:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Approve Schedule
+      description: Approve a pending schedule
+      operationId: approve_schedule_warehouse_schedules__schedule_id__approve_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Schedule Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleApprovalRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Approve Schedule Warehouse Schedules  Schedule Id  Approve Post
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Approve Schedule Warehouse Schedules  Schedule Id  Approve Post
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Approve Schedule Warehouse Schedules  Schedule Id  Approve Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/{schedule_id}/reject:
+    post:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Reject Schedule
+      description: Reject a pending schedule
+      operationId: reject_schedule_warehouse_schedules__schedule_id__reject_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Schedule Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleApprovalRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Reject Schedule Warehouse Schedules  Schedule Id  Reject Post
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Reject Schedule Warehouse Schedules  Schedule Id  Reject Post
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Reject Schedule Warehouse Schedules  Schedule Id  Reject Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/{schedule_id}/metadata:
+    get:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Get Schedule Metadata
+      description: Get metadata for a specific schedule
+      operationId: get_schedule_metadata_warehouse_schedules__schedule_id__metadata_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Schedule Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleMetadataResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Schedule Metadata Warehouse Schedules  Schedule Id  Metadata Get
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Schedule Metadata Warehouse Schedules  Schedule Id  Metadata Get
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Schedule Metadata Warehouse Schedules  Schedule Id  Metadata Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/{schedule_id}/event_history:
+    get:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Get Schedule Event History
+      operationId: get_schedule_event_history_warehouse_schedules__schedule_id__event_history_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Schedule Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduleEventHistoryResponse'
+                title: Response Get Schedule Event History Warehouse Schedules  Schedule Id  Event History Get
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Schedule Event History Warehouse Schedules  Schedule Id  Event History Get
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Schedule Event History Warehouse Schedules  Schedule Id  Event History Get
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Schedule Event History Warehouse Schedules  Schedule Id  Event History Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/dynamic:
+    get:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Get Dynamic Schedules
+      operationId: get_dynamic_schedules_warehouse_schedules_dynamic_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: warehouse_name
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Warehouse Name
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Instance Id
+      - name: start_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: Start Time
+      - name: end_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: End Time
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CombinedScheduleResponse'
+                title: Response Get Dynamic Schedules Warehouse Schedules Dynamic Get
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Dynamic Schedules Warehouse Schedules Dynamic Get
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Dynamic Schedules Warehouse Schedules Dynamic Get
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Dynamic Schedules Warehouse Schedules Dynamic Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /warehouse/schedules/dynamic/create:
+    post:
+      tags:
+      - WAREHOUSE_SCHEDULE
+      summary: Create Dynamic Schedule
+      operationId: create_dynamic_schedule_warehouse_schedules_dynamic_create_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleCreateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Create Dynamic Schedule Warehouse Schedules Dynamic Create Post
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Create Dynamic Schedule Warehouse Schedules Dynamic Create Post
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Create Dynamic Schedule Warehouse Schedules Dynamic Create Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ApplyRecommendedEventsRequest:
+      properties:
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        instance_id:
+          type: string
+          title: Instance Id
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+      type: object
+      required:
+      - warehouse_name
+      - instance_id
+      - start_time
+      - end_time
+      title: ApplyRecommendedEventsRequest
+    ScheduleApprovalRequest:
+      properties:
+        reason:
+          type: string
+          title: Reason
+          description: Reason for approval/rejection
+      type: object
+      required:
+      - reason
+      title: ScheduleApprovalRequest
+    RecommendationResponse:
+      properties:
+        recommendation_id:
+          type: integer
+          title: Recommendation Id
+        applied_schedule_id:
+          type: integer
+          title: Applied Schedule Id
+        recommendation_data:
+          additionalProperties: true
+          type: object
+          title: Recommendation Data
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        metrics:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metrics
+      type: object
+      required:
+      - recommendation_id
+      - applied_schedule_id
+      - recommendation_data
+      - created_at
+      title: RecommendationResponse
+    ScheduleType:
+      type: string
+      enum:
+      - recommendation
+      - manual
+      - block
+      - auto_resize
+      - backoff
+      title: ScheduleType
+    ActionType:
+      type: string
+      enum:
+      - upsize
+      - downsize
+      - no_change
+      title: ActionType
+    app__schemas__warehouse_schedules__ScheduleListResponse:
+      properties:
+        schedule_id:
+          type: integer
+          title: Schedule Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        configuration:
+          $ref: '#/components/schemas/WarehouseConfig'
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        schedule_type:
+          $ref: '#/components/schemas/ScheduleType'
+        status:
+          $ref: '#/components/schemas/ScheduleStatus'
+        reason:
+          type: string
+          title: Reason
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Updated By
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        recurrence_pattern:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Recurrence Pattern
+        resize_mode:
+          anyOf:
+          - $ref: '#/components/schemas/app__schemas__warehouse_schedules__AutoResizingMode'
+          - type: 'null'
+        recommendation:
+          anyOf:
+          - $ref: '#/components/schemas/RecommendationResponse'
+          - type: 'null'
+        defaults:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseDefaultsResponse'
+          - type: 'null'
+      type: object
+      required:
+      - schedule_id
+      - warehouse_name
+      - configuration
+      - start_time
+      - end_time
+      - schedule_type
+      - status
+      - reason
+      - created_by
+      - created_at
+      title: ScheduleListResponse
+    app__schemas__warehouse_schedules__ScheduleUpdateRequest:
+      properties:
+        warehouse_configuration:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseConfig'
+          - type: 'null'
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        recurrence_pattern:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Recurrence Pattern
+        schedule_type:
+          type: string
+          title: Schedule Type
+          description: 'One of: manual, recommendation, block'
+      type: object
+      required:
+      - schedule_type
+      title: ScheduleUpdateRequest
+    ScheduleMetadataResponse:
+      properties:
+        schedule:
+          $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+        recommendations:
+          items:
+            $ref: '#/components/schemas/RecommendationResponse'
+          type: array
+          title: Recommendations
+        warehouse_defaults:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseDefaultsResponse'
+          - type: 'null'
+      type: object
+      required:
+      - schedule
+      - recommendations
+      title: ScheduleMetadataResponse
+    WarehouseConfig:
+      properties:
+        warehouse_size:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseSize'
+          - type: 'null'
+      type: object
+      title: WarehouseConfig
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WarehouseDefaultsResponse:
+      properties:
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        configuration:
+          additionalProperties: true
+          type: object
+          title: Configuration
+        default_schedule:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Default Schedule
+      type: object
+      required:
+      - warehouse_name
+      - configuration
+      title: WarehouseDefaultsResponse
+    ScheduleStatus:
+      type: string
+      enum:
+      - pending
+      - approved
+      - rejected
+      title: ScheduleStatus
+    BulkApprovalResponse:
+      properties:
+        approved:
+          items:
+            $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+          type: array
+          title: Approved
+        skipped:
+          items:
+            $ref: '#/components/schemas/SkippedScheduleResponse'
+          type: array
+          title: Skipped
+      type: object
+      required:
+      - approved
+      - skipped
+      title: BulkApprovalResponse
+    CombinedScheduleResponse:
+      properties:
+        schedule_id:
+          type: integer
+          title: Schedule Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        configuration:
+          $ref: '#/components/schemas/WarehouseConfig'
+        reasons:
+          items:
+            $ref: '#/components/schemas/ReasonEntry'
+          type: array
+          title: Reasons
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Updated By
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        schedule_type:
+          $ref: '#/components/schemas/ScheduleType'
+        status:
+          $ref: '#/components/schemas/ScheduleStatus'
+        action:
+          anyOf:
+          - $ref: '#/components/schemas/ActionType'
+          - type: 'null'
+      type: object
+      required:
+      - schedule_id
+      - warehouse_name
+      - start_time
+      - end_time
+      - configuration
+      - reasons
+      - created_by
+      - created_at
+      - schedule_type
+      - status
+      title: CombinedScheduleResponse
+      description: 'Response model for combined warehouse schedules.
+
+        Includes detailed start/end times, warehouse size, and reasons with timestamps.'
+    ScheduleConflictInfo:
+      properties:
+        conflict_type:
+          type: string
+          title: Conflict Type
+        conflicting_schedule_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Conflicting Schedule Id
+        conflicting_schedule_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conflicting Schedule Type
+        conflicting_start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Conflicting Start Time
+        conflicting_end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Conflicting End Time
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - conflict_type
+      - message
+      title: ScheduleConflictInfo
+      description: 'A single conflict blocking a schedule write or approval.
+
+
+        `message` is user-presentable (UI type label + UTC time range); the
+
+        structured fields let clients render the conflicting schedule in the
+
+        user''s own timezone/format.'
+    WarehouseSize:
+      type: string
+      enum:
+      - X-Small
+      - Small
+      - Medium
+      - Large
+      - X-Large
+      - 2X-Large
+      - 3X-Large
+      - 4X-Large
+      - 5X-Large
+      - 6X-Large
+      title: WarehouseSize
+    ReasonEntry:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - timestamp
+      - reason
+      title: ReasonEntry
+      description: A single reason entry with timestamp information.
+    SkippedScheduleResponse:
+      properties:
+        schedule_id:
+          type: integer
+          title: Schedule Id
+        schedule_type:
+          $ref: '#/components/schemas/ScheduleType'
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        conflicts:
+          items:
+            $ref: '#/components/schemas/ScheduleConflictInfo'
+          type: array
+          title: Conflicts
+      type: object
+      required:
+      - schedule_id
+      - schedule_type
+      - start_time
+      - end_time
+      - conflicts
+      title: SkippedScheduleResponse
+      description: A pending schedule left unapproved by bulk approval, with why.
+    app__schemas__warehouse_schedules__AutoResizingMode:
+      type: string
+      enum:
+      - dynamic
+      - scheduled
+      title: AutoResizingMode
+    app__schemas__warehouse_schedules__ScheduleResponse:
+      properties:
+        schedule_id:
+          type: integer
+          title: Schedule Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        configuration:
+          $ref: '#/components/schemas/WarehouseConfig'
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        schedule_type:
+          $ref: '#/components/schemas/ScheduleType'
+        status:
+          $ref: '#/components/schemas/ScheduleStatus'
+        reason:
+          type: string
+          title: Reason
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Updated By
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        recurrence_pattern:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Recurrence Pattern
+        resize_mode:
+          anyOf:
+          - $ref: '#/components/schemas/app__schemas__warehouse_schedules__AutoResizingMode'
+          - type: 'null'
+      type: object
+      required:
+      - schedule_id
+      - warehouse_name
+      - configuration
+      - start_time
+      - end_time
+      - schedule_type
+      - status
+      - reason
+      - created_by
+      - created_at
+      title: ScheduleResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    RecurrencePattern:
+      properties:
+        days:
+          items:
+            type: string
+          type: array
+          title: Days
+        end_date:
+          type: string
+          format: date-time
+          title: End Date
+      type: object
+      required:
+      - days
+      - end_date
+      title: RecurrencePattern
+    ScheduleEventHistoryResponse:
+      properties:
+        event_id:
+          type: integer
+          title: Event Id
+        event_type:
+          type: string
+          title: Event Type
+        comment:
+          type: string
+          title: Comment
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+      type: object
+      required:
+      - event_id
+      - event_type
+      - comment
+      - created_at
+      title: ScheduleEventHistoryResponse
+    app__schemas__warehouse_schedules__ScheduleCreateRequest:
+      properties:
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        instance_id:
+          type: string
+          title: Instance Id
+        warehouse_configuration:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseConfig'
+          - type: 'null'
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        schedule_type:
+          type: string
+          title: Schedule Type
+          description: 'One of: manual, recommendation, block'
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        recurrence_pattern:
+          anyOf:
+          - $ref: '#/components/schemas/RecurrencePattern'
+          - type: 'null'
+      type: object
+      required:
+      - warehouse_name
+      - instance_id
+      - start_time
+      - end_time
+      - schedule_type
+      title: ScheduleCreateRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

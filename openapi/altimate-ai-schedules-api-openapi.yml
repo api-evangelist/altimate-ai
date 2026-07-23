@@ -1,0 +1,992 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS SCHEDULES API
+  version: 0.1.0
+tags:
+- name: SCHEDULES
+paths:
+  /studio/schedules:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Create Schedule Endpoint
+      description: 'Create a new scheduled report.
+
+
+        - **name**: Name for this schedule
+
+        - **session_id**: Session to report on
+
+        - **content_scope**: ''last_answer'' or ''full_chat''
+
+        - **frequency**: ''daily'', ''weekly'', ''monthly'', or ''custom''
+
+        - **hour**: Hour to run (0-23 UTC)
+
+        - **emails**: Recipients'
+      operationId: create_schedule_endpoint_studio_schedules_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - SCHEDULES
+      summary: List Schedules
+      description: 'List schedules.
+
+
+        - If session_id is provided, returns schedules for that session
+
+        - Otherwise, returns all schedules created by the current user'
+      operationId: list_schedules_studio_schedules_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}:
+    get:
+      tags:
+      - SCHEDULES
+      summary: Get Schedule Endpoint
+      description: Get details of a specific schedule.
+      operationId: get_schedule_endpoint_studio_schedules__schedule_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - SCHEDULES
+      summary: Update Schedule Endpoint
+      description: Update a schedule.
+      operationId: update_schedule_endpoint_studio_schedules__schedule_id__put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - SCHEDULES
+      summary: Delete Schedule Endpoint
+      description: Delete a schedule.
+      operationId: delete_schedule_endpoint_studio_schedules__schedule_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/toggle:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Toggle Schedule
+      description: Enable or disable a schedule.
+      operationId: toggle_schedule_studio_schedules__schedule_id__toggle_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/refresh-snapshot:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Refresh Snapshot
+      description: Refresh the snapshot content for a schedule.
+      operationId: refresh_snapshot_studio_schedules__schedule_id__refresh_snapshot_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/send-now:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Send Now Endpoint
+      description: 'Trigger a scheduled report to be sent immediately with fresh execution.
+
+
+        Returns 202 Accepted immediately; the report is generated and emailed
+
+        in the background. Check the schedule''s runs endpoint for status.'
+      operationId: send_now_endpoint_studio_schedules__schedule_id__send_now_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /studio/schedules/{schedule_id}/runs:
+    get:
+      tags:
+      - SCHEDULES
+      summary: Get Schedule Runs Endpoint
+      description: Get recent runs for a schedule.
+      operationId: get_schedule_runs_endpoint_studio_schedules__schedule_id__runs_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          default: 10
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleRunsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/schedules:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Create Schedule Endpoint
+      description: 'Create a new scheduled report.
+
+
+        - **name**: Name for this schedule
+
+        - **session_id**: Session to report on
+
+        - **content_scope**: ''last_answer'' or ''full_chat''
+
+        - **frequency**: ''daily'', ''weekly'', ''monthly'', or ''custom''
+
+        - **hour**: Hour to run (0-23 UTC)
+
+        - **emails**: Recipients'
+      operationId: create_schedule_endpoint_playground_schedules_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - SCHEDULES
+      summary: List Schedules
+      description: 'List schedules.
+
+
+        - If session_id is provided, returns schedules for that session
+
+        - Otherwise, returns all schedules created by the current user'
+      operationId: list_schedules_playground_schedules_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/schedules/{schedule_id}:
+    get:
+      tags:
+      - SCHEDULES
+      summary: Get Schedule Endpoint
+      description: Get details of a specific schedule.
+      operationId: get_schedule_endpoint_playground_schedules__schedule_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - SCHEDULES
+      summary: Update Schedule Endpoint
+      description: Update a schedule.
+      operationId: update_schedule_endpoint_playground_schedules__schedule_id__put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - SCHEDULES
+      summary: Delete Schedule Endpoint
+      description: Delete a schedule.
+      operationId: delete_schedule_endpoint_playground_schedules__schedule_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/schedules/{schedule_id}/toggle:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Toggle Schedule
+      description: Enable or disable a schedule.
+      operationId: toggle_schedule_playground_schedules__schedule_id__toggle_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/schedules/{schedule_id}/refresh-snapshot:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Refresh Snapshot
+      description: Refresh the snapshot content for a schedule.
+      operationId: refresh_snapshot_playground_schedules__schedule_id__refresh_snapshot_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/schedules/{schedule_id}/send-now:
+    post:
+      tags:
+      - SCHEDULES
+      summary: Send Now Endpoint
+      description: 'Trigger a scheduled report to be sent immediately with fresh execution.
+
+
+        Returns 202 Accepted immediately; the report is generated and emailed
+
+        in the background. Check the schedule''s runs endpoint for status.'
+      operationId: send_now_endpoint_playground_schedules__schedule_id__send_now_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /playground/schedules/{schedule_id}/runs:
+    get:
+      tags:
+      - SCHEDULES
+      summary: Get Schedule Runs Endpoint
+      description: Get recent runs for a schedule.
+      operationId: get_schedule_runs_endpoint_playground_schedules__schedule_id__runs_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          default: 10
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleRunsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ScheduleFrequency:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      - custom
+      title: ScheduleFrequency
+      description: Predefined schedule frequencies.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    app__schemas__ai_playground__schedules__ScheduleCreateRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+          description: Name for this schedule
+        session_id:
+          type: string
+          title: Session Id
+          description: Session ID to schedule reports for
+        content_scope:
+          $ref: '#/components/schemas/ContentScope'
+          description: What content to include
+          default: first_query
+        frequency:
+          $ref: '#/components/schemas/ScheduleFrequency'
+          description: Schedule frequency
+          default: weekly
+        custom_cron:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Custom Cron
+          description: Custom cron expression (only for 'custom' frequency)
+        hour:
+          type: integer
+          maximum: 23.0
+          minimum: 0.0
+          title: Hour
+          description: Hour to run (0-23 UTC)
+          default: 9
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Day of week for weekly frequency (0=Sunday … 6=Saturday). Only valid when frequency='weekly'. When omitted, defaults to Monday (1) to preserve existing behaviour.
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: 'Day of month for monthly frequency (1-31). Only valid when frequency=''monthly''. When omitted, defaults to the 1st. Follows standard cron semantics: schedules with day_of_month=29/30/31 only fire in months that contain that day (so day=31 skips February, April, June, September, November). Matches APScheduler''s CronTrigger.from_crontab so the polled next_run and the registered periodic task stay in agreement.'
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+          description: Email addresses to send reports to
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Slack Webhook Id
+          description: Notification ID for Slack webhook delivery. Must be a positive integer; 0 is reserved for the update path (clear selection).
+      type: object
+      required:
+      - name
+      - session_id
+      title: ScheduleCreateRequest
+      description: Request to create a new scheduled report.
+    app__schemas__ai_playground__schedules__ScheduleResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        session_id:
+          type: string
+          title: Session Id
+        content_scope:
+          $ref: '#/components/schemas/ContentScope'
+        cron_expr:
+          type: string
+          title: Cron Expr
+        destination_type:
+          $ref: '#/components/schemas/DestinationType'
+        emails:
+          items:
+            type: string
+          type: array
+          title: Emails
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Slack Webhook Id
+        enabled:
+          type: boolean
+          title: Enabled
+        last_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Run
+        next_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Next Run
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Cron weekday (0=Sunday … 6=Saturday) when frequency is weekly
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: Cron day-of-month (1-31) when frequency is monthly
+      type: object
+      required:
+      - id
+      - name
+      - session_id
+      - content_scope
+      - cron_expr
+      - destination_type
+      - emails
+      - enabled
+      - last_run
+      - next_run
+      - created_by
+      - created_at
+      - updated_at
+      title: ScheduleResponse
+      description: Response containing schedule details.
+    DestinationType:
+      type: string
+      enum:
+      - email
+      - slack
+      - multi
+      title: DestinationType
+      description: 'How to deliver the scheduled report.
+
+
+        Derived from `destination_config` at save time — `MULTI` means both
+
+        emails and a Slack webhook are configured on the same schedule.'
+    ScheduleRunsListResponse:
+      properties:
+        runs:
+          items:
+            $ref: '#/components/schemas/ScheduleRunResponse'
+          type: array
+          title: Runs
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - runs
+      - total
+      title: ScheduleRunsListResponse
+      description: Response containing a list of schedule runs.
+    ScheduleRunResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        schedule_id:
+          type: string
+          format: uuid
+          title: Schedule Id
+        run_at:
+          type: string
+          format: date-time
+          title: Run At
+        status:
+          type: string
+          title: Status
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        recipients_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Recipients Count
+        sent_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sent Count
+        failed_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Failed Count
+      type: object
+      required:
+      - id
+      - schedule_id
+      - run_at
+      - status
+      - error_message
+      - recipients_count
+      - sent_count
+      - failed_count
+      title: ScheduleRunResponse
+      description: Response for a single schedule run.
+    app__schemas__ai_playground__schedules__ScheduleListResponse:
+      properties:
+        schedules:
+          items:
+            $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+          type: array
+          title: Schedules
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - schedules
+      - total
+      title: ScheduleListResponse
+      description: Response containing a list of schedules.
+    ContentScope:
+      type: string
+      enum:
+      - first_query
+      - last_answer
+      - full_chat
+      title: ContentScope
+      description: What content to include in the scheduled report.
+    app__schemas__ai_playground__schedules__ScheduleUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+        content_scope:
+          anyOf:
+          - $ref: '#/components/schemas/ContentScope'
+          - type: 'null'
+        frequency:
+          anyOf:
+          - $ref: '#/components/schemas/ScheduleFrequency'
+          - type: 'null'
+        custom_cron:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Custom Cron
+        hour:
+          anyOf:
+          - type: integer
+            maximum: 23.0
+            minimum: 0.0
+          - type: 'null'
+          title: Hour
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Day of week for weekly frequency (0=Sunday … 6=Saturday). Only meaningful when the patched frequency is 'weekly'. When the patched frequency stays/becomes 'weekly' and this field is omitted, the existing weekday is preserved.
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: Day of month for monthly frequency (1-31). Only meaningful when the patched frequency is 'monthly'.
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Slack Webhook Id
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+      type: object
+      title: ScheduleUpdateRequest
+      description: "Request to update an existing schedule.\n\n``slack_webhook_id``:\n  - ``None`` (omitted) → leave webhook unchanged\n  - ``0`` → clear the current webhook\n  - any positive integer → set the webhook to that notification id"
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

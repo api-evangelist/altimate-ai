@@ -1,0 +1,3229 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS TABLES API
+  version: 0.1.0
+tags:
+- name: TABLES
+paths:
+  /tables/:
+    get:
+      tags:
+      - TABLES
+      summary: Get All
+      description: 'Gets all tables.
+
+        - datasources: search parameter
+
+        - databases: search parameter
+
+        - schemas: search parameter
+
+        - contract_ids: search parameter
+
+        - keyword: general search parameter for table name or column name'
+      operationId: get_all_tables__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: datasource_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Datasource Type
+      - name: datasources
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Datasources
+      - name: databases
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Databases
+      - name: schemas
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Schemas
+      - name: contract_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: integer
+          - type: 'null'
+          title: Contract Ids
+      - name: tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Tags
+      - name: keyword
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Keyword
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TableFetchResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get All Tables  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get All Tables  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/items/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table By Id
+      operationId: get_table_by_id_tables_items__table_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table By Id Tables Items  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table By Id Tables Items  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/filters:
+    get:
+      tags:
+      - TABLES
+      summary: Get Filter
+      description: Gets table filters.
+      operationId: get_filter_tables_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Filter Tables Filters Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Filter Tables Filters Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/column/{column_id}:
+    patch:
+      tags:
+      - TABLES
+      summary: Update Table Schema Metadata
+      operationId: update_table_schema_metadata_tables_column__column_id__patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: column_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Column Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableSchemaMetadataUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Table Schema Metadata Tables Column  Column Id  Patch
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Table Schema Metadata Tables Column  Column Id  Patch
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Table Schema Metadata Tables Column  Column Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/{table_id}:
+    patch:
+      tags:
+      - TABLES
+      summary: Update Table Metadata
+      operationId: update_table_metadata_tables__table_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableMetadataUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Table Metadata Tables  Table Id  Patch
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Table Metadata Tables  Table Id  Patch
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Table Metadata Tables  Table Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/columns/tags/:
+    get:
+      tags:
+      - TABLES
+      summary: Get Column Badges For Filter
+      operationId: get_column_badges_for_filter_tables_columns_tags__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Column Badges For Filter Tables Columns Tags  Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Column Badges For Filter Tables Columns Tags  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Column Badges For Filter Tables Columns Tags  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/custom/{table_id}:
+    post:
+      tags:
+      - TABLES
+      summary: Upsert Custom Table Tag
+      operationId: upsert_custom_table_tag_tables_custom__table_id__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Table Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableUpsertCustomTagRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableUpsertCustomTagResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Upsert Custom Table Tag Tables Custom  Table Id  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Upsert Custom Table Tag Tables Custom  Table Id  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/insights/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Insights
+      operationId: get_table_insights_tables_insights__table_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableInsightsResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Insights Tables Insights  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Insights Tables Insights  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/insights_status/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Insights Status
+      operationId: get_table_insights_status_tables_insights_status__table_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Insights Status Tables Insights Status  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Insights Status Tables Insights Status  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/table_description/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Description From Resource Id
+      operationId: get_table_description_from_resource_id_tables_table_description__table_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Table Description From Resource Id Tables Table Description  Table Id  Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Description From Resource Id Tables Table Description  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Description From Resource Id Tables Table Description  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/storage_details/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Storage Details
+      operationId: get_table_storage_details_tables_storage_details__table_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/TableStorageOverTimeResponse'
+                - type: 'null'
+                title: Response Get Table Storage Details Tables Storage Details  Table Id  Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Storage Details Tables Storage Details  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Storage Details Tables Storage Details  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/recent:
+    get:
+      tags:
+      - TABLES
+      summary: Get Recently Accessed Table
+      operationId: get_recently_accessed_table_tables_recent_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - items:
+                    $ref: '#/components/schemas/TablesAccessedResponse'
+                  type: array
+                - type: 'null'
+                title: Response Get Recently Accessed Table Tables Recent Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Recently Accessed Table Tables Recent Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Recently Accessed Table Tables Recent Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /tables/access_history/:
+    post:
+      tags:
+      - TABLES
+      summary: Get Table Access History
+      operationId: get_table_access_history_tables_access_history__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableAccessHistory'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TableAccessResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Access History Tables Access History  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Access History Tables Access History  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/access_history/filters/:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Access History Filters
+      operationId: get_table_access_history_filters_tables_access_history_filters__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TableColumnObjectResponse'
+                title: Response Get Table Access History Filters Tables Access History Filters  Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Access History Filters Tables Access History Filters  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Access History Filters Tables Access History Filters  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/access_history/column/:
+    post:
+      tags:
+      - TABLES
+      summary: Get Column Access History
+      operationId: get_column_access_history_tables_access_history_column__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableAccessHistoryColumns'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColumnUserAccessHistoryResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Column Access History Tables Access History Column  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Column Access History Tables Access History Column  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Data
+      operationId: get_table_data_tables_tabledata_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: ''
+          title: Order By
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: desc
+          title: Sort Order
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: table_rk
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Table Rk
+      - name: filter_schema
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Filter Schema
+      - name: filter_db
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Filter Db
+      - name: tag_rks
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Tag Rks
+      - name: total_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cost
+      - name: insertion_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Insertion Cost
+      - name: storage_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage Cost
+      - name: clustering_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Clustering Cost
+      - name: min_reads
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Reads
+      - name: min_writes
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Writes
+      - name: min_read_write_ratio
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min Read Write Ratio
+      - name: owners
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Owners
+      - name: instance_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: integer
+          - type: 'null'
+          default: []
+          title: Instance Ids
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TableDataResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Data Tables Tabledata Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Data Tables Tabledata Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/costs-summary:
+    get:
+      tags:
+      - TABLES
+      summary: Get Annualized Costs Summary
+      operationId: get_annualized_costs_summary_tables_tabledata_costs_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Table Names
+      - name: schema_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Schema Names
+      - name: database_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Database Names
+      - name: tag_rks
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Tag Rks
+      - name: total_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cost
+      - name: insertion_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Insertion Cost
+      - name: storage_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage Cost
+      - name: clustering_cost
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Clustering Cost
+      - name: min_reads
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Reads
+      - name: min_writes
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Writes
+      - name: min_read_write_ratio
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min Read Write Ratio
+      - name: owners
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Owners
+      - name: instance_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          default: []
+          title: Instance Ids
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualizedCostsResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Annualized Costs Summary Tables Tabledata Costs Summary Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Annualized Costs Summary Tables Tabledata Costs Summary Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/costs-breakdown:
+    get:
+      tags:
+      - TABLES
+      summary: Get Cost Breakdown
+      operationId: get_cost_breakdown_tables_tabledata_costs_breakdown_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: instance_ids
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Instance Ids
+      - name: table_names
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Table Names
+      - name: schema_names
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Schema Names
+      - name: database_names
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Database Names
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: End Date
+      - name: aggregation
+        in: query
+        required: false
+        schema:
+          type: string
+          default: day
+          title: Aggregation
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__tables__CostBreakdownResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Cost Breakdown Tables Tabledata Costs Breakdown Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Cost Breakdown Tables Tabledata Costs Breakdown Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Data Filters
+      operationId: get_table_data_filters_tables_tabledata_filters__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableDataFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Data Filters Tables Tabledata Filters  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Data Filters Tables Tabledata Filters  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/table_rk/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Rk
+      operationId: get_table_rk_tables_table_rk__table_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Table Rk Tables Table Rk  Table Id  Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Rk Tables Table Rk  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Rk Tables Table Rk  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/table_id:
+    post:
+      tags:
+      - TABLES
+      summary: Get Table Id
+      operationId: get_table_id_tables_table_id_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableIdFomRkRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Get Table Id Tables Table Id Post
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Table Id Tables Table Id Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Table Id Tables Table Id Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /tables/last_refreshed:
+    get:
+      tags:
+      - TABLES
+      summary: Get Last Refreshed
+      operationId: get_last_refreshed_tables_last_refreshed_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: table_rk
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Table Rk
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Last Refreshed Tables Last Refreshed Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Last Refreshed Tables Last Refreshed Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/rks:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Rk Filters Api
+      description: Get filtered table resource keys
+      operationId: get_table_rk_filters_api_tables_tabledata_filters_rks_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 10
+          title: Size
+      - name: filter_type
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/TableRkFilterType'
+          default: all
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableRkFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Rk Filters Api Tables Tabledata Filters Rks Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Rk Filters Api Tables Tabledata Filters Rks Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/tags:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Tag Filters Api
+      operationId: get_table_tag_filters_api_tables_tabledata_filters_tags_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Tag Filters Api Tables Tabledata Filters Tags Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Tag Filters Api Tables Tabledata Filters Tags Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/owners:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Owner Filters Api
+      operationId: get_table_owner_filters_api_tables_tabledata_filters_owners_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableOwnerFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Owner Filters Api Tables Tabledata Filters Owners Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Owner Filters Api Tables Tabledata Filters Owners Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/rks/tablename:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Rk Tablename Filters Api
+      description: Filter table RKs by table name part
+      operationId: get_table_rk_tablename_filters_api_tables_tabledata_filters_rks_tablename_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableRkFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Rk Tablename Filters Api Tables Tabledata Filters Rks Tablename Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Rk Tablename Filters Api Tables Tabledata Filters Rks Tablename Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/rks/schema:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Rk Schema Filters Api
+      description: Filter table RKs by schema part
+      operationId: get_table_rk_schema_filters_api_tables_tabledata_filters_rks_schema_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableRkFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Rk Schema Filters Api Tables Tabledata Filters Rks Schema Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Rk Schema Filters Api Tables Tabledata Filters Rks Schema Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/rks/db:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Rk Db Filters Api
+      description: Filter table RKs by database part
+      operationId: get_table_rk_db_filters_api_tables_tabledata_filters_rks_db_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableRkFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Rk Db Filters Api Tables Tabledata Filters Rks Db Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Rk Db Filters Api Tables Tabledata Filters Rks Db Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/queries/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Queries
+      description: 'Get all queries that accessed a specific table.
+
+        This endpoint retrieves queries from the access_history_query_table_accessed table
+
+        joined with query_usage_data for execution details.'
+      operationId: get_table_queries_tables_queries__table_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      - name: access_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Access Types
+      - name: instance_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: integer
+          - type: 'null'
+          title: Instance Ids
+      - name: user_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: User Names
+      - name: warehouse_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Warehouse Names
+      - name: insights
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Insights
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: End Date
+      - name: execution_time_filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          default: 0
+          title: Execution Time Filter
+      - name: execution_time_filter_mode
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Filter mode: gt, lt, gte, lte'
+          default: gt
+          title: Execution Time Filter Mode
+        description: 'Filter mode: gt, lt, gte, lte'
+      - name: estimated_cost_filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: Query cost filter
+          default: 0
+          title: Estimated Cost Filter
+        description: Query cost filter
+      - name: estimated_cost_filter_mode
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Filter mode: gt, lt, gte, lte'
+          default: gt
+          title: Estimated Cost Filter Mode
+        description: 'Filter mode: gt, lt, gte, lte'
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          exclusiveMinimum: 0
+          description: Page size (max 100)
+          default: 10
+          title: Size
+        description: Page size (max 100)
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: start_time
+          title: Order By
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: desc
+          title: Sort Order
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableQueriesResponse'
+        '400':
+          description: Bad request or table not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Queries Tables Queries  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Queries Tables Queries  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/queries/filters/{table_id}:
+    get:
+      tags:
+      - TABLES
+      summary: Get Table Queries Filters
+      description: 'Get unique filter values for queries that accessed a specific table.
+
+        Returns unique warehouses, users, access_types, and insights.'
+      operationId: get_table_queries_filters_tables_queries_filters__table_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Table Id
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Start date filter (YYYY-MM-DD HH:MM:SS)
+          title: Start Date
+        description: Start date filter (YYYY-MM-DD HH:MM:SS)
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: End date filter (YYYY-MM-DD HH:MM:SS)
+          title: End Date
+        description: End date filter (YYYY-MM-DD HH:MM:SS)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableQueriesFiltersResponse'
+        '400':
+          description: Bad request or table not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Queries Filters Tables Queries Filters  Table Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Queries Filters Tables Queries Filters  Table Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    TableRkFilterResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/app__schemas__tables__FilterResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+        filter_type:
+          $ref: '#/components/schemas/TableRkFilterType'
+          default: all
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: TableRkFilterResponse
+      description: Response for table RK filters
+    MatchResult:
+      properties:
+        table_name:
+          type: boolean
+          title: Table Name
+        column_names:
+          type: integer
+          title: Column Names
+        table_purpose_match:
+          type: boolean
+          title: Table Purpose Match
+        column_description_matches:
+          type: integer
+          title: Column Description Matches
+      type: object
+      required:
+      - table_name
+      - column_names
+      - table_purpose_match
+      - column_description_matches
+      title: MatchResult
+    AnnualizedCostsResponse:
+      properties:
+        annualized_total_cost:
+          type: number
+          title: Annualized Total Cost
+        annualized_insertion_cost:
+          type: number
+          title: Annualized Insertion Cost
+        annualized_storage_cost:
+          type: number
+          title: Annualized Storage Cost
+        annualized_clustering_cost:
+          type: number
+          title: Annualized Clustering Cost
+      type: object
+      required:
+      - annualized_total_cost
+      - annualized_insertion_cost
+      - annualized_storage_cost
+      - annualized_clustering_cost
+      title: AnnualizedCostsResponse
+    TableRkFilterType:
+      type: string
+      enum:
+      - all
+      - tablename
+      - schema
+      - db
+      title: TableRkFilterType
+      description: Type of filter to apply on table resource keys
+    Page_TableFetchResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableFetchResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TableFetchResponse]
+    TableStorageOverTimeResponse:
+      properties:
+        table_owner:
+          type: string
+          title: Table Owner
+        active_storage:
+          type: string
+          title: Active Storage
+        time_travel_storage:
+          type: string
+          title: Time Travel Storage
+        failsafe_storage:
+          type: string
+          title: Failsafe Storage
+        cloned_storage:
+          type: string
+          title: Cloned Storage
+        cluster_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Key
+        cluster_cost:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Cost
+        is_dynamic_table:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Dynamic Table
+        dynamic_table_attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Dynamic Table Attributes
+      type: object
+      required:
+      - table_owner
+      - active_storage
+      - time_travel_storage
+      - failsafe_storage
+      - cloned_storage
+      title: TableStorageOverTimeResponse
+    TableQueriesResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableQueryResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: TableQueriesResponse
+      description: Paginated response for table queries
+    Page_TableAccessResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableAccessResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TableAccessResponse]
+    app__schemas__tables__Tag:
+      properties:
+        label:
+          type: string
+          title: Label
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - label
+      - reason
+      title: Tag
+    TableAccessHistory:
+      properties:
+        table_id:
+          type: integer
+          title: Table Id
+        column_rk:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Column Rk
+          default: []
+        order_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+          default: usage
+        sort_order:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sort Order
+          default: asc
+      type: object
+      required:
+      - table_id
+      title: TableAccessHistory
+    TableUpsertCustomTagResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: TableUpsertCustomTagResponse
+    TableUpsertCustomTagRequest:
+      properties:
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+      type: object
+      title: TableUpsertCustomTagRequest
+    TableAccessResponse:
+      properties:
+        column_count:
+          type: integer
+          title: Column Count
+        cost:
+          type: number
+          title: Cost
+        column:
+          $ref: '#/components/schemas/TableColumnObjectResponse'
+        usage:
+          type: number
+          title: Usage
+        user_count:
+          type: integer
+          title: User Count
+        queries:
+          type: integer
+          title: Queries
+      type: object
+      required:
+      - column_count
+      - cost
+      - column
+      - usage
+      - user_count
+      - queries
+      title: TableAccessResponse
+    TableQueryResponse:
+      properties:
+        query_id:
+          type: string
+          title: Query Id
+        access_type:
+          type: string
+          title: Access Type
+        hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Hash
+        query_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Text
+        insights:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Insights
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        warehouse_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Name
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        execution_time:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Execution Time
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
+        query_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Query Cost
+        bytes_scanned:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Bytes Scanned
+        rows_produced:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rows Produced
+      type: object
+      required:
+      - query_id
+      - access_type
+      title: TableQueryResponse
+      description: Response model for a single query that accessed a table
+    UserAccessResponse:
+      properties:
+        usage:
+          type: number
+          title: Usage
+        user_name:
+          type: string
+          title: User Name
+      type: object
+      required:
+      - usage
+      - user_name
+      title: UserAccessResponse
+    app__schemas__tables__CostBreakdownResponse:
+      properties:
+        breakdown:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Breakdown
+      type: object
+      required:
+      - breakdown
+      title: CostBreakdownResponse
+    app__schemas__tables__ContractFetchResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        status:
+          type: string
+          title: Status
+        level:
+          type: string
+          title: Level
+      type: object
+      required:
+      - id
+      - name
+      - status
+      - level
+      title: ContractFetchResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    TableFetchResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        datasource_type:
+          type: string
+          title: Datasource Type
+        scope:
+          items:
+            type: string
+          type: array
+          title: Scope
+        columns:
+          items:
+            $ref: '#/components/schemas/ColumnSchemaMetadata'
+          type: array
+          title: Columns
+        purpose:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Purpose
+        purpose_frozen:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Purpose Frozen
+        contracts:
+          items:
+            $ref: '#/components/schemas/app__schemas__tables__ContractFetchResponse'
+          type: array
+          title: Contracts
+        total_violations:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Violations
+        last_violation_timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Violation Timestamp
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+        tags:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ColumnTag'
+            type: array
+          - type: 'null'
+          title: Tags
+        matches:
+          anyOf:
+          - $ref: '#/components/schemas/MatchResult'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - name
+      - datasource_type
+      - scope
+      - columns
+      - contracts
+      title: TableFetchResponse
+    TableMetadataUpdate:
+      properties:
+        purpose:
+          type: string
+          title: Purpose
+      type: object
+      required:
+      - purpose
+      title: TableMetadataUpdate
+    TableIdFomRkRequest:
+      properties:
+        table_rk:
+          type: string
+          title: Table Rk
+      type: object
+      required:
+      - table_rk
+      title: TableIdFomRkRequest
+    TableDataFilterResponse:
+      properties:
+        rks:
+          items:
+            $ref: '#/components/schemas/TableColumnObjectResponse'
+          type: array
+          title: Rks
+        tag_rks:
+          items:
+            type: string
+          type: array
+          title: Tag Rks
+        owners:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Owners
+      type: object
+      required:
+      - rks
+      - tag_rks
+      title: TableDataFilterResponse
+    TableColumnObjectResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+      type: object
+      required:
+      - rk
+      - name
+      - path
+      title: TableColumnObjectResponse
+    TableSchemaMetadataUpdate:
+      properties:
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - description
+      title: TableSchemaMetadataUpdate
+    CustomTag:
+      properties:
+        reason:
+          type: string
+          title: Reason
+        user:
+          type: integer
+          title: User
+      type: object
+      required:
+      - reason
+      - user
+      title: CustomTag
+    ColumnTag:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+      type: object
+      required:
+      - name
+      title: ColumnTag
+    app__schemas__tables__FilterResponse:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: string
+          title: Value
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        table_schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Table Schema
+      type: object
+      required:
+      - label
+      - value
+      title: FilterResponse
+    TableAccessHistoryColumns:
+      properties:
+        column_rk:
+          type: string
+          title: Column Rk
+      type: object
+      required:
+      - column_rk
+      title: TableAccessHistoryColumns
+    TableDataResponse:
+      properties:
+        rk:
+          anyOf:
+          - $ref: '#/components/schemas/TableColumnObjectResponse'
+          - type: 'null'
+        resource_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Resource Id
+        total_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cost
+        insertion_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Insertion Cost
+        storage_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage Cost
+        clustering_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Clustering Cost
+        tag_rks:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tag Rks
+        reads:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Reads
+        writes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Writes
+        read_write_ratio:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Read Write Ratio
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+      type: object
+      title: TableDataResponse
+    ColumnSchemaMetadata:
+      properties:
+        table_schema_id:
+          type: integer
+          title: Table Schema Id
+        column_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Column Description
+        created_on:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created On
+        name:
+          type: string
+          title: Name
+        datatype:
+          type: string
+          title: Datatype
+        tags:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ColumnTag'
+            type: array
+          - type: 'null'
+          title: Tags
+        description_frozen:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Description Frozen
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+      type: object
+      required:
+      - table_schema_id
+      - name
+      - datatype
+      title: ColumnSchemaMetadata
+    TableOwnerFilterResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/app__schemas__tables__FilterResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: TableOwnerFilterResponse
+    ColumnUserAccessHistoryResponse:
+      properties:
+        num_queries:
+          type: integer
+          title: Num Queries
+        user_access:
+          items:
+            $ref: '#/components/schemas/UserAccessResponse'
+          type: array
+          title: User Access
+      type: object
+      required:
+      - num_queries
+      - user_access
+      title: ColumnUserAccessHistoryResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TablesAccessedResponse:
+      properties:
+        resource_id:
+          type: integer
+          title: Resource Id
+        resource_path:
+          type: string
+          title: Resource Path
+        resource_name:
+          type: string
+          title: Resource Name
+        datasource_type:
+          type: string
+          title: Datasource Type
+        access_time:
+          type: integer
+          title: Access Time
+      type: object
+      required:
+      - resource_id
+      - resource_path
+      - resource_name
+      - datasource_type
+      - access_time
+      title: TablesAccessedResponse
+    Page_TableDataResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableDataResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TableDataResponse]
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    TableQueriesFiltersResponse:
+      properties:
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+        users:
+          items:
+            type: string
+          type: array
+          title: Users
+        access_types:
+          items:
+            type: string
+          type: array
+          title: Access Types
+        insights:
+          items:
+            type: string
+          type: array
+          title: Insights
+      type: object
+      required:
+      - warehouses
+      - users
+      - access_types
+      - insights
+      title: TableQueriesFiltersResponse
+      description: Response model for table queries filters
+    TableInsightsResponse:
+      properties:
+        tags:
+          items:
+            $ref: '#/components/schemas/app__schemas__tables__Tag'
+          type: array
+          title: Tags
+        custom_tag:
+          anyOf:
+          - $ref: '#/components/schemas/CustomTag'
+          - type: 'null'
+        insights:
+          additionalProperties: true
+          type: object
+          title: Insights
+        is_dynamic_table:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Dynamic Table
+        is_table:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Table
+        is_external_table:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is External Table
+        is_event_table:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Event Table
+        is_materialized_view:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Materialized View
+        is_iceberg:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Iceberg
+        is_hybrid:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Hybrid
+        is_immutable:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Immutable
+        is_temporary:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Temporary
+        is_secure:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Secure
+      type: object
+      required:
+      - tags
+      - insights
+      title: TableInsightsResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

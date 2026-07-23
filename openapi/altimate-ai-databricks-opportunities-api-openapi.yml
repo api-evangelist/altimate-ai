@@ -1,0 +1,1230 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Opportunities API
+  version: 0.1.0
+tags:
+- name: Databricks Opportunities
+paths:
+  /api/v1/databricks/opportunities/summary:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get opportunities summary
+      description: Get summary counts of all opportunity types.
+      operationId: get_opportunities_summary_api_v1_databricks_opportunities_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for query analysis
+          title: Start Date
+        description: Start date for query analysis
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for query analysis
+          title: End Date
+        description: End date for query analysis
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunitiesSummaryResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/oversized-clusters:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get oversized cluster opportunities
+      description: Get clusters that appear to be oversized based on utilization metrics.
+      operationId: get_oversized_clusters_api_v1_databricks_opportunities_oversized_clusters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cpu_threshold
+        in: query
+        required: false
+        schema:
+          type: number
+          description: Maximum average CPU to be considered oversized
+          default: 30.0
+          title: Cpu Threshold
+        description: Maximum average CPU to be considered oversized
+      - name: memory_threshold
+        in: query
+        required: false
+        schema:
+          type: number
+          description: Maximum average memory to be considered oversized
+          default: 30.0
+          title: Memory Threshold
+        description: Maximum average memory to be considered oversized
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of days for metrics
+          default: 30
+          title: Days
+        description: Number of days for metrics
+      - name: min_samples
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Minimum samples for reliable analysis
+          default: 100
+          title: Min Samples
+        description: Minimum samples for reliable analysis
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__opportunities__OversizedClustersResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/serverless-candidates:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get serverless migration candidates
+      description: Get warehouses that could benefit from serverless migration.
+      operationId: get_serverless_candidates_api_v1_databricks_opportunities_serverless_candidates_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: max_auto_stop_mins
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum auto-stop time to consider
+          default: 10
+          title: Max Auto Stop Mins
+        description: Maximum auto-stop time to consider
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__opportunities__ServerlessCandidatesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/high-failure-jobs:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get high failure rate jobs
+      description: Get jobs with high failure rates that need attention.
+      operationId: get_high_failure_jobs_api_v1_databricks_opportunities_high_failure_jobs_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: min_failure_rate
+        in: query
+        required: false
+        schema:
+          type: number
+          description: Minimum failure rate to flag
+          default: 20.0
+          title: Min Failure Rate
+        description: Minimum failure rate to flag
+      - name: min_runs
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Minimum runs for reliable analysis
+          default: 5
+          title: Min Runs
+        description: Minimum runs for reliable analysis
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of days to analyze
+          default: 30
+          title: Days
+        description: Number of days to analyze
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HighFailureJobsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/expensive-queries:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get expensive queries
+      description: Get expensive queries that could be optimized.
+      operationId: get_expensive_queries_api_v1_databricks_opportunities_expensive_queries_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: min_duration_ms
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Minimum duration threshold (5 min default)
+          default: 300000
+          title: Min Duration Ms
+        description: Minimum duration threshold (5 min default)
+      - name: min_read_bytes
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Minimum bytes read threshold (5GB default)
+          default: 5368709120
+          title: Min Read Bytes
+        description: Minimum bytes read threshold (5GB default)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Maximum results
+          default: 50
+          title: Limit
+        description: Maximum results
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpensiveQueriesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/idle-clusters:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get idle clusters
+      description: Get clusters that have been idle for extended periods.
+      operationId: get_idle_clusters_api_v1_databricks_opportunities_idle_clusters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: idle_hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Hours of inactivity to consider idle
+          default: 24
+          title: Idle Hours
+        description: Hours of inactivity to consider idle
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdleClustersResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/by-resource:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get opportunities for a specific resource
+      description: 'Get opportunities for a specific Databricks resource.
+
+
+        Resource types:
+
+        - 12: CLUSTER (returns oversized and idle cluster opportunities)
+
+        - 17: JOB (returns high failure job opportunities)
+
+        - 18: WAREHOUSE (returns serverless candidate opportunities)'
+      operationId: get_opportunities_by_resource_api_v1_databricks_opportunities_by_resource_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: resource_id
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Resource ID (cluster_id, job_id, or warehouse_id)
+          title: Resource Id
+        description: Resource ID (cluster_id, job_id, or warehouse_id)
+      - name: resource_type
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: 'Resource type: 12=CLUSTER, 17=JOB, 18=WAREHOUSE'
+          title: Resource Type
+        description: 'Resource type: 12=CLUSTER, 17=JOB, 18=WAREHOUSE'
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceOpportunitiesResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/redirection:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get resource redirection URL for Databricks
+      description: 'Get redirection URL for a Databricks resource by looking up the opportunity.
+
+
+        Looks up the opportunity in ClickHouse and returns the appropriate URL
+
+        based on the resource type:
+
+        - 12: CLUSTER -> /clusters/{resource_id}
+
+        - 17: JOB -> /jobs/{resource_id}
+
+        - 18: DATABRICKS_WAREHOUSE (SQL warehouse) -> /sql-warehouses/{resource_id}'
+      operationId: get_databricks_resource_redirection_api_v1_databricks_opportunities_redirection_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: opportunity_id
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Opportunity ID
+          title: Opportunity Id
+        description: Opportunity ID
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Instance ID
+          title: Instance Id
+        description: Instance ID
+      - name: resource_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: 'Resource type filter: 3=WAREHOUSE, 12=CLUSTER, 17=JOB'
+          title: Resource Type
+        description: 'Resource type filter: 3=WAREHOUSE, 12=CLUSTER, 17=JOB'
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '403':
+          description: Not authorized
+        '404':
+          description: Opportunity not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/opportunities/resource:
+    get:
+      tags:
+      - Databricks Opportunities
+      summary: Get opportunities for a specific resource
+      description: 'Get opportunities for a specific Databricks resource.
+
+
+        Queries ClickHouse to find opportunities that have this resource
+
+        in their resources array (by resource ID).'
+      operationId: get_databricks_opportunities_for_resource_api_v1_databricks_opportunities_resource_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: resource_uri
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Resource ID
+          title: Resource Uri
+        description: Resource ID
+      - name: resource_type
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: 'Resource type: 1=QUERY, 12=CLUSTER, 17=JOB, 18=DATABRICKS_WAREHOUSE'
+          title: Resource Type
+        description: 'Resource type: 1=QUERY, 12=CLUSTER, 17=JOB, 18=DATABRICKS_WAREHOUSE'
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Instance ID
+          title: Instance Id
+        description: Instance ID
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: End date
+          title: End Date
+        description: End date
+      - name: status_filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Status filter (comma-separated): active, implemented, closed, dismissed'
+          title: Status Filter
+        description: 'Status filter (comma-separated): active, implemented, closed, dismissed'
+      - name: sort
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Sort field
+          title: Sort
+        description: Sort field
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort order: asc, desc'
+          title: Sort Order
+        description: 'Sort order: asc, desc'
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Databricks Opportunities For Resource Api V1 Databricks Opportunities Resource Get
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    OpportunitiesSummary:
+      properties:
+        oversized_clusters:
+          type: integer
+          title: Oversized Clusters
+          default: 0
+        serverless_candidates:
+          type: integer
+          title: Serverless Candidates
+          default: 0
+        high_failure_jobs:
+          type: integer
+          title: High Failure Jobs
+          default: 0
+        expensive_queries:
+          type: integer
+          title: Expensive Queries
+          default: 0
+        total_opportunities:
+          type: integer
+          title: Total Opportunities
+          default: 0
+      type: object
+      title: OpportunitiesSummary
+      description: Summary of all opportunity types.
+    OpportunitiesSummaryResponse:
+      properties:
+        summary:
+          $ref: '#/components/schemas/OpportunitiesSummary'
+      type: object
+      required:
+      - summary
+      title: OpportunitiesSummaryResponse
+      description: Response for opportunities summary.
+    ResourceOpportunitiesResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/ResourceOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+        resource_id:
+          type: string
+          title: Resource Id
+        resource_type:
+          type: integer
+          title: Resource Type
+      type: object
+      required:
+      - opportunities
+      - total_count
+      - resource_id
+      - resource_type
+      title: ResourceOpportunitiesResponse
+      description: Response for opportunities by resource.
+    HighFailureJobOpportunity:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        job_name:
+          type: string
+          title: Job Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        total_runs:
+          type: integer
+          title: Total Runs
+        failed_runs:
+          type: integer
+          title: Failed Runs
+        failure_rate:
+          type: number
+          title: Failure Rate
+        last_failure_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Failure Time
+        wasted_compute_hours:
+          type: number
+          title: Wasted Compute Hours
+          description: Estimated wasted compute hours from failures
+      type: object
+      required:
+      - job_id
+      - job_name
+      - workspace_id
+      - total_runs
+      - failed_runs
+      - failure_rate
+      - wasted_compute_hours
+      title: HighFailureJobOpportunity
+      description: A high failure rate job opportunity.
+    app__schemas__databricks__opportunities__ServerlessCandidatesResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/ServerlessCandidateOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+        max_auto_stop_mins:
+          type: integer
+          title: Max Auto Stop Mins
+      type: object
+      required:
+      - opportunities
+      - total_count
+      - max_auto_stop_mins
+      title: ServerlessCandidatesResponse
+      description: Response for serverless candidates opportunities.
+    OversizedClusterOpportunity:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+        avg_memory:
+          type: number
+          title: Avg Memory
+        sample_count:
+          type: integer
+          title: Sample Count
+        potential_savings_pct:
+          type: number
+          title: Potential Savings Pct
+          description: Estimated potential savings percentage
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      - avg_cpu
+      - avg_memory
+      - sample_count
+      - potential_savings_pct
+      title: OversizedClusterOpportunity
+      description: An oversized cluster opportunity.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    IdleClustersResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/IdleClusterOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+        idle_hours:
+          type: integer
+          title: Idle Hours
+      type: object
+      required:
+      - opportunities
+      - total_count
+      - idle_hours
+      title: IdleClustersResponse
+      description: Response for idle clusters opportunities.
+    app__schemas__databricks__opportunities__OversizedClustersResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/OversizedClusterOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+        cpu_threshold:
+          type: number
+          title: Cpu Threshold
+        memory_threshold:
+          type: number
+          title: Memory Threshold
+      type: object
+      required:
+      - opportunities
+      - total_count
+      - cpu_threshold
+      - memory_threshold
+      title: OversizedClustersResponse
+      description: Response for oversized clusters opportunities.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ExpensiveQueryOpportunity:
+      properties:
+        statement_id:
+          type: string
+          title: Statement Id
+        statement_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statement Type
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        total_duration_ms:
+          type: integer
+          title: Total Duration Ms
+        read_bytes:
+          type: integer
+          title: Read Bytes
+        spilled_local_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Spilled Local Bytes
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        cost_score:
+          type: number
+          title: Cost Score
+          description: Cost score for ranking
+      type: object
+      required:
+      - statement_id
+      - start_time
+      - total_duration_ms
+      - read_bytes
+      - cost_score
+      title: ExpensiveQueryOpportunity
+      description: An expensive query opportunity.
+    ExpensiveQueriesResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/ExpensiveQueryOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - opportunities
+      - total_count
+      title: ExpensiveQueriesResponse
+      description: Response for expensive queries opportunities.
+    ServerlessCandidateOpportunity:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Type
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        auto_stop_mins:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Auto Stop Mins
+        min_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Num Clusters
+        max_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Num Clusters
+      type: object
+      required:
+      - warehouse_id
+      - warehouse_name
+      - workspace_id
+      title: ServerlessCandidateOpportunity
+      description: A serverless migration candidate.
+    HighFailureJobsResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/HighFailureJobOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+        min_failure_rate:
+          type: number
+          title: Min Failure Rate
+      type: object
+      required:
+      - opportunities
+      - total_count
+      - min_failure_rate
+      title: HighFailureJobsResponse
+      description: Response for high failure jobs opportunities.
+    IdleClusterOpportunity:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        state:
+          type: string
+          title: State
+        last_state_change:
+          type: string
+          format: date-time
+          title: Last State Change
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      - state
+      - last_state_change
+      title: IdleClusterOpportunity
+      description: An idle cluster opportunity.
+    ResourceOpportunity:
+      properties:
+        opportunity_type:
+          type: string
+          title: Opportunity Type
+          description: 'Type: oversized_cluster, idle_cluster, serverless_candidate, high_failure_job'
+        resource_id:
+          type: string
+          title: Resource Id
+        resource_name:
+          type: string
+          title: Resource Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        description:
+          type: string
+          title: Description
+        potential_savings_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Potential Savings Pct
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      required:
+      - opportunity_type
+      - resource_id
+      - resource_name
+      - workspace_id
+      - description
+      title: ResourceOpportunity
+      description: A generic opportunity for a specific resource.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

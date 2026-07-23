@@ -1,0 +1,572 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS PUBLIC_SNIPPETS API
+  version: 0.1.0
+tags:
+- name: PUBLIC_SNIPPETS
+paths:
+  /public/snippets:
+    get:
+      tags:
+      - PUBLIC_SNIPPETS
+      summary: Get Snippets
+      description: 'List all code snippets with pagination and filtering.
+
+
+        This endpoint is for service users (PUBLIC_TENANT) to retrieve
+
+        code snippets stored in Weaviate.'
+      operationId: get_snippets_public_snippets_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: database_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by database type (e.g., clickhouse, postgres)
+          title: Database Type
+        description: Filter by database type (e.g., clickhouse, postgres)
+      - name: tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by tags (multiple allowed)
+          title: Tags
+        description: Filter by tags (multiple allowed)
+      - name: snippet_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by type (data_definition or sql_example)
+          title: Snippet Type
+        description: Filter by type (data_definition or sql_example)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnippetsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - PUBLIC_SNIPPETS
+      summary: Create Snippet Endpoint
+      description: 'Create a new snippet in Weaviate.
+
+
+        This endpoint creates a new snippet in either the DataDefinition
+
+        or SqlExamples collection based on the type field.'
+      operationId: create_snippet_endpoint_public_snippets_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSnippetRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnippetItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /public/snippets/filters:
+    get:
+      tags:
+      - PUBLIC_SNIPPETS
+      summary: Get Snippets Filters
+      description: 'Get available filter options for snippets.
+
+
+        Returns the unique database types and tags available for filtering.'
+      operationId: get_snippets_filters_public_snippets_filters_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnippetsFilterOptions'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /public/snippets/execute:
+    post:
+      tags:
+      - PUBLIC_SNIPPETS
+      summary: Execute Snippet Endpoint
+      description: 'Execute a SQL snippet against a tenant''s datastore.
+
+
+        The target tenant is specified in the request body, allowing
+
+        PUBLIC_TENANT users to execute against any company''s datastore.'
+      operationId: execute_snippet_endpoint_public_snippets_execute_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecuteSnippetRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecuteSnippetResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /public/snippets/{snippet_id}:
+    get:
+      tags:
+      - PUBLIC_SNIPPETS
+      summary: Get Snippet
+      description: 'Get a single snippet by its Weaviate UUID.
+
+
+        This endpoint retrieves a specific snippet from either the
+
+        DataDefinition or SqlExamples collection.'
+      operationId: get_snippet_public_snippets__snippet_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: snippet_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snippet Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnippetItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - PUBLIC_SNIPPETS
+      summary: Update Snippet Endpoint
+      description: 'Update an existing snippet in Weaviate.
+
+
+        This endpoint updates a specific snippet''s properties.
+
+        Only non-null fields in the request will be updated.'
+      operationId: update_snippet_endpoint_public_snippets__snippet_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: snippet_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snippet Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSnippetRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnippetItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - PUBLIC_SNIPPETS
+      summary: Delete Snippet Endpoint
+      description: 'Delete a snippet from Weaviate.
+
+
+        This endpoint deletes a specific snippet from either the
+
+        DataDefinition or SqlExamples collection.'
+      operationId: delete_snippet_endpoint_public_snippets__snippet_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: snippet_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snippet Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSnippetResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ExecuteSnippetRequest:
+      properties:
+        tenant:
+          type: string
+          title: Tenant
+          description: Tenant name to execute against
+        database_type:
+          type: string
+          title: Database Type
+          description: Database type to execute against (clickhouse or postgres)
+        sql:
+          type: string
+          title: Sql
+          description: SQL query to execute
+      type: object
+      required:
+      - tenant
+      - database_type
+      - sql
+      title: ExecuteSnippetRequest
+      description: Request to execute a SQL snippet against a tenant's datastore
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SnippetsFilterOptions:
+      properties:
+        database_types:
+          items:
+            type: string
+          type: array
+          title: Database Types
+          description: Available database types for filtering
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+          description: Available tags for filtering
+      type: object
+      title: SnippetsFilterOptions
+      description: Available filter options for snippets
+    CreateSnippetRequest:
+      properties:
+        title:
+          type: string
+          title: Title
+          description: Title or name of the snippet
+        description:
+          type: string
+          title: Description
+          description: Description of what the snippet does
+        database_type:
+          type: string
+          title: Database Type
+          description: Database type (e.g., clickhouse, postgres)
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+          description: Capability tags
+        type:
+          type: string
+          title: Type
+          description: 'Snippet type: data_definition or sql_example'
+        full_content:
+          additionalProperties: true
+          type: object
+          title: Full Content
+          description: Full snippet content
+      type: object
+      required:
+      - title
+      - description
+      - database_type
+      - type
+      - full_content
+      title: CreateSnippetRequest
+      description: Request to create a new snippet
+    SnippetItem:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Unique identifier for the snippet
+        title:
+          type: string
+          title: Title
+          description: Title or name of the snippet
+        description:
+          type: string
+          title: Description
+          description: Description of what the snippet does
+        database_type:
+          type: string
+          title: Database Type
+          description: Database type (e.g., clickhouse, postgres)
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+          description: Capability tags
+        type:
+          type: string
+          title: Type
+          description: 'Snippet type: data_definition or sql_example'
+        full_content:
+          additionalProperties: true
+          type: object
+          title: Full Content
+          description: Full snippet content
+      type: object
+      required:
+      - id
+      - title
+      - description
+      - database_type
+      - type
+      title: SnippetItem
+      description: Individual code snippet from Weaviate
+    ExecuteSnippetResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the execution succeeded
+        rows:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Rows
+          description: Query result rows
+        columns:
+          items:
+            type: string
+          type: array
+          title: Columns
+          description: Column names in the result
+        row_count:
+          type: integer
+          title: Row Count
+          description: Number of rows returned
+          default: 0
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+          description: Error message if execution failed
+        execution_time_ms:
+          type: integer
+          title: Execution Time Ms
+          description: Execution time in milliseconds
+          default: 0
+      type: object
+      required:
+      - success
+      title: ExecuteSnippetResponse
+      description: Response from executing a SQL snippet
+    SnippetsListResponse:
+      properties:
+        snippets:
+          items:
+            $ref: '#/components/schemas/SnippetItem'
+          type: array
+          title: Snippets
+          description: List of snippets
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items per page
+        has_more:
+          type: boolean
+          title: Has More
+          description: Whether there are more pages
+        total:
+          type: integer
+          title: Total
+          description: Total number of snippets matching filters
+      type: object
+      required:
+      - snippets
+      - page
+      - page_size
+      - has_more
+      - total
+      title: SnippetsListResponse
+      description: Paginated list of snippets
+    DeleteSnippetResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion succeeded
+        message:
+          type: string
+          title: Message
+          description: Status message
+      type: object
+      required:
+      - success
+      - message
+      title: DeleteSnippetResponse
+      description: Response from deleting a snippet
+    UpdateSnippetRequest:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+          description: Title or name of the snippet
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Description of what the snippet does
+        database_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database Type
+          description: Database type
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+          description: Capability tags
+        full_content:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Full Content
+          description: Full snippet content
+      type: object
+      title: UpdateSnippetRequest
+      description: Request to update an existing snippet
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

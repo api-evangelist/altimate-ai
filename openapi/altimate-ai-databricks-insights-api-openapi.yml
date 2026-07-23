@@ -1,0 +1,392 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Insights API
+  version: 0.1.0
+tags:
+- name: Databricks Insights
+paths:
+  /api/v1/databricks/insights/overview:
+    get:
+      tags:
+      - Databricks Insights
+      summary: Get Databricks environment overview
+      description: 'Get complete overview of Databricks environment.
+
+
+        Returns aggregated insights including:
+
+        - Compute resources (clusters, warehouses)
+
+        - Job health (runs, failures)
+
+        - Query health (counts, performance)
+
+        - Cost summary and top drivers
+
+        - Utilization insights'
+      operationId: get_overview_api_v1_databricks_insights_overview_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for metrics
+          title: Start Date
+        description: Start date for metrics
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for metrics
+          title: End Date
+        description: End date for metrics
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Days for activity metrics
+          default: 7
+          title: Days
+        description: Days for activity metrics
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksOverviewResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/insights/workspace-activity:
+    get:
+      tags:
+      - Databricks Insights
+      summary: Get activity by workspace
+      description: Get activity summary by workspace.
+      operationId: get_workspace_activity_api_v1_databricks_insights_workspace_activity_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Days to analyze
+          default: 7
+          title: Days
+        description: Days to analyze
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceActivityResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    UtilizationInsights:
+      properties:
+        total_clusters_with_data:
+          type: integer
+          title: Total Clusters With Data
+          default: 0
+        overall_avg_cpu:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Overall Avg Cpu
+        overall_avg_memory:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Overall Avg Memory
+        underutilized_count:
+          type: integer
+          title: Underutilized Count
+          default: 0
+      type: object
+      title: UtilizationInsights
+      description: Utilization insights.
+    CostDriver:
+      properties:
+        sku_name:
+          type: string
+          title: Sku Name
+        total_dbus:
+          type: number
+          title: Total Dbus
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+      type: object
+      required:
+      - sku_name
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: CostDriver
+      description: A top cost driver.
+    QueryHealthSummary:
+      properties:
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        failure_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Failure Rate
+        slow_queries:
+          type: integer
+          title: Slow Queries
+          default: 0
+        spill_queries:
+          type: integer
+          title: Spill Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+      type: object
+      title: QueryHealthSummary
+      description: Summary of query health.
+    WorkspaceActivityResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceActivity'
+          type: array
+          title: Workspaces
+      type: object
+      required:
+      - workspaces
+      title: WorkspaceActivityResponse
+      description: Response for workspace activity.
+    ComputeSummary:
+      properties:
+        total_clusters:
+          type: integer
+          title: Total Clusters
+          default: 0
+        total_warehouses:
+          type: integer
+          title: Total Warehouses
+          default: 0
+      type: object
+      title: ComputeSummary
+      description: Summary of compute resources.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WorkspaceActivity:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        job_runs:
+          type: integer
+          title: Job Runs
+          default: 0
+        query_count:
+          type: integer
+          title: Query Count
+          default: 0
+      type: object
+      required:
+      - workspace_id
+      title: WorkspaceActivity
+      description: Activity summary for a workspace.
+    JobHealthSummary:
+      properties:
+        total_jobs:
+          type: integer
+          title: Total Jobs
+          default: 0
+        total_runs:
+          type: integer
+          title: Total Runs
+          default: 0
+        total_failures:
+          type: integer
+          title: Total Failures
+          default: 0
+        overall_failure_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Overall Failure Rate
+        jobs_with_failures:
+          type: integer
+          title: Jobs With Failures
+          default: 0
+      type: object
+      title: JobHealthSummary
+      description: Summary of job health.
+    DatabricksOverviewResponse:
+      properties:
+        overview:
+          $ref: '#/components/schemas/DatabricksOverview'
+      type: object
+      required:
+      - overview
+      title: DatabricksOverviewResponse
+      description: Response for Databricks overview.
+    DatabricksOverview:
+      properties:
+        compute:
+          $ref: '#/components/schemas/ComputeSummary'
+        job_health:
+          $ref: '#/components/schemas/JobHealthSummary'
+        query_health:
+          $ref: '#/components/schemas/QueryHealthSummary'
+        cost:
+          $ref: '#/components/schemas/app__schemas__databricks__insights__CostSummary'
+        top_cost_drivers:
+          items:
+            $ref: '#/components/schemas/CostDriver'
+          type: array
+          title: Top Cost Drivers
+        utilization:
+          $ref: '#/components/schemas/UtilizationInsights'
+      type: object
+      required:
+      - compute
+      - job_health
+      - query_health
+      - cost
+      - top_cost_drivers
+      - utilization
+      title: DatabricksOverview
+      description: Complete overview of Databricks environment.
+    app__schemas__databricks__insights__CostSummary:
+      properties:
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+        days_count:
+          type: integer
+          title: Days Count
+          default: 0
+        workspace_count:
+          type: integer
+          title: Workspace Count
+          default: 0
+      type: object
+      title: CostSummary
+      description: Summary of costs.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

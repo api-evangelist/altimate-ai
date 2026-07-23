@@ -1,0 +1,70 @@
+generated: '2026-07-17'
+method: derived
+source: openapi/altimate-ai-openapi-original.json
+# Core entities and relationships derived from the OpenAPI path structure, tag families,
+# and id path-parameters (user_uuid, group_id, registry_id, contract_id, query_id/hash).
+# The full spec has 1271 component schemas across ~120 tag families; this captures the
+# central identity + data-engineering domain, not every DTO.
+entities:
+  - name: Company
+    id: tenant/x-tenant
+    description: Top-level tenant/organization; carries connections and tenant info.
+  - name: User
+    id: user_uuid
+    belongs_to: [Company]
+    description: A member of a company; has a role and belongs to groups.
+  - name: Group
+    id: group_id
+    belongs_to: [Company]
+    has_many: [User, GroupRule]
+    description: User group with membership, ownership, and access rules.
+  - name: Role
+    id: role_uuid
+    description: Permission set assigned to users (permissions endpoints).
+  - name: Registry
+    id: registry_id
+    has_many: [Contract]
+    description: Container for data contracts.
+  - name: Contract
+    id: contract_id
+    belongs_to: [Registry]
+    description: A data contract definition that can be dry-run validated and scheduled.
+  - name: Query
+    id: query_id
+    belongs_to: [QueryGroup]
+    description: An observed warehouse query with cost/perf metrics and SQL lineage.
+  - name: QueryGroup
+    id: query_hash
+    has_many: [Query]
+    description: Queries grouped by normalized hash; carries aggregate stats.
+  - name: DbtModel
+    description: dbt model tracked across DBT/DBT_V2/V3/V4 and DBT_MODELS product areas.
+  - name: KnowledgeBase
+    description: Uploaded knowledge base (knowledge_bases_v2) for RAG/agent context.
+  - name: Connection
+    description: Warehouse/tool connection (Snowflake, Databricks, dbt Cloud, Metabase, Tableau).
+relationships:
+  - from: User
+    to: Company
+    kind: belongs_to
+    via: tenant
+  - from: User
+    to: Group
+    kind: has_many
+    via: group_id
+  - from: User
+    to: Role
+    kind: has_one
+    via: role
+  - from: Contract
+    to: Registry
+    kind: belongs_to
+    via: registry_id
+  - from: Query
+    to: QueryGroup
+    kind: belongs_to
+    via: query_hash
+notes: >-
+  Products span dbt, Databricks, Snowflake, query cost/lineage, data contracts,
+  governance, and AI studio/playground. See the tag families in the OpenAPI for the
+  full surface.

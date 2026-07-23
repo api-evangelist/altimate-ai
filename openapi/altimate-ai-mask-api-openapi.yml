@@ -1,0 +1,201 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS MASK API
+  version: 0.1.0
+tags:
+- name: MASK
+paths:
+  /mask/:
+    get:
+      tags:
+      - MASK
+      summary: Get Mask Info
+      description: 'Gets Mask Data info for a particular tenant from the database.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :return: ok status and optional message.'
+      operationId: get_mask_info_mask__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMaskDataResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Mask Info Mask  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Mask Info Mask  Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - MASK
+      summary: Save Mask Info
+      description: 'Saves Mask Data info for a particular tenant in the database.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :param mask_data_request: mask data request.
+
+        :return: ok status and optional message.'
+      operationId: save_mask_info_mask__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaskDataRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaskDataResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Save Mask Info Mask  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Save Mask Info Mask  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    MaskingType:
+      type: string
+      enum:
+      - allow
+      - mask
+      - block
+      title: MaskingType
+    MaskDataRequest:
+      properties:
+        mask_data:
+          items:
+            $ref: '#/components/schemas/MaskData'
+          type: array
+          title: Mask Data
+      type: object
+      required:
+      - mask_data
+      title: MaskDataRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    GetMaskDataResponse:
+      properties:
+        mask_data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Mask Data
+      type: object
+      required:
+      - mask_data
+      title: GetMaskDataResponse
+    MaskData:
+      properties:
+        label:
+          type: string
+          title: Label
+        masking_type:
+          $ref: '#/components/schemas/MaskingType'
+        regex:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Regex
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default
+          default: ''
+      type: object
+      required:
+      - label
+      - masking_type
+      title: MaskData
+    MaskDataResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: MaskDataResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

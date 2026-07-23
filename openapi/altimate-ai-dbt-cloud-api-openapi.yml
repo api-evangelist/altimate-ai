@@ -1,0 +1,1549 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DBT_CLOUD API
+  version: 0.1.0
+tags:
+- name: DBT_CLOUD
+paths:
+  /api/v1/dbt/cloud/connections:
+    post:
+      tags:
+      - DBT_CLOUD
+      summary: Create Connection
+      description: 'Create a new dbt Cloud connection.
+
+
+        This will:
+
+        1. Validate the API token
+
+        2. Create the connection record
+
+        3. Discover all projects and environments
+
+        4. Create DBTCoreIntegration records for each project'
+      operationId: create_connection_api_v1_dbt_cloud_connections_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DbtCloudConnectionCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudConnectionResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Create Connection Api V1 Dbt Cloud Connections Post
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Create Connection Api V1 Dbt Cloud Connections Post
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Create Connection Api V1 Dbt Cloud Connections Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - DBT_CLOUD
+      summary: List Connections
+      description: List all dbt Cloud connections.
+      operationId: list_connections_api_v1_dbt_cloud_connections_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudConnectionListResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 List Connections Api V1 Dbt Cloud Connections Get
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Connections Api V1 Dbt Cloud Connections Get
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 List Connections Api V1 Dbt Cloud Connections Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/connections/{connection_id}:
+    get:
+      tags:
+      - DBT_CLOUD
+      summary: Get Connection
+      description: Get a dbt Cloud connection with all projects and environments.
+      operationId: get_connection_api_v1_dbt_cloud_connections__connection_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudConnectionResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Connection Api V1 Dbt Cloud Connections  Connection Id  Get
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Connection Api V1 Dbt Cloud Connections  Connection Id  Get
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Connection Api V1 Dbt Cloud Connections  Connection Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - DBT_CLOUD
+      summary: Delete Connection
+      description: 'Delete a dbt Cloud connection.
+
+
+        This will permanently delete the connection and all associated records:
+
+        - dbt Cloud projects and environments
+
+        - Associated DBTCoreIntegration records
+
+        - Associated DBTCoreIntegrationEnvironment records
+
+        - Periodic sync tasks'
+      operationId: delete_connection_api_v1_dbt_cloud_connections__connection_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Delete Connection Api V1 Dbt Cloud Connections  Connection Id  Delete
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Delete Connection Api V1 Dbt Cloud Connections  Connection Id  Delete
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Delete Connection Api V1 Dbt Cloud Connections  Connection Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - DBT_CLOUD
+      summary: Update Connection
+      description: 'Update an existing dbt Cloud connection.
+
+
+        Allows updating:
+
+        - name: Connection display name
+
+        - api_token: Service token (will be validated)
+
+        - api_base_url: API base URL
+
+
+        If api_token is provided, it will be validated against dbt Cloud API.'
+      operationId: update_connection_api_v1_dbt_cloud_connections__connection_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DbtCloudConnectionUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudConnectionResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Connection Api V1 Dbt Cloud Connections  Connection Id  Patch
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Connection Api V1 Dbt Cloud Connections  Connection Id  Patch
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Update Connection Api V1 Dbt Cloud Connections  Connection Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/connections/{connection_id}/refresh:
+    post:
+      tags:
+      - DBT_CLOUD
+      summary: Refresh Connection
+      description: 'Re-discover projects and environments from dbt Cloud.
+
+
+        Use this to sync new projects/environments that were added in dbt Cloud.'
+      operationId: refresh_connection_api_v1_dbt_cloud_connections__connection_id__refresh_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudDiscoveryResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Refresh Connection Api V1 Dbt Cloud Connections  Connection Id  Refresh Post
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Refresh Connection Api V1 Dbt Cloud Connections  Connection Id  Refresh Post
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Refresh Connection Api V1 Dbt Cloud Connections  Connection Id  Refresh Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/projects/{project_id}:
+    patch:
+      tags:
+      - DBT_CLOUD
+      summary: Update Project
+      description: Enable or disable sync for a dbt Cloud project.
+      operationId: update_project_api_v1_dbt_cloud_projects__project_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Project Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DbtCloudProjectUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudProjectResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Project Api V1 Dbt Cloud Projects  Project Id  Patch
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Project Api V1 Dbt Cloud Projects  Project Id  Patch
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Update Project Api V1 Dbt Cloud Projects  Project Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/environments/{environment_id}:
+    patch:
+      tags:
+      - DBT_CLOUD
+      summary: Update Environment
+      description: Enable or disable sync for a dbt Cloud environment.
+      operationId: update_environment_api_v1_dbt_cloud_environments__environment_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: environment_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Environment Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DbtCloudEnvironmentUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudEnvironmentResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Environment Api V1 Dbt Cloud Environments  Environment Id  Patch
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Environment Api V1 Dbt Cloud Environments  Environment Id  Patch
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Update Environment Api V1 Dbt Cloud Environments  Environment Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/connections/{connection_id}/sync:
+    post:
+      tags:
+      - DBT_CLOUD
+      summary: Trigger Sync
+      description: "Trigger a manual sync for all enabled projects/environments.\n\nThis will queue a background task to:\n1. Fetch new runs from dbt Cloud\n2. Download artifacts\n3. Upload to S3\n4. Trigger ingestion pipeline\n\nArgs:\n    force: If True, resets processed runs to force re-download of all artifacts"
+      operationId: trigger_sync_api_v1_dbt_cloud_connections__connection_id__sync_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: force
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Force
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudSyncResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Trigger Sync Api V1 Dbt Cloud Connections  Connection Id  Sync Post
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Trigger Sync Api V1 Dbt Cloud Connections  Connection Id  Sync Post
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Trigger Sync Api V1 Dbt Cloud Connections  Connection Id  Sync Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/connections/{connection_id}/sync-history:
+    get:
+      tags:
+      - DBT_CLOUD
+      summary: Get Sync History
+      description: Get sync history for a connection with pagination.
+      operationId: get_sync_history_api_v1_dbt_cloud_connections__connection_id__sync_history_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 20
+          title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudSyncHistoryResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Sync History Api V1 Dbt Cloud Connections  Connection Id  Sync History Get
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Sync History Api V1 Dbt Cloud Connections  Connection Id  Sync History Get
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Sync History Api V1 Dbt Cloud Connections  Connection Id  Sync History Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/connections/{connection_id}/schedule:
+    patch:
+      tags:
+      - DBT_CLOUD
+      summary: Update Schedule
+      description: Update the sync schedule for a connection.
+      operationId: update_schedule_api_v1_dbt_cloud_connections__connection_id__schedule_patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DbtCloudScheduleUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudScheduleResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Schedule Api V1 Dbt Cloud Connections  Connection Id  Schedule Patch
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Update Schedule Api V1 Dbt Cloud Connections  Connection Id  Schedule Patch
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Update Schedule Api V1 Dbt Cloud Connections  Connection Id  Schedule Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/validate:
+    post:
+      tags:
+      - DBT_CLOUD
+      summary: Validate Token
+      description: 'Validate a dbt Cloud API token without creating a connection.
+
+
+        Use this to verify credentials before creating a connection.'
+      operationId: validate_token_api_v1_dbt_cloud_validate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DbtCloudValidateTokenRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudValidationResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Validate Token Api V1 Dbt Cloud Validate Post
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Validate Token Api V1 Dbt Cloud Validate Post
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Validate Token Api V1 Dbt Cloud Validate Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/dbt/cloud/connections/{connection_id}/test:
+    post:
+      tags:
+      - DBT_CLOUD
+      summary: Test Connection
+      description: 'Test an existing dbt Cloud connection using stored credentials.
+
+
+        Use this to verify that an existing connection''s credentials are still valid.'
+      operationId: test_connection_api_v1_dbt_cloud_connections__connection_id__test_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtCloudValidationResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Test Connection Api V1 Dbt Cloud Connections  Connection Id  Test Post
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Test Connection Api V1 Dbt Cloud Connections  Connection Id  Test Post
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Test Connection Api V1 Dbt Cloud Connections  Connection Id  Test Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dbt/cloud/trigger-ingestion:
+    post:
+      tags:
+      - DBT_CLOUD
+      summary: Trigger Dbt Ingestion
+      description: 'Trigger the dbt ingestion worker to process pending GlobalTasks.
+
+
+        This is primarily for local development and testing.
+
+        In production, this is triggered automatically by Celery beat.'
+      operationId: trigger_dbt_ingestion_api_v1_dbt_cloud_trigger_ingestion_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Trigger Dbt Ingestion Api V1 Dbt Cloud Trigger Ingestion Post
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Trigger Dbt Ingestion Api V1 Dbt Cloud Trigger Ingestion Post
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Trigger Dbt Ingestion Api V1 Dbt Cloud Trigger Ingestion Post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    DbtCloudProjectUpdateRequest:
+      properties:
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+          description: Enable/disable sync for this project
+      type: object
+      required:
+      - is_enabled
+      title: DbtCloudProjectUpdateRequest
+      description: Request to update a dbt Cloud project.
+    DbtCloudEnvironmentUpdateRequest:
+      properties:
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+          description: Enable/disable sync for this environment
+      type: object
+      required:
+      - is_enabled
+      title: DbtCloudEnvironmentUpdateRequest
+      description: Request to update a dbt Cloud environment.
+    DbtCloudDiscoveredEnvironment:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        environment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Type
+      type: object
+      required:
+      - id
+      title: DbtCloudDiscoveredEnvironment
+      description: Discovered environment from dbt Cloud (not yet persisted).
+    DbtCloudDiscoveredProject:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        environments:
+          items:
+            $ref: '#/components/schemas/DbtCloudDiscoveredEnvironment'
+          type: array
+          title: Environments
+          default: []
+      type: object
+      required:
+      - id
+      title: DbtCloudDiscoveredProject
+      description: Discovered project from dbt Cloud (not yet persisted).
+    DbtCloudSyncDetails:
+      properties:
+        synced_files:
+          items:
+            type: string
+          type: array
+          title: Synced Files
+          default: []
+        failed_files:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Failed Files
+          default: []
+        missing_artifacts:
+          items:
+            type: string
+          type: array
+          title: Missing Artifacts
+          default: []
+        errors:
+          items:
+            type: string
+          type: array
+          title: Errors
+          default: []
+        ingestion_error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ingestion Error
+      type: object
+      title: DbtCloudSyncDetails
+      description: Detailed sync information for a processed run.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DbtCloudScheduleUpdateRequest:
+      properties:
+        sync_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sync Type
+          description: 'Sync type: ''scheduled'' or ''real_time'''
+        cron_expr:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cron Expr
+          description: Cron expression for sync schedule
+        lookback_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Lookback Days
+          description: Days to look back for runs
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+          description: Enable/disable the schedule
+      type: object
+      title: DbtCloudScheduleUpdateRequest
+      description: Request to update the sync schedule.
+    DbtCloudProcessedRunResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        dbt_cloud_run_id:
+          type: string
+          title: Dbt Cloud Run Id
+        project_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Name
+        environment_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Name
+        run_finished_at:
+          type: string
+          format: date-time
+          title: Run Finished At
+        processed_at:
+          type: string
+          format: date-time
+          title: Processed At
+        artifacts_downloaded:
+          items:
+            type: string
+          type: array
+          title: Artifacts Downloaded
+        status:
+          type: string
+          title: Status
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        sync_details:
+          anyOf:
+          - $ref: '#/components/schemas/DbtCloudSyncDetails'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - dbt_cloud_run_id
+      - run_finished_at
+      - processed_at
+      - artifacts_downloaded
+      - status
+      title: DbtCloudProcessedRunResponse
+      description: Processed run information.
+    DbtCloudSyncResponse:
+      properties:
+        sync_triggered:
+          type: boolean
+          title: Sync Triggered
+        task_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Id
+        projects_queued:
+          type: integer
+          title: Projects Queued
+        environments_queued:
+          type: integer
+          title: Environments Queued
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - sync_triggered
+      - projects_queued
+      - environments_queued
+      title: DbtCloudSyncResponse
+      description: Response after triggering a sync.
+    DbtCloudConnectionUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 128
+            minLength: 1
+          - type: 'null'
+          title: Name
+          description: Connection name
+        api_token:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Api Token
+          description: dbt Cloud service token (if updating credentials)
+        api_base_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Base Url
+          description: API base URL (for single-tenant or regional deployments)
+      type: object
+      title: DbtCloudConnectionUpdateRequest
+      description: Request to update an existing dbt Cloud connection.
+    DbtCloudValidateTokenRequest:
+      properties:
+        api_token:
+          type: string
+          minLength: 1
+          title: Api Token
+          description: dbt Cloud service token
+        account_id:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Account Id
+          description: dbt Cloud account ID
+        api_base_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Base Url
+          description: API base URL (for single-tenant or regional deployments)
+          default: https://cloud.getdbt.com/api/v2/
+      type: object
+      required:
+      - api_token
+      - account_id
+      title: DbtCloudValidateTokenRequest
+      description: Request to validate a dbt Cloud API token.
+    DbtCloudDiscoveryResponse:
+      properties:
+        connection_id:
+          type: integer
+          title: Connection Id
+        projects_discovered:
+          type: integer
+          title: Projects Discovered
+        environments_discovered:
+          type: integer
+          title: Environments Discovered
+        projects:
+          items:
+            $ref: '#/components/schemas/DbtCloudProjectResponse'
+          type: array
+          title: Projects
+      type: object
+      required:
+      - connection_id
+      - projects_discovered
+      - environments_discovered
+      - projects
+      title: DbtCloudDiscoveryResponse
+      description: Response after discovering projects/environments.
+    DbtCloudConnectionListResponse:
+      properties:
+        connections:
+          items:
+            $ref: '#/components/schemas/DbtCloudConnectionResponse'
+          type: array
+          title: Connections
+      type: object
+      required:
+      - connections
+      title: DbtCloudConnectionListResponse
+      description: List of dbt Cloud connections.
+    DbtCloudValidationResponse:
+      properties:
+        valid:
+          type: boolean
+          title: Valid
+        account_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Id
+        account_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Name
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        projects_discovered:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Projects Discovered
+        environments_discovered:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Environments Discovered
+        projects:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DbtCloudDiscoveredProject'
+            type: array
+          - type: 'null'
+          title: Projects
+      type: object
+      required:
+      - valid
+      title: DbtCloudValidationResponse
+      description: Response after validating API token.
+    DbtCloudConnectionCreateRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: Name
+          description: Connection name
+        api_token:
+          type: string
+          minLength: 1
+          title: Api Token
+          description: dbt Cloud service token
+        account_id:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Account Id
+          description: dbt Cloud account ID
+        api_base_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Base Url
+          description: API base URL (for single-tenant or regional deployments)
+          default: https://cloud.getdbt.com/api/v2/
+        sync_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sync Type
+          description: 'Sync type: ''scheduled'' or ''real_time'''
+          default: scheduled
+        schedule_cron:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schedule Cron
+          description: Cron expression for sync schedule (only used when sync_type is 'scheduled')
+          default: 0 0 * * *
+        lookback_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Lookback Days
+          description: Days to look back for runs
+          default: 30
+      type: object
+      required:
+      - name
+      - api_token
+      - account_id
+      title: DbtCloudConnectionCreateRequest
+      description: Request to create a new dbt Cloud connection.
+    DbtCloudEnvironmentResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        external_environment_id:
+          type: string
+          title: External Environment Id
+        environment_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Name
+        environment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Type
+        dbt_core_integration_environment_id:
+          type: integer
+          title: Dbt Core Integration Environment Id
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+        last_processed_run_finished_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Processed Run Finished At
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+        processed_runs_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Processed Runs Count
+      type: object
+      required:
+      - id
+      - external_environment_id
+      - environment_name
+      - environment_type
+      - dbt_core_integration_environment_id
+      - is_enabled
+      - last_processed_run_finished_at
+      - created_at
+      - last_modified_at
+      title: DbtCloudEnvironmentResponse
+      description: dbt Cloud environment information.
+    DbtCloudConnectionResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        account_id:
+          type: string
+          title: Account Id
+        api_base_url:
+          type: string
+          title: Api Base Url
+        is_active:
+          type: boolean
+          title: Is Active
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+        created_by:
+          type: integer
+          title: Created By
+        last_modified_by:
+          type: integer
+          title: Last Modified By
+        projects:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DbtCloudProjectResponse'
+            type: array
+          - type: 'null'
+          title: Projects
+        schedule:
+          anyOf:
+          - $ref: '#/components/schemas/DbtCloudScheduleResponse'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - name
+      - account_id
+      - api_base_url
+      - is_active
+      - created_at
+      - last_modified_at
+      - created_by
+      - last_modified_by
+      title: DbtCloudConnectionResponse
+      description: dbt Cloud connection information.
+    DbtCloudScheduleResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        sync_type:
+          type: string
+          title: Sync Type
+        cron_expr:
+          type: string
+          title: Cron Expr
+        lookback_days:
+          type: integer
+          title: Lookback Days
+        is_active:
+          type: boolean
+          title: Is Active
+        last_sync_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Sync At
+        last_sync_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Sync Status
+        last_sync_error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Sync Error
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+      type: object
+      required:
+      - id
+      - sync_type
+      - cron_expr
+      - lookback_days
+      - is_active
+      - created_at
+      - last_modified_at
+      title: DbtCloudScheduleResponse
+      description: Sync schedule configuration.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    DbtCloudSyncHistoryResponse:
+      properties:
+        connection_id:
+          type: integer
+          title: Connection Id
+        environments:
+          items:
+            $ref: '#/components/schemas/DbtCloudEnvironmentResponse'
+          type: array
+          title: Environments
+        recent_runs:
+          items:
+            $ref: '#/components/schemas/DbtCloudProcessedRunResponse'
+          type: array
+          title: Recent Runs
+        page:
+          type: integer
+          title: Page
+        pages:
+          type: integer
+          title: Pages
+        size:
+          type: integer
+          title: Size
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - connection_id
+      - environments
+      - recent_runs
+      - page
+      - pages
+      - size
+      - total
+      title: DbtCloudSyncHistoryResponse
+      description: Sync history for a connection with pagination.
+    DbtCloudProjectResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        external_project_id:
+          type: string
+          title: External Project Id
+        project_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Name
+        dbt_core_integration_id:
+          type: integer
+          title: Dbt Core Integration Id
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+        environments:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DbtCloudEnvironmentResponse'
+            type: array
+          - type: 'null'
+          title: Environments
+      type: object
+      required:
+      - id
+      - external_project_id
+      - project_name
+      - dbt_core_integration_id
+      - is_enabled
+      - created_at
+      - last_modified_at
+      title: DbtCloudProjectResponse
+      description: dbt Cloud project information.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

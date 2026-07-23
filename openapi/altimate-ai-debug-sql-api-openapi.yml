@@ -1,0 +1,120 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS DEBUG_SQL API
+  version: 0.1.0
+tags:
+- name: DEBUG_SQL
+paths:
+  /debug_sql/{term_violation_id}:
+    get:
+      tags:
+      - DEBUG_SQL
+      summary: Fetch Debug Sql By Term Type
+      description: 'Fetches debug_sql for a given term_violation_id.
+
+        :param auth: The authorization token for the request.
+
+        :param term_violation_id: The term violation id for which we are supposed to fetch debug_sql.
+
+        :return: A dictionary containing the result of the operation.'
+      operationId: fetch_debug_sql_by_term_type_debug_sql__term_violation_id__get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: term_violation_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Term Violation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebugSQLFetchResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Fetch Debug Sql By Term Type Debug Sql  Term Violation Id  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Fetch Debug Sql By Term Type Debug Sql  Term Violation Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DebugSQLFetchResponse:
+      properties:
+        debug_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Debug Sql
+        status:
+          type: string
+          title: Status
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - status
+      title: DebugSQLFetchResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

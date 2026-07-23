@@ -1,0 +1,1083 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS AUTH API
+  version: 0.1.0
+tags:
+- name: AUTH
+paths:
+  /auth/login:
+    post:
+      tags:
+      - AUTH
+      summary: Auth Login
+      operationId: auth_login_auth_login_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Auth Login Auth Login Post
+        '403':
+          description: User not activated or User not verified yet
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Auth Login Auth Login Post
+        '401':
+          description: Incorrect username or password
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Auth Login Auth Login Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/supertokens_user_info:
+    get:
+      tags:
+      - AUTH
+      summary: Supertokens User Info
+      operationId: supertokens_user_info_auth_supertokens_user_info_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/UserLoginOut'
+                - $ref: '#/components/schemas/SupertokensUserInfo'
+                title: Response Supertokens User Info Auth Supertokens User Info Get
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Supertokens User Info Auth Supertokens User Info Get
+        '403':
+          description: User not activated or User not verified yet
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Supertokens User Info Auth Supertokens User Info Get
+        '401':
+          description: Incorrect username or password
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Supertokens User Info Auth Supertokens User Info Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/register-sso:
+    post:
+      tags:
+      - AUTH
+      summary: Register New User Sso
+      operationId: register_new_user_sso_auth_register_sso_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SSOUserRegisterIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '403':
+          description: User cannot be created in public tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Register New User Sso Auth Register Sso Post
+        '400':
+          description: User is not created.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Register New User Sso Auth Register Sso Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/company-info:
+    get:
+      tags:
+      - AUTH
+      summary: Company Info
+      operationId: company_info_auth_company_info_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Company Info Auth Company Info Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/group-tenants:
+    post:
+      tags:
+      - AUTH
+      summary: Group Tenants
+      operationId: group_tenants_auth_group_tenants_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupTenantsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/register-invite:
+    post:
+      tags:
+      - AUTH
+      summary: Register Invite
+      operationId: register_invite_auth_register_invite_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '403':
+          description: User cannot be created in public tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Register Invite Auth Register Invite Post
+        '400':
+          description: User is not created.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Register Invite Auth Register Invite Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/connections:
+    get:
+      tags:
+      - AUTH
+      summary: Connections
+      operationId: connections_auth_connections_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/forgot-password:
+    post:
+      tags:
+      - AUTH
+      summary: Forgot Password
+      operationId: forgot_password_auth_forgot_password_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: User cannot reset password in public tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Forgot Password Auth Forgot Password Post
+        '400':
+          description: User cannot reset password.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Forgot Password Auth Forgot Password Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/reset-password:
+    post:
+      tags:
+      - AUTH
+      summary: Reset Password
+      operationId: reset_password_auth_reset_password_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: User cannot reset password in public tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Reset Password Auth Reset Password Post
+        '400':
+          description: User cannot reset password.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Reset Password Auth Reset Password Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/tenant-info:
+    get:
+      tags:
+      - AUTH
+      summary: Tenant Info
+      operationId: tenant_info_auth_tenant_info_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Tenant Info Auth Tenant Info Get
+        '403':
+          description: User cannot be created in public tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Tenant Info Auth Tenant Info Get
+        '400':
+          description: User is not created.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Tenant Info Auth Tenant Info Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - AUTH
+      summary: Patch Tenant Info
+      operationId: patch_tenant_info_auth_tenant_info_patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchTenantInfoRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/regenerate_token:
+    post:
+      tags:
+      - AUTH
+      summary: Regenerate Token
+      operationId: regenerate_token_auth_regenerate_token_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Regenerate Token Auth Regenerate Token Post
+        '403':
+          description: Operation not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Regenerate Token Auth Regenerate Token Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ResetPasswordIn:
+      properties:
+        token:
+          type: string
+          title: Token
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - token
+      - password
+      title: ResetPasswordIn
+    UserLoginOut:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        email:
+          type: string
+          title: Email
+        auth_token:
+          type: string
+          title: Auth Token
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        is_onboarded:
+          type: boolean
+          title: Is Onboarded
+        tz:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tz
+        lang:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lang
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        role_FK:
+          anyOf:
+          - $ref: '#/components/schemas/RolePermissionFull'
+          - type: 'null'
+        has_role_conflict:
+          type: boolean
+          title: Has Role Conflict
+          default: false
+        sso_resolved_role_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sso Resolved Role Title
+      type: object
+      required:
+      - email
+      - auth_token
+      - is_onboarded
+      - uuid
+      title: UserLoginOut
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ForgotPasswordIn:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+      - email
+      title: ForgotPasswordIn
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    SupertokensUserInfo:
+      properties:
+        email:
+          type: string
+          title: Email
+      type: object
+      required:
+      - email
+      title: SupertokensUserInfo
+    UserRegisterIn:
+      properties:
+        name:
+          type: string
+          title: Name
+        password:
+          type: string
+          title: Password
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - name
+      - password
+      - token
+      title: UserRegisterIn
+    SSOUserRegisterIn:
+      properties:
+        firstName:
+          type: string
+          title: Firstname
+        lastName:
+          type: string
+          title: Lastname
+      type: object
+      required:
+      - firstName
+      - lastName
+      title: SSOUserRegisterIn
+    RolePermissionFull:
+      properties:
+        role_name:
+          type: string
+          title: Role Name
+        role_description:
+          type: string
+          title: Role Description
+        role_title:
+          type: string
+          title: Role Title
+        is_custom:
+          type: boolean
+          title: Is Custom
+        permission:
+          items:
+            $ref: '#/components/schemas/PermissionsFull'
+          type: array
+          title: Permission
+      type: object
+      required:
+      - role_name
+      - role_description
+      - role_title
+      - is_custom
+      - permission
+      title: RolePermissionFull
+    UserLoginIn:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - email
+      - password
+      title: UserLoginIn
+    PatchTenantInfoRequest:
+      properties:
+        currency:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Currency
+        frontendUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Frontendurl
+        teammatesEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Teammatesenabled
+        enableCostReports:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablecostreports
+        enableCustomReports:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablecustomreports
+        enableSnowflakeContracts:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablesnowflakecontracts
+        enableComputePool:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablecomputepool
+        rbacEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Rbacenabled
+        exportLineageEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Exportlineageenabled
+        enableBiFeature:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablebifeature
+        dbtWorkloadEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Dbtworkloadenabled
+        costAttributionEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Costattributionenabled
+        accessRulesDisabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Accessrulesdisabled
+        disableAccountCosts:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Disableaccountcosts
+        costAnalysisReportsEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Costanalysisreportsenabled
+        streamlitNotebooksEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Streamlitnotebooksenabled
+        storedProceduresEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Storedproceduresenabled
+        enableKnowledgeEngine:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableknowledgeengine
+        enableKnowledgeEngineLearningsV2:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableknowledgeenginelearningsv2
+        enableKnowledgeEngineMultimodal:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableknowledgeenginemultimodal
+        dbtIntegrationEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Dbtintegrationenabled
+        enableWarehouseSizeRecommendation:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablewarehousesizerecommendation
+        enableCostAttributionInTeams:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablecostattributioninteams
+        enableTenantSwitching:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabletenantswitching
+        enableOpportunityTicketCreation:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableopportunityticketcreation
+        enableAdvancedGuardRails:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableadvancedguardrails
+        staleResourcesEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Staleresourcesenabled
+        enableCreditsPage:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablecreditspage
+        enablePromptLibrary:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablepromptlibrary
+        enableCloudIntegration:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablecloudintegration
+        enableCustomWorkloadsChartAggregation:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablecustomworkloadschartaggregation
+        enableProjectionAgent:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableprojectionagent
+        enableSemanticLayer:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablesemanticlayer
+        enableAIServicesInCodePage:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableaiservicesincodepage
+        queryAiServicesOwnerOnly:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Queryaiservicesowneronly
+        isDatabricksTenant:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isdatabrickstenant
+        isSparkAnalysisEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Issparkanalysisenabled
+        enableAltimateCode:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablealtimatecode
+        ssoGroupSyncEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ssogroupsyncenabled
+        ssoUserRefreshMins:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ssouserrefreshmins
+        enableStudioCitations:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablestudiocitations
+        enableStudioShareableLinks:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablestudioshareablelinks
+        enableStudioScheduledReports:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablestudioscheduledreports
+        showDefaultScheduleBlocks:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Showdefaultscheduleblocks
+        enableDbtJobsListing:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabledbtjobslisting
+        disableTaskSelectionAutoTuneDatabricks:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Disabletaskselectionautotunedatabricks
+        disableAllPurposeAutotune:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Disableallpurposeautotune
+        showCloudCosts:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Showcloudcosts
+        whitelistedDomains:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Whitelisteddomains
+        enableReadOnlyOwnerRole:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablereadonlyownerrole
+        enablePriorityTab:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableprioritytab
+        enableImplementedTab:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableimplementedtab
+        warehouseSchedulerEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Warehouseschedulerenabled
+        newAutoTuneUIEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Newautotuneuienabled
+        useClickhouseChatOnChart:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Useclickhousechatonchart
+        enableDBTIntegration:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabledbtintegration
+        enableInformaticaIntegration:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableinformaticaintegration
+        enableTransparencyAnnotations:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabletransparencyannotations
+      type: object
+      title: PatchTenantInfoRequest
+    GroupTenantsRequest:
+      properties:
+        tenants:
+          items:
+            type: string
+          type: array
+          title: Tenants
+      type: object
+      required:
+      - tenants
+      title: GroupTenantsRequest
+    PermissionsFull:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
+      type: object
+      required:
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

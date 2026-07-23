@@ -1,0 +1,533 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS GLOBAL_CONFIG API
+  version: 0.1.0
+tags:
+- name: GLOBAL_CONFIG
+paths:
+  /global_config/:
+    get:
+      tags:
+      - GLOBAL_CONFIG
+      summary: Get Global Config
+      description: Get global configuration for query tags or cost attribution
+      operationId: get_global_config_global_config__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: config_type
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/GlobalConfigType'
+          default: query_tag_keys
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Global Config Global Config  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Global Config Global Config  Get
+        '404':
+          description: Configuration not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Global Config Global Config  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - GLOBAL_CONFIG
+      summary: Add Query Tag
+      description: Add a new query tag to global configuration
+      operationId: add_query_tag_global_config__post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddQueryTagRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                title: Response Add Query Tag Global Config  Post
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Add Query Tag Global Config  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Add Query Tag Global Config  Post
+        '404':
+          description: Configuration not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Add Query Tag Global Config  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /global_config/cost-attribution:
+    post:
+      tags:
+      - GLOBAL_CONFIG
+      summary: Upsert Cost Attribution
+      description: Upsert cost attribution global configuration
+      operationId: upsert_cost_attribution_global_config_cost_attribution_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertCostAttributionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostAttributionResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Upsert Cost Attribution Global Config Cost Attribution Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Upsert Cost Attribution Global Config Cost Attribution Post
+        '404':
+          description: Configuration not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Upsert Cost Attribution Global Config Cost Attribution Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /global_config/recipient-email-domain-allowlist:
+    get:
+      tags:
+      - GLOBAL_CONFIG
+      summary: Get Email Domain Allowlist
+      description: 'Get the per-tenant recipient email-domain allowlist with attribution and
+
+        status. Owner only.'
+      operationId: get_email_domain_allowlist_global_config_recipient_email_domain_allowlist_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailDomainAllowlistResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist Get
+        '404':
+          description: Configuration not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - GLOBAL_CONFIG
+      summary: Add Email Domain
+      description: 'Add a domain to the allowlist. Stamps the current user and time, status
+
+        active. Owner only. Invalid or duplicate domains are rejected.'
+      operationId: add_email_domain_global_config_recipient_email_domain_allowlist_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddEmailDomainRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailDomainAllowlistResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Add Email Domain Global Config Recipient Email Domain Allowlist Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Add Email Domain Global Config Recipient Email Domain Allowlist Post
+        '404':
+          description: Configuration not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Add Email Domain Global Config Recipient Email Domain Allowlist Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    patch:
+      tags:
+      - GLOBAL_CONFIG
+      summary: Update Email Domain Status
+      description: 'Update a domain''s status (active / paused). Owner only. The
+
+        status value is validated by the request schema.'
+      operationId: update_email_domain_status_global_config_recipient_email_domain_allowlist_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEmailDomainStatusRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailDomainAllowlistResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Update Email Domain Status Global Config Recipient Email Domain Allowlist Patch
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Update Email Domain Status Global Config Recipient Email Domain Allowlist Patch
+        '404':
+          description: Configuration not found
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Update Email Domain Status Global Config Recipient Email Domain Allowlist Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /global_config/recipient-email-domain-allowlist/{domain}:
+    delete:
+      tags:
+      - GLOBAL_CONFIG
+      summary: Delete Email Domain
+      description: Remove a domain from the allowlist. Owner only.
+      operationId: delete_email_domain_global_config_recipient_email_domain_allowlist__domain__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: domain
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Domain
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailDomainAllowlistResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Delete Email Domain Global Config Recipient Email Domain Allowlist  Domain  Delete
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Delete Email Domain Global Config Recipient Email Domain Allowlist  Domain  Delete
+        '404':
+          description: Configuration not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Delete Email Domain Global Config Recipient Email Domain Allowlist  Domain  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    UpsertCostAttributionRequest:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        mode:
+          type: string
+          title: Mode
+          default: warehouse
+      type: object
+      title: UpsertCostAttributionRequest
+    DomainStatus:
+      type: string
+      enum:
+      - active
+      - paused
+      title: DomainStatus
+    UpdateEmailDomainStatusRequest:
+      properties:
+        domain:
+          type: string
+          title: Domain
+        status:
+          $ref: '#/components/schemas/DomainStatus'
+      type: object
+      required:
+      - domain
+      - status
+      title: UpdateEmailDomainStatusRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CostAttributionResponse:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        mode:
+          type: string
+          title: Mode
+      type: object
+      required:
+      - enabled
+      - mode
+      title: CostAttributionResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AddEmailDomainRequest:
+      properties:
+        domain:
+          type: string
+          title: Domain
+      type: object
+      required:
+      - domain
+      title: AddEmailDomainRequest
+    GlobalConfigType:
+      type: string
+      enum:
+      - summary
+      - dbt_s3_prefix
+      - query_profile
+      - ingestion_worker_config
+      - tenant_info
+      - audit_s3_prefix
+      - snowflake_job
+      - altimate_db_and_schema
+      - cost_per_credit
+      - query_tag_keys
+      - altimate_tableau_site
+      - cost_attribution
+      - knowledge_private_link_enabled
+      - use_account_usage
+      - snowflake_enterprise
+      - instance_edition
+      - dbt_ingestion_failures_email
+      - skip_dbt_lineage
+      - ingestion_config
+      - snowflake_ddl_tool
+      - cost_projections
+      - auto_resize_ignore_list
+      - recipient_email_domain_allowlist
+      - databricks_service_principal_config
+      - infra_savings_multiplier
+      title: GlobalConfigType
+    AddQueryTagRequest:
+      properties:
+        tag:
+          type: string
+          title: Tag
+      type: object
+      required:
+      - tag
+      title: AddQueryTagRequest
+    EmailDomainAllowlistResponse:
+      properties:
+        domains:
+          items:
+            $ref: '#/components/schemas/EmailDomainEntry'
+          type: array
+          title: Domains
+      type: object
+      required:
+      - domains
+      title: EmailDomainAllowlistResponse
+    EmailDomainEntry:
+      properties:
+        domain:
+          type: string
+          title: Domain
+        added_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Added By
+        added_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Added At
+        status:
+          $ref: '#/components/schemas/DomainStatus'
+      type: object
+      required:
+      - domain
+      - status
+      title: EmailDomainEntry
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,2976 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS OPPORTUNITIES API
+  version: 0.1.0
+tags:
+- name: OPPORTUNITIES
+paths:
+  /opportunities/:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunities Data
+      description: 'Get opportunities data.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :param opportunities_data_request: opportunities data request.
+
+        :return: ok status and optional message.'
+      operationId: get_opportunities_data_opportunities__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Page
+      - name: size
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Size
+      - name: override_global_opportunties_fetch_size
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Override Global Opportunties Fetch Size
+      - name: effort
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Effort
+      - name: resource_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Name
+      - name: resource_type
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Type
+      - name: owner
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          title: Owner
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: User
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Status
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Opportunity Name
+      - name: secondary_resource
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Secondary Resource
+      - name: warehouse
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Warehouse
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Start date for filtering opportunities (ISO format)
+          title: Start Date
+        description: Start date for filtering opportunities (ISO format)
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: End date for filtering opportunities (ISO format)
+          title: End Date
+        description: End date for filtering opportunities (ISO format)
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          default: cost_savings_max
+          title: Sort
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          type: string
+          default: desc
+          title: Sort Order
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Instance Id
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_GetOpportunitiesDataResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunities Data Opportunities  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunities Data Opportunities  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - OPPORTUNITIES
+      summary: Put Opportunities Data
+      description: "Update opportunities data in both PostgreSQL and ClickHouse databases and OS(TODO: to be removed).\n\nArgs:\n    db: Database session for PostgreSQL access\n    auth: Authentication token containing user info\n    tenant: Tenant identifier\n    tenant_alias: Alias for the tenant\n    opportunities_data_request: Request containing opportunity changes\n    client: OpenSearch client for legacy updates (TODO: to be removed)\n    clickhouse_client: ClickHouse client for updating global_opportunities_aggregated table\n    is_operation_allowed: Flag indicating if operation is allowed for tenant\n\nReturns:\n    StandardResponse with status and optional message"
+      operationId: put_opportunities_data_opportunities__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutOpportunitiesDataRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Put Opportunities Data Opportunities  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Put Opportunities Data Opportunities  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/implemented:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Implemented Opportunities Data
+      description: 'List opportunities that were marked IMPLEMENTED.
+
+
+        Reads from the dedicated `implemented_opportunities` ClickHouse table
+
+        that survives the 1-month TTL on `individual_opportunities`. The main
+
+        GET `/opportunities/` endpoint is untouched — it still serves the
+
+        Active/Dismissed view from the original tables.'
+      operationId: get_implemented_opportunities_data_opportunities_implemented_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Page
+      - name: size
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Size
+      - name: effort
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Effort
+      - name: resource_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Name
+      - name: resource_type
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Type
+      - name: owner
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          title: Owner
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Opportunity Name
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          default: cost_savings_max
+          title: Sort
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          type: string
+          default: desc
+          title: Sort Order
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Instance Id
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: User
+      - name: warehouse
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Warehouse
+      - name: database
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Database
+      - name: schema
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Schema
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_GetImplementedOpportunitiesDataResponse_'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Implemented Opportunities Data Opportunities Implemented Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Implemented Opportunities Data Opportunities Implemented Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/priority:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Priority Opportunities Data
+      description: Top-N curated priority opportunities for the tenant (read-only).
+      operationId: get_priority_opportunities_data_opportunities_priority_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PriorityOpportunityResponse'
+                title: Response Get Priority Opportunities Data Opportunities Priority Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Priority Opportunities Data Opportunities Priority Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Priority Opportunities Data Opportunities Priority Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/detail:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunity Detail Data
+      description: Hydrated single opportunity with comments and (for SE-authored priority opps) priority metadata.
+      operationId: get_opportunity_detail_data_opportunities_detail_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: opportunity_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Opportunity Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Instance Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityDetailResponse'
+        '404':
+          description: Opportunity not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Opportunity Detail Data Opportunities Detail Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/comments:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: List Opportunity Comments
+      operationId: list_opportunity_comments_opportunities_comments_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: opportunity_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Opportunity Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Instance Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentResponse'
+                title: Response List Opportunity Comments Opportunities Comments Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - OPPORTUNITIES
+      summary: Create Opportunity Comment
+      operationId: create_opportunity_comment_opportunities_comments_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCommentRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/comments/{comment_id}:
+    put:
+      tags:
+      - OPPORTUNITIES
+      summary: Edit Opportunity Comment
+      operationId: edit_opportunity_comment_opportunities_comments__comment_id__put
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: comment_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Comment Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCommentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '403':
+          description: Only the comment author can edit this comment
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Edit Opportunity Comment Opportunities Comments  Comment Id  Put
+        '404':
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Edit Opportunity Comment Opportunities Comments  Comment Id  Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - OPPORTUNITIES
+      summary: Remove Opportunity Comment
+      operationId: remove_opportunity_comment_opportunities_comments__comment_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: comment_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Comment Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: Only the comment author can delete this comment
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Remove Opportunity Comment Opportunities Comments  Comment Id  Delete
+        '404':
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Remove Opportunity Comment Opportunities Comments  Comment Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/grouped:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunities Grouped Data
+      operationId: get_opportunities_grouped_data_opportunities_grouped_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: effort
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Effort
+      - name: resource_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Name
+      - name: resource_type
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Type
+      - name: owner
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          title: Owner
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: User
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Status
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Opportunity Name
+      - name: secondary_resource
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Secondary Resource
+      - name: warehouse
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Warehouse
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Start date for filtering opportunities (ISO format)
+          title: Start Date
+        description: Start date for filtering opportunities (ISO format)
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: End date for filtering opportunities (ISO format)
+          title: End Date
+        description: End date for filtering opportunities (ISO format)
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          default: cost_savings_max
+          title: Sort
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          type: string
+          default: desc
+          title: Sort Order
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Instance Id
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value). Sourced from the More-Filters Workspace chip; ignored on non-Databricks tenants.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupedOpportunityResponse'
+                title: Response Get Opportunities Grouped Data Opportunities Grouped Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunities Grouped Data Opportunities Grouped Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunities Grouped Data Opportunities Grouped Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/summary:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunities Summary Data
+      description: 'Get opportunities data.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :return: ok status and optional message.'
+      operationId: get_opportunities_summary_data_opportunities_summary_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: effort
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Effort
+      - name: resource_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Name
+      - name: opportunity_name
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Opportunity Name
+      - name: resource_type
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Resource Type
+      - name: owner
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          title: Owner
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: User
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Status
+      - name: secondary_resource
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Secondary Resource
+      - name: warehouse
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Warehouse
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Start date for filtering opportunities (ISO format)
+          title: Start Date
+        description: Start date for filtering opportunities (ISO format)
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: End date for filtering opportunities (ISO format)
+          title: End Date
+        description: End date for filtering opportunities (ISO format)
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Instance Id
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value). Mirrors the list endpoint's workspace_id so summary tiles scope to the same selection.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value). Mirrors the list endpoint's workspace_id so summary tiles scope to the same selection.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetOpportunitiesSummaryResponse'
+                title: Response Get Opportunities Summary Data Opportunities Summary Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunities Summary Data Opportunities Summary Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunities Summary Data Opportunities Summary Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/filters/opportunity_name:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunity Name Filters
+      description: 'Get opportunities name filter options.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :return: ok status and optional message.'
+      operationId: get_opportunity_name_filters_opportunities_filters_opportunity_name_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value) to scope candidates.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value) to scope candidates.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+                title: Response Get Opportunity Name Filters Opportunities Filters Opportunity Name Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunity Name Filters Opportunities Filters Opportunity Name Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunity Name Filters Opportunities Filters Opportunity Name Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/resource_name_filter:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunities Resource Name Filter
+      description: 'Get opportunities resource name filter options.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :param prefix: The prefix for filtering the resource name.
+
+        :return: ok status and optional message.'
+      operationId: get_opportunities_resource_name_filter_opportunities_resource_name_filter_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value) to scope candidates.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value) to scope candidates.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOpportunitiesResourceNameFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunities Resource Name Filter Opportunities Resource Name Filter Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunities Resource Name Filter Opportunities Resource Name Filter Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/filters/user:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunities User Filters
+      description: 'Get opportunities user filter options.
+
+        :param auth: The authorization token for the request.
+
+        :param prefix: The prefix for filtering the resource name.
+
+        :return: ok status and optional message.'
+      operationId: get_opportunities_user_filters_opportunities_filters_user_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value) to scope candidates.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value) to scope candidates.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOpportunitiesUserFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunities User Filters Opportunities Filters User Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunities User Filters Opportunities Filters User Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/filters/warehouse:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunities Warehouse Filters
+      description: 'Get opportunities warehouse filter options.
+
+        :param auth: The authorization token for the request.
+
+        :param prefix: The prefix for filtering the resource name.
+
+        :return: ok status and optional message.'
+      operationId: get_opportunities_warehouse_filters_opportunities_filters_warehouse_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Databricks workspace IDs (multi-value) to scope candidates.
+          title: Workspace Id
+        description: Databricks workspace IDs (multi-value) to scope candidates.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOpportunitiesWarehouseFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunities Warehouse Filters Opportunities Filters Warehouse Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunities Warehouse Filters Opportunities Filters Warehouse Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/resource:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Resource Opportunities Data
+      description: 'Get opportunities resource data.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :param resource_uri: The resource uri for the opportunities.
+
+        :param status: List of status values to filter by (active, implemented, discarded).
+
+        :param sort: Field to sort by (cost_savings, time_savings, effort) - for backward compatibility.
+
+        :param sort_by: Field to sort by (cost_savings, time_savings, effort).
+
+        :param sort_order: Sort direction (asc, desc).
+
+        :return: ok status and optional message.'
+      operationId: get_resource_opportunities_data_opportunities_resource_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: resource_uri
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Resource Uri
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Instance Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Status
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Sort
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Sort By
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Sort Order
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Resource Opportunities Data Opportunities Resource Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Resource Opportunities Data Opportunities Resource Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Resource Opportunities Data Opportunities Resource Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/scheduled_events_opportunity_data:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Scheduled Events Opportunity Data
+      description: 'Get scheduled events opportunity data.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :return: List of opportunity data.'
+      operationId: get_scheduled_events_opportunity_data_opportunities_scheduled_events_opportunity_data_get
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      - name: warehouse_name
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Warehouse Name
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+                title: Response Get Scheduled Events Opportunity Data Opportunities Scheduled Events Opportunity Data Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Scheduled Events Opportunity Data Opportunities Scheduled Events Opportunity Data Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Scheduled Events Opportunity Data Opportunities Scheduled Events Opportunity Data Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/redirection:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Resource Redirection
+      description: 'Get opportunities resource redirection.
+
+
+        For Databricks tenants, uses opportunity_id + instance_id to look up
+
+        the resource in ClickHouse and return the appropriate URL.
+
+        For Snowflake tenants, uses resource_uri + resource_type + instance_id.'
+      operationId: get_resource_redirection_opportunities_redirection_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: resource_uri
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Uri
+      - name: resource_type
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Resource Type
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Instance Id
+      - name: opportunity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Opportunity Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Resource Redirection Opportunities Redirection Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Resource Redirection Opportunities Redirection Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Resource Redirection Opportunities Redirection Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/updates:
+    get:
+      tags:
+      - OPPORTUNITIES
+      summary: Get Opportunity Updates Data
+      description: 'Get opportunity updates data.
+
+        :param db: The database session for accessing the database.
+
+        :param auth: The authorization token for the request.
+
+        :param opportunity_id: The opportunity id for the resource name filter.
+
+        :return: ok status and optional message.'
+      operationId: get_opportunity_updates_data_opportunities_updates_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: opportunity_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Opportunity Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpportunityUpdatesResponse'
+                title: Response Get Opportunity Updates Data Opportunities Updates Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Opportunity Updates Data Opportunities Updates Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Opportunity Updates Data Opportunities Updates Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/explanation:
+    post:
+      tags:
+      - OPPORTUNITIES
+      summary: Post Explanation
+      operationId: post_explanation_opportunities_explanation_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsightExplanationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Post Explanation Opportunities Explanation Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Post Explanation Opportunities Explanation Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/explanation/plain:
+    post:
+      tags:
+      - OPPORTUNITIES
+      summary: Post Explanation Plain
+      operationId: post_explanation_plain_opportunities_explanation_plain_post
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleInsightExplanationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Post Explanation Plain Opportunities Explanation Plain Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Post Explanation Plain Opportunities Explanation Plain Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /opportunities/jira:
+    post:
+      tags:
+      - OPPORTUNITIES
+      summary: Create Jira Ticket For Opportunity
+      description: "Create a Jira ticket for an opportunity.\n\nArgs:\n    db: The database session for accessing the database\n    auth: Authentication token\n    tenant: Tenant identifier\n    client: OpenSearch client\n    jira_ticket_request: Parameters for the Jira ticket\n\nReturns:\n    Dictionary containing the Jira ticket URL"
+      operationId: create_jira_ticket_for_opportunity_opportunities_jira_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JiraTicketRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Create Jira Ticket For Opportunity Opportunities Jira Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Create Jira Ticket For Opportunity Opportunities Jira Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    GetOpportunitiesUserFilterResponse:
+      properties:
+        items:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
+            type: array
+          - type: 'null'
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pages
+      type: object
+      title: GetOpportunitiesUserFilterResponse
+    JiraTicketRequest:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        project_key:
+          type: string
+          title: Project Key
+          default: AI
+        issue_type:
+          type: string
+          title: Issue Type
+          default: Task
+        priority:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Priority
+          default: Medium
+        assignee:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assignee
+        additional_fields:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Additional Fields
+        altimate_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Altimate Url
+        query_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Id
+        create_jira_ticket:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Create Jira Ticket
+          default: false
+        action:
+          anyOf:
+          - $ref: '#/components/schemas/Action'
+          - type: 'null'
+          default: create_jira_ticket
+      type: object
+      required:
+      - opportunity_id
+      title: JiraTicketRequest
+    CommentResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        comment:
+          type: string
+          title: Comment
+        created_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Created By
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        edited:
+          type: boolean
+          title: Edited
+          default: false
+      type: object
+      required:
+      - id
+      - opportunity_id
+      - comment
+      - timestamp
+      title: CommentResponse
+    Page_GetImplementedOpportunitiesDataResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/GetImplementedOpportunitiesDataResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[GetImplementedOpportunitiesDataResponse]
+    GetOpportunitiesResourceNameFilterResponse:
+      properties:
+        items:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
+            type: array
+          - type: 'null'
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pages
+      type: object
+      title: GetOpportunitiesResourceNameFilterResponse
+    PutOpportunitiesDataRequest:
+      properties:
+        changes:
+          items:
+            $ref: '#/components/schemas/Changes'
+          type: array
+          title: Changes
+        user_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: User Id
+        start_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      type: object
+      required:
+      - changes
+      title: PutOpportunitiesDataRequest
+    GetOpportunitiesDataResponse:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          type: integer
+          title: Instance Id
+        resource_name:
+          type: string
+          title: Resource Name
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypes'
+        resource_uri:
+          type: string
+          title: Resource Uri
+        opportunity_name:
+          type: string
+          title: Opportunity Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        last_seen:
+          type: string
+          format: date-time
+          title: Last Seen
+        first_seen:
+          type: string
+          format: date-time
+          title: First Seen
+        count:
+          type: integer
+          title: Count
+        total_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Count
+        resources:
+          items:
+            $ref: '#/components/schemas/app__schemas__opportunities__Resource'
+          type: array
+          title: Resources
+        money_savings:
+          additionalProperties:
+            type: string
+          type: object
+          title: Money Savings
+        time_savings:
+          type: string
+          title: Time Savings
+        effort:
+          $ref: '#/components/schemas/EffortLabel'
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        status:
+          $ref: '#/components/schemas/OpportunityStatus'
+      type: object
+      required:
+      - opportunity_id
+      - instance_id
+      - resource_name
+      - resource_type
+      - resource_uri
+      - opportunity_name
+      - last_seen
+      - first_seen
+      - count
+      - resources
+      - money_savings
+      - time_savings
+      - effort
+      - status
+      title: GetOpportunitiesDataResponse
+    AddCommentRequest:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          type: integer
+          title: Instance Id
+        comment:
+          type: string
+          maxLength: 10000
+          minLength: 1
+          title: Comment
+      type: object
+      required:
+      - opportunity_id
+      - instance_id
+      - comment
+      title: AddCommentRequest
+    PriorityOpportunityResponse:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          type: integer
+          title: Instance Id
+        resource_name:
+          type: string
+          title: Resource Name
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypes'
+        resource_uri:
+          type: string
+          title: Resource Uri
+        opportunity_name:
+          type: string
+          title: Opportunity Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        last_seen:
+          type: string
+          format: date-time
+          title: Last Seen
+        first_seen:
+          type: string
+          format: date-time
+          title: First Seen
+        count:
+          type: integer
+          title: Count
+        total_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Count
+        resources:
+          items:
+            $ref: '#/components/schemas/app__schemas__opportunities__Resource'
+          type: array
+          title: Resources
+        money_savings:
+          additionalProperties:
+            type: string
+          type: object
+          title: Money Savings
+        time_savings:
+          type: string
+          title: Time Savings
+        effort:
+          $ref: '#/components/schemas/EffortLabel'
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        status:
+          $ref: '#/components/schemas/OpportunityStatus'
+        priority_rank:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Priority Rank
+        priority_se_notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Priority Se Notes
+      type: object
+      required:
+      - opportunity_id
+      - instance_id
+      - resource_name
+      - resource_type
+      - resource_uri
+      - opportunity_name
+      - last_seen
+      - first_seen
+      - count
+      - resources
+      - money_savings
+      - time_savings
+      - effort
+      - status
+      title: PriorityOpportunityResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SimpleInsightExplanationRequest:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        query_hash:
+          type: string
+          title: Query Hash
+        query_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Id
+      type: object
+      required:
+      - opportunity_id
+      - query_hash
+      title: SimpleInsightExplanationRequest
+    GetOpportunitiesSummaryResponse:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          anyOf:
+          - type: string
+          - additionalProperties: true
+            type: object
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: GetOpportunitiesSummaryResponse
+    app__schemas__opportunities__Resource:
+      properties:
+        resource_name:
+          type: string
+          title: Resource Name
+        resource_uri:
+          type: string
+          title: Resource Uri
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypes'
+      type: object
+      required:
+      - resource_name
+      - resource_uri
+      - resource_type
+      title: Resource
+    ResourceTypes:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 20
+      - 21
+      - 22
+      - 23
+      - 24
+      title: ResourceTypes
+    GetOpportunitiesWarehouseFilterResponse:
+      properties:
+        items:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
+            type: array
+          - type: 'null'
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pages
+      type: object
+      title: GetOpportunitiesWarehouseFilterResponse
+    Changes:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        owner:
+          anyOf:
+          - type: integer
+          - type: string
+          - type: 'null'
+          title: Owner
+      type: object
+      required:
+      - opportunity_id
+      title: Changes
+    app__schemas__opportunities__FilterResponse:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: FilterResponse
+    InsightExplanationRequest:
+      properties:
+        resource_type:
+          type: integer
+          title: Resource Type
+        resource_uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Uri
+        opportunity:
+          additionalProperties: true
+          type: object
+          title: Opportunity
+        query_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Hash
+        query_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Id
+        period_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period Type
+        source_views:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Source Views
+      type: object
+      required:
+      - resource_type
+      - opportunity
+      title: InsightExplanationRequest
+    Action:
+      type: string
+      enum:
+      - create_jira_ticket
+      - solve_issue
+      title: Action
+    OpportunityUpdatesResponse:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+      type: object
+      required:
+      - opportunity_id
+      - timestamp
+      title: OpportunityUpdatesResponse
+    UpdateCommentRequest:
+      properties:
+        comment:
+          type: string
+          maxLength: 10000
+          minLength: 1
+          title: Comment
+      type: object
+      required:
+      - comment
+      title: UpdateCommentRequest
+    GetImplementedOpportunitiesDataResponse:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          type: integer
+          title: Instance Id
+        resource_name:
+          type: string
+          title: Resource Name
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypes'
+        resource_uri:
+          type: string
+          title: Resource Uri
+        opportunity_name:
+          type: string
+          title: Opportunity Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        last_seen:
+          type: string
+          format: date-time
+          title: Last Seen
+        first_seen:
+          type: string
+          format: date-time
+          title: First Seen
+        count:
+          type: integer
+          title: Count
+        total_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Count
+        resources:
+          items:
+            $ref: '#/components/schemas/app__schemas__opportunities__Resource'
+          type: array
+          title: Resources
+        money_savings:
+          additionalProperties:
+            type: string
+          type: object
+          title: Money Savings
+        time_savings:
+          type: string
+          title: Time Savings
+        effort:
+          $ref: '#/components/schemas/EffortLabel'
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        status:
+          $ref: '#/components/schemas/OpportunityStatus'
+        implemented_at:
+          type: string
+          format: date-time
+          title: Implemented At
+      type: object
+      required:
+      - opportunity_id
+      - instance_id
+      - resource_name
+      - resource_type
+      - resource_uri
+      - opportunity_name
+      - last_seen
+      - first_seen
+      - count
+      - resources
+      - money_savings
+      - time_savings
+      - effort
+      - status
+      - implemented_at
+      title: GetImplementedOpportunitiesDataResponse
+      description: 'Response item for the implemented_opportunities snapshot endpoint.
+
+
+        Adds the `implemented_at` timestamp that the snapshot table carries
+
+        (the moment the user clicked "implement"). Pydantic strips unknown
+
+        fields when the route declares a `response_model`, so reusing the
+
+        base `GetOpportunitiesDataResponse` would silently drop the column
+
+        from the JSON payload and the CSV export — every downstream
+
+        consumer would see a contract that doesn''t match the schema''s
+
+        request side (whose `?from=/?to=` filters bind to the same column).'
+    Page_GetOpportunitiesDataResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/GetOpportunitiesDataResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[GetOpportunitiesDataResponse]
+    GroupedOpportunityResponse:
+      properties:
+        opportunity_name:
+          type: string
+          title: Opportunity Name
+        cost_savings_max:
+          type: number
+          title: Cost Savings Max
+        cost_savings_min:
+          type: number
+          title: Cost Savings Min
+        time_savings_max:
+          type: number
+          title: Time Savings Max
+        time_savings_min:
+          type: number
+          title: Time Savings Min
+        occurrences:
+          type: integer
+          title: Occurrences
+        resource_type:
+          type: integer
+          title: Resource Type
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - opportunity_name
+      - cost_savings_max
+      - cost_savings_min
+      - time_savings_max
+      - time_savings_min
+      - occurrences
+      - resource_type
+      - description
+      title: GroupedOpportunityResponse
+    EffortLabel:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      title: EffortLabel
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    OpportunityStatus:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      title: OpportunityStatus
+    OpportunityMetadata:
+      properties:
+        agent_instructions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Instructions
+      additionalProperties: true
+      type: object
+      title: OpportunityMetadata
+      description: 'Agent-actionable metadata attached to an opportunity.
+
+
+        `agent_instructions` is the canonical, pre-formatted markdown the detail
+
+        page renders. `extra="allow"` forwards every other metadata key untouched
+
+        so new keys are never silently dropped.'
+    OpportunityDetailResponse:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          type: integer
+          title: Instance Id
+        resource_name:
+          type: string
+          title: Resource Name
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypes'
+        resource_uri:
+          type: string
+          title: Resource Uri
+        opportunity_name:
+          type: string
+          title: Opportunity Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        last_seen:
+          type: string
+          format: date-time
+          title: Last Seen
+        first_seen:
+          type: string
+          format: date-time
+          title: First Seen
+        count:
+          type: integer
+          title: Count
+        total_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Count
+        resources:
+          items:
+            $ref: '#/components/schemas/app__schemas__opportunities__Resource'
+          type: array
+          title: Resources
+        money_savings:
+          additionalProperties:
+            type: string
+          type: object
+          title: Money Savings
+        time_savings:
+          type: string
+          title: Time Savings
+        effort:
+          $ref: '#/components/schemas/EffortLabel'
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        status:
+          $ref: '#/components/schemas/OpportunityStatus'
+        comments_count:
+          type: integer
+          title: Comments Count
+          default: 0
+        comments:
+          items:
+            $ref: '#/components/schemas/CommentResponse'
+          type: array
+          title: Comments
+          default: []
+        priority_rank:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Priority Rank
+        priority_se_notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Priority Se Notes
+        metadata:
+          anyOf:
+          - $ref: '#/components/schemas/OpportunityMetadata'
+          - type: 'null'
+      type: object
+      required:
+      - opportunity_id
+      - instance_id
+      - resource_name
+      - resource_type
+      - resource_uri
+      - opportunity_name
+      - last_seen
+      - first_seen
+      - count
+      - resources
+      - money_savings
+      - time_savings
+      - effort
+      - status
+      title: OpportunityDetailResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

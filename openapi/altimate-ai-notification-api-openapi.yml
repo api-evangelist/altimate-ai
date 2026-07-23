@@ -1,0 +1,341 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS NOTIFICATION API
+  version: 0.1.0
+tags:
+- name: NOTIFICATION
+paths:
+  /notification/:
+    get:
+      tags:
+      - NOTIFICATION
+      summary: Get
+      operationId: get_notification__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get Notification  Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get Notification  Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+    post:
+      tags:
+      - NOTIFICATION
+      summary: Create Or Update
+      operationId: create_or_update_notification__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Create Or Update Notification  Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Create Or Update Notification  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /notification/send/slack:
+    post:
+      tags:
+      - NOTIFICATION
+      summary: Send Slack Notification
+      operationId: send_slack_notification_notification_send_slack_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendSlackNotificationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendSlackNotificationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Send Slack Notification Notification Send Slack Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Send Slack Notification Notification Send Slack Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /notification/slack_channels:
+    get:
+      tags:
+      - NOTIFICATION
+      summary: Get All Slack Channels
+      operationId: get_all_slack_channels_notification_slack_channels_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Notification'
+                type: array
+                title: Response Get All Slack Channels Notification Slack Channels Get
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get All Slack Channels Notification Slack Channels Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Get All Slack Channels Notification Slack Channels Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /notification/send_datamate_request:
+    post:
+      tags:
+      - NOTIFICATION
+      summary: Send Slack Notification For Datamate Access
+      operationId: send_slack_notification_for_datamate_access_notification_send_datamate_request_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeatureRequestNotificationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendSlackNotificationResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Send Slack Notification For Datamate Access Notification Send Datamate Request Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Send Slack Notification For Datamate Access Notification Send Datamate Request Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    NotificationRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        webhook_url:
+          type: string
+          title: Webhook Url
+      type: object
+      required:
+      - name
+      - webhook_url
+      title: NotificationRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    SendSlackNotificationResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: SendSlackNotificationResponse
+    NotificationResponse:
+      properties:
+        notifications:
+          items:
+            $ref: '#/components/schemas/Notification'
+          type: array
+          title: Notifications
+      type: object
+      required:
+      - notifications
+      title: NotificationResponse
+    SendSlackNotificationRequest:
+      properties:
+        webhook_url:
+          type: string
+          title: Webhook Url
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+      type: object
+      required:
+      - webhook_url
+      - payload
+      title: SendSlackNotificationRequest
+    Notification:
+      properties:
+        id:
+          type: integer
+          title: Id
+        type:
+          type: string
+          title: Type
+        config:
+          $ref: '#/components/schemas/NotificationConfigPublic'
+      type: object
+      required:
+      - id
+      - type
+      - config
+      title: Notification
+    NotificationConfigPublic:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      title: NotificationConfigPublic
+      description: 'Public-facing slice of a notification''s `config`.
+
+
+        The stored config contains the webhook URL, which is itself the
+
+        credential — anyone who reads it can post to Slack directly. Only
+
+        the display name is surfaced over the API; the backend looks up the
+
+        URL internally via `get_notification_by_id`.'
+    FeatureRequestNotificationRequest:
+      properties:
+        request_type:
+          type: string
+          title: Request Type
+          default: datamate
+      type: object
+      title: FeatureRequestNotificationRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

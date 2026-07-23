@@ -1,0 +1,91 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS user-group-rules API
+  version: 0.1.0
+tags:
+- name: user-group-rules
+paths:
+  /api/user-group-rules-stats:
+    get:
+      tags:
+      - user-group-rules
+      summary: Get User Group Rules Stats
+      description: "Get user group rules statistics including entity types and match types.\n\nArgs:\n    tenant_filter: Optional tenant filter ('all' for aggregated, specific tenant name, or None for current)\n    tenant: Current tenant from header\n\nReturns:\n    Dictionary containing statistics by entity type and match type"
+      operationId: get_user_group_rules_stats_api_user_group_rules_stats_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tenant_filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant Filter
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/user-group-rules-stats/tenants:
+    get:
+      tags:
+      - user-group-rules
+      summary: Get Tenants
+      description: "Get list of tenants that have user_group_rules data.\n\nReturns:\n    List of tenant names"
+      operationId: get_tenants_api_user_group_rules_stats_tenants_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

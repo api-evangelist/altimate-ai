@@ -1,0 +1,2400 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks Clusters API
+  version: 0.1.0
+tags:
+- name: Databricks Clusters
+paths:
+  /api/v1/databricks/clusters/filters:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get filter options for clusters
+      description: Get distinct filter values for cluster filtering.
+      operationId: get_cluster_filters_api_v1_databricks_clusters_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search prefix for name filters
+          title: Prefix
+        description: Search prefix for name filters
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: compute_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+          title: Compute Type
+        description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: 1-indexed page for the dropdown's load-more; offsets results by (page - 1) * size.
+          default: 1
+          title: Page
+        description: 1-indexed page for the dropdown's load-more; offsets results by (page - 1) * size.
+      - name: size
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            maximum: 100
+            minimum: 1
+          - type: 'null'
+          description: Maximum number of filter options to return.
+          title: Size
+        description: Maximum number of filter options to return.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterFilterOptions'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/filters/cluster_names:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get paginated distinct cluster names for filtering
+      description: Get a paginated list of distinct cluster-name filter options.
+      operationId: get_cluster_name_filters_api_v1_databricks_clusters_filters_cluster_names_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search substring for cluster names (case-insensitive)
+          title: Prefix
+        description: Search substring for cluster names (case-insensitive)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: compute_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+          title: Compute Type
+        description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Inclusive start of the metrics window. Defaults to 30 days before end_date.
+          title: Start Date
+        description: Inclusive start of the metrics window. Defaults to 30 days before end_date.
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Inclusive end. Defaults to today.
+          title: End Date
+        description: Inclusive end. Defaults to today.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNamesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/filters/workspaces:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get paginated distinct cluster workspaces for filtering
+      description: Get a paginated list of distinct workspace filter options.
+      operationId: get_cluster_workspace_filters_api_v1_databricks_clusters_filters_workspaces_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search substring for workspace names (case-insensitive)
+          title: Prefix
+        description: Search substring for workspace names (case-insensitive)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Workspace ID to filter by
+          title: Workspace Id
+        description: Workspace ID to filter by
+      - name: compute_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+          title: Compute Type
+        description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Inclusive start of the metrics window. Defaults to 30 days before end_date.
+          title: Start Date
+        description: Inclusive start of the metrics window. Defaults to 30 days before end_date.
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Inclusive end. Defaults to today.
+          title: End Date
+        description: Inclusive end. Defaults to today.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNamesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get all Databricks clusters
+      description: Get list of all clusters with utilization metrics.
+      operationId: get_clusters_api_v1_databricks_clusters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start date (inclusive) for utilization/cost metrics. Defaults to 30 days before `end_date`.
+          title: Start Date
+        description: Start date (inclusive) for utilization/cost metrics. Defaults to 30 days before `end_date`.
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date (inclusive). Defaults to today.
+          title: End Date
+        description: End date (inclusive). Defaults to today.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: sortAttribute
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort column name. Valid columns: avg_cpu, avg_memory, total_cost, auto_tune_savings. Sorting by inventory columns (cluster_name, node types, ...) is not supported.'
+          title: Sortattribute
+        description: 'Sort column name. Valid columns: avg_cpu, avg_memory, total_cost, auto_tune_savings. Sorting by inventory columns (cluster_name, node types, ...) is not supported.'
+      - name: sortOrder
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - enum:
+            - asc
+            - desc
+            type: string
+          - type: 'null'
+          description: 'Sort direction: ''asc'' or ''desc'''
+          title: Sortorder
+        description: 'Sort direction: ''asc'' or ''desc'''
+      - name: cluster_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by cluster names
+          title: Cluster Names
+        description: Filter by cluster names
+      - name: workspaces
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by workspace names
+          title: Workspaces
+        description: Filter by workspace names
+      - name: compute_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+          title: Compute Type
+        description: 'Filter by compute type(s): ''all_purpose'', ''jobs'', ''dlt'''
+      - name: enable_photon
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter by Photon enablement. True returns only Photon-enabled clusters; False returns only clusters where Photon is off. Omit to include all.
+          title: Enable Photon
+        description: Filter by Photon enablement. True returns only Photon-enabled clusters; False returns only clusters where Photon is off. Omit to include all.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClustersResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/oversized:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get oversized clusters
+      description: Get clusters that appear to be oversized based on low utilization.
+      operationId: get_oversized_clusters_api_v1_databricks_clusters_oversized_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cpu_threshold
+        in: query
+        required: false
+        schema:
+          type: number
+          description: Maximum average CPU threshold
+          default: 30.0
+          title: Cpu Threshold
+        description: Maximum average CPU threshold
+      - name: memory_threshold
+        in: query
+        required: false
+        schema:
+          type: number
+          description: Maximum average memory threshold
+          default: 30.0
+          title: Memory Threshold
+        description: Maximum average memory threshold
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Days for utilization metrics
+          default: 30
+          title: Days
+        description: Days for utilization metrics
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__schemas__databricks__cluster__OversizedClustersResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/cost-trends:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get cluster cost trends by compute type
+      description: Get all clusters cost trends over time broken down by compute type.
+      operationId: get_clusters_cost_trends_api_v1_databricks_clusters_cost_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Time granularity (day, week, month)
+          default: day
+          title: Granularity
+        description: Time granularity (day, week, month)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClustersCostTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get cluster details
+      description: Get detailed information for a specific cluster.
+      operationId: get_cluster_detail_api_v1_databricks_clusters__cluster_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterDetail'
+        '403':
+          description: Not authorized
+        '404':
+          description: Cluster not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/utilization:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get cluster utilization metrics
+      description: Get utilization metrics and timeseries for a specific cluster.
+      operationId: get_cluster_utilization_api_v1_databricks_clusters__cluster_id__utilization_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for metrics
+          title: Start Date
+        description: Start date for metrics
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for metrics
+          title: End Date
+        description: End date for metrics
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterUtilizationResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/state-history:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get cluster state history
+      description: Get state change history for a specific cluster.
+      operationId: get_cluster_state_history_api_v1_databricks_clusters__cluster_id__state_history_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterStateHistoryResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/cost:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Get cluster cost data
+      description: Get cost data for a specific cluster.
+      operationId: get_cluster_cost_api_v1_databricks_clusters__cluster_id__cost_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date for cost data
+          title: Start Date
+        description: Start date for cost data
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date for cost data
+          title: End Date
+        description: End date for cost data
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Time granularity (day, week, month)
+          default: day
+          title: Granularity
+        description: Time granularity (day, week, month)
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterCostResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/status:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Page-level Auto Tune status for an all-purpose cluster
+      description: 'Read-only status for the Auto Tune tab on mount. Surfaces the
+
+        master toggle position, a live preflight snapshot for UI gating, and
+
+        the recommendation / enabled counts. No DB writes.'
+      operationId: get_cluster_auto_tune_status_api_v1_databricks_clusters__cluster_id__auto_tune_status_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoTuneStatusResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/recommendations:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Active Auto Tune recommendations for an all-purpose cluster
+      description: 'Worker Sizing (resize) + Auto Termination (auto_terminate) recs for
+
+        the cluster, each annotated with its resolved sub-toggle state.'
+      operationId: get_cluster_auto_tune_recommendations_api_v1_databricks_clusters__cluster_id__auto_tune_recommendations_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAutoTuneRecommendationsResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/toggle:
+    patch:
+      tags:
+      - Databricks Clusters
+      summary: Toggle Auto Tune for an all-purpose cluster (master or sub-toggle)
+      description: 'Enable/disable Auto Tune for the cluster. ``rec_type=None`` is the
+
+        master toggle (flips both sub-toggles). Records config + audit only;
+
+        no Databricks edit. On enable, the cluster permission preflight runs
+
+        first and blocks the write if the SP can''t manage the cluster.'
+      operationId: toggle_cluster_auto_tune_api_v1_databricks_clusters__cluster_id__auto_tune_toggle_patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClusterAutoTuneToggleRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAutoTuneToggleResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/history:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Paginated Auto Tune audit history for an all-purpose cluster
+      description: Read-only audit history for the Auto Tune tab, newest-first.
+      operationId: get_cluster_auto_tune_history_api_v1_databricks_clusters__cluster_id__auto_tune_history_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: event_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated event_type values to include. Empty = all.
+          title: Event Types
+        description: Comma-separated event_type values to include. Empty = all.
+      - name: period
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+          description: Look-back window in days.
+          title: Period
+        description: Look-back window in days.
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (1-indexed)
+          default: 1
+          title: Page
+        description: Page number (1-indexed)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Items per page
+          default: 20
+          title: Page Size
+        description: Items per page
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoTuneHistoryResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/savings-trends:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Per-day Possible Savings for an all-purpose cluster
+      description: 'Per-day Spend × savings-pct Possible Savings series. ``actual`` is
+
+        always empty — cluster Auto Tune has no realized-savings mart.'
+      operationId: get_cluster_auto_tune_savings_trends_api_v1_databricks_clusters__cluster_id__auto_tune_savings_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoTuneSavingsTrendsResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AutoTuneHistoryResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AutoTuneHistoryEvent'
+          type: array
+          title: Items
+        total_count:
+          type: integer
+          title: Total Count
+          default: 0
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      required:
+      - items
+      title: AutoTuneHistoryResponse
+      description: 'Paginated response wrapper for the Auto Tune history endpoint.
+
+
+        Matches the existing Databricks response convention
+
+        (``total_count`` / ``page`` / ``page_size`` / ``total_pages``)
+
+        rather than ``fastapi_pagination.Page[T]`` — none of the other
+
+        Databricks endpoints in this router use the latter.'
+    ClusterSummary:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        min_autoscale_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Autoscale Workers
+        max_autoscale_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Autoscale Workers
+        cluster_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Source
+        compute_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compute Type
+          description: 'Derived compute classification: ''all_purpose'', ''jobs'', or ''serverless''.'
+        enable_photon:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Photon
+          description: Whether the cluster runs a Photon runtime, derived from the runtime version. Null when the version is unknown.
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        last_state_change:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last State Change
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+          default: 0
+        avg_memory:
+          type: number
+          title: Avg Memory
+          default: 0
+        sample_count:
+          type: integer
+          title: Sample Count
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          default: 0
+        realized_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Realized Savings
+        estimated_annualized_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Annualized Savings
+        is_auto_tune_enabled:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Is Auto Tune Enabled
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      title: ClusterSummary
+      description: Summary information for a cluster.
+    ClusterAutoTuneRecommendationsResponse:
+      properties:
+        recommendations:
+          items:
+            $ref: '#/components/schemas/ClusterAutoTuneRecommendationItem'
+          type: array
+          title: Recommendations
+        total_count:
+          type: integer
+          title: Total Count
+          description: Number of active recommendations for this cluster.
+          default: 0
+      type: object
+      required:
+      - recommendations
+      title: ClusterAutoTuneRecommendationsResponse
+      description: List response for cluster Auto Tune recommendations.
+    ClustersCostTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/ClusterCostTrendItem'
+          type: array
+          title: Trends
+          description: Cost trends broken down by compute type
+        compute_types:
+          items:
+            type: string
+          type: array
+          title: Compute Types
+          description: Distinct compute types present, ordered by total cost desc (legend order).
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day, week, month)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs in period
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total estimated cost
+          default: 0
+      type: object
+      required:
+      - trends
+      - compute_types
+      - granularity
+      title: ClustersCostTrendsResponse
+      description: Response for all clusters cost trends (aggregated across all clusters).
+    ToggleAutoTunePreflight:
+      properties:
+        blocked:
+          type: boolean
+          title: Blocked
+          default: false
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        actionable_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actionable Message
+      type: object
+      title: ToggleAutoTunePreflight
+      description: 'Surfaced to the FE so it can render an actionable error inline.
+
+
+        When ``blocked=False`` the toggle pipeline ran. When ``blocked=True``
+
+        no DB writes happened and ``actionable_message`` should be shown to
+
+        the user verbatim (e.g. "ask your workspace admin to add r5.xlarge
+
+        to the policy allowlist").'
+    ClusterStateChange:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        state:
+          type: string
+          title: State
+        change_time:
+          type: string
+          format: date-time
+          title: Change Time
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - state
+      - change_time
+      title: ClusterStateChange
+      description: A single state change record.
+    ClusterUtilizationPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+          default: 0
+        avg_memory:
+          type: number
+          title: Avg Memory
+          default: 0
+        sample_count:
+          type: integer
+          title: Sample Count
+          default: 0
+      type: object
+      required:
+      - period
+      title: ClusterUtilizationPoint
+      description: Single point in utilization timeseries.
+    ClusterAutoTuneToggleResponse:
+      properties:
+        auto_tune_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Tune Mode
+        audit_event_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Audit Event Id
+        entity_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Name
+        preflight:
+          $ref: '#/components/schemas/ToggleAutoTunePreflight'
+        rolled_back_rec_types:
+          items:
+            type: string
+          type: array
+          title: Rolled Back Rec Types
+      type: object
+      title: ClusterAutoTuneToggleResponse
+      description: 'Response for the cluster Auto Tune toggle endpoint.
+
+
+        Returns the resolved master ``auto_tune_mode`` so the FE can re-render
+
+        the header pill without a second round-trip.'
+    ClusterUtilization:
+      properties:
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+          default: 0
+        max_cpu:
+          type: number
+          title: Max Cpu
+          default: 0
+        min_cpu:
+          type: number
+          title: Min Cpu
+          default: 0
+        avg_memory:
+          type: number
+          title: Avg Memory
+          default: 0
+        max_memory:
+          type: number
+          title: Max Memory
+          default: 0
+        min_memory:
+          type: number
+          title: Min Memory
+          default: 0
+        sample_count:
+          type: integer
+          title: Sample Count
+          default: 0
+      type: object
+      title: ClusterUtilization
+      description: Utilization metrics for a cluster.
+    ClusterAutoTuneRecommendationItem:
+      properties:
+        entity_id:
+          type: string
+          title: Entity Id
+        entity_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Name
+        rec_type:
+          type: string
+          title: Rec Type
+        rec_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rec Source
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        owned_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owned By
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        current_config:
+          additionalProperties: true
+          type: object
+          title: Current Config
+        recommended_config:
+          additionalProperties: true
+          type: object
+          title: Recommended Config
+        current_cost_per_hr_dbu:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Current Cost Per Hr Dbu
+        recommended_cost_per_hr_dbu:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Recommended Cost Per Hr Dbu
+        estimated_savings_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Savings Pct
+        recommendation_summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation Summary
+        reasoning:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reasoning
+        inference_start_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Inference Start Date
+        inference_end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Inference End Date
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        latest_action_event_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Action Event Type
+        applied_config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Applied Config
+      type: object
+      required:
+      - entity_id
+      - rec_type
+      title: ClusterAutoTuneRecommendationItem
+      description: 'A single all-purpose-cluster recommendation from
+
+        ``databricks_auto_tune_recommendation`` (``entity_type=''all_purpose''``).
+
+
+        The FE renders one drawer toggle per ``rec_type``. ``enabled`` is the
+
+        resolved sub-toggle state — read from the cluster''s
+
+        ``databricks_auto_tune_configuration.configuration`` JSONB
+
+        (``resize_enabled`` / ``auto_terminate_enabled``).'
+    app__schemas__databricks__cluster__OversizedClustersResponse:
+      properties:
+        clusters:
+          items:
+            $ref: '#/components/schemas/OversizedCluster'
+          type: array
+          title: Clusters
+        cpu_threshold:
+          type: number
+          title: Cpu Threshold
+        memory_threshold:
+          type: number
+          title: Memory Threshold
+      type: object
+      required:
+      - clusters
+      - cpu_threshold
+      - memory_threshold
+      title: OversizedClustersResponse
+      description: Response for oversized clusters.
+    ClusterUtilizationResponse:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        utilization:
+          $ref: '#/components/schemas/ClusterUtilization'
+        timeseries:
+          items:
+            $ref: '#/components/schemas/ClusterUtilizationPoint'
+          type: array
+          title: Timeseries
+          default: []
+      type: object
+      required:
+      - cluster_id
+      - utilization
+      title: ClusterUtilizationResponse
+      description: Response for cluster utilization metrics.
+    ClusterAutoTuneToggleRequest:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          description: Desired state for the toggle.
+        rec_type:
+          anyOf:
+          - type: string
+            enum:
+            - resize
+            - auto_terminate
+          - type: 'null'
+          title: Rec Type
+          description: Which sub-toggle to flip. None = master toggle (flips both Worker Sizing and Auto Termination).
+      type: object
+      required:
+      - enabled
+      title: ClusterAutoTuneToggleRequest
+      description: 'Request body for ``PATCH /databricks/clusters/{id}/auto-tune/toggle``.
+
+
+        ``rec_type=None`` is the master toggle — it flips BOTH sub-toggles
+
+        (``resize`` + ``auto_terminate``) to ``enabled``. A specific
+
+        ``rec_type`` flips only that sub-toggle. Nothing is applied to
+
+        Databricks; the call records the config change + an audit event.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AutoTuneHistoryEvent:
+      properties:
+        event_id:
+          type: integer
+          title: Event Id
+        event_type:
+          type: string
+          title: Event Type
+        mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Mode
+        change_timestamp:
+          type: string
+          format: date-time
+          title: Change Timestamp
+        task_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Key
+        recommendation_from:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From
+        recommendation_to:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To
+        recommendation_from_workers:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From Workers
+        recommendation_to_workers:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To Workers
+        recommendation_from_worker_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From Worker Instance
+        recommendation_to_worker_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To Worker Instance
+        recommendation_from_driver_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation From Driver Instance
+        recommendation_to_driver_instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation To Driver Instance
+        changed_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Changed By
+        changed_by_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Changed By Name
+        actionable_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actionable Message
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        event_message:
+          type: string
+          title: Event Message
+          default: ''
+      type: object
+      required:
+      - event_id
+      - event_type
+      - change_timestamp
+      title: AutoTuneHistoryEvent
+      description: 'One row in the Auto Tune history panel.
+
+
+        Mirrors the shape the FE renders directly. ``event_message`` is
+
+        pre-composed in the API layer via
+
+        ``app.service.databricks.auto_tune.history.compose_event_message`` so
+
+        the schema stays a dumb data carrier and the templating logic lives
+
+        in the service layer.
+
+
+        ``changed_by_name`` is resolved by the API layer (manual lookup in
+
+        ``altimate_users``) since the audit ORM model does not currently
+
+        carry a relationship to the user model — see PR #5070 for the future
+
+        relationship-based approach.'
+    ClusterCostPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      title: ClusterCostPoint
+      description: Single data point for cluster cost timeseries.
+    OversizedCluster:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+        avg_memory:
+          type: number
+          title: Avg Memory
+        sample_count:
+          type: integer
+          title: Sample Count
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      - avg_cpu
+      - avg_memory
+      - sample_count
+      title: OversizedCluster
+      description: Information about an oversized cluster.
+    PaginatedNamesResponse:
+      properties:
+        items:
+          items:
+            type: string
+          type: array
+          title: Items
+        page:
+          type: integer
+          title: Page
+          description: Current page number (1-indexed)
+          default: 1
+        size:
+          type: integer
+          title: Size
+          description: Items per page
+          default: 20
+        total:
+          type: integer
+          title: Total
+          description: Total number of matching names
+          default: 0
+      type: object
+      title: PaginatedNamesResponse
+      description: Paginated list of distinct filter-option names.
+    AutoTuneSavingsTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        dbu_savings:
+          type: number
+          title: Dbu Savings
+          default: 0.0
+        infra_savings:
+          type: number
+          title: Infra Savings
+          default: 0.0
+      type: object
+      required:
+      - period
+      title: AutoTuneSavingsTrendPoint
+      description: One day's auto-tune savings, split into DBU and infra components.
+    ClusterDetail:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        min_autoscale_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Autoscale Workers
+        max_autoscale_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Autoscale Workers
+        cluster_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Source
+        compute_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compute Type
+          description: Derived compute classification ('all_purpose', 'jobs', 'dlt'). The Auto Tune tab is only available when this is 'all_purpose'.
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        last_state_change:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last State Change
+        creator_user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator User Name
+        spark_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spark Version
+        runtime_engine:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Runtime Engine
+        enable_photon:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Photon
+          description: Whether the cluster runs a Photon runtime, derived from the Databricks runtime version (dbr_version). None when the runtime version is unknown.
+        autotermination_minutes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Autotermination Minutes
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      title: ClusterDetail
+      description: Detailed information for a cluster.
+    AutoTuneStatusResponse:
+      properties:
+        auto_tune_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Tune Mode
+          description: '"enabled" if any task on the job has Auto Tune turned on. "disabled" if all tasks are off or no config exists. None when there are no recommendations for this job at all.'
+        preflight:
+          $ref: '#/components/schemas/ToggleAutoTunePreflight'
+        recommendation_count:
+          type: integer
+          title: Recommendation Count
+          default: 0
+        at_scoped_spend_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: At Scoped Spend Usd
+        tasks_enabled:
+          type: integer
+          title: Tasks Enabled
+          default: 0
+        tasks_total:
+          type: integer
+          title: Tasks Total
+          default: 0
+      type: object
+      title: AutoTuneStatusResponse
+      description: "Page-level status for the Auto Tune tab.\n\nReturned by GET /databricks/jobs/{job_id}/auto-tune/status. The FE\nuses this on JobDetail page mount to drive:\n\n- Master toggle position in the page header (auto_tune_mode).\n- Whether the toggle is interactive or disabled with a HoverCard\n  explaining why (preflight.blocked + actionable_message).\n- Whether the Auto Tune tab content renders the full panel or the\n  empty state (recommendation_count + auto_tune_mode).\n\nRead-only — no DB writes happen on this call."
+    ClustersResponse:
+      properties:
+        clusters:
+          items:
+            $ref: '#/components/schemas/ClusterSummary'
+          type: array
+          title: Clusters
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of clusters
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items per page
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - clusters
+      - total_count
+      title: ClustersResponse
+      description: Response for listing clusters.
+    ClusterCostTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+        compute_type:
+          type: string
+          title: Compute Type
+          description: 'Compute type bucket: ''all_purpose'', ''jobs'', or ''serverless''.'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      - compute_type
+      title: ClusterCostTrendItem
+      description: Single data point for cluster cost trends by compute type.
+    AutoTuneSavingsTrendsResponse:
+      properties:
+        actual:
+          items:
+            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
+          type: array
+          title: Actual
+        potential:
+          items:
+            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
+          type: array
+          title: Potential
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - actual
+      - potential
+      - granularity
+      title: AutoTuneSavingsTrendsResponse
+      description: 'Per-day auto-tune savings for a job, split into realized and potential.
+
+
+        ``actual`` holds savings on runs where an applied recommendation was in
+
+        effect; ``potential`` holds the savings those runs would have earned from
+
+        the active recommendation had it been applied. Each series is bucketed by
+
+        the run window (``period_start_time``).'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ClusterCostResponse:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+        daily_average_dbus:
+          type: number
+          title: Daily Average Dbus
+          default: 0
+        daily_average_cost:
+          type: number
+          title: Daily Average Cost
+          default: 0
+        timeseries:
+          items:
+            $ref: '#/components/schemas/ClusterCostPoint'
+          type: array
+          title: Timeseries
+          default: []
+      type: object
+      required:
+      - cluster_id
+      title: ClusterCostResponse
+      description: Response for cluster cost data.
+    ClusterStateHistoryResponse:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        history:
+          items:
+            $ref: '#/components/schemas/ClusterStateChange'
+          type: array
+          title: History
+      type: object
+      required:
+      - cluster_id
+      - history
+      title: ClusterStateHistoryResponse
+      description: Response for cluster state history.
+    ClusterFilterOptions:
+      properties:
+        cluster_names:
+          items:
+            type: string
+          type: array
+          title: Cluster Names
+        workspaces:
+          items:
+            type: string
+          type: array
+          title: Workspaces
+        sources:
+          items:
+            type: string
+          type: array
+          title: Sources
+        driver_nodes:
+          items:
+            type: string
+          type: array
+          title: Driver Nodes
+        worker_nodes:
+          items:
+            type: string
+          type: array
+          title: Worker Nodes
+      type: object
+      title: ClusterFilterOptions
+      description: Filter options for clusters.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

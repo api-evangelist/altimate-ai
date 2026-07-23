@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS Databricks AI Studio API
+  version: 0.1.0
+tags:
+- name: Databricks AI Studio
+paths:
+  /api/v1/databricks/datapilot/initial-questions:
+    get:
+      tags:
+      - Databricks AI Studio
+      summary: Get AI Studio initial questions for Databricks resources
+      description: Get suggested AI Studio questions for Databricks resources.
+      operationId: get_databricks_initial_questions_api_v1_databricks_datapilot_initial_questions_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: resource_type
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/DatabricksResourceType'
+          description: Type of resource (cluster, warehouse, job, query, user)
+        description: Type of resource (cluster, warehouse, job, query, user)
+      - name: resource_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional resource ID for context
+          title: Resource Id
+        description: Optional resource ID for context
+      - name: resource_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional resource name for context
+          title: Resource Name
+        description: Optional resource name for context
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional workspace ID for context
+          title: Workspace Id
+        description: Optional workspace ID for context
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DatabricksResourceType:
+      type: string
+      enum:
+      - cluster
+      - warehouse
+      - job
+      - query
+      - user
+      title: DatabricksResourceType
+      description: Resource types for Databricks AI Studio initial questions.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,328 @@
+openapi: 3.1.0
+info:
+  title: Fast ACCOUNT_COSTS MEMORY API
+  version: 0.1.0
+tags:
+- name: MEMORY
+paths:
+  /datamates/memory/:
+    post:
+      tags:
+      - MEMORY
+      summary: Add Memory
+      description: Add a new memory to the system.
+      operationId: add_memory_datamates_memory__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMemoryRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemoryResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamates/memory/{memory_id}:
+    patch:
+      tags:
+      - MEMORY
+      summary: Update Memory
+      description: Update an existing memory in the system.
+      operationId: update_memory_datamates_memory__memory_id__patch
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: memory_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Memory Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Request Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemoryResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '404':
+          description: Memory not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - MEMORY
+      summary: Delete Memory
+      description: Delete a specific memory from the system.
+      operationId: delete_memory_datamates_memory__memory_id__delete
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: memory_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Memory Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemoryResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/memory/search:
+    get:
+      tags:
+      - MEMORY
+      summary: Search Memory
+      description: Search for memories in the system.
+      operationId: search_memory_datamates_memory_search_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  additionalProperties: true
+                  type: object
+                type: array
+                title: Response Search Memory Datamates Memory Search Get
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamates/memory/list:
+    get:
+      tags:
+      - MEMORY
+      summary: List Memories
+      description: List all memories in the system.
+      operationId: list_memories_datamates_memory_list_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  additionalProperties: true
+                  type: object
+                type: array
+                title: Response List Memories Datamates Memory List Get
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamates/memory/all:
+    delete:
+      tags:
+      - MEMORY
+      summary: Delete All Memories
+      description: Delete all memories from the system.
+      operationId: delete_all_memories_datamates_memory_all_delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemoryResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+      deprecated: true
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamates/memory/batch:
+    delete:
+      tags:
+      - MEMORY
+      summary: Batch Delete Memories
+      description: Batch delete multiple memories from the system.
+      operationId: batch_delete_memories_datamates_memory_batch_delete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+              title: Memory Ids
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemoryResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+components:
+  schemas:
+    AddMemoryRequest:
+      properties:
+        messages:
+          items:
+            $ref: '#/components/schemas/Message'
+          type: array
+          title: Messages
+        memory_options:
+          anyOf:
+          - $ref: '#/components/schemas/MemoryOptions'
+          - type: 'null'
+      type: object
+      required:
+      - messages
+      title: AddMemoryRequest
+    Message:
+      properties:
+        content:
+          type: string
+          title: Content
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+          title: Role
+      type: object
+      required:
+      - content
+      - role
+      title: Message
+    MemoryOptions:
+      properties:
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        org_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Org Name
+        org_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Org Id
+        project_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Id
+      type: object
+      title: MemoryOptions
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MemoryResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: MemoryResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer
