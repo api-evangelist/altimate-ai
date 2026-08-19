@@ -1,0 +1,247 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS Knowledge Bases V2 API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Knowledge Bases V2",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Upload With Kb Creation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/upload",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new knowledge base with either file upload or markdown content.\n\nThis endpoint supports two modes:\n1. **File Upload**: Provide 'file' parameter with document (PDF, DOCX, MD, TXT)\n2. **Markdown Content**: Provide 'markdown_content' parameter with markdown text\n\nProcess:\n1. Validates and uploads content to S3\n2. Creates a new knowledge base\n3. Creates a document record (version 1)\n4. Returns KB and document info for async processing\n\nThe document processing (chunking, vectorization) happe"
+        },
+        {
+          "info": {
+            "name": "Fork Template V2",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/fork-template",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new knowledge base from a template with v2 processing.\n\nThis endpoint:\n1. Finds the template by name\n2. Creates a new KB with document record (forked=True, source=template_name)\n3. Uploads template content to S3\n4. Queues Celery task for async processing (chunking, vectorization)\n\nThe document processing happens asynchronously via Celery."
+        },
+        {
+          "info": {
+            "name": "Upload To Existing Kb",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/:kb_id/upload",
+            "params": [
+              {
+                "name": "kb_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Upload a new document version to an existing knowledge base.\n\nThis endpoint supports two modes:\n1. **File Upload**: Provide 'file' parameter with document (PDF, DOCX, MD, TXT)\n2. **Markdown Content**: Provide 'markdown_content' parameter with markdown text\n\nProcess:\n1. Validates knowledge base exists and user has access\n2. Creates document record (gets version number)\n3. Uploads content to S3 with kb_id/version path\n4. Updates document with S3 path\n5. Returns document info for async processing\n\n"
+        },
+        {
+          "info": {
+            "name": "Get Knowledge Base Detail",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/:kb_id",
+            "params": [
+              {
+                "name": "kb_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get knowledge base details with current document processing status.\n\nReturns:\n- Knowledge base information (name, description, content, etc.)\n- Current active document status and metadata\n- User-friendly status message based on processing state\n- Processing error details if applicable\n\nThe status message provides clear feedback about:\n- Upload success and queuing\n- Processing progress\n- Completion with success indicators\n- Errors with actionable information"
+        },
+        {
+          "info": {
+            "name": "Delete Knowledge Base",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/:kb_id",
+            "params": [
+              {
+                "name": "kb_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Soft delete a knowledge base and clean up associated vector data.\n\nThis endpoint:\n1. Verifies KB exists and user has permission\n2. Soft deletes all chunks (sets is_deleted=True, deleted_at, deleted_by in lightrag_doc_chunks)\n3. Deletes all vectors from Weaviate (by workspace filter)\n4. Soft deletes all documents (sets is_deleted=True, deleted_at, deleted_by in knowledge_documents)\n5. Soft deletes the knowledge base (sets is_deleted=True)\n6. Preserves chunk access logs for analytics\n7. Leaves S3 "
+        },
+        {
+          "info": {
+            "name": "Get Knowledge Base Documents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/:kb_id/documents",
+            "params": [
+              {
+                "name": "kb_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get all document versions for a knowledge base.\n\nReturns list of all documents (versions) ordered by version descending (newest first).\nEach document includes:\n- Basic info: filename, file type, file size, version\n- Processing status and timestamps\n- User who uploaded it\n- Chunks information"
+        },
+        {
+          "info": {
+            "name": "Retry Document Processing",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/:kb_id/documents/:doc_id/retry",
+            "params": [
+              {
+                "name": "kb_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "doc_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retry processing for a failed document.\n\nThis endpoint:\n1. Validates the document exists and is in a failed state\n2. Resets the document status to pending_ingestion\n3. Queues a new Celery task for processing\n\nOnly documents with status: ingestion_failed, celery_failed, or airflow_failed can be retried."
+        },
+        {
+          "info": {
+            "name": "Get Document Chunks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/:kb_id/documents/:doc_id/chunks",
+            "params": [
+              {
+                "name": "kb_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "doc_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get all chunks for a specific document.\n\nReturns all chunks for the specified document ordered by chunk_order_index.\nEach chunk includes:\n- Chunk ID and order index\n- Content text\n- Token count\n- File path (if available)"
+        },
+        {
+          "info": {
+            "name": "Query Knowledge Bases",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/query",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Query across one or more knowledge bases with unified results.\n\nThis endpoint consolidates results from multiple KBs into a single answer,\nleveraging the consolidated workspace architecture for cross-workspace search.\n\nRequest body must include:\n- question: The query to search for\n- knowledge_base_ids: List of knowledge base IDs to query across"
+        },
+        {
+          "info": {
+            "name": "Submit Knowledge Feedback",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/knowledge_bases/v2/:kb_id/feedback",
+            "params": [
+              {
+                "name": "kb_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Submit feedback for a knowledge base chunk/learning.\n\nFeedback is stored in the database and sent to Slack for visibility."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

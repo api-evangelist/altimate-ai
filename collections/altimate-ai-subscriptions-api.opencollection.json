@@ -1,0 +1,389 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS SUBSCRIPTIONS API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "SUBSCRIPTIONS",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Metrics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions/metrics",
+            "params": [
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by category (e.g., 'warehouse')"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get all available metrics from the v2 registry.\n\nArgs:\n    category: Optional category filter\n\nReturns:\n    List of metric definitions"
+        },
+        {
+          "info": {
+            "name": "Get Metric Filter Options",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions/metrics/filters/:filter_name/options",
+            "params": [
+              {
+                "name": "filter_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "metric_name",
+                "value": "",
+                "type": "query",
+                "description": "Optional metric name to filter options based on metric context (e.g., for 'instance' filter, only return Snowflake instances for Snowflake metrics)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get available options for a specific filter dimension.\n\nUses the FilterOptionsProvider pattern to fetch RBAC-filtered options\nfor different entity types (warehouse, instance, etc.).\n\nSupports both PostgreSQL-based filters (warehouse, instance) and\nClickHouse-based filters (user, role, query_type, database, schema,\nexecution_status, warehouse_size, cluster).\n\nArgs:\n    filter_name: Name of the filter dimension (e.g., 'warehouse', 'user', 'role')\n    metric_name: Optional metric name to filter opt"
+        },
+        {
+          "info": {
+            "name": "Get Subscription Filters",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions/filters",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get available filter options for the subscription list.\n\nReturns distinct values for subscription_type, category, created_by, and destinations\nbased on existing subscriptions the user has access to."
+        },
+        {
+          "info": {
+            "name": "Get Subscription Summary",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions/summary",
+            "params": [
+              {
+                "name": "subscription_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by type: 'alert' or 'report'"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by metric category"
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Search by subscription name"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by start date (ISO 8601 format)"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by end date (ISO 8601 format)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get subscription summary statistics.\n\nReturns the total number of subscriptions for the user,\nplus placeholder values for alerts triggered and reports sent.\nSupports filtering by subscription_type, category, and date range."
+        },
+        {
+          "info": {
+            "name": "List Subscriptions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions",
+            "params": [
+              {
+                "name": "subscription_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by type: 'alert' or 'report'"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by status: 'active' or 'inactive'"
+              },
+              {
+                "name": "entity_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by entity type"
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Search by subscription name"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by metric category"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by start date (ISO 8601 format)"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by end date (ISO 8601 format)"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort by field: 'created_at', 'name'"
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: 'asc' or 'desc'"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "Page size"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get paginated list of subscriptions with optional filters.\n\nArgs:\n    subscription_type: Filter by subscription type\n    status_filter: Filter by status\n    entity_type: Filter by entity type\n    search: Search by name (case-insensitive)\n    category: Filter by metric category\n    start_date: Filter subscriptions created after this date\n    end_date: Filter subscriptions created before this date\n    sort_by: Field to sort by\n    sort_order: Sort direction (asc/desc)\n\nReturns:\n    Paginated subsc"
+        },
+        {
+          "info": {
+            "name": "Create Subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/subscriptions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new subscription (alert or report).\n\nSupports both provider-based metrics and custom SQL.\n\nArgs:\n    request: Subscription creation request\n\nReturns:\n    Created subscription details"
+        },
+        {
+          "info": {
+            "name": "Get Subscription Templates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions/templates",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get available subscription templates.\n\nReturns:\n    List of templates with preset configurations"
+        },
+        {
+          "info": {
+            "name": "Get Subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions/:subscription_id",
+            "params": [
+              {
+                "name": "subscription_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a single subscription by ID.\n\nArgs:\n    subscription_id: Subscription ID\n\nReturns:\n    Subscription details with execution history"
+        },
+        {
+          "info": {
+            "name": "Delete Subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/subscriptions/:subscription_id",
+            "params": [
+              {
+                "name": "subscription_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a subscription.\n\nArgs:\n    subscription_id: Subscription ID\n\nReturns:\n    Success confirmation"
+        },
+        {
+          "info": {
+            "name": "Get Subscription History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/subscriptions/:subscription_id/history",
+            "params": [
+              {
+                "name": "subscription_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "Items per page"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by status: triggered, pending, failed, skipped"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by start date (ISO 8601 format)"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by end date (ISO 8601 format)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get execution history for a subscription.\n\nArgs:\n    subscription_id: Subscription ID\n    page: Page number\n    size: Items per page\n    status_filter: Optional status filter\n    start_date: Optional start date filter (ISO 8601 format)\n    end_date: Optional end date filter (ISO 8601 format)\n\nReturns:\n    Paginated list of execution history items"
+        },
+        {
+          "info": {
+            "name": "Get Subscription Preview",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/subscriptions/preview",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a preview of what the subscription will look like.\n\nGenerates real-time preview based on the metric configuration,\nshowing actual data from the selected metrics and filters.\n\nArgs:\n    request: Preview request with subscription_type and metric_config\n\nReturns:\n    Preview items with markdown and charts based on real data"
+        },
+        {
+          "info": {
+            "name": "Update Subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/subscriptions/:subscription_id/update",
+            "params": [
+              {
+                "name": "subscription_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update an existing subscription.\n\nArgs:\n    subscription_id: Subscription ID\n    request: Update request with fields to modify\n\nReturns:\n    Updated subscription details"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

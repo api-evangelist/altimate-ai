@@ -1,0 +1,709 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS AI_PLAYGROUND API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "AI_PLAYGROUND",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "View Shared Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/share/shared/:share_id",
+            "params": [
+              {
+                "name": "share_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "View a shared playground session.\n\nThis is the public endpoint for viewing shared content.\n- 'anyone' links: No authentication required\n- 'specific_people' links: User must be authenticated and in the allowed list"
+        },
+        {
+          "info": {
+            "name": "List Shares",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/share",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List share links.\n\n- If session_id is provided, returns share links for that session\n- Otherwise, returns all share links created by the current user"
+        },
+        {
+          "info": {
+            "name": "Create Share",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/share",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new share link for a playground session.\n\n- **session_id**: The session to share\n- **access_type**: 'anyone' (public) or 'specific_people' (restricted)\n- **expires_in_days**: Optional expiration (1-365 days)\n- **user_ids**: Required for 'specific_people' access type\n- **title**: Optional title for the share link"
+        },
+        {
+          "info": {
+            "name": "List Shares For Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/share/session/:session_id",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List share links for a specific session."
+        },
+        {
+          "info": {
+            "name": "Get Share",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/share/:share_id",
+            "params": [
+              {
+                "name": "share_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get details of a specific share link."
+        },
+        {
+          "info": {
+            "name": "Delete Share",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/playground/share/:share_id",
+            "params": [
+              {
+                "name": "share_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a share link."
+        },
+        {
+          "info": {
+            "name": "Share To Slack",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/share/slack",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Share a Studio session to Slack via incoming webhook."
+        },
+        {
+          "info": {
+            "name": "List Schedules",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/schedules",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List schedules.\n\n- If session_id is provided, returns schedules for that session\n- Otherwise, returns all schedules created by the current user"
+        },
+        {
+          "info": {
+            "name": "Create Schedule Endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/schedules",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new scheduled report.\n\n- **name**: Name for this schedule\n- **session_id**: Session to report on\n- **content_scope**: 'last_answer' or 'full_chat'\n- **frequency**: 'daily', 'weekly', 'monthly', or 'custom'\n- **hour**: Hour to run (0-23 UTC)\n- **emails**: Recipients"
+        },
+        {
+          "info": {
+            "name": "Get Schedule Endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/schedules/:schedule_id",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get details of a specific schedule."
+        },
+        {
+          "info": {
+            "name": "Update Schedule Endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.myaltimate.com/playground/schedules/:schedule_id",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update a schedule."
+        },
+        {
+          "info": {
+            "name": "Delete Schedule Endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/playground/schedules/:schedule_id",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a schedule."
+        },
+        {
+          "info": {
+            "name": "Toggle Schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/schedules/:schedule_id/toggle",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Enable or disable a schedule."
+        },
+        {
+          "info": {
+            "name": "Refresh Snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/schedules/:schedule_id/refresh-snapshot",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Refresh the snapshot content for a schedule."
+        },
+        {
+          "info": {
+            "name": "Send Now Endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/schedules/:schedule_id/send-now",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trigger a scheduled report to be sent immediately with fresh execution.\n\nReturns 202 Accepted immediately; the report is generated and emailed\nin the background. Check the schedule's runs endpoint for status."
+        },
+        {
+          "info": {
+            "name": "Get Schedule Runs Endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/schedules/:schedule_id/runs",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get recent runs for a schedule."
+        },
+        {
+          "info": {
+            "name": "Get Sessions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/sessions",
+            "params": [
+              {
+                "name": "search_text",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number starting from 1"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Number of items per page"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "active (default), archived, or all (active+archived)"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get all AI playground sessions for a user with pagination support for infinite scroll"
+        },
+        {
+          "info": {
+            "name": "Get Session By Id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/sessions/:session_id",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a specific AI playground session by ID with its turns"
+        },
+        {
+          "info": {
+            "name": "Update Session Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.myaltimate.com/playground/sessions/:session_id",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Archive (``archived``), restore (``active``), or soft-delete\n(``deleted``) a single session owned by the authenticated user.\nSoft-deleted sessions remain in the database. It will be backed\ninto s3 later."
+        },
+        {
+          "info": {
+            "name": "Ask Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/ask",
+            "params": [
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Ask a question in an AI playground session and get streaming response.\n\nThe actual pipeline (security scan, output guard, service invocation,\nstreaming) lives in ``app.service.ai_playground.ask_pipeline.run_ask_pipeline``\nso it can be reused by the playground scheduler worker without an HTTP\ncallback. This endpoint is now a thin transport wrapper."
+        },
+        {
+          "info": {
+            "name": "Enhance Prompt",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/prompt/enhance",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Enhance a user prompt - Temporary proxy to actual prompt enhancer"
+        },
+        {
+          "info": {
+            "name": "Session To Pdf",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/session_to_pdf",
+            "params": [
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Generate a PDF report from the full conversation thread of a session.\nIncludes all user questions and assistant answers."
+        },
+        {
+          "info": {
+            "name": "Session To Email Mailing List",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/session_to_email_mailing_list",
+            "params": [
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Generate a PDF from the full conversation thread and send via email.\n\nRecipients are resolved from ``recipient_type``:\n- ``specific_emails``: the explicit, regex-validated ``emails`` list (To)\n- ``all_altimate_users``: every active tenant user (BCC fan-out)\n- ``team``: active members of the selected teams (BCC fan-out)"
+        },
+        {
+          "info": {
+            "name": "Cancel Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/cancel",
+            "params": [
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Cancel an active AI playground session"
+        },
+        {
+          "info": {
+            "name": "List Agents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/agents",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List all production agents from Langfuse.\n\nFetches the agent names from the 'agent-names' prompt config,\nthen retrieves full details (name, version, prompt, config, labels) for each agent."
+        },
+        {
+          "info": {
+            "name": "Create Or Update Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/agents",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create or update an agent definition in Langfuse.\n\nNote: We use create_prompt for both create and update because:\n- create_prompt automatically creates a new version if the name exists\n- update_prompt only modifies labels on existing versions, not content"
+        },
+        {
+          "info": {
+            "name": "Delete Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/playground/agents",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Deprecate an agent by removing it from production and marking as deprecated."
+        },
+        {
+          "info": {
+            "name": "Get Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/playground/agents/:agent_name",
+            "params": [
+              {
+                "name": "agent_name",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get an agent definition from Langfuse."
+        },
+        {
+          "info": {
+            "name": "Add Agent To Production",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/agents/production/add",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Add an agent to the production agents list (agent-names config.agents)."
+        },
+        {
+          "info": {
+            "name": "Remove Agent From Production",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/playground/agents/production/remove",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Remove an agent from the production agents list (agent-names config.agents)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

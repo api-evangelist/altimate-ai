@@ -1,0 +1,287 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS SSO Group Mappings API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "SSO Group Mappings",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Targets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/sso-group-mappings/targets",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Return all teams and roles for SSO mapping target dropdowns (no RBAC filtering)."
+        },
+        {
+          "info": {
+            "name": "Get Config",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/sso-group-mappings/config",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Read SSO team sync configuration, returning defaults if not yet configured."
+        },
+        {
+          "info": {
+            "name": "Update Config",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.myaltimate.com/sso-group-mappings/config",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create or update SSO team sync configuration."
+        },
+        {
+          "info": {
+            "name": "List Mappings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/sso-group-mappings/mappings",
+            "params": [
+              {
+                "name": "mapping_type",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "include_inactive",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get SSO group mappings with resolved target names and creator emails.\n\nPass include_inactive=true to also see deactivated mappings (for reactivation)."
+        },
+        {
+          "info": {
+            "name": "Create Mapping",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/sso-group-mappings/mappings",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new SSO group mapping with duplicate and target validation."
+        },
+        {
+          "info": {
+            "name": "Update Mapping",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.myaltimate.com/sso-group-mappings/mappings/:mapping_id",
+            "params": [
+              {
+                "name": "mapping_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update an existing SSO group mapping."
+        },
+        {
+          "info": {
+            "name": "Delete Mapping",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/sso-group-mappings/mappings/:mapping_id",
+            "params": [
+              {
+                "name": "mapping_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Soft-delete an SSO group mapping and record an audit event."
+        },
+        {
+          "info": {
+            "name": "Preview Mappings",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/sso-group-mappings/preview",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Preview how external SSO groups would resolve to teams and roles."
+        },
+        {
+          "info": {
+            "name": "List External Groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/sso-group-mappings/external-groups",
+            "params": [
+              {
+                "name": "search",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List uploaded external SSO groups with optional search filter."
+        },
+        {
+          "info": {
+            "name": "Upload External Groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/sso-group-mappings/external-groups/upload",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Upload a CSV of external SSO group names.\n\nCSV format: group_name\nMerge strategy: new groups inserted, existing skipped, soft-deleted re-activated."
+        },
+        {
+          "info": {
+            "name": "Upload Mappings",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/sso-group-mappings/mappings/upload",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Upload a CSV of SSO group mappings for bulk creation.\n\nCSV format: external_group_identifier,match_type,mapping_type,target_name\n- mapping_type: \"team\" or \"role\"\n- target_name: team name (for team mappings) or role title (for role mappings)\n- match_type: exact, prefix, contains, suffix (defaults to \"exact\")"
+        },
+        {
+          "info": {
+            "name": "List Audit Events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/sso-group-mappings/audit-events",
+            "params": [
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "event_type",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Query SSO audit events with optional filters and pagination."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

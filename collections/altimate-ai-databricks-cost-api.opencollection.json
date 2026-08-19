@@ -1,0 +1,940 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS Databricks Cost API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Databricks Cost",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get available Databricks workspaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/workspaces",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get list of available Databricks workspaces."
+        },
+        {
+          "info": {
+            "name": "Get Databricks cost overview",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/overview",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost overview with summary metrics.\n\nReturns total DBUs, estimated cost, and period-over-period comparison."
+        },
+        {
+          "info": {
+            "name": "Get Databricks cost trends over time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/trends",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost trends over time.\n\nReturns time series data with DBU consumption and estimated cost per period."
+        },
+        {
+          "info": {
+            "name": "Get Databricks cost trends by product over time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/trends/by-product",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Which UI category the chart is for. Drives both the product filter and the per-row segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return the products in that spec group."
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost trends over time, sliced for a UI category.\n\nReturns time series data with DBU consumption and estimated cost per\nperiod, with each row labelled by the category's chosen segment. The\n``products`` array in the response is the canonical legend for the\ncategory (in display order, including segments with no data) so the FE\nlegend stays stable across date ranges."
+        },
+        {
+          "info": {
+            "name": "Get Databricks cost trends by product with projections",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/trends/by-product/estimate",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (typically start of year)"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (typically end of year)"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost trends by product with future projections.\n\nReturns monthly cost data by product (JOBS, SQL, ALL_PURPOSE, etc.) with\nprojections to end of period. Used for Future State visualization showing\nproduct-level historical + projected costs."
+        },
+        {
+          "info": {
+            "name": "Get cost breakdown by SKU",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/breakdown/sku",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "sortAttribute",
+                "value": "",
+                "type": "query",
+                "description": "Sort column: name, total_dbus, or total_cost. Default total_cost."
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Sort direction: 'asc' or 'desc'. Default 'desc'."
+              },
+              {
+                "name": "sku_names",
+                "value": "",
+                "type": "query",
+                "description": "Filter to specific SKU names (multi-value)"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost breakdown by SKU.\n\nReturns DBU consumption and cost grouped by Databricks SKU type."
+        },
+        {
+          "info": {
+            "name": "Get cost breakdown by workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/breakdown/workspace",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost breakdown by workspace.\n\nReturns DBU consumption and cost grouped by Databricks workspace."
+        },
+        {
+          "info": {
+            "name": "Get cost breakdown by product",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/breakdown/product",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "sortAttribute",
+                "value": "",
+                "type": "query",
+                "description": "Sort column: name, total_dbus, or total_cost. Default total_cost."
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Sort direction: 'asc' or 'desc'. Default 'desc'."
+              },
+              {
+                "name": "products",
+                "value": "",
+                "type": "query",
+                "description": "Filter to specific billing_origin_product values"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost breakdown by product.\n\nReturns DBU consumption and cost grouped by Databricks product type."
+        },
+        {
+          "info": {
+            "name": "Get cost comparison between periods",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/comparison",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the current period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the current period"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost comparison between current and previous period.\n\nAutomatically calculates the previous period based on the duration of the current period."
+        },
+        {
+          "info": {
+            "name": "Get total cost with category breakdown",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/total",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get total cost with category breakdown.\n\nReturns total cost and DBUs with breakdown by cost category\n(Compute, SQL, AI/ML, Data Platform, Infrastructure)."
+        },
+        {
+          "info": {
+            "name": "Get cost trends with future projections",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/overall/estimate",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (typically start of year)"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (typically end of year)"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``."
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost trends with future projections, segmented for a UI category.\n\nReturns monthly cost data with projections to end of period — each graph\npoint carries the per-segment breakdown for the requested ``category``.\nUsed for Future State visualization showing historical + projected costs."
+        },
+        {
+          "info": {
+            "name": "Get total estimated cost for the year",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/total/estimate",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (typically start of year)"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (typically end of year)"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for the segmentation rules."
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get total estimated cost for the period (actual + projected).\n\nReturns the grand total plus a per-segment breakdown for the requested\n``category``. Used for Future State total cost display."
+        },
+        {
+          "info": {
+            "name": "Get compute efficiency breakdown",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/compute-efficiency",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get compute efficiency breakdown.\n\nReturns efficiency metrics including:\n- Jobs vs All-Purpose ratio (healthy = >70% jobs)\n- Serverless vs Provisioned breakdown\n- Photon vs Standard engine usage"
+        },
+        {
+          "info": {
+            "name": "Get cost trends by compute type over time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/trends/by-compute-type",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost trends over time broken down by compute type.\n\nReturns time series data grouped by compute type (jobs, all_purpose, sql, other)\nfor visualizing compute efficiency over time."
+        },
+        {
+          "info": {
+            "name": "Get cost trends by deployment type (serverless vs provisioned)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/trends/by-deployment-type",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost trends over time broken down by deployment type\n(serverless vs provisioned)."
+        },
+        {
+          "info": {
+            "name": "Get cost trends by engine type (photon vs standard)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/trends/by-engine-type",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost trends over time broken down by engine type\n(photon vs standard)."
+        },
+        {
+          "info": {
+            "name": "Get efficiency metrics per workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/workspace-efficiency",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get efficiency metrics per workspace for chargeback and analysis.\n\nReturns per-workspace metrics including:\n- Total DBUs and cost\n- Jobs vs All-Purpose percentage\n- Serverless percentage\n- Efficiency score (healthy, moderate, unhealthy)"
+        },
+        {
+          "info": {
+            "name": "Get cloud infrastructure cost trends by category",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/cloud/trends",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the period"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for the period"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get full cloud-bill (TCO) trends over time, stacked by infrastructure\ncategory (Compute / Storage / Networking / Database / Security /\nAnalytics & Streaming, plus an ``Other`` catch-all).\n\nOne row per period; each category is a numeric field, plus a synthetic\n``__cloud_cost_total__`` and per-period percentage-change fields. Powers the\nSummary \"Cloud Costs\" tab and the Jobs \"Cloud Costs\" group-by. Returns ``[]``\nfor tenants without the cloud-cost feed."
+        },
+        {
+          "info": {
+            "name": "Get cloud infrastructure cost projection (actual + month-end estimate)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/cost/cloud/projection",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get the current calendar year's cloud cost by category, month by month,\nwith a month-end projection.\n\nPast months are fully actual; the current month is month-to-date actual plus\na run-rate projected remainder; future months are the full run-rate\nprojection. Used by the Future State \"Cloud Costs\" tab. Returns ``[]`` for\ntenants without the cloud-cost feed."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

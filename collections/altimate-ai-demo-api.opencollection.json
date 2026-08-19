@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS DEMO API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DEMO",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Demo Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/demo/create-demo-session",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create or retrieve a demo user and generate a temporary session ID.\n\nThis endpoint creates a dedicated demo user in the demo tenant for the calling tenant.\nEach tenant gets exactly one demo user (1-to-1 mapping) with email: demo@{calling_tenant}.\nReturns a session ID that expires in 30 minutes and can be used once to authenticate.\n\nReturns:\n    DemoSessionResponse: Contains the demo tenant frontend URL and session ID"
+        },
+        {
+          "info": {
+            "name": "Authenticate Demo Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/demo/authenticate",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Authenticate a demo session using session_id.\n\nThis endpoint validates the session_id and returns the demo user with auth token\nif the session is valid (created within last 30 minutes).\nThe session is deleted after successful authentication.\nCan only be called from the demo tenant and only works for demo accounts.\n\nArgs:\n    session_id: The session ID returned from create-demo-session\n\nReturns:\n    UserLoginOut: User information with auth token (same as /login)"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

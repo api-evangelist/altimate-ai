@@ -1,0 +1,266 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS PROMPT_LIBRARY API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "PROMPT_LIBRARY",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get All Prompts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/prompts/",
+            "params": [
+              {
+                "name": "tags",
+                "value": "",
+                "type": "query",
+                "description": "Filter by tags. Returns prompts that have ANY of the specified tags."
+              },
+              {
+                "name": "owners",
+                "value": "",
+                "type": "query",
+                "description": "Filter by owner user IDs. Supports multiple values."
+              },
+              {
+                "name": "teams",
+                "value": "",
+                "type": "query",
+                "description": "Filter by team IDs."
+              },
+              {
+                "name": "search_text",
+                "value": "",
+                "type": "query",
+                "description": "Search in title, description, and prompt text"
+              },
+              {
+                "name": "is_public",
+                "value": "",
+                "type": "query",
+                "description": "Filter by public/tenant prompts"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by prompt type: 'saved' for tenant prompts, 'default' or 'public' for public prompts. Supports comma-separated values like 'default,saved' to get both types."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Number of items per page"
+              },
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Sort by field: created_at, updated_at, last_used_at"
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: asc or desc"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "Page size"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get all prompts (public + tenant) with filtering, sorting, and pagination.\nReturns prompts accessible to the user based on their teams."
+        },
+        {
+          "info": {
+            "name": "Create Prompt",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/prompts/",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new prompt.\nAll prompts are stored in the tenant table, owned by the creating user\n(the service user, Altimate AI, included)."
+        },
+        {
+          "info": {
+            "name": "Get Unique Tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/prompts/tags",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get unique tags from all accessible prompts.\nReturns tags from both public and tenant prompts that the user can access."
+        },
+        {
+          "info": {
+            "name": "Get Starter Prompts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/prompts/starter",
+            "params": [
+              {
+                "name": "entity_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter prompts by entity type (e.g., snowflake_query, databricks_warehouse, dbt_model)"
+              },
+              {
+                "name": "integration_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter prompts by integration type (e.g., snowflake, databricks, dbt). Only prompts whose attributes.integration_type matches exactly are returned."
+              },
+              {
+                "name": "public_max",
+                "value": "",
+                "type": "query",
+                "description": "Max number of public starter prompts to return. Defaults to 4."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get starter prompts from public prompt library.\nOptionally filter by entity_type and/or integration_type to get context-specific prompts.\nReturns up to `public_max` (default 4) prompts sorted by created_at descending."
+        },
+        {
+          "info": {
+            "name": "Get Prompt By Id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/prompts/:prompt_id",
+            "params": [
+              {
+                "name": "prompt_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a single prompt by ID.\nReturns the prompt if the user has access to it."
+        },
+        {
+          "info": {
+            "name": "Update Prompt",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/prompts/:prompt_id",
+            "params": [
+              {
+                "name": "prompt_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update an existing prompt.\nUsers can only update prompts they created, service users can update any prompt."
+        },
+        {
+          "info": {
+            "name": "Update Prompt",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.myaltimate.com/prompts/:prompt_id",
+            "params": [
+              {
+                "name": "prompt_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update an existing prompt.\nUsers can only update prompts they created, service users can update any prompt."
+        },
+        {
+          "info": {
+            "name": "Delete Prompt",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/prompts/:prompt_id",
+            "params": [
+              {
+                "name": "prompt_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a prompt (soft delete).\nUsers can only delete prompts they created, service users can delete any prompt."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

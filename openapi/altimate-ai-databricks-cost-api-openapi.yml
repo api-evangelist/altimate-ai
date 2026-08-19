@@ -266,9 +266,15 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/CategoryName'
-          description: Which UI category the chart is for. Drives both the product filter and the per-row segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return the products in that spec group.
+          description: Which UI category the chart is for. Drives both the product filter and the per-row
+            segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML
+            / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values
+            return the products in that spec group.
           default: total
-        description: Which UI category the chart is for. Drives both the product filter and the per-row segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return the products in that spec group.
+        description: Which UI category the chart is for. Drives both the product filter and the per-row
+          segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML /
+          Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return
+          the products in that spec group.
       - name: navigationSource
         in: query
         required: false
@@ -849,9 +855,12 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/CategoryName'
-          description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
+          description: Which UI category to segment the projection by. ``total`` → the 6 spec groups;
+            ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group.
+            Mirrors ``/cost/trends/by-product``.
           default: total
-        description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
+        description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse``
+          → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
       - name: navigationSource
         in: query
         required: false
@@ -932,9 +941,11 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/CategoryName'
-          description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for the segmentation rules.
+          description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for
+            the segmentation rules.
           default: total
-        description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for the segmentation rules.
+        description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for
+          the segmentation rules.
       - name: navigationSource
         in: query
         required: false
@@ -1630,7 +1641,8 @@ components:
             type: string
           type: array
           title: Products
-          description: Canonical segment legend for the requested ``category``, in display order — includes segments with no data so the legend stays stable across date ranges.
+          description: Canonical segment legend for the requested ``category``, in display order — includes
+            segments with no data so the legend stays stable across date ranges.
         currency:
           type: string
           title: Currency
@@ -1945,7 +1957,9 @@ components:
             $ref: '#/components/schemas/CostCategoryItem'
           type: array
           title: Category Breakdown
-          description: Per-category cost & DBU breakdown for the 5 spec groups, in canonical legend order (Clusters → SQL Warehouse → AI/ML → Lakehouse → Platform). Empty categories are included with zero values so the FE can keep colour ordering stable.
+          description: Per-category cost & DBU breakdown for the 5 spec groups, in canonical legend order
+            (Clusters → SQL Warehouse → AI/ML → Lakehouse → Platform). Empty categories are included with
+            zero values so the FE can keep colour ordering stable.
       type: object
       required:
       - total_dbus
@@ -2032,7 +2046,11 @@ components:
       required:
       - period
       title: CloudCostTrendRow
-      description: "One stacked-bar period of cloud infrastructure cost by category.\n\nBesides ``period`` the row carries, as extra keys:\n  * one float per segment in :data:`CLOUD_COST_SEGMENTS` (e.g. ``Compute``),\n  * ``percentage_<segment>`` — % change vs the previous period (or ``None``),\n  * :data:`CLOUD_TOTAL_KEY` — the row total (sum of all segments),\n  * ``percentage_total`` — % change of the total vs the previous period."
+      description: "One stacked-bar period of cloud infrastructure cost by category.\n\nBesides ``period``\
+        \ the row carries, as extra keys:\n  * one float per segment in :data:`CLOUD_COST_SEGMENTS` (e.g.\
+        \ ``Compute``),\n  * ``percentage_<segment>`` — % change vs the previous period (or ``None``),\n\
+        \  * :data:`CLOUD_TOTAL_KEY` — the row total (sum of all segments),\n  * ``percentage_total``\
+        \ — % change of the total vs the previous period."
     ProductEstimateItem:
       properties:
         date:
@@ -2131,7 +2149,8 @@ components:
         label:
           type: string
           title: Label
-          description: Display label for the category (e.g. ``Clusters``, ``SQL Warehouse``). Matches the legend label used by ``/cost/trends/by-product?category=total``.
+          description: Display label for the category (e.g. ``Clusters``, ``SQL Warehouse``). Matches
+            the legend label used by ``/cost/trends/by-product?category=total``.
         total_dbus:
           type: number
           title: Total Dbus
@@ -2143,7 +2162,8 @@ components:
         pct_of_total:
           type: number
           title: Pct Of Total
-          description: Share of the overall ``estimated_cost`` (0–100, one decimal). Sums to ~100 across the breakdown.
+          description: Share of the overall ``estimated_cost`` (0–100, one decimal). Sums to ~100 across
+            the breakdown.
       type: object
       required:
       - category
@@ -2170,7 +2190,11 @@ components:
       - lakehouse
       - platform
       title: CategoryName
-      description: "Spec-group category identifier shared across the cost APIs.\n\nUsed by:\n\n* ``GET /cost/trends/by-product?category=<value>`` — selects which\n  products get filtered in and how each row's segment label is computed.\n* ``GET /cost/overview`` — each ``category_breakdown`` item carries one\n  of these values.\n\nSee ``CATEGORY_DEFINITIONS`` in ``app.service.databricks.cost_constants``\nfor the per-category filter list, segment label expression, and canonical\nlegend order."
+      description: "Spec-group category identifier shared across the cost APIs.\n\nUsed by:\n\n* ``GET\
+        \ /cost/trends/by-product?category=<value>`` — selects which\n  products get filtered in and how\
+        \ each row's segment label is computed.\n* ``GET /cost/overview`` — each ``category_breakdown``\
+        \ item carries one\n  of these values.\n\nSee ``CATEGORY_DEFINITIONS`` in ``app.service.databricks.cost_constants``\n\
+        for the per-category filter list, segment label expression, and canonical\nlegend order."
     EngineTypeTrendItem:
       properties:
         period:
@@ -2229,7 +2253,8 @@ components:
             $ref: '#/components/schemas/EstimateSegmentItem'
           type: array
           title: Segments
-          description: Per-segment actual + projected costs for the requested ``category``, in canonical legend order. The segment set matches the ``products`` array on the response.
+          description: Per-segment actual + projected costs for the requested ``category``, in canonical
+            legend order. The segment set matches the ``products`` array on the response.
       type: object
       required:
       - date
@@ -2248,7 +2273,9 @@ components:
             type: string
           type: array
           title: Products
-          description: Canonical segment labels for the chart legend, in display order. When called with a ``category``, this is the full set of expected segments for that category — empty segments are still included so the legend stays stable across date ranges.
+          description: Canonical segment labels for the chart legend, in display order. When called with
+            a ``category``, this is the full set of expected segments for that category — empty segments
+            are still included so the legend stays stable across date ranges.
         granularity:
           type: string
           title: Granularity
@@ -2257,7 +2284,8 @@ components:
           anyOf:
           - $ref: '#/components/schemas/CategoryName'
           - type: 'null'
-          description: Category the response was computed for. Omitted when called without the ``category`` query param.
+          description: Category the response was computed for. Omitted when called without the ``category``
+            query param.
       type: object
       required:
       - trends
@@ -2491,7 +2519,8 @@ components:
             $ref: '#/components/schemas/EstimateSegmentTotalItem'
           type: array
           title: Segment Breakdown
-          description: Per-segment combined (actual + projected) cost breakdown for the requested ``category``, in canonical legend order.
+          description: Per-segment combined (actual + projected) cost breakdown for the requested ``category``,
+            in canonical legend order.
       type: object
       required:
       - total
@@ -2592,3 +2621,6 @@ components:
     HTTPBearer:
       type: http
       scheme: bearer
+servers:
+- url: https://api.myaltimate.com
+  description: Base URL reconciled from apis.yml

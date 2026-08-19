@@ -1,0 +1,217 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS METABASE API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "METABASE",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate Metabase Token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/metabase/auth/metabase/token",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Generate a signed JWT token for Metabase embedded analytics.\n\nThis endpoint creates a JWT token that can be used with Metabase's\nembedded analytics feature to authenticate users and control access\nto dashboards and data.\n\nArgs:\n    request: MetabaseJWTRequest containing optional groups and expiration\n    current_user: The authenticated user from the request\n\nReturns:\n    dict: Contains the signed JWT token with user info from request"
+        },
+        {
+          "info": {
+            "name": "Get Tenant Dashboards",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/metabase/dashboards",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number (starts from 1)"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Number of dashboards per page (max 100)"
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Search term for dashboard name/description"
+              },
+              {
+                "name": "tags",
+                "value": "",
+                "type": "query",
+                "description": "Filter by specific tags"
+              },
+              {
+                "name": "collection_ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by collection IDs"
+              },
+              {
+                "name": "collection_names",
+                "value": "",
+                "type": "query",
+                "description": "Filter by collection names"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query",
+                "description": "ISO date string - filter dashboards created after this date"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query",
+                "description": "ISO date string - filter dashboards created before this date"
+              },
+              {
+                "name": "updated_after",
+                "value": "",
+                "type": "query",
+                "description": "ISO date string - filter dashboards updated after this date"
+              },
+              {
+                "name": "updated_before",
+                "value": "",
+                "type": "query",
+                "description": "ISO date string - filter dashboards updated before this date"
+              },
+              {
+                "name": "has_description",
+                "value": "",
+                "type": "query",
+                "description": "Filter dashboards with/without descriptions"
+              },
+              {
+                "name": "archived",
+                "value": "",
+                "type": "query",
+                "description": "Include/exclude archived dashboards"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort by field: name, created_at, updated_at, collection_name"
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: asc, desc"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get paginated dashboards from local database with advanced filtering and sorting.\n\nThis endpoint fetches dashboard metadata from the local database\nthat was previously synced from Metabase by the sync worker.\n\nArgs:\n    page: Page number (starts from 1)\n    page_size: Number of dashboards per page (max 100)\n    search: Search term for dashboard name/description\n    tags: Filter by specific tags\n    collection_ids: Filter by collection IDs\n    collection_names: Filter by collection names\n    crea"
+        },
+        {
+          "info": {
+            "name": "Sync Dashboard Metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/metabase/sync-dashboard-metadata",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Sync Metabase dashboard metadata from Airflow DAG to local database.\n\nThis endpoint receives collections and dashboards data from an Airflow DAG\nand stores the metadata in the local PostgreSQL database for the specified tenant.\n\nArgs:\n    request: SyncDashboardMetadataRequest containing tenant, collections, dashboards, and fetch timestamp\n\nReturns:\n    SyncDashboardMetadataResponse with sync operation results"
+        },
+        {
+          "info": {
+            "name": "Get Dashboard By Id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/metabase/dashboards/:dashboard_id",
+            "params": [
+              {
+                "name": "dashboard_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a specific dashboard by ID from the local database.\n\nThis endpoint retrieves dashboard metadata for a specific dashboard ID\nthat was previously synced from Metabase.\n\nArgs:\n    dashboard_id: The ID of the dashboard to retrieve\n\nReturns:\n    MetabaseDashboardDetail with dashboard information"
+        },
+        {
+          "info": {
+            "name": "Trigger Sync All Dashboards",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/metabase/dashboards/sync-all",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trigger the Celery worker to sync Metabase dashboards for all tenants.\n\nReturns HTTP 202 with queued task id so the UI can track it."
+        },
+        {
+          "info": {
+            "name": "Has Dashboard Tag",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/metabase/has-tag",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "query",
+                "description": "Tag to check for in dashboards"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Check whether the provided tag exists in any `SpacesDashboard` for the current tenant (case-insensitive).\n\nArgs:\n    tag: The tag to check for\n\nReturns:\n    True if present (case-insensitive), else False"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

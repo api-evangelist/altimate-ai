@@ -1,0 +1,354 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS DBT_CLOUD API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DBT_CLOUD",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Connections",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections",
+            "params": [
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List all dbt Cloud connections."
+        },
+        {
+          "info": {
+            "name": "Create Connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new dbt Cloud connection.\n\nThis will:\n1. Validate the API token\n2. Create the connection record\n3. Discover all projects and environments\n4. Create DBTCoreIntegration records for each project"
+        },
+        {
+          "info": {
+            "name": "Get Connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a dbt Cloud connection with all projects and environments."
+        },
+        {
+          "info": {
+            "name": "Update Connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update an existing dbt Cloud connection.\n\nAllows updating:\n- name: Connection display name\n- api_token: Service token (will be validated)\n- api_base_url: API base URL\n\nIf api_token is provided, it will be validated against dbt Cloud API."
+        },
+        {
+          "info": {
+            "name": "Delete Connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a dbt Cloud connection.\n\nThis will permanently delete the connection and all associated records:\n- dbt Cloud projects and environments\n- Associated DBTCoreIntegration records\n- Associated DBTCoreIntegrationEnvironment records\n- Periodic sync tasks"
+        },
+        {
+          "info": {
+            "name": "Refresh Connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id/refresh",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Re-discover projects and environments from dbt Cloud.\n\nUse this to sync new projects/environments that were added in dbt Cloud."
+        },
+        {
+          "info": {
+            "name": "Update Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/projects/:project_id",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Enable or disable sync for a dbt Cloud project."
+        },
+        {
+          "info": {
+            "name": "Update Environment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/environments/:environment_id",
+            "params": [
+              {
+                "name": "environment_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Enable or disable sync for a dbt Cloud environment."
+        },
+        {
+          "info": {
+            "name": "Trigger Sync",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id/sync",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "force",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trigger a manual sync for all enabled projects/environments.\n\nThis will queue a background task to:\n1. Fetch new runs from dbt Cloud\n2. Download artifacts\n3. Upload to S3\n4. Trigger ingestion pipeline\n\nArgs:\n    force: If True, resets processed runs to force re-download of all artifacts"
+        },
+        {
+          "info": {
+            "name": "Get Sync History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id/sync-history",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get sync history for a connection with pagination."
+        },
+        {
+          "info": {
+            "name": "Update Schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id/schedule",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update the sync schedule for a connection."
+        },
+        {
+          "info": {
+            "name": "Validate Token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/validate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Validate a dbt Cloud API token without creating a connection.\n\nUse this to verify credentials before creating a connection."
+        },
+        {
+          "info": {
+            "name": "Test Connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/connections/:connection_id/test",
+            "params": [
+              {
+                "name": "connection_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Test an existing dbt Cloud connection using stored credentials.\n\nUse this to verify that an existing connection's credentials are still valid."
+        },
+        {
+          "info": {
+            "name": "Trigger Dbt Ingestion",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.myaltimate.com/api/v1/dbt/cloud/trigger-ingestion",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trigger the dbt ingestion worker to process pending GlobalTasks.\n\nThis is primarily for local development and testing.\nIn production, this is triggered automatically by Celery beat."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

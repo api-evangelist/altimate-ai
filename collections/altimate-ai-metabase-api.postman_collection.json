@@ -1,0 +1,1131 @@
+{
+  "item": [
+    {
+      "id": "02e46f4a-52ed-4cbc-a274-b6ef7e93305d",
+      "name": "METABASE",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b59f286f-2bc2-46db-8213-84d404c2352a",
+          "name": "Generate Metabase Token",
+          "request": {
+            "name": "Generate Metabase Token",
+            "description": {
+              "content": "Generate a signed JWT token for Metabase embedded analytics.\n\nThis endpoint creates a JWT token that can be used with Metabase's\nembedded analytics feature to authenticate users and control access\nto dashboards and data.\n\nArgs:\n    request: MetabaseJWTRequest containing optional groups and expiration\n    current_user: The authenticated user from the request\n\nReturns:\n    dict: Contains the signed JWT token with user info from request",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "metabase",
+                "auth",
+                "metabase",
+                "token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exp\": \"<integer>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "da8173af-e7e6-48fb-aa62-f43fc2e84000",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "auth",
+                    "metabase",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"exp\": \"<integer>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"jwt\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b463b3f9-f8e6-4634-b04d-d8016934335e",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "auth",
+                    "metabase",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"exp\": \"<integer>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d04f75d2-20dd-4042-938b-7a762148dee8",
+          "name": "Get Tenant Dashboards",
+          "request": {
+            "name": "Get Tenant Dashboards",
+            "description": {
+              "content": "Get paginated dashboards from local database with advanced filtering and sorting.\n\nThis endpoint fetches dashboard metadata from the local database\nthat was previously synced from Metabase by the sync worker.\n\nArgs:\n    page: Page number (starts from 1)\n    page_size: Number of dashboards per page (max 100)\n    search: Search term for dashboard name/description\n    tags: Filter by specific tags\n    collection_ids: Filter by collection IDs\n    collection_names: Filter by collection names\n    created_after: ISO date string - filter dashboards created after this date\n    created_before: ISO date string - filter dashboards created before this date\n    updated_after: ISO date string - filter dashboards updated after this date\n    updated_before: ISO date string - filter dashboards updated before this date\n    has_description: Filter dashboards with/without descriptions\n    archived: Include/exclude archived dashboards\n    sort_by: Sort by field: name, created_at, updated_at, collection_name\n    sort_order: Sort order: asc, desc\n\nReturns:\n    dict: Contains the filtered, sorted, and paginated dashboards for the current tenant",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "metabase",
+                "dashboards"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (starts from 1)"
+                },
+                {
+                  "disabled": false,
+                  "key": "page_size",
+                  "value": "10",
+                  "description": "Number of dashboards per page (max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "search",
+                  "value": "<string>",
+                  "description": "Search term for dashboard name/description"
+                },
+                {
+                  "disabled": false,
+                  "key": "tags",
+                  "value": "<string>",
+                  "description": "Filter by specific tags"
+                },
+                {
+                  "disabled": false,
+                  "key": "tags",
+                  "value": "<string>",
+                  "description": "Filter by specific tags"
+                },
+                {
+                  "disabled": false,
+                  "key": "collection_ids",
+                  "value": "<integer>",
+                  "description": "Filter by collection IDs"
+                },
+                {
+                  "disabled": false,
+                  "key": "collection_ids",
+                  "value": "<integer>",
+                  "description": "Filter by collection IDs"
+                },
+                {
+                  "disabled": false,
+                  "key": "collection_names",
+                  "value": "<string>",
+                  "description": "Filter by collection names"
+                },
+                {
+                  "disabled": false,
+                  "key": "collection_names",
+                  "value": "<string>",
+                  "description": "Filter by collection names"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_after",
+                  "value": "<string>",
+                  "description": "ISO date string - filter dashboards created after this date"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_before",
+                  "value": "<string>",
+                  "description": "ISO date string - filter dashboards created before this date"
+                },
+                {
+                  "disabled": false,
+                  "key": "updated_after",
+                  "value": "<string>",
+                  "description": "ISO date string - filter dashboards updated after this date"
+                },
+                {
+                  "disabled": false,
+                  "key": "updated_before",
+                  "value": "<string>",
+                  "description": "ISO date string - filter dashboards updated before this date"
+                },
+                {
+                  "disabled": false,
+                  "key": "has_description",
+                  "value": "<boolean>",
+                  "description": "Filter dashboards with/without descriptions"
+                },
+                {
+                  "disabled": false,
+                  "key": "archived",
+                  "value": "<boolean>",
+                  "description": "Include/exclude archived dashboards"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "<string>",
+                  "description": "Sort by field: name, created_at, updated_at, collection_name"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_order",
+                  "value": "<string>",
+                  "description": "Sort order: asc, desc"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c40067b7-d33a-4cb1-9cbf-4dcc32b59579",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "dashboards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    },
+                    {
+                      "key": "search",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "tags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "tags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "collection_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "collection_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "collection_names",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "collection_names",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "updated_after",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "updated_before",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "has_description",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "archived",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sort_order",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"dashboards\": [\n    {\n      \"id\": 3044,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"attributes\": {\n        \"key_0\": 4667.084434305912\n      },\n      \"dashboard_id\": 6145,\n      \"collection_id\": 7553,\n      \"collection_name\": \"string\",\n      \"dashboard_metadata\": {\n        \"key_0\": \"string\",\n        \"key_1\": 3453.653127094286,\n        \"key_2\": 9126.330037403955\n      },\n      \"collection_metadata\": {\n        \"key_0\": \"string\"\n      },\n      \"creator\": {\n        \"id\": 8803,\n        \"email\": \"string\",\n        \"first_name\": \"string\",\n        \"last_name\": \"string\",\n        \"common_name\": \"string\"\n      },\n      \"view_count\": 5144,\n      \"last_viewed_at\": \"string\",\n      \"tenant_name\": \"string\"\n    },\n    {\n      \"id\": 7599,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"attributes\": {\n        \"key_0\": \"string\"\n      },\n      \"dashboard_id\": 3202,\n      \"collection_id\": 5551,\n      \"collection_name\": \"string\",\n      \"dashboard_metadata\": {\n        \"key_0\": \"string\",\n        \"key_1\": 9099,\n        \"key_2\": 5557\n      },\n      \"collection_metadata\": {\n        \"key_0\": 3024.270671014161,\n        \"key_1\": 8119.123409660931,\n        \"key_2\": 2117.3197043097525\n      },\n      \"creator\": {\n        \"id\": 9419,\n        \"email\": \"string\",\n        \"first_name\": \"string\",\n        \"last_name\": \"string\",\n        \"common_name\": \"string\"\n      },\n      \"view_count\": 7962,\n      \"last_viewed_at\": \"string\",\n      \"tenant_name\": \"string\"\n    }\n  ],\n  \"count\": 3050,\n  \"total\": 2286,\n  \"page\": 4771,\n  \"page_size\": 737,\n  \"total_pages\": 5067,\n  \"has_next\": true,\n  \"has_previous\": false,\n  \"available_tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"available_collections\": [\n    {\n      \"id\": 6391,\n      \"name\": \"string\",\n      \"count\": 7341\n    },\n    {\n      \"id\": 629,\n      \"name\": \"string\",\n      \"count\": 6184\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "01055504-1a67-47b3-8796-622fcc04b5bc",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "dashboards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    },
+                    {
+                      "key": "search",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "tags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "tags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "collection_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "collection_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "collection_names",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "collection_names",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "updated_after",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "updated_before",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "has_description",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "archived",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sort_order",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "666c8584-7cfb-403b-a79a-6a2a61ad80dd",
+          "name": "Sync Dashboard Metadata",
+          "request": {
+            "name": "Sync Dashboard Metadata",
+            "description": {
+              "content": "Sync Metabase dashboard metadata from Airflow DAG to local database.\n\nThis endpoint receives collections and dashboards data from an Airflow DAG\nand stores the metadata in the local PostgreSQL database for the specified tenant.\n\nArgs:\n    request: SyncDashboardMetadataRequest containing tenant, collections, dashboards, and fetch timestamp\n\nReturns:\n    SyncDashboardMetadataResponse with sync operation results",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "metabase",
+                "sync-dashboard-metadata"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenant_name\": \"<string>\",\n  \"collections\": [\n    {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"color\": \"<string>\",\n      \"parent_id\": \"<integer>\",\n      \"personal_owner_id\": \"<integer>\",\n      \"created_at\": \"<string>\",\n      \"updated_at\": \"<string>\",\n      \"archived\": \"<boolean>\",\n      \"slug\": \"<string>\",\n      \"location\": \"<string>\",\n      \"namespace\": \"<string>\",\n      \"authority_level\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"color\": \"<string>\",\n      \"parent_id\": \"<integer>\",\n      \"personal_owner_id\": \"<integer>\",\n      \"created_at\": \"<string>\",\n      \"updated_at\": \"<string>\",\n      \"archived\": \"<boolean>\",\n      \"slug\": \"<string>\",\n      \"location\": \"<string>\",\n      \"namespace\": \"<string>\",\n      \"authority_level\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ],\n  \"dashboards\": [\n    {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"collection_id\": \"<integer>\",\n      \"collection_position\": \"<integer>\",\n      \"creator_id\": \"<integer>\",\n      \"created_at\": \"<string>\",\n      \"updated_at\": \"<string>\",\n      \"archived\": \"<boolean>\",\n      \"public_uuid\": \"<string>\",\n      \"made_public_by_id\": \"<integer>\",\n      \"enable_embedding\": \"<boolean>\",\n      \"embedding_params\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\"\n      },\n      \"caveats\": \"<string>\",\n      \"points_of_interest\": \"<string>\",\n      \"show_in_getting_started\": \"<boolean>\",\n      \"position\": \"<integer>\",\n      \"parameters\": [\n        {\n          \"key_0\": 6840,\n          \"key_1\": false,\n          \"key_2\": true\n        },\n        {\n          \"key_0\": \"string\",\n          \"key_1\": 6154,\n          \"key_2\": true\n        }\n      ],\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"auto_apply_filters\": \"<boolean>\",\n      \"cache_field_values_schedule\": \"<string>\",\n      \"cache_duration\": \"<integer>\"\n    },\n    {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"collection_id\": \"<integer>\",\n      \"collection_position\": \"<integer>\",\n      \"creator_id\": \"<integer>\",\n      \"created_at\": \"<string>\",\n      \"updated_at\": \"<string>\",\n      \"archived\": \"<boolean>\",\n      \"public_uuid\": \"<string>\",\n      \"made_public_by_id\": \"<integer>\",\n      \"enable_embedding\": \"<boolean>\",\n      \"embedding_params\": {\n        \"key_0\": 7802,\n        \"key_1\": \"string\"\n      },\n      \"caveats\": \"<string>\",\n      \"points_of_interest\": \"<string>\",\n      \"show_in_getting_started\": \"<boolean>\",\n      \"position\": \"<integer>\",\n      \"parameters\": [\n        {\n          \"key_0\": 2783\n        },\n        {\n          \"key_0\": 4317,\n          \"key_1\": 555,\n          \"key_2\": 9092,\n          \"key_3\": 2180\n        }\n      ],\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"auto_apply_filters\": \"<boolean>\",\n      \"cache_field_values_schedule\": \"<string>\",\n      \"cache_duration\": \"<integer>\"\n    }\n  ],\n  \"fetch_timestamp\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d540b46f-8dd7-4d31-80d4-1b82e5688118",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "sync-dashboard-metadata"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_name\": \"<string>\",\n  \"collections\": [\n    {\n      \"id\": 2458,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"color\": \"string\",\n      \"parent_id\": 9102,\n      \"personal_owner_id\": 5415,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": false,\n      \"slug\": \"string\",\n      \"location\": \"string\",\n      \"namespace\": \"string\",\n      \"authority_level\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"id\": 2150,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"color\": \"string\",\n      \"parent_id\": 2491,\n      \"personal_owner_id\": 6374,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": true,\n      \"slug\": \"string\",\n      \"location\": \"string\",\n      \"namespace\": \"string\",\n      \"authority_level\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"dashboards\": [\n    {\n      \"id\": 5876,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"collection_id\": 3480,\n      \"collection_position\": 5769,\n      \"creator_id\": 3458,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": false,\n      \"public_uuid\": \"string\",\n      \"made_public_by_id\": 8305,\n      \"enable_embedding\": true,\n      \"embedding_params\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\",\n        \"key_2\": 570,\n        \"key_3\": true\n      },\n      \"caveats\": \"string\",\n      \"points_of_interest\": \"string\",\n      \"show_in_getting_started\": false,\n      \"position\": 2088,\n      \"parameters\": [\n        {\n          \"key_0\": \"string\",\n          \"key_1\": false\n        },\n        {\n          \"key_0\": 9843.45221930964,\n          \"key_1\": true\n        }\n      ],\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"auto_apply_filters\": false,\n      \"cache_field_values_schedule\": \"string\",\n      \"cache_duration\": 8521\n    },\n    {\n      \"id\": 7546,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"collection_id\": 9900,\n      \"collection_position\": 8681,\n      \"creator_id\": 2254,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": false,\n      \"public_uuid\": \"string\",\n      \"made_public_by_id\": 2055,\n      \"enable_embedding\": true,\n      \"embedding_params\": {\n        \"key_0\": 7749.5790335923375\n      },\n      \"caveats\": \"string\",\n      \"points_of_interest\": \"string\",\n      \"show_in_getting_started\": true,\n      \"position\": 7205,\n      \"parameters\": [\n        {\n          \"key_0\": 5379\n        },\n        {\n          \"key_0\": 4900.73714613013,\n          \"key_1\": 1682,\n          \"key_2\": true\n        }\n      ],\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"auto_apply_filters\": true,\n      \"cache_field_values_schedule\": \"string\",\n      \"cache_duration\": 6881\n    }\n  ],\n  \"fetch_timestamp\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"string\",\n  \"dashboards_synced\": 1515,\n  \"dashboards_updated\": 7137,\n  \"dashboards_deleted\": 5838,\n  \"total_dashboards\": 7419,\n  \"tenant\": \"string\",\n  \"processing_time_seconds\": 3665.109298158372\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ff874396-9d59-48d7-9197-858d3827b08f",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "sync-dashboard-metadata"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_name\": \"<string>\",\n  \"collections\": [\n    {\n      \"id\": 2458,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"color\": \"string\",\n      \"parent_id\": 9102,\n      \"personal_owner_id\": 5415,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": false,\n      \"slug\": \"string\",\n      \"location\": \"string\",\n      \"namespace\": \"string\",\n      \"authority_level\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"id\": 2150,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"color\": \"string\",\n      \"parent_id\": 2491,\n      \"personal_owner_id\": 6374,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": true,\n      \"slug\": \"string\",\n      \"location\": \"string\",\n      \"namespace\": \"string\",\n      \"authority_level\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"dashboards\": [\n    {\n      \"id\": 5876,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"collection_id\": 3480,\n      \"collection_position\": 5769,\n      \"creator_id\": 3458,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": false,\n      \"public_uuid\": \"string\",\n      \"made_public_by_id\": 8305,\n      \"enable_embedding\": true,\n      \"embedding_params\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\",\n        \"key_2\": 570,\n        \"key_3\": true\n      },\n      \"caveats\": \"string\",\n      \"points_of_interest\": \"string\",\n      \"show_in_getting_started\": false,\n      \"position\": 2088,\n      \"parameters\": [\n        {\n          \"key_0\": \"string\",\n          \"key_1\": false\n        },\n        {\n          \"key_0\": 9843.45221930964,\n          \"key_1\": true\n        }\n      ],\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"auto_apply_filters\": false,\n      \"cache_field_values_schedule\": \"string\",\n      \"cache_duration\": 8521\n    },\n    {\n      \"id\": 7546,\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"collection_id\": 9900,\n      \"collection_position\": 8681,\n      \"creator_id\": 2254,\n      \"created_at\": \"string\",\n      \"updated_at\": \"string\",\n      \"archived\": false,\n      \"public_uuid\": \"string\",\n      \"made_public_by_id\": 2055,\n      \"enable_embedding\": true,\n      \"embedding_params\": {\n        \"key_0\": 7749.5790335923375\n      },\n      \"caveats\": \"string\",\n      \"points_of_interest\": \"string\",\n      \"show_in_getting_started\": true,\n      \"position\": 7205,\n      \"parameters\": [\n        {\n          \"key_0\": 5379\n        },\n        {\n          \"key_0\": 4900.73714613013,\n          \"key_1\": 1682,\n          \"key_2\": true\n        }\n      ],\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"auto_apply_filters\": true,\n      \"cache_field_values_schedule\": \"string\",\n      \"cache_duration\": 6881\n    }\n  ],\n  \"fetch_timestamp\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a974bd99-fba9-43a2-9381-9309398c5fd1",
+          "name": "Get Dashboard By Id",
+          "request": {
+            "name": "Get Dashboard By Id",
+            "description": {
+              "content": "Get a specific dashboard by ID from the local database.\n\nThis endpoint retrieves dashboard metadata for a specific dashboard ID\nthat was previously synced from Metabase.\n\nArgs:\n    dashboard_id: The ID of the dashboard to retrieve\n\nReturns:\n    MetabaseDashboardDetail with dashboard information",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "metabase",
+                "dashboards",
+                ":dashboard_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "dashboard_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9bcaa038-6e65-4c05-90b8-ff2befc6307a",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "dashboards",
+                    ":dashboard_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "dashboard_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 9464,\n  \"name\": \"string\",\n  \"created_at\": \"string\",\n  \"updated_at\": \"string\",\n  \"description\": \"string\",\n  \"tenant_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7302d2b3-8060-43b6-b916-35158bc506e8",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "dashboards",
+                    ":dashboard_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "dashboard_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ce438584-405e-4108-a2d4-9f7ba92ed78b",
+          "name": "Trigger Sync All Dashboards",
+          "request": {
+            "name": "Trigger Sync All Dashboards",
+            "description": {
+              "content": "Trigger the Celery worker to sync Metabase dashboards for all tenants.\n\nReturns HTTP 202 with queued task id so the UI can track it.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "metabase",
+                "dashboards",
+                "sync-all"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7e22f54b-57b6-4cce-bf5b-621b5973e740",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "dashboards",
+                    "sync-all"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ee9ee86f-8f77-4f0a-bd0f-20a7cb041ccb",
+          "name": "Has Dashboard Tag",
+          "request": {
+            "name": "Has Dashboard Tag",
+            "description": {
+              "content": "Check whether the provided tag exists in any `SpacesDashboard` for the current tenant (case-insensitive).\n\nArgs:\n    tag: The tag to check for\n\nReturns:\n    True if present (case-insensitive), else False",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "metabase",
+                "has-tag"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "tag",
+                  "value": "<string>",
+                  "description": "(Required) Tag to check for in dashboards"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2b294b2e-b11f-40be-80a8-309f603f24d8",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "has-tag"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tag",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "false",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8858878f-4950-4daf-8b21-ef8e80f83b58",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metabase",
+                    "has-tag"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tag",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.myaltimate.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "e304d162-164b-44f8-a9f0-b4731a6f2847",
+    "name": "Fast ACCOUNT_COSTS METABASE API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,466 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS Databricks AI/ML Services API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Databricks AI/ML Services",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get AI/ML services summary with trend data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/summary",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated workspace IDs to filter, or 'all'"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get AI/ML services summary with trend data.\n\nReturns trend data for:\n- Model Serving (DBUs and costs)\n- Vector Search (DBUs and costs)\n- AI Gateway (DBUs and costs)\n\nData is aggregated by the specified granularity (day, week, or month).\nFrontend calculates totals by summing the trend data.\n\nQuery Parameters:\n- start_date: Start date (YYYY-MM-DD), defaults to 30 days ago\n- end_date: End date (YYYY-MM-DD), defaults to today\n- granularity: Time granularity ('day', 'week', 'month'), defaults to 'day"
+        },
+        {
+          "info": {
+            "name": "Get unified list of AI/ML endpoints (Model Serving + Vector Search + AI Gateway)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/endpoints",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "entity_type",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated leaf entity_types to filter the rows. One of FOUNDATION_MODEL, CUSTOM_MODEL, AI_FUNCTION, EXTERNAL_MODEL, FEATURE_SPEC, VECTOR_SEARCH, AI_GATEWAY. Omit to return all rows."
+              },
+              {
+                "name": "endpoint_name",
+                "value": "",
+                "type": "query",
+                "description": "Exact endpoint name(s) to filter the rows (any-of match). Repeat the param for multiple names. Names are sourced from GET /ai-ml-services/endpoints/filters/names. Omit to return all rows."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated workspace IDs to filter"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max rows to return"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort field: 'endpoint_name' | 'total_cost_usd' | 'total_dbus' | 'service' | 'entity_type'"
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: 'asc' or 'desc'"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a unified list of AI/ML endpoints for the dashboard table.\n\nEach row carries:\n\n- ``service`` — routing discriminator ('model_serving' | 'vector_search' |\n  'ai_gateway'). Used by the FE to pick the detail page on row-click; **not**\n  a filter input. The legacy ``service`` query param was intentionally\n  dropped (commit ad00d32) — it is no longer read here, so a stray\n  ``?service=...`` is ignored rather than filtering. Use ``entity_type``\n  to narrow rows.\n- ``entity_type`` — leaf type rende"
+        },
+        {
+          "info": {
+            "name": "Get filter values for the unified AI/ML endpoints list",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/endpoints/filters",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Return discrete values for the filters the list endpoint accepts.\n\nFilterable fields on ``GET /ai-ml-services/endpoints`` are:\n- ``entity_type`` — comma-separated leaf entity_type values (the seven\n  types in ``_UNIFIED_VALID_ENTITY_TYPES``). The returned ``entity_types``\n  lists only the leaves that actually appear on rows in the window.\n- ``workspace_id`` — distinct workspace IDs with AI/ML traffic in the\n  window.\n- ``start_date`` / ``end_date`` — free-form date range, not enumerable; the\n  c"
+        },
+        {
+          "info": {
+            "name": "Get searchable, paginated endpoint names for the name filter",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/endpoints/filters/names",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Case-insensitive substring to match endpoint names"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Workspace ID to scope names to"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number (1-indexed)"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "Items per page"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Return distinct endpoint names for the name-filter dropdown.\n\nThe full name set is too large to ship at once, so the FE searches\nserver-side and pages through matches. Names are scoped to the same window\n(and optional workspace) as the list, so the dropdown never offers a name\nthat can't appear on the table."
+        },
+        {
+          "info": {
+            "name": "Get endpoint detail (Model Serving, Vector Search or AI Gateway)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/endpoints/:endpoint_name",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "endpoint_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "service",
+                "value": "",
+                "type": "query",
+                "description": "Service type: 'model_serving' | 'vector_search' | 'ai_gateway'"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get detailed metrics for a specific endpoint.\n\nPath Parameters:\n- endpoint_name: Endpoint name (required)\n\nQuery Parameters:\n- service: 'model_serving' | 'vector_search' | 'ai_gateway' (required)\n- start_date: Start date (YYYY-MM-DD), defaults to 30 days ago\n- end_date: End date (YYYY-MM-DD), defaults to today\n\nReturns detailed metrics shaped per service. AI Gateway detail mirrors\nVector Search (cost / DBUs / activity window) plus first_seen and\nlast_activity; no per-request or token counts."
+        },
+        {
+          "info": {
+            "name": "Get endpoint trend (Model Serving, Vector Search or AI Gateway)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/endpoints/:endpoint_name/trend",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "endpoint_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "service",
+                "value": "",
+                "type": "query",
+                "description": "Service type: 'model_serving' | 'vector_search' | 'ai_gateway'"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', 'month', or 'auto' (auto-detect based on date range)"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get trend data for a specific endpoint.\n\nPath Parameters:\n- endpoint_name: Endpoint name (required)\n\nQuery Parameters:\n- service: 'model_serving' | 'vector_search' | 'ai_gateway' (required)\n- start_date: Start date (YYYY-MM-DD), defaults to 30 days ago\n- end_date: End date (YYYY-MM-DD), defaults to today\n- granularity: 'day', 'week', 'month', or 'auto' (default: auto)\n\nReturns:\n- Array of trend data points (direct array, no wrapper object). For\n  Vector Search and AI Gateway this is ``{date, dbu"
+        },
+        {
+          "info": {
+            "name": "Get jobs/queries calling a model serving endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/endpoints/:endpoint_name/callers",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "endpoint_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max rows to return"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get list of jobs/queries that are calling a model serving endpoint.\n\nThis endpoint identifies the source of model serving endpoint calls by analyzing:\n- Query history for AI function calls (ai_classify, ai_summarize, etc.)\n- Job information from query_source metadata\n- Notebook IDs for notebook-based calls\n\nPath Parameters:\n- endpoint_name: Endpoint name (required)\n\nQuery Parameters:\n- start_date: Start date (YYYY-MM-DD), defaults to 30 days ago\n- end_date: End date (YYYY-MM-DD), defaults to tod"
+        },
+        {
+          "info": {
+            "name": "Get AI function usage breakdown by source",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/ai-ml-services/endpoints/:endpoint_name/usage-breakdown",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "endpoint_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD), defaults to 30 days ago"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (YYYY-MM-DD), defaults to today"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get usage breakdown for an AI function endpoint.\n\nShows how the AI function is being invoked: via MV refresh, notebooks,\njobs, SQL queries, DDL, or ad-hoc queries.\n\nPath Parameters:\n- endpoint_name: AI function endpoint name (e.g., databricks-ai-summarize)\n\nQuery Parameters:\n- start_date: Start date (YYYY-MM-DD), defaults to 30 days ago\n- end_date: End date (YYYY-MM-DD), defaults to today\n\nReturns:\n- usage: List of usage sources with type, identity, request count, and last used"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

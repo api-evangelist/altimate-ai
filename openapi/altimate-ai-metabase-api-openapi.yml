@@ -10,7 +10,11 @@ paths:
       tags:
       - METABASE
       summary: Generate Metabase Token
-      description: "Generate a signed JWT token for Metabase embedded analytics.\n\nThis endpoint creates a JWT token that can be used with Metabase's\nembedded analytics feature to authenticate users and control access\nto dashboards and data.\n\nArgs:\n    request: MetabaseJWTRequest containing optional groups and expiration\n    current_user: The authenticated user from the request\n\nReturns:\n    dict: Contains the signed JWT token with user info from request"
+      description: "Generate a signed JWT token for Metabase embedded analytics.\n\nThis endpoint creates\
+        \ a JWT token that can be used with Metabase's\nembedded analytics feature to authenticate users\
+        \ and control access\nto dashboards and data.\n\nArgs:\n    request: MetabaseJWTRequest containing\
+        \ optional groups and expiration\n    current_user: The authenticated user from the request\n\n\
+        Returns:\n    dict: Contains the signed JWT token with user info from request"
       operationId: generate_metabase_token_metabase_auth_metabase_token_post
       requestBody:
         content:
@@ -39,7 +43,19 @@ paths:
       tags:
       - METABASE
       summary: Get Tenant Dashboards
-      description: "Get paginated dashboards from local database with advanced filtering and sorting.\n\nThis endpoint fetches dashboard metadata from the local database\nthat was previously synced from Metabase by the sync worker.\n\nArgs:\n    page: Page number (starts from 1)\n    page_size: Number of dashboards per page (max 100)\n    search: Search term for dashboard name/description\n    tags: Filter by specific tags\n    collection_ids: Filter by collection IDs\n    collection_names: Filter by collection names\n    created_after: ISO date string - filter dashboards created after this date\n    created_before: ISO date string - filter dashboards created before this date\n    updated_after: ISO date string - filter dashboards updated after this date\n    updated_before: ISO date string - filter dashboards updated before this date\n    has_description: Filter dashboards with/without descriptions\n    archived: Include/exclude archived dashboards\n    sort_by: Sort by field: name, created_at, updated_at, collection_name\n    sort_order: Sort order: asc, desc\n\nReturns:\n    dict: Contains the filtered, sorted, and paginated dashboards for the current tenant"
+      description: "Get paginated dashboards from local database with advanced filtering and sorting.\n\
+        \nThis endpoint fetches dashboard metadata from the local database\nthat was previously synced\
+        \ from Metabase by the sync worker.\n\nArgs:\n    page: Page number (starts from 1)\n    page_size:\
+        \ Number of dashboards per page (max 100)\n    search: Search term for dashboard name/description\n\
+        \    tags: Filter by specific tags\n    collection_ids: Filter by collection IDs\n    collection_names:\
+        \ Filter by collection names\n    created_after: ISO date string - filter dashboards created after\
+        \ this date\n    created_before: ISO date string - filter dashboards created before this date\n\
+        \    updated_after: ISO date string - filter dashboards updated after this date\n    updated_before:\
+        \ ISO date string - filter dashboards updated before this date\n    has_description: Filter dashboards\
+        \ with/without descriptions\n    archived: Include/exclude archived dashboards\n    sort_by: Sort\
+        \ by field: name, created_at, updated_at, collection_name\n    sort_order: Sort order: asc, desc\n\
+        \nReturns:\n    dict: Contains the filtered, sorted, and paginated dashboards for the current\
+        \ tenant"
       operationId: get_tenant_dashboards_metabase_dashboards_get
       security:
       - HTTPBearer: []
@@ -212,7 +228,11 @@ paths:
       tags:
       - METABASE
       summary: Sync Dashboard Metadata
-      description: "Sync Metabase dashboard metadata from Airflow DAG to local database.\n\nThis endpoint receives collections and dashboards data from an Airflow DAG\nand stores the metadata in the local PostgreSQL database for the specified tenant.\n\nArgs:\n    request: SyncDashboardMetadataRequest containing tenant, collections, dashboards, and fetch timestamp\n\nReturns:\n    SyncDashboardMetadataResponse with sync operation results"
+      description: "Sync Metabase dashboard metadata from Airflow DAG to local database.\n\nThis endpoint\
+        \ receives collections and dashboards data from an Airflow DAG\nand stores the metadata in the\
+        \ local PostgreSQL database for the specified tenant.\n\nArgs:\n    request: SyncDashboardMetadataRequest\
+        \ containing tenant, collections, dashboards, and fetch timestamp\n\nReturns:\n    SyncDashboardMetadataResponse\
+        \ with sync operation results"
       operationId: sync_dashboard_metadata_metabase_sync_dashboard_metadata_post
       requestBody:
         content:
@@ -245,7 +265,10 @@ paths:
       tags:
       - METABASE
       summary: Get Dashboard By Id
-      description: "Get a specific dashboard by ID from the local database.\n\nThis endpoint retrieves dashboard metadata for a specific dashboard ID\nthat was previously synced from Metabase.\n\nArgs:\n    dashboard_id: The ID of the dashboard to retrieve\n\nReturns:\n    MetabaseDashboardDetail with dashboard information"
+      description: "Get a specific dashboard by ID from the local database.\n\nThis endpoint retrieves\
+        \ dashboard metadata for a specific dashboard ID\nthat was previously synced from Metabase.\n\n\
+        Args:\n    dashboard_id: The ID of the dashboard to retrieve\n\nReturns:\n    MetabaseDashboardDetail\
+        \ with dashboard information"
       operationId: get_dashboard_by_id_metabase_dashboards__dashboard_id__get
       security:
       - HTTPBearer: []
@@ -297,7 +320,9 @@ paths:
       tags:
       - METABASE
       summary: Has Dashboard Tag
-      description: "Check whether the provided tag exists in any `SpacesDashboard` for the current tenant (case-insensitive).\n\nArgs:\n    tag: The tag to check for\n\nReturns:\n    True if present (case-insensitive), else False"
+      description: "Check whether the provided tag exists in any `SpacesDashboard` for the current tenant\
+        \ (case-insensitive).\n\nArgs:\n    tag: The tag to check for\n\nReturns:\n    True if present\
+        \ (case-insensitive), else False"
       operationId: has_dashboard_tag_metabase_has_tag_get
       security:
       - HTTPBearer: []
@@ -875,3 +900,6 @@ components:
     HTTPBearer:
       type: http
       scheme: bearer
+servers:
+- url: https://api.myaltimate.com
+  description: Base URL reconciled from apis.yml

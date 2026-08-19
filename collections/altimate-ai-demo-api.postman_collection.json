@@ -1,0 +1,455 @@
+{
+  "item": [
+    {
+      "id": "396de9a7-f68b-4ecc-afb8-588ba9120d2a",
+      "name": "DEMO",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "de88e0db-566e-42eb-8da6-ba0b7997937a",
+          "name": "Create Demo Session",
+          "request": {
+            "name": "Create Demo Session",
+            "description": {
+              "content": "Create or retrieve a demo user and generate a temporary session ID.\n\nThis endpoint creates a dedicated demo user in the demo tenant for the calling tenant.\nEach tenant gets exactly one demo user (1-to-1 mapping) with email: demo@{calling_tenant}.\nReturns a session ID that expires in 30 minutes and can be used once to authenticate.\n\nReturns:\n    DemoSessionResponse: Contains the demo tenant frontend URL and session ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "demo",
+                "create-demo-session"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b550cfb4-e172-4da9-84da-2188d2214fc5",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "demo",
+                    "create-demo-session"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"demoUrl\": \"string\",\n  \"sessionId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fa585e84-ced6-4b8d-9221-1f09d7feaa11",
+              "name": "Demo tenant not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "demo",
+                    "create-demo-session"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": 1470.944712385097,\n  \"key_1\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f12e33b4-5a63-4ef4-b0e8-ba1200cd1354",
+              "name": "Failed to create demo session",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "demo",
+                    "create-demo-session"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": \"string\",\n  \"key_1\": 4226,\n  \"key_2\": 4094.3561388511184\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d9e439c4-49d3-4600-8f26-598f4df7838d",
+          "name": "Authenticate Demo Session",
+          "request": {
+            "name": "Authenticate Demo Session",
+            "description": {
+              "content": "Authenticate a demo session using session_id.\n\nThis endpoint validates the session_id and returns the demo user with auth token\nif the session is valid (created within last 30 minutes).\nThe session is deleted after successful authentication.\nCan only be called from the demo tenant and only works for demo accounts.\n\nArgs:\n    session_id: The session ID returned from create-demo-session\n\nReturns:\n    UserLoginOut: User information with auth token (same as /login)",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "demo",
+                "authenticate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "session_id",
+                  "value": "<string>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "598b2fe8-035a-442d-863f-4703cacb4609",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "demo",
+                    "authenticate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "session_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"email\": \"string\",\n  \"auth_token\": \"string\",\n  \"is_onboarded\": true,\n  \"uuid\": \"67052c7f-2ad9-0b35-ce65-276570a68b51\",\n  \"id\": 9542,\n  \"first_name\": \"string\",\n  \"last_name\": \"string\",\n  \"tz\": \"string\",\n  \"lang\": \"string\",\n  \"role_FK\": {\n    \"role_name\": \"string\",\n    \"role_description\": \"string\",\n    \"role_title\": \"string\",\n    \"is_custom\": true,\n    \"permission\": [\n      {\n        \"uuid\": \"e3a70cc9-f10c-1fc2-8fe8-081170fc618f\",\n        \"name\": \"string\",\n        \"title\": \"string\",\n        \"description\": \"string\",\n        \"group\": \"string\"\n      },\n      {\n        \"uuid\": \"51d57314-246a-1091-8ed7-3db9e5f6d3ba\",\n        \"name\": \"string\",\n        \"title\": \"string\",\n        \"description\": \"string\",\n        \"group\": \"string\"\n      }\n    ]\n  },\n  \"has_role_conflict\": false,\n  \"sso_resolved_role_title\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fde4cf59-124e-4f86-a9f6-85e90c718496",
+              "name": "Forbidden - only accessible from demo tenant or not a demo account",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "demo",
+                    "authenticate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "session_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b37279cf-1a7a-492d-96f3-4ef379060a68",
+              "name": "Session not found or user not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "demo",
+                    "authenticate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "session_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": false,\n  \"key_1\": 4498.068739528851\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b656f09f-8cf9-467c-8234-6c8af941a2eb",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "demo",
+                    "authenticate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "session_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.myaltimate.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "dfd618c4-8528-4e39-b643-5a91f6c0a1bf",
+    "name": "Fast ACCOUNT_COSTS DEMO API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

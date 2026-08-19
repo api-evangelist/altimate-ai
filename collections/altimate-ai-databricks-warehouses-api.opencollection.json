@@ -1,0 +1,737 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Fast ACCOUNT_COSTS Databricks Warehouses API",
+    "version": "0.1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Databricks Warehouses",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get filter options for warehouses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/filters",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "prefix",
+                "value": "",
+                "type": "query",
+                "description": "Search prefix for name filters"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Workspace ID to filter by"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get distinct filter values for warehouse filtering."
+        },
+        {
+          "info": {
+            "name": "Get all Databricks warehouses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date (inclusive) for cost / utilization metrics. Defaults to 30 days before `end_date`."
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date (inclusive). Defaults to today."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number (1-indexed)"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Items per page"
+              },
+              {
+                "name": "sortAttribute",
+                "value": "",
+                "type": "query",
+                "description": "Sort column name. Valid columns: warehouse_name, workspace_name, warehouse_type, warehouse_size, min_num_clusters, max_num_clusters, auto_stop_mins, last_state_change, estimated_cost, auto_tune_savings (both sorted with nulls last)."
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Sort direction: 'asc' or 'desc'"
+              },
+              {
+                "name": "warehouse_names",
+                "value": "",
+                "type": "query",
+                "description": "Filter by warehouse names"
+              },
+              {
+                "name": "warehouse_types",
+                "value": "",
+                "type": "query",
+                "description": "Filter by warehouse types (CLASSIC, PRO, SERVERLESS)"
+              },
+              {
+                "name": "warehouse_sizes",
+                "value": "",
+                "type": "query",
+                "description": "Filter by warehouse sizes"
+              },
+              {
+                "name": "workspace_ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by one or more workspace IDs"
+              },
+              {
+                "name": "auto_tune_status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by auto-tune status: 'enabled' or 'disabled'."
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get list of all warehouses."
+        },
+        {
+          "info": {
+            "name": "Get total auto-tune savings across SQL warehouses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/total-savings",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get the SQL warehouses list page's \"Total Savings\" cards — Realised\nSavings, Estimated Annual Savings, and Total Opportunities.\n\nDeclared before `/{warehouse_id}` so FastAPI's declaration-order route\nmatching doesn't swallow this path as a warehouse_id lookup.\n\nNote: unlike the warehouses list, this aggregate only supports a single\n``workspace_id`` — ``get_warehouse_savings_totals_by_type`` (the\nunderlying repo method, shared with ``DatabricksSavingsService``'s\nother overall-savings endpoints) t"
+        },
+        {
+          "info": {
+            "name": "Get warehouse cost trends by SKU",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/cost-trends",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity (day, week, month)"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get warehouse (SQL) cost trends over time broken down by SKU."
+        },
+        {
+          "info": {
+            "name": "Get serverless migration candidates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/serverless-candidates",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "max_auto_stop_mins",
+                "value": "",
+                "type": "query",
+                "description": "Maximum auto-stop time (minutes) for candidates. Warehouses with `auto_stop_mins <= this value` are returned — lower values yield a stricter filter. Defaults to 10 when neither this nor the deprecated `min_auto_stop_mins` alias is sent."
+              },
+              {
+                "name": "min_auto_stop_mins",
+                "value": "",
+                "type": "query",
+                "description": "DEPRECATED — use `max_auto_stop_mins`. Kept for backward compat."
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by workspace ID"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get warehouses that are candidates for serverless migration."
+        },
+        {
+          "info": {
+            "name": "Get warehouse details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get detailed information for a specific warehouse."
+        },
+        {
+          "info": {
+            "name": "Get warehouse events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/events",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "event_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by event type (e.g., SCALED_UP, SCALED_DOWN)"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get events for a specific warehouse."
+        },
+        {
+          "info": {
+            "name": "Get warehouse state history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/state-history",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get state change history for a specific warehouse."
+        },
+        {
+          "info": {
+            "name": "Get warehouse cost data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/cost",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date for cost data"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date for cost data"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity (day, week, month)"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get cost data for a specific warehouse."
+        },
+        {
+          "info": {
+            "name": "Get per-day auto-tune savings (realized + potential) for a SQL warehouse",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/auto-tune/savings-trends",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "instance_id",
+                "value": "",
+                "type": "query",
+                "description": "Databricks instance id"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'day', 'week', or 'month'"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get realized and potential auto-tune savings per day for a SQL\nwarehouse, scoped to the warehouse's auto-stop tuning."
+        },
+        {
+          "info": {
+            "name": "Get realised savings range and estimated annual savings for a SQL warehouse",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/auto-tune/savings-summary",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "instance_id",
+                "value": "",
+                "type": "query",
+                "description": "Databricks instance id"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get the \"Realised Savings\" range and \"Estimated Annual Savings\"\nfigure shown above a SQL warehouse's detail tabs. Realised savings are\nsummed over ``[start_date, end_date]``; the annual estimate annualizes a\ntrailing 29-day actual+potential run-rate independent of that range."
+        },
+        {
+          "info": {
+            "name": "Get warehouse running stats trends",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/running-stats-trends",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get daily active/idle time trends for a specific warehouse."
+        },
+        {
+          "info": {
+            "name": "Get warehouse utilization efficiency",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/utilization-efficiency",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get daily utilization efficiency (0-1) for a specific warehouse."
+        },
+        {
+          "info": {
+            "name": "Get time-bucketed query metrics timeline for a warehouse",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.myaltimate.com/api/v1/databricks/warehouses/:warehouse_id/query-metrics-timeline",
+            "headers": [
+              {
+                "name": "x-tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "warehouse_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity: 'hour' or 'day'"
+              },
+              {
+                "name": "instance_id",
+                "value": "",
+                "type": "query",
+                "description": "Databricks instance id"
+              },
+              {
+                "name": "navigationSource",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get the time-bucketed metrics timeline powering the SQL warehouse\nMonitoring page's stacked charts (latency, queueing, scan size, cache\nhit rate, spill).\n\nHybrid-sourced: historical buckets come from the ClickHouse mirror,\nand the fresh tail the mirror hasn't ingested yet (up to ~24h) is\nread live from Databricks system tables via the Statement Execution\nAPI against the tenant's ingestion SQL warehouse — this will\nauto-start that warehouse if it is currently suspended. A live-tail\nfailure degrad"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
