@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS connections API
+  title: Fast Connections API
   version: 0.1.0
 tags:
-- name: connections
+- name: Connections
 paths:
   /connections/:
     get:
       tags:
-      - connections
+      - Connections
       summary: List Connections
       description: List all connections for current user
       operationId: list_connections_connections__get
@@ -24,7 +24,7 @@ paths:
       - HTTPBearer: []
     post:
       tags:
-      - connections
+      - Connections
       summary: Create New Connection
       description: Create a new connection with validation
       operationId: create_new_connection_connections__post
@@ -53,7 +53,7 @@ paths:
   /connections/{connection_id}:
     patch:
       tags:
-      - connections
+      - Connections
       summary: Update Existing Connection
       description: Update a connection with optional revalidation
       operationId: update_existing_connection_connections__connection_id__patch
@@ -88,7 +88,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - connections
+      - Connections
       summary: Remove Connection
       description: Delete a connection (soft delete)
       operationId: remove_connection_connections__connection_id__delete
@@ -118,7 +118,7 @@ paths:
   /connections/test:
     post:
       tags:
-      - connections
+      - Connections
       summary: Test Connection Endpoint
       description: Test connection details using external connection validation service
       operationId: test_connection_endpoint_connections_test_post
@@ -147,17 +147,44 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ConnectionListResponse:
+    HTTPValidationError:
       properties:
-        connections:
+        detail:
           items:
-            $ref: '#/components/schemas/ConnectionInDB'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Connections
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
       type: object
       required:
-      - connections
-      title: ConnectionListResponse
+      - ok
+      title: StandardResponse
+    ConnectionTest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Config
+      type: object
+      title: ConnectionTest
     ValidationError:
       properties:
         loc:
@@ -179,35 +206,6 @@ components:
       - msg
       - type
       title: ValidationError
-    ConnectionUpdate:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        integration_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Id
-        config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Config
-      type: object
-      title: ConnectionUpdate
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ConnectionCreate:
       properties:
         name:
@@ -226,49 +224,17 @@ components:
       - integration_id
       - config
       title: ConnectionCreate
-    StandardResponse:
+    ConnectionListResponse:
       properties:
-        ok:
-          type: boolean
-          title: Ok
+        connections:
+          items:
+            $ref: '#/components/schemas/ConnectionInDB'
+          type: array
+          title: Connections
       type: object
       required:
-      - ok
-      title: StandardResponse
-    ConnectionTestResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      title: ConnectionTestResponse
-    ConnectionTest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        integration_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Id
-        config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Config
-      type: object
-      title: ConnectionTest
+      - connections
+      title: ConnectionListResponse
     ConnectionInDB:
       properties:
         name:
@@ -316,10 +282,41 @@ components:
       - is_valid
       - created_at
       title: ConnectionInDB
+    ConnectionUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Config
+      type: object
+      title: ConnectionUpdate
+    ConnectionTestResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ConnectionTestResponse
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

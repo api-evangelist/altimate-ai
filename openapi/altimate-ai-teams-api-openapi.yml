@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS TEAMS API
+  title: Fast TEAMS API
   version: 0.1.0
 tags:
-- name: TEAMS
+- name: Teams
 paths:
   /teams/team_rule_file:
     post:
       tags:
-      - TEAMS
+      - Teams
       summary: Upload Team Rule File
       operationId: upload_team_rule_file_teams_team_rule_file_post
       security:
@@ -61,7 +61,7 @@ paths:
   /teams/user_team_file:
     post:
       tags:
-      - TEAMS
+      - Teams
       summary: Upload User Team File
       operationId: upload_user_team_file_teams_user_team_file_post
       deprecated: true
@@ -115,7 +115,7 @@ paths:
   /teams/cost/graph:
     get:
       tags:
-      - TEAMS
+      - Teams
       summary: Get Cost
       operationId: get_cost_teams_cost_graph_get
       security:
@@ -194,7 +194,7 @@ paths:
   /teams/cost/period-comparison:
     get:
       tags:
-      - TEAMS
+      - Teams
       summary: Get Cost Period Comparison
       operationId: get_cost_period_comparison_teams_cost_period_comparison_get
       security:
@@ -314,7 +314,7 @@ paths:
   /teams/filters:
     get:
       tags:
-      - TEAMS
+      - Teams
       summary: Get Filters
       operationId: get_filters_teams_filters_get
       security:
@@ -347,92 +347,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    Body_upload_team_rule_file_teams_team_rule_file_post:
-      properties:
-        file:
-          type: string
-          format: binary
-          title: File
-      type: object
-      required:
-      - file
-      title: Body_upload_team_rule_file_teams_team_rule_file_post
-    Body_upload_user_team_file_teams_user_team_file_post:
-      properties:
-        file:
-          type: string
-          format: binary
-          title: File
-      type: object
-      required:
-      - file
-      title: Body_upload_user_team_file_teams_user_team_file_post
-    DailyTeamSpend:
-      properties:
-        date:
-          type: string
-          title: Date
-        team_spends:
-          additionalProperties:
-            type: number
-          type: object
-          title: Team Spends
-      type: object
-      required:
-      - date
-      - team_spends
-      title: DailyTeamSpend
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    CostGraphResponse:
-      properties:
-        summary:
-          $ref: '#/components/schemas/app__schemas__team__CostSummary'
-        spend_by_teams:
-          items:
-            $ref: '#/components/schemas/DailyTeamSpend'
-          type: array
-          title: Spend By Teams
-        meta:
-          additionalProperties:
-            type: string
-          type: object
-          title: Meta
-          description: Period start and end dates
-      type: object
-      required:
-      - summary
-      - spend_by_teams
-      - meta
-      title: CostGraphResponse
     Page_TeamSpend_:
       properties:
         items:
@@ -494,6 +408,51 @@ components:
       - team
       - team_spends
       title: TeamSpend
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DailyTeamSpend:
+      properties:
+        date:
+          type: string
+          title: Date
+        team_spends:
+          additionalProperties:
+            type: number
+          type: object
+          title: Team Spends
+      type: object
+      required:
+      - date
+      - team_spends
+      title: DailyTeamSpend
+    CostGraphResponse:
+      properties:
+        summary:
+          $ref: '#/components/schemas/app__schemas__team__CostSummary'
+        spend_by_teams:
+          items:
+            $ref: '#/components/schemas/DailyTeamSpend'
+          type: array
+          title: Spend By Teams
+        meta:
+          additionalProperties:
+            type: string
+          type: object
+          title: Meta
+          description: Period start and end dates
+      type: object
+      required:
+      - summary
+      - spend_by_teams
+      - meta
+      title: CostGraphResponse
     app__schemas__team__CostSummary:
       properties:
         total_spend:
@@ -515,10 +474,48 @@ components:
       - average_daily_spend
       - unaccounted_spend
       title: CostSummary
+    Body_upload_user_team_file_teams_user_team_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_user_team_file_teams_user_team_file_post
+    Body_upload_team_rule_file_teams_team_rule_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_team_rule_file_teams_team_rule_file_post
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

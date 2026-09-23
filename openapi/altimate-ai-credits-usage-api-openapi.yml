@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS CREDITS_USAGE API
+  title: Fast CREDITS USAGE API
   version: 0.1.0
 tags:
 - name: CREDITS_USAGE
@@ -392,8 +392,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 400 Get Org Usage Transactions Group By User Credits Org Usage Table Data
-                  By Users Get
+                title: Response 400 Get Org Usage Transactions Group By User Credits Org Usage Table Data By Users Get
         '403':
           description: Access denied. Admin or Owner role required.
           content:
@@ -401,8 +400,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 403 Get Org Usage Transactions Group By User Credits Org Usage Table Data
-                  By Users Get
+                title: Response 403 Get Org Usage Transactions Group By User Credits Org Usage Table Data By Users Get
         '422':
           description: Validation Error
           content:
@@ -483,8 +481,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 400 Get Org Usage Transactions Aggregated By Task Credits Org Usage Table
-                  Data Aggregated By Task Get
+                title: Response 400 Get Org Usage Transactions Aggregated By Task Credits Org Usage Table Data Aggregated By Task Get
         '403':
           description: Access denied. Admin or Owner role required.
           content:
@@ -492,8 +489,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 403 Get Org Usage Transactions Aggregated By Task Credits Org Usage Table
-                  Data Aggregated By Task Get
+                title: Response 403 Get Org Usage Transactions Aggregated By Task Credits Org Usage Table Data Aggregated By Task Get
         '422':
           description: Validation Error
           content:
@@ -615,44 +611,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    Page_CreditTransactionWithUser_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CreditTransactionWithUser'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[CreditTransactionWithUser]
     CreditTransactionAggregatedByTask:
       properties:
         task_name:
@@ -678,45 +636,35 @@ components:
       - last_used_on
       title: CreditTransactionAggregatedByTask
       description: Credit transaction aggregated by task with users as dictionary
-    ValidationError:
+    CreditTransaction:
       properties:
-        loc:
+        task_name:
+          type: string
+          title: Task Name
+        user_email:
+          type: string
+          title: User Email
+        ai_teammates:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            type: string
           type: array
-          title: Location
-        msg:
+          title: Ai Teammates
+        timestamp:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          format: date-time
+          title: Timestamp
+        credits_consumed:
+          type: number
+          title: Credits Consumed
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    OrgUsageResponse:
-      properties:
-        graph_data:
-          items:
-            $ref: '#/components/schemas/UsageTrend'
-          type: array
-          title: Graph Data
-        top_users:
-          $ref: '#/components/schemas/TopUsers'
-        top_ai_teammates:
-          $ref: '#/components/schemas/TopAITeammates'
-      type: object
-      required:
-      - graph_data
-      - top_users
-      - top_ai_teammates
-      title: OrgUsageResponse
-      description: Response for Org Usage API
+      - task_name
+      - user_email
+      - ai_teammates
+      - timestamp
+      - credits_consumed
+      title: CreditTransaction
+      description: Individual credit transaction entry
     HTTPValidationError:
       properties:
         detail:
@@ -726,6 +674,30 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    TopUsers:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/app__schemas__credits__TopUser'
+          type: array
+          title: Users
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+      type: object
+      required:
+      - users
+      - total_credits_consumed
+      title: TopUsers
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     UsageTrend:
       properties:
         date:
@@ -746,114 +718,6 @@ components:
       - breakdown
       title: UsageTrend
       description: Usage trend data point
-    CreditTransactionGroupedByUser:
-      properties:
-        user_email:
-          type: string
-          title: User Email
-        display_name:
-          type: string
-          title: Display Name
-        ai_teammates:
-          items:
-            $ref: '#/components/schemas/TopAITeammate'
-          type: array
-          title: Ai Teammates
-        last_used_on:
-          type: string
-          format: date-time
-          title: Last Used On
-        credits_consumed:
-          type: number
-          title: Credits Consumed
-      type: object
-      required:
-      - user_email
-      - display_name
-      - ai_teammates
-      - last_used_on
-      - credits_consumed
-      title: CreditTransactionGroupedByUser
-      description: Credit transaction with user details for org usage
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    Page_CreditTransactionAggregatedByTask_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CreditTransactionAggregatedByTask'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[CreditTransactionAggregatedByTask]
-    app__schemas__credits__TopUser:
-      properties:
-        user_email:
-          type: string
-          title: User Email
-        display_name:
-          type: string
-          title: Display Name
-        credits_consumed:
-          type: number
-          title: Credits Consumed
-      type: object
-      required:
-      - user_email
-      - display_name
-      - credits_consumed
-      title: TopUser
-      description: Top user by credit consumption
-    TopAITeammate:
-      properties:
-        teammate:
-          type: string
-          title: Teammate
-        credits_consumed:
-          type: number
-          title: Credits Consumed
-      type: object
-      required:
-      - teammate
-      - credits_consumed
-      title: TopAITeammate
-      description: Top AI teammate by credit consumption
     Page_CreditTransaction_:
       properties:
         items:
@@ -892,6 +756,102 @@ components:
       - page
       - size
       title: Page[CreditTransaction]
+    Page_CreditTransactionAggregatedByTask_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransactionAggregatedByTask'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransactionAggregatedByTask]
+    TopAITeammate:
+      properties:
+        teammate:
+          type: string
+          title: Teammate
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - teammate
+      - credits_consumed
+      title: TopAITeammate
+      description: Top AI teammate by credit consumption
+    TopAITeammates:
+      properties:
+        teammates:
+          items:
+            $ref: '#/components/schemas/TopAITeammate'
+          type: array
+          title: Teammates
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+      type: object
+      required:
+      - teammates
+      - total_credits_consumed
+      title: TopAITeammates
+    CreditTransactionGroupedByUser:
+      properties:
+        user_email:
+          type: string
+          title: User Email
+        display_name:
+          type: string
+          title: Display Name
+        ai_teammates:
+          items:
+            $ref: '#/components/schemas/TopAITeammate'
+          type: array
+          title: Ai Teammates
+        last_used_on:
+          type: string
+          format: date-time
+          title: Last Used On
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - user_email
+      - display_name
+      - ai_teammates
+      - last_used_on
+      - credits_consumed
+      title: CreditTransactionGroupedByUser
+      description: Credit transaction with user details for org usage
     CreditTransactionWithUser:
       properties:
         task_name:
@@ -921,50 +881,80 @@ components:
       - credits_consumed
       title: CreditTransactionWithUser
       description: Credit transaction with user details for org usage
-    CreditTransaction:
+    app__schemas__credits__TopUser:
       properties:
-        task_name:
-          type: string
-          title: Task Name
         user_email:
           type: string
           title: User Email
-        ai_teammates:
-          items:
-            type: string
-          type: array
-          title: Ai Teammates
-        timestamp:
+        display_name:
           type: string
-          format: date-time
-          title: Timestamp
+          title: Display Name
         credits_consumed:
           type: number
           title: Credits Consumed
       type: object
       required:
-      - task_name
       - user_email
-      - ai_teammates
-      - timestamp
+      - display_name
       - credits_consumed
-      title: CreditTransaction
-      description: Individual credit transaction entry
-    TopAITeammates:
+      title: TopUser
+      description: Top user by credit consumption
+    OrgUsageResponse:
       properties:
-        teammates:
+        graph_data:
           items:
-            $ref: '#/components/schemas/TopAITeammate'
+            $ref: '#/components/schemas/UsageTrend'
           type: array
-          title: Teammates
-        total_credits_consumed:
-          type: number
-          title: Total Credits Consumed
+          title: Graph Data
+        top_users:
+          $ref: '#/components/schemas/TopUsers'
+        top_ai_teammates:
+          $ref: '#/components/schemas/TopAITeammates'
       type: object
       required:
-      - teammates
-      - total_credits_consumed
-      title: TopAITeammates
+      - graph_data
+      - top_users
+      - top_ai_teammates
+      title: OrgUsageResponse
+      description: Response for Org Usage API
+    Page_CreditTransactionWithUser_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransactionWithUser'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransactionWithUser]
     app__schemas__credits__PlansResponse:
       properties:
         used_credits:
@@ -1001,21 +991,27 @@ components:
       - subscription_details
       title: PlansResponse
       description: Response for Plans API
-    TopUsers:
+    ValidationError:
       properties:
-        users:
+        loc:
           items:
-            $ref: '#/components/schemas/app__schemas__credits__TopUser'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Users
-        total_credits_consumed:
-          type: number
-          title: Total Credits Consumed
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - users
-      - total_credits_consumed
-      title: TopUsers
+      - loc
+      - msg
+      - type
+      title: ValidationError
     Page_CreditTransactionGroupedByUser_:
       properties:
         items:
@@ -1058,6 +1054,3 @@ components:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

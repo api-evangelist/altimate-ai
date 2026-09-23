@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS Databricks AI/ML Services API
+  title: Fast Databricks AI/ML Services API
   version: 0.1.0
 tags:
 - name: Databricks AI/ML Services
@@ -126,19 +126,54 @@ paths:
       tags:
       - Databricks AI/ML Services
       summary: Get unified list of AI/ML endpoints (Model Serving + Vector Search + AI Gateway)
-      description: "Get a unified list of AI/ML endpoints for the dashboard table.\n\nEach row carries:\n\
-        \n- ``service`` — routing discriminator ('model_serving' | 'vector_search' |\n  'ai_gateway').\
-        \ Used by the FE to pick the detail page on row-click; **not**\n  a filter input. The legacy ``service``\
-        \ query param was intentionally\n  dropped (commit ad00d32) — it is no longer read here, so a\
-        \ stray\n  ``?service=...`` is ignored rather than filtering. Use ``entity_type``\n  to narrow\
-        \ rows.\n- ``entity_type`` — leaf type rendered in the Type column / filtered on\n  via the ``entity_type``\
-        \ query param.\n\nFields that don't apply to a row's service are null. Pagination is applied\n\
-        over the merged result set so the top spenders surface first.\n\nQuery Parameters:\n\n- entity_type:\
-        \ comma-separated leaf entity_type values (optional)\n- endpoint_name: exact endpoint name(s),\
-        \ repeatable, any-of match (optional)\n- start_date: Start date (YYYY-MM-DD), defaults to 30 days\
-        \ ago\n- end_date: End date (YYYY-MM-DD), defaults to today\n- workspace_id: Comma-separated workspace\
-        \ IDs or 'all' (default)\n- limit: Max rows to return (default: 50, max: 1000)\n- offset: Pagination\
-        \ offset (default: 0)\n- sort_by: see above\n- sort_order: 'asc' | 'desc' (default: 'desc')"
+      description: 'Get a unified list of AI/ML endpoints for the dashboard table.
+
+
+        Each row carries:
+
+
+        - ``service`` — routing discriminator (''model_serving'' | ''vector_search'' |
+
+        ''ai_gateway''). Used by the FE to pick the detail page on row-click; **not**
+
+        a filter input. The legacy ``service`` query param was intentionally
+
+        dropped (commit ad00d32) — it is no longer read here, so a stray
+
+        ``?service=...`` is ignored rather than filtering. Use ``entity_type``
+
+        to narrow rows.
+
+        - ``entity_type`` — leaf type rendered in the Type column / filtered on
+
+        via the ``entity_type`` query param.
+
+
+        Fields that don''t apply to a row''s service are null. Pagination is applied
+
+        over the merged result set so the top spenders surface first.
+
+
+        Query Parameters:
+
+
+        - entity_type: comma-separated leaf entity_type values (optional)
+
+        - endpoint_name: exact endpoint name(s), repeatable, any-of match (optional)
+
+        - start_date: Start date (YYYY-MM-DD), defaults to 30 days ago
+
+        - end_date: End date (YYYY-MM-DD), defaults to today
+
+        - workspace_id: Comma-separated workspace IDs or ''all'' (default)
+
+        - limit: Max rows to return (default: 50, max: 1000)
+
+        - offset: Pagination offset (default: 0)
+
+        - sort_by: see above
+
+        - sort_order: ''asc'' | ''desc'' (default: ''desc'')'
       operationId: get_model_serving_endpoints_api_v1_databricks_ai_ml_services_endpoints_get
       security:
       - HTTPBearer: []
@@ -151,12 +186,9 @@ paths:
           anyOf:
           - type: string
           - type: 'null'
-          description: Comma-separated leaf entity_types to filter the rows. One of FOUNDATION_MODEL,
-            CUSTOM_MODEL, AI_FUNCTION, EXTERNAL_MODEL, FEATURE_SPEC, VECTOR_SEARCH, AI_GATEWAY. Omit to
-            return all rows.
+          description: Comma-separated leaf entity_types to filter the rows. One of FOUNDATION_MODEL, CUSTOM_MODEL, AI_FUNCTION, EXTERNAL_MODEL, FEATURE_SPEC, VECTOR_SEARCH, AI_GATEWAY. Omit to return all rows.
           title: Entity Type
-        description: Comma-separated leaf entity_types to filter the rows. One of FOUNDATION_MODEL, CUSTOM_MODEL,
-          AI_FUNCTION, EXTERNAL_MODEL, FEATURE_SPEC, VECTOR_SEARCH, AI_GATEWAY. Omit to return all rows.
+        description: Comma-separated leaf entity_types to filter the rows. One of FOUNDATION_MODEL, CUSTOM_MODEL, AI_FUNCTION, EXTERNAL_MODEL, FEATURE_SPEC, VECTOR_SEARCH, AI_GATEWAY. Omit to return all rows.
       - name: endpoint_name
         in: query
         required: false
@@ -166,13 +198,9 @@ paths:
             items:
               type: string
           - type: 'null'
-          description: Exact endpoint name(s) to filter the rows (any-of match). Repeat the param for
-            multiple names. Names are sourced from GET /ai-ml-services/endpoints/filters/names. Omit to
-            return all rows.
+          description: Exact endpoint name(s) to filter the rows (any-of match). Repeat the param for multiple names. Names are sourced from GET /ai-ml-services/endpoints/filters/names. Omit to return all rows.
           title: Endpoint Name
-        description: Exact endpoint name(s) to filter the rows (any-of match). Repeat the param for multiple
-          names. Names are sourced from GET /ai-ml-services/endpoints/filters/names. Omit to return all
-          rows.
+        description: Exact endpoint name(s) to filter the rows (any-of match). Repeat the param for multiple names. Names are sourced from GET /ai-ml-services/endpoints/filters/names. Omit to return all rows.
       - name: start_date
         in: query
         required: false
@@ -231,12 +259,10 @@ paths:
         required: false
         schema:
           type: string
-          description: 'Sort field: ''endpoint_name'' | ''total_cost_usd'' | ''total_dbus'' | ''service''
-            | ''entity_type'''
+          description: 'Sort field: ''endpoint_name'' | ''total_cost_usd'' | ''total_dbus'' | ''service'' | ''entity_type'''
           default: total_cost_usd
           title: Sort By
-        description: 'Sort field: ''endpoint_name'' | ''total_cost_usd'' | ''total_dbus'' | ''service''
-          | ''entity_type'''
+        description: 'Sort field: ''endpoint_name'' | ''total_cost_usd'' | ''total_dbus'' | ''service'' | ''entity_type'''
       - name: sort_order
         in: query
         required: false
@@ -282,17 +308,37 @@ paths:
       tags:
       - Databricks AI/ML Services
       summary: Get filter values for the unified AI/ML endpoints list
-      description: "Return discrete values for the filters the list endpoint accepts.\n\nFilterable fields\
-        \ on ``GET /ai-ml-services/endpoints`` are:\n- ``entity_type`` — comma-separated leaf entity_type\
-        \ values (the seven\n  types in ``_UNIFIED_VALID_ENTITY_TYPES``). The returned ``entity_types``\n\
-        \  lists only the leaves that actually appear on rows in the window.\n- ``workspace_id`` — distinct\
-        \ workspace IDs with AI/ML traffic in the\n  window.\n- ``start_date`` / ``end_date`` — free-form\
-        \ date range, not enumerable; the\n  caller passes the same window in here so both lists are scoped\
-        \ to it.\n- ``endpoint_name`` — exact name filter on the list endpoint. Its values are\n  too\
-        \ numerous to enumerate up front, so they are served separately by the\n  searchable, paginated\
-        \ ``GET /ai-ml-services/endpoints/filters/names`` rather than\n  inlined here.\n\nNote: ``service``\
-        \ is a row-level routing discriminator, not a filter\ninput, so it is intentionally absent from\
-        \ this response."
+      description: 'Return discrete values for the filters the list endpoint accepts.
+
+
+        Filterable fields on ``GET /ai-ml-services/endpoints`` are:
+
+        - ``entity_type`` — comma-separated leaf entity_type values (the seven
+
+        types in ``_UNIFIED_VALID_ENTITY_TYPES``). The returned ``entity_types``
+
+        lists only the leaves that actually appear on rows in the window.
+
+        - ``workspace_id`` — distinct workspace IDs with AI/ML traffic in the
+
+        window.
+
+        - ``start_date`` / ``end_date`` — free-form date range, not enumerable; the
+
+        caller passes the same window in here so both lists are scoped to it.
+
+        - ``endpoint_name`` — exact name filter on the list endpoint. Its values are
+
+        too numerous to enumerate up front, so they are served separately by the
+
+        searchable, paginated ``GET /ai-ml-services/endpoints/filters/names`` rather than
+
+        inlined here.
+
+
+        Note: ``service`` is a row-level routing discriminator, not a filter
+
+        input, so it is intentionally absent from this response.'
       operationId: get_aiml_endpoint_filters_api_v1_databricks_ai_ml_services_endpoints_filters_get
       security:
       - HTTPBearer: []
@@ -568,13 +614,32 @@ paths:
       tags:
       - Databricks AI/ML Services
       summary: Get endpoint trend (Model Serving, Vector Search or AI Gateway)
-      description: "Get trend data for a specific endpoint.\n\nPath Parameters:\n- endpoint_name: Endpoint\
-        \ name (required)\n\nQuery Parameters:\n- service: 'model_serving' | 'vector_search' | 'ai_gateway'\
-        \ (required)\n- start_date: Start date (YYYY-MM-DD), defaults to 30 days ago\n- end_date: End\
-        \ date (YYYY-MM-DD), defaults to today\n- granularity: 'day', 'week', 'month', or 'auto' (default:\
-        \ auto)\n\nReturns:\n- Array of trend data points (direct array, no wrapper object). For\n  Vector\
-        \ Search and AI Gateway this is ``{date, dbus, cost_usd}`` — one\n  row per bucket where billing\
-        \ usage exists (no zero-fill)."
+      description: 'Get trend data for a specific endpoint.
+
+
+        Path Parameters:
+
+        - endpoint_name: Endpoint name (required)
+
+
+        Query Parameters:
+
+        - service: ''model_serving'' | ''vector_search'' | ''ai_gateway'' (required)
+
+        - start_date: Start date (YYYY-MM-DD), defaults to 30 days ago
+
+        - end_date: End date (YYYY-MM-DD), defaults to today
+
+        - granularity: ''day'', ''week'', ''month'', or ''auto'' (default: auto)
+
+
+        Returns:
+
+        - Array of trend data points (direct array, no wrapper object). For
+
+        Vector Search and AI Gateway this is ``{date, dbus, cost_usd}`` — one
+
+        row per bucket where billing usage exists (no zero-fill).'
       operationId: get_endpoint_trend_api_v1_databricks_ai_ml_services_endpoints__endpoint_name__trend_get
       security:
       - HTTPBearer: []
@@ -621,12 +686,10 @@ paths:
         required: false
         schema:
           type: string
-          description: 'Time granularity: ''day'', ''week'', ''month'', or ''auto'' (auto-detect based
-            on date range)'
+          description: 'Time granularity: ''day'', ''week'', ''month'', or ''auto'' (auto-detect based on date range)'
           default: auto
           title: Granularity
-        description: 'Time granularity: ''day'', ''week'', ''month'', or ''auto'' (auto-detect based on
-          date range)'
+        description: 'Time granularity: ''day'', ''week'', ''month'', or ''auto'' (auto-detect based on date range)'
       - name: navigationSource
         in: query
         required: false
@@ -874,131 +937,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AIMLEndpointsFilterOptions:
-      properties:
-        entity_types:
-          items:
-            type: string
-          type: array
-          title: Entity Types
-          description: 'Distinct entity_types appearing on rows in the window. Subset of the seven leaf
-            types: FOUNDATION_MODEL, CUSTOM_MODEL, AI_FUNCTION, EXTERNAL_MODEL, FEATURE_SPEC, VECTOR_SEARCH,
-            AI_GATEWAY.'
-        workspace_ids:
-          items:
-            type: string
-          type: array
-          title: Workspace Ids
-          description: Distinct workspace IDs that have AI/ML usage in the window
-      type: object
-      title: AIMLEndpointsFilterOptions
-      description: 'Discrete filter values for the unified AI/ML endpoints list.
-
-
-        Only fields that are actually filterable on ``GET /ai-ml-services/endpoints``
-
-        are returned. ``start_date`` / ``end_date`` are a free-form date range and
-
-        therefore not enumerable here; the caller still passes them in to scope
-
-        ``entity_types`` and ``workspace_ids`` to rows with traffic in the window.'
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    AIFunctionUsageItem:
-      properties:
-        usage_type:
-          type: string
-          title: Usage Type
-          description: 'Type of usage: ''MV Refresh'', ''Notebook'', ''SQL Query'', ''Job'', ''DDL'',
-            ''Ad-hoc'''
-        usage_identity:
-          type: string
-          title: Usage Identity
-          description: 'Identity of the usage source: MV name, notebook ID, job ID, etc.'
-        job_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Job Name
-          description: Resolved job name from dbx_job_inventory (for Job type)
-        executed_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Executed By
-          description: User who executed the query
-        source_identifier:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Source Identifier
-          description: 'Best available identifier: statement_id, job_id, notebook_id, etc.'
-        total_requests:
-          type: integer
-          title: Total Requests
-          description: Total number of invocations
-          default: 0
-        days_active:
-          type: integer
-          title: Days Active
-          description: Number of distinct days with activity
-          default: 0
-        last_used:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Used
-          description: Most recent invocation timestamp
-      type: object
-      required:
-      - usage_type
-      - usage_identity
-      title: AIFunctionUsageItem
-      description: A usage source for an AI function endpoint.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    UnifiedAIMLEndpointsListResponse:
-      properties:
-        endpoints:
-          items:
-            $ref: '#/components/schemas/UnifiedAIMLEndpointItem'
-          type: array
-          title: Endpoints
-          description: Mixed list of model serving, vector search and AI gateway endpoints
-        pagination:
-          $ref: '#/components/schemas/app__schemas__databricks__ai_services__PaginationInfo'
-          description: Pagination info
-      type: object
-      required:
-      - pagination
-      title: UnifiedAIMLEndpointsListResponse
-      description: Response for the unified AI/ML endpoints list.
     UnifiedAIMLEndpointItem:
       properties:
         service:
@@ -1010,9 +948,7 @@ components:
           - type: string
           - type: 'null'
           title: Entity Type
-          description: Leaf type used for the Type column / filter. One of the five model_serving entity
-            types, 'VECTOR_SEARCH', or 'AI_GATEWAY'. Null when a model_serving endpoint has no served_entities
-            row (rendered as '-' by the FE) — we don't guess a type.
+          description: Leaf type used for the Type column / filter. One of the five model_serving entity types, 'VECTOR_SEARCH', or 'AI_GATEWAY'. Null when a model_serving endpoint has no served_entities row (rendered as '-' by the FE) — we don't guess a type.
         endpoint_name:
           type: string
           title: Endpoint Name
@@ -1080,13 +1016,93 @@ components:
       - service
       - endpoint_name
       title: UnifiedAIMLEndpointItem
-      description: "Unified endpoint row covering Model Serving, Vector Search and AI Gateway.\n\n``entity_type``\
-        \ is the single leaf-level discriminator the table renders in\nits Type column and the FE filters\
-        \ on:\n\n- Model Serving rows: one of ``FOUNDATION_MODEL``, ``CUSTOM_MODEL``,\n  ``AI_FUNCTION``,\
-        \ ``EXTERNAL_MODEL``, ``FEATURE_SPEC``.\n- Vector Search rows: ``VECTOR_SEARCH``.\n- AI Gateway\
-        \ rows: ``AI_GATEWAY``.\n\n``service`` stays on each row as the routing discriminator the FE uses\
-        \ on\nrow-click (model-serving / vector-search / ai-gateway detail pages); it is\nno longer a\
-        \ filter input. Fields that don't apply to a row's service are\nnull."
+      description: "Unified endpoint row covering Model Serving, Vector Search and AI Gateway.\n\n``entity_type`` is the single leaf-level discriminator the table renders in\nits Type column and the FE filters on:\n\n- Model Serving rows: one of ``FOUNDATION_MODEL``, ``CUSTOM_MODEL``,\n  ``AI_FUNCTION``, ``EXTERNAL_MODEL``, ``FEATURE_SPEC``.\n- Vector Search rows: ``VECTOR_SEARCH``.\n- AI Gateway rows: ``AI_GATEWAY``.\n\n``service`` stays on each row as the routing discriminator the FE uses on\nrow-click (model-serving / vector-search / ai-gateway detail pages); it is\nno longer a filter input. Fields that don't apply to a row's service are\nnull."
+    UnifiedAIMLEndpointsListResponse:
+      properties:
+        endpoints:
+          items:
+            $ref: '#/components/schemas/UnifiedAIMLEndpointItem'
+          type: array
+          title: Endpoints
+          description: Mixed list of model serving, vector search and AI gateway endpoints
+        pagination:
+          $ref: '#/components/schemas/app__schemas__databricks__ai_services__PaginationInfo'
+          description: Pagination info
+      type: object
+      required:
+      - pagination
+      title: UnifiedAIMLEndpointsListResponse
+      description: Response for the unified AI/ML endpoints list.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    app__schemas__databricks__ai_services__PaginationInfo:
+      properties:
+        total:
+          type: integer
+          title: Total
+          description: Total number of items
+        limit:
+          type: integer
+          title: Limit
+          description: Items per page
+        offset:
+          type: integer
+          title: Offset
+          description: Current offset
+      type: object
+      required:
+      - total
+      - limit
+      - offset
+      title: PaginationInfo
+      description: Pagination information.
+    AIMLEndpointNamesResponse:
+      properties:
+        items:
+          items:
+            type: string
+          type: array
+          title: Items
+          description: Distinct endpoint names on this page
+        page:
+          type: integer
+          title: Page
+          description: Current page number (1-indexed)
+          default: 1
+        size:
+          type: integer
+          title: Size
+          description: Items per page
+          default: 20
+        total:
+          type: integer
+          title: Total
+          description: Total number of matching names
+          default: 0
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      title: AIMLEndpointNamesResponse
+      description: 'Paginated, searchable list of distinct endpoint names.
+
+
+        Backs the endpoint-name filter dropdown: the full set of names is too large
+
+        to ship at once, so the FE searches server-side (substring ``search``) and
+
+        pages through matches. The selected name(s) are then sent back to
+
+        ``GET /ai-ml-services/endpoints`` as the exact ``endpoint_name`` filter.'
     AIFunctionUsageBreakdownResponse:
       properties:
         usage:
@@ -1098,6 +1114,77 @@ components:
       type: object
       title: AIFunctionUsageBreakdownResponse
       description: Response for AI function usage breakdown.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AIFunctionUsageItem:
+      properties:
+        usage_type:
+          type: string
+          title: Usage Type
+          description: 'Type of usage: ''MV Refresh'', ''Notebook'', ''SQL Query'', ''Job'', ''DDL'', ''Ad-hoc'''
+        usage_identity:
+          type: string
+          title: Usage Identity
+          description: 'Identity of the usage source: MV name, notebook ID, job ID, etc.'
+        job_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Name
+          description: Resolved job name from dbx_job_inventory (for Job type)
+        executed_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Executed By
+          description: User who executed the query
+        source_identifier:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Identifier
+          description: 'Best available identifier: statement_id, job_id, notebook_id, etc.'
+        total_requests:
+          type: integer
+          title: Total Requests
+          description: Total number of invocations
+          default: 0
+        days_active:
+          type: integer
+          title: Days Active
+          description: Number of distinct days with activity
+          default: 0
+        last_used:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Used
+          description: Most recent invocation timestamp
+      type: object
+      required:
+      - usage_type
+      - usage_identity
+      title: AIFunctionUsageItem
+      description: A usage source for an AI function endpoint.
     EndpointCallerItem:
       properties:
         job_id:
@@ -1163,31 +1250,13 @@ components:
         cost_per_inference:
           type: number
           title: Cost Per Inference
-          description: Estimated cost per inference in the endpoint currency. The endpoint's billed cost
-            is allocated to this caller by its share of tokens, then divided by its invocations; falls
-            back to the flat endpoint rate (endpoint cost / total invocations) when token counts are unavailable.
+          description: Estimated cost per inference in the endpoint currency. The endpoint's billed cost is allocated to this caller by its share of tokens, then divided by its invocations; falls back to the flat endpoint rate (endpoint cost / total invocations) when token counts are unavailable.
           default: 0
       type: object
       required:
       - caller_type
       title: EndpointCallerItem
       description: A job or query that calls the model serving endpoint.
-    EndpointCallersListResponse:
-      properties:
-        callers:
-          items:
-            $ref: '#/components/schemas/EndpointCallerItem'
-          type: array
-          title: Callers
-          description: List of callers (jobs/queries)
-        pagination:
-          $ref: '#/components/schemas/app__schemas__databricks__ai_services__PaginationInfo'
-          description: Pagination info
-      type: object
-      required:
-      - pagination
-      title: EndpointCallersListResponse
-      description: Response for listing jobs/queries calling an endpoint.
     AIMLServicesTrendPoint:
       properties:
         date:
@@ -1239,71 +1308,49 @@ components:
       - date
       title: AIMLServicesTrendPoint
       description: Single data point for AI/ML services daily trend.
-    app__schemas__databricks__ai_services__PaginationInfo:
+    EndpointCallersListResponse:
       properties:
-        total:
-          type: integer
-          title: Total
-          description: Total number of items
-        limit:
-          type: integer
-          title: Limit
-          description: Items per page
-        offset:
-          type: integer
-          title: Offset
-          description: Current offset
+        callers:
+          items:
+            $ref: '#/components/schemas/EndpointCallerItem'
+          type: array
+          title: Callers
+          description: List of callers (jobs/queries)
+        pagination:
+          $ref: '#/components/schemas/app__schemas__databricks__ai_services__PaginationInfo'
+          description: Pagination info
       type: object
       required:
-      - total
-      - limit
-      - offset
-      title: PaginationInfo
-      description: Pagination information.
-    AIMLEndpointNamesResponse:
+      - pagination
+      title: EndpointCallersListResponse
+      description: Response for listing jobs/queries calling an endpoint.
+    AIMLEndpointsFilterOptions:
       properties:
-        items:
+        entity_types:
           items:
             type: string
           type: array
-          title: Items
-          description: Distinct endpoint names on this page
-        page:
-          type: integer
-          title: Page
-          description: Current page number (1-indexed)
-          default: 1
-        size:
-          type: integer
-          title: Size
-          description: Items per page
-          default: 20
-        total:
-          type: integer
-          title: Total
-          description: Total number of matching names
-          default: 0
-        total_pages:
-          type: integer
-          title: Total Pages
-          description: Total number of pages
-          default: 1
+          title: Entity Types
+          description: 'Distinct entity_types appearing on rows in the window. Subset of the seven leaf types: FOUNDATION_MODEL, CUSTOM_MODEL, AI_FUNCTION, EXTERNAL_MODEL, FEATURE_SPEC, VECTOR_SEARCH, AI_GATEWAY.'
+        workspace_ids:
+          items:
+            type: string
+          type: array
+          title: Workspace Ids
+          description: Distinct workspace IDs that have AI/ML usage in the window
       type: object
-      title: AIMLEndpointNamesResponse
-      description: 'Paginated, searchable list of distinct endpoint names.
+      title: AIMLEndpointsFilterOptions
+      description: 'Discrete filter values for the unified AI/ML endpoints list.
 
 
-        Backs the endpoint-name filter dropdown: the full set of names is too large
+        Only fields that are actually filterable on ``GET /ai-ml-services/endpoints``
 
-        to ship at once, so the FE searches server-side (substring ``search``) and
+        are returned. ``start_date`` / ``end_date`` are a free-form date range and
 
-        pages through matches. The selected name(s) are then sent back to
+        therefore not enumerable here; the caller still passes them in to scope
 
-        ``GET /ai-ml-services/endpoints`` as the exact ``endpoint_name`` filter.'
+        ``entity_types`` and ``workspace_ids`` to rows with traffic in the window.'
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

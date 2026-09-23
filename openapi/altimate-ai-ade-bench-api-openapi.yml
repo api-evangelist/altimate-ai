@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS ade-bench API
+  title: Fast Ade Bench API
   version: 0.1.0
 tags:
 - name: ade-bench
@@ -320,423 +320,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    TaskProgressItem:
-      properties:
-        task_id:
-          type: string
-          title: Task Id
-        status:
-          $ref: '#/components/schemas/TaskStatus'
-        tests_passing:
-          type: integer
-          title: Tests Passing
-          default: 0
-        tests_total:
-          type: integer
-          title: Tests Total
-          default: 0
-        attempts:
-          type: integer
-          title: Attempts
-          default: 0
-        last_failure_mode:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Failure Mode
-        last_run_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Run Id
-        last_run_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Run Time
-        first_solved_run_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: First Solved Run Id
-        langfuse_trace_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Langfuse Trace Url
-        best_input_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Best Input Tokens
-        best_output_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Best Output Tokens
-        best_cost_usd:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Best Cost Usd
-      type: object
-      required:
-      - task_id
-      - status
-      title: TaskProgressItem
-      description: Progress info for a single task.
-    TrialSummary:
-      properties:
-        trial_name:
-          type: string
-          title: Trial Name
-        task_id:
-          type: string
-          title: Task Id
-        is_resolved:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Resolved
-        failure_mode:
-          type: string
-          title: Failure Mode
-          default: unset
-        input_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Input Tokens
-        output_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Output Tokens
-        runtime_ms:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Runtime Ms
-        cost_usd:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Cost Usd
-        tests_passed:
-          type: integer
-          title: Tests Passed
-          default: 0
-        tests_total:
-          type: integer
-          title: Tests Total
-          default: 0
-        langfuse_trace_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Langfuse Trace Url
-      type: object
-      required:
-      - trial_name
-      - task_id
-      title: TrialSummary
-      description: Summary view of a trial for list display.
-    FilterOptionsResponse:
-      properties:
-        agents:
-          items:
-            type: string
-          type: array
-          title: Agents
-          default: []
-        models:
-          items:
-            type: string
-          type: array
-          title: Models
-          default: []
-      type: object
-      title: FilterOptionsResponse
-      description: Response schema for filter dropdown options.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    TaskProgressResponse:
-      properties:
-        tasks_solved:
-          type: integer
-          title: Tasks Solved
-          default: 0
-        tasks_total:
-          type: integer
-          title: Tasks Total
-          default: 0
-        tasks_solved_pct:
-          type: number
-          title: Tasks Solved Pct
-          default: 0.0
-        tests_passing:
-          type: integer
-          title: Tests Passing
-          default: 0
-        tests_total:
-          type: integer
-          title: Tests Total
-          default: 0
-        tests_passing_pct:
-          type: number
-          title: Tests Passing Pct
-          default: 0.0
-        tasks:
-          items:
-            $ref: '#/components/schemas/TaskProgressItem'
-          type: array
-          title: Tasks
-          default: []
-      type: object
-      title: TaskProgressResponse
-      description: Response schema for task progress dashboard.
-    RunResultsResponse:
-      properties:
-        run_id:
-          type: string
-          title: Run Id
-        results:
-          items:
-            $ref: '#/components/schemas/TrialResultResponse'
-          type: array
-          title: Results
-          default: []
-        pass_at_k:
-          anyOf:
-          - additionalProperties:
-              anyOf:
-              - type: number
-              - type: 'null'
-            type: object
-          - type: 'null'
-          title: Pass At K
-        n_resolved:
-          type: integer
-          title: N Resolved
-          default: 0
-        n_unresolved:
-          type: integer
-          title: N Unresolved
-          default: 0
-        accuracy:
-          type: number
-          title: Accuracy
-          default: 0.0
-        resolved_ids:
-          items:
-            type: string
-          type: array
-          title: Resolved Ids
-          default: []
-        unresolved_ids:
-          items:
-            type: string
-          type: array
-          title: Unresolved Ids
-          default: []
-      type: object
-      required:
-      - run_id
-      title: RunResultsResponse
-      description: Response schema for full run results.
-    TrialListResponse:
-      properties:
-        run_id:
-          type: string
-          title: Run Id
-        trials:
-          items:
-            $ref: '#/components/schemas/TrialSummary'
-          type: array
-          title: Trials
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - run_id
-      - trials
-      - total
-      title: TrialListResponse
-      description: Response schema for list of trials in a run.
-    TrialResultResponse:
-      properties:
-        trial_name:
-          type: string
-          title: Trial Name
-        task_id:
-          type: string
-          title: Task Id
-        task_prompt:
-          type: string
-          title: Task Prompt
-        is_resolved:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Resolved
-        failure_mode:
-          type: string
-          title: Failure Mode
-          default: unset
-        parser_results:
-          anyOf:
-          - additionalProperties:
-              type: string
-            type: object
-          - type: 'null'
-          title: Parser Results
-        expected_test_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Expected Test Count
-        input_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Input Tokens
-        output_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Output Tokens
-        cache_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Cache Tokens
-        num_turns:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Num Turns
-        runtime_ms:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Runtime Ms
-        cost_usd:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Cost Usd
-        uuid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Uuid
-        recording_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Recording Path
-        langfuse_trace_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Langfuse Trace Url
-        agent:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Agent
-        model_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Model Name
-        db_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Db Type
-        project_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Project Type
-        used_mcp:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Used Mcp
-      type: object
-      required:
-      - trial_name
-      - task_id
-      - task_prompt
-      title: TrialResultResponse
-      description: Response schema for a single trial result.
-    RunListResponse:
-      properties:
-        runs:
-          items:
-            $ref: '#/components/schemas/RunMetadataResponse'
-          type: array
-          title: Runs
-        total:
-          type: integer
-          title: Total
-        limit:
-          type: integer
-          title: Limit
-        offset:
-          type: integer
-          title: Offset
-        has_more:
-          type: boolean
-          title: Has More
-      type: object
-      required:
-      - runs
-      - total
-      - limit
-      - offset
-      - has_more
-      title: RunListResponse
-      description: Response schema for paginated run list.
-    TaskStatus:
-      type: string
-      enum:
-      - solved
-      - partial
-      - failing
-      title: TaskStatus
-      description: Status of a task based on best known result.
     RunMetadataResponse:
       properties:
         run_id:
@@ -849,10 +432,424 @@ components:
       - agent_name
       title: RunMetadataResponse
       description: Response schema for run metadata.
+    TrialResultResponse:
+      properties:
+        trial_name:
+          type: string
+          title: Trial Name
+        task_id:
+          type: string
+          title: Task Id
+        task_prompt:
+          type: string
+          title: Task Prompt
+        is_resolved:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Resolved
+        failure_mode:
+          type: string
+          title: Failure Mode
+          default: unset
+        parser_results:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Parser Results
+        expected_test_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expected Test Count
+        input_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Input Tokens
+        output_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Output Tokens
+        cache_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cache Tokens
+        num_turns:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Turns
+        runtime_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Runtime Ms
+        cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cost Usd
+        uuid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uuid
+        recording_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recording Path
+        langfuse_trace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Langfuse Trace Url
+        agent:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent
+        model_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Name
+        db_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Db Type
+        project_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Type
+        used_mcp:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Used Mcp
+      type: object
+      required:
+      - trial_name
+      - task_id
+      - task_prompt
+      title: TrialResultResponse
+      description: Response schema for a single trial result.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    TaskProgressResponse:
+      properties:
+        tasks_solved:
+          type: integer
+          title: Tasks Solved
+          default: 0
+        tasks_total:
+          type: integer
+          title: Tasks Total
+          default: 0
+        tasks_solved_pct:
+          type: number
+          title: Tasks Solved Pct
+          default: 0.0
+        tests_passing:
+          type: integer
+          title: Tests Passing
+          default: 0
+        tests_total:
+          type: integer
+          title: Tests Total
+          default: 0
+        tests_passing_pct:
+          type: number
+          title: Tests Passing Pct
+          default: 0.0
+        tasks:
+          items:
+            $ref: '#/components/schemas/TaskProgressItem'
+          type: array
+          title: Tasks
+          default: []
+      type: object
+      title: TaskProgressResponse
+      description: Response schema for task progress dashboard.
+    RunResultsResponse:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        results:
+          items:
+            $ref: '#/components/schemas/TrialResultResponse'
+          type: array
+          title: Results
+          default: []
+        pass_at_k:
+          anyOf:
+          - additionalProperties:
+              anyOf:
+              - type: number
+              - type: 'null'
+            type: object
+          - type: 'null'
+          title: Pass At K
+        n_resolved:
+          type: integer
+          title: N Resolved
+          default: 0
+        n_unresolved:
+          type: integer
+          title: N Unresolved
+          default: 0
+        accuracy:
+          type: number
+          title: Accuracy
+          default: 0.0
+        resolved_ids:
+          items:
+            type: string
+          type: array
+          title: Resolved Ids
+          default: []
+        unresolved_ids:
+          items:
+            type: string
+          type: array
+          title: Unresolved Ids
+          default: []
+      type: object
+      required:
+      - run_id
+      title: RunResultsResponse
+      description: Response schema for full run results.
+    FilterOptionsResponse:
+      properties:
+        agents:
+          items:
+            type: string
+          type: array
+          title: Agents
+          default: []
+        models:
+          items:
+            type: string
+          type: array
+          title: Models
+          default: []
+      type: object
+      title: FilterOptionsResponse
+      description: Response schema for filter dropdown options.
+    RunListResponse:
+      properties:
+        runs:
+          items:
+            $ref: '#/components/schemas/RunMetadataResponse'
+          type: array
+          title: Runs
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - runs
+      - total
+      - limit
+      - offset
+      - has_more
+      title: RunListResponse
+      description: Response schema for paginated run list.
+    TrialSummary:
+      properties:
+        trial_name:
+          type: string
+          title: Trial Name
+        task_id:
+          type: string
+          title: Task Id
+        is_resolved:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Resolved
+        failure_mode:
+          type: string
+          title: Failure Mode
+          default: unset
+        input_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Input Tokens
+        output_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Output Tokens
+        runtime_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Runtime Ms
+        cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cost Usd
+        tests_passed:
+          type: integer
+          title: Tests Passed
+          default: 0
+        tests_total:
+          type: integer
+          title: Tests Total
+          default: 0
+        langfuse_trace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Langfuse Trace Url
+      type: object
+      required:
+      - trial_name
+      - task_id
+      title: TrialSummary
+      description: Summary view of a trial for list display.
+    TaskProgressItem:
+      properties:
+        task_id:
+          type: string
+          title: Task Id
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        tests_passing:
+          type: integer
+          title: Tests Passing
+          default: 0
+        tests_total:
+          type: integer
+          title: Tests Total
+          default: 0
+        attempts:
+          type: integer
+          title: Attempts
+          default: 0
+        last_failure_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Failure Mode
+        last_run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Run Id
+        last_run_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Run Time
+        first_solved_run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Solved Run Id
+        langfuse_trace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Langfuse Trace Url
+        best_input_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Best Input Tokens
+        best_output_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Best Output Tokens
+        best_cost_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Best Cost Usd
+      type: object
+      required:
+      - task_id
+      - status
+      title: TaskProgressItem
+      description: Progress info for a single task.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TaskStatus:
+      type: string
+      enum:
+      - solved
+      - partial
+      - failing
+      title: TaskStatus
+      description: Status of a task based on best known result.
+    TrialListResponse:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        trials:
+          items:
+            $ref: '#/components/schemas/TrialSummary'
+          type: array
+          title: Trials
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - run_id
+      - trials
+      - total
+      title: TrialListResponse
+      description: Response schema for list of trials in a run.
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

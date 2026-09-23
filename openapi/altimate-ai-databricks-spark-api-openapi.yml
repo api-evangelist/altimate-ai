@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS Databricks Spark API
+  title: Fast Databricks Spark API
   version: 0.1.0
 tags:
 - name: Databricks Spark
@@ -294,27 +294,182 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
+    SparkPlanAnalysisSummary:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        flag_name:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Flag Name
+        count:
+          type: integer
+          title: Count
+          default: 0
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - flag_name
+      title: SparkPlanAnalysisSummary
+      description: Summary counts for plan analysis flags.
+    SparkStage:
+      properties:
+        stage_id:
+          type: integer
+          title: Stage Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        num_tasks:
+          type: integer
+          title: Num Tasks
+          default: 0
+        submission_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Submission Time
+        completion_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completion Time
+        duration_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Duration Ms
+        gc_time_ms:
+          type: number
+          title: Gc Time Ms
+          default: 0
+        shuffle_read_bytes:
+          type: number
+          title: Shuffle Read Bytes
+          default: 0
+        shuffle_write_bytes:
+          type: number
+          title: Shuffle Write Bytes
+          default: 0
+        spill_memory_bytes:
+          type: number
+          title: Spill Memory Bytes
+          default: 0
+        spill_disk_bytes:
+          type: number
+          title: Spill Disk Bytes
+          default: 0
+        failed_tasks:
+          type: integer
+          title: Failed Tasks
+          default: 0
+        skew_ratio:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Skew Ratio
+      type: object
+      required:
+      - stage_id
+      title: SparkStage
+      description: Stage information with aggregated task metrics.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SparkApplicationSummary:
+      properties:
+        application_id:
+          type: string
+          title: Application Id
+        cluster_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Id
+        total_jobs:
+          type: integer
+          title: Total Jobs
+          default: 0
+        total_stages:
+          type: integer
+          title: Total Stages
+          default: 0
+        total_tasks:
+          type: integer
+          title: Total Tasks
+          default: 0
+        duration_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Duration Ms
+        success:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Success
+        spark_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spark Version
+        log_date:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Log Date
+        flag_count:
+          type: integer
+          title: Flag Count
+          default: 0
+      type: object
+      required:
+      - application_id
+      title: SparkApplicationSummary
+      description: Summary information for a Spark application.
+    SparkStagesResponse:
+      properties:
+        stages:
+          items:
+            $ref: '#/components/schemas/SparkStage'
+          type: array
+          title: Stages
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of stages
+      type: object
+      required:
+      - stages
+      - total_count
+      title: SparkStagesResponse
+      description: Response for listing Spark stages.
+    SparkConfigItem:
+      properties:
+        config_category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Category
+        config_key:
+          type: string
+          title: Config Key
+        config_value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Value
+      type: object
+      required:
+      - config_key
+      title: SparkConfigItem
+      description: A single Spark configuration key-value pair.
     SparkTaskStats:
       properties:
         stage_id:
@@ -382,15 +537,6 @@ components:
       - stage_id
       title: SparkTaskStats
       description: Per-stage task statistics with percentiles.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     SparkApplicationsResponse:
       properties:
         applications:
@@ -428,190 +574,27 @@ components:
       - flag_name
       title: SparkPlanFlag
       description: A single plan analysis flag.
-    SparkStagesResponse:
+    ValidationError:
       properties:
-        stages:
+        loc:
           items:
-            $ref: '#/components/schemas/SparkStage'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Stages
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of stages
-      type: object
-      required:
-      - stages
-      - total_count
-      title: SparkStagesResponse
-      description: Response for listing Spark stages.
-    SparkApplicationSummary:
-      properties:
-        application_id:
+          title: Location
+        msg:
           type: string
-          title: Application Id
-        cluster_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cluster Id
-        total_jobs:
-          type: integer
-          title: Total Jobs
-          default: 0
-        total_stages:
-          type: integer
-          title: Total Stages
-          default: 0
-        total_tasks:
-          type: integer
-          title: Total Tasks
-          default: 0
-        duration_ms:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Duration Ms
-        success:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Success
-        spark_version:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Spark Version
-        log_date:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Log Date
-        flag_count:
-          type: integer
-          title: Flag Count
-          default: 0
-      type: object
-      required:
-      - application_id
-      title: SparkApplicationSummary
-      description: Summary information for a Spark application.
-    SparkConfigItem:
-      properties:
-        config_category:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Config Category
-        config_key:
+          title: Message
+        type:
           type: string
-          title: Config Key
-        config_value:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Config Value
+          title: Error Type
       type: object
       required:
-      - config_key
-      title: SparkConfigItem
-      description: A single Spark configuration key-value pair.
-    SparkTaskStatsResponse:
-      properties:
-        stages:
-          items:
-            $ref: '#/components/schemas/SparkTaskStats'
-          type: array
-          title: Stages
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of stages
-      type: object
-      required:
-      - stages
-      - total_count
-      title: SparkTaskStatsResponse
-      description: Response for per-stage task statistics.
-    SparkStage:
-      properties:
-        stage_id:
-          type: integer
-          title: Stage Id
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        num_tasks:
-          type: integer
-          title: Num Tasks
-          default: 0
-        submission_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Submission Time
-        completion_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Completion Time
-        duration_ms:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Duration Ms
-        gc_time_ms:
-          type: number
-          title: Gc Time Ms
-          default: 0
-        shuffle_read_bytes:
-          type: number
-          title: Shuffle Read Bytes
-          default: 0
-        shuffle_write_bytes:
-          type: number
-          title: Shuffle Write Bytes
-          default: 0
-        spill_memory_bytes:
-          type: number
-          title: Spill Memory Bytes
-          default: 0
-        spill_disk_bytes:
-          type: number
-          title: Spill Disk Bytes
-          default: 0
-        failed_tasks:
-          type: integer
-          title: Failed Tasks
-          default: 0
-        skew_ratio:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Skew Ratio
-      type: object
-      required:
-      - stage_id
-      title: SparkStage
-      description: Stage information with aggregated task metrics.
-    SparkPlanAnalysisSummary:
-      properties:
-        flag_name:
-          type: string
-          title: Flag Name
-        count:
-          type: integer
-          title: Count
-          default: 0
-      type: object
-      required:
-      - flag_name
-      title: SparkPlanAnalysisSummary
-      description: Summary counts for plan analysis flags.
+      - loc
+      - msg
+      - type
+      title: ValidationError
     SparkConfigResponse:
       properties:
         configs:
@@ -652,10 +635,24 @@ components:
       - total_count
       title: SparkPlanAnalysisResponse
       description: Response for Spark plan analysis flags.
+    SparkTaskStatsResponse:
+      properties:
+        stages:
+          items:
+            $ref: '#/components/schemas/SparkTaskStats'
+          type: array
+          title: Stages
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of stages
+      type: object
+      required:
+      - stages
+      - total_count
+      title: SparkTaskStatsResponse
+      description: Response for per-stage task statistics.
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

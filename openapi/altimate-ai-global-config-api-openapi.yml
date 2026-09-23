@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS GLOBAL_CONFIG API
+  title: Fast GLOBAL CONFIG API
   version: 0.1.0
 tags:
-- name: GLOBAL_CONFIG
+- name: Global Config
 paths:
   /global_config/:
     get:
       tags:
-      - GLOBAL_CONFIG
+      - Global Config
       summary: Get Global Config
       description: Get global configuration for query tags or cost attribution
       operationId: get_global_config_global_config__get
@@ -60,7 +60,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - GLOBAL_CONFIG
+      - Global Config
       summary: Add Query Tag
       description: Add a new query tag to global configuration
       operationId: add_query_tag_global_config__post
@@ -117,7 +117,7 @@ paths:
   /global_config/cost-attribution:
     post:
       tags:
-      - GLOBAL_CONFIG
+      - Global Config
       summary: Upsert Cost Attribution
       description: Upsert cost attribution global configuration
       operationId: upsert_cost_attribution_global_config_cost_attribution_post
@@ -170,7 +170,7 @@ paths:
   /global_config/recipient-email-domain-allowlist:
     get:
       tags:
-      - GLOBAL_CONFIG
+      - Global Config
       summary: Get Email Domain Allowlist
       description: 'Get the per-tenant recipient email-domain allowlist with attribution and
 
@@ -190,8 +190,7 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 400 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist
-                  Get
+                title: Response 400 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist Get
         '403':
           description: Not supported for public user
           content:
@@ -199,8 +198,7 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 403 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist
-                  Get
+                title: Response 403 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist Get
         '404':
           description: Configuration not found
           content:
@@ -208,14 +206,13 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 404 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist
-                  Get
+                title: Response 404 Get Email Domain Allowlist Global Config Recipient Email Domain Allowlist Get
       security:
       - HTTPBearer: []
       - HTTPBearer: []
     post:
       tags:
-      - GLOBAL_CONFIG
+      - Global Config
       summary: Add Email Domain
       description: 'Add a domain to the allowlist. Stamps the current user and time, status
 
@@ -269,7 +266,7 @@ paths:
       - HTTPBearer: []
     patch:
       tags:
-      - GLOBAL_CONFIG
+      - Global Config
       summary: Update Email Domain Status
       description: 'Update a domain''s status (active / paused). Owner only. The
 
@@ -295,8 +292,7 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 400 Update Email Domain Status Global Config Recipient Email Domain Allowlist
-                  Patch
+                title: Response 400 Update Email Domain Status Global Config Recipient Email Domain Allowlist Patch
         '403':
           description: Not supported for public user
           content:
@@ -304,8 +300,7 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 403 Update Email Domain Status Global Config Recipient Email Domain Allowlist
-                  Patch
+                title: Response 403 Update Email Domain Status Global Config Recipient Email Domain Allowlist Patch
         '404':
           description: Configuration not found
           content:
@@ -313,8 +308,7 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 404 Update Email Domain Status Global Config Recipient Email Domain Allowlist
-                  Patch
+                title: Response 404 Update Email Domain Status Global Config Recipient Email Domain Allowlist Patch
         '422':
           description: Validation Error
           content:
@@ -327,7 +321,7 @@ paths:
   /global_config/recipient-email-domain-allowlist/{domain}:
     delete:
       tags:
-      - GLOBAL_CONFIG
+      - Global Config
       summary: Delete Email Domain
       description: Remove a domain from the allowlist. Owner only.
       operationId: delete_email_domain_global_config_recipient_email_domain_allowlist__domain__delete
@@ -380,88 +374,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UpsertCostAttributionRequest:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        mode:
-          type: string
-          title: Mode
-          default: warehouse
-      type: object
-      title: UpsertCostAttributionRequest
-    DomainStatus:
-      type: string
-      enum:
-      - active
-      - paused
-      title: DomainStatus
-    UpdateEmailDomainStatusRequest:
-      properties:
-        domain:
-          type: string
-          title: Domain
-        status:
-          $ref: '#/components/schemas/DomainStatus'
-      type: object
-      required:
-      - domain
-      - status
-      title: UpdateEmailDomainStatusRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    CostAttributionResponse:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-        mode:
-          type: string
-          title: Mode
-      type: object
-      required:
-      - enabled
-      - mode
-      title: CostAttributionResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AddEmailDomainRequest:
-      properties:
-        domain:
-          type: string
-          title: Domain
-      type: object
-      required:
-      - domain
-      title: AddEmailDomainRequest
     GlobalConfigType:
       type: string
       enum:
@@ -491,6 +403,43 @@ components:
       - databricks_service_principal_config
       - infra_savings_multiplier
       title: GlobalConfigType
+    CostAttributionResponse:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        mode:
+          type: string
+          title: Mode
+      type: object
+      required:
+      - enabled
+      - mode
+      title: CostAttributionResponse
+    DomainStatus:
+      type: string
+      enum:
+      - active
+      - paused
+      title: DomainStatus
+    AddEmailDomainRequest:
+      properties:
+        domain:
+          type: string
+          title: Domain
+      type: object
+      required:
+      - domain
+      title: AddEmailDomainRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     AddQueryTagRequest:
       properties:
         tag:
@@ -500,17 +449,51 @@ components:
       required:
       - tag
       title: AddQueryTagRequest
-    EmailDomainAllowlistResponse:
+    ValidationError:
       properties:
-        domains:
+        loc:
           items:
-            $ref: '#/components/schemas/EmailDomainEntry'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Domains
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - domains
-      title: EmailDomainAllowlistResponse
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UpdateEmailDomainStatusRequest:
+      properties:
+        domain:
+          type: string
+          title: Domain
+        status:
+          $ref: '#/components/schemas/DomainStatus'
+      type: object
+      required:
+      - domain
+      - status
+      title: UpdateEmailDomainStatusRequest
+    UpsertCostAttributionRequest:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        mode:
+          type: string
+          title: Mode
+          default: warehouse
+      type: object
+      title: UpsertCostAttributionRequest
     EmailDomainEntry:
       properties:
         domain:
@@ -533,10 +516,18 @@ components:
       - domain
       - status
       title: EmailDomainEntry
+    EmailDomainAllowlistResponse:
+      properties:
+        domains:
+          items:
+            $ref: '#/components/schemas/EmailDomainEntry'
+          type: array
+          title: Domains
+      type: object
+      required:
+      - domains
+      title: EmailDomainAllowlistResponse
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS NOTIFICATION API
+  title: Fast NOTIFICATION API
   version: 0.1.0
 tags:
-- name: NOTIFICATION
+- name: Notification
 paths:
   /notification/:
     get:
       tags:
-      - NOTIFICATION
+      - Notification
       summary: Get
       operationId: get_notification__get
       responses:
@@ -39,7 +39,7 @@ paths:
       - HTTPBearer: []
     post:
       tags:
-      - NOTIFICATION
+      - Notification
       summary: Create Or Update
       operationId: create_or_update_notification__post
       requestBody:
@@ -83,7 +83,7 @@ paths:
   /notification/send/slack:
     post:
       tags:
-      - NOTIFICATION
+      - Notification
       summary: Send Slack Notification
       operationId: send_slack_notification_notification_send_slack_post
       requestBody:
@@ -128,7 +128,7 @@ paths:
   /notification/slack_channels:
     get:
       tags:
-      - NOTIFICATION
+      - Notification
       summary: Get All Slack Channels
       operationId: get_all_slack_channels_notification_slack_channels_get
       responses:
@@ -163,7 +163,7 @@ paths:
   /notification/send_datamate_request:
     post:
       tags:
-      - NOTIFICATION
+      - Notification
       summary: Send Slack Notification For Datamate Access
       operationId: send_slack_notification_for_datamate_access_notification_send_datamate_request_post
       requestBody:
@@ -185,8 +185,7 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 400 Send Slack Notification For Datamate Access Notification Send Datamate
-                  Request Post
+                title: Response 400 Send Slack Notification For Datamate Access Notification Send Datamate Request Post
         '403':
           description: Not supported for public user
           content:
@@ -194,8 +193,7 @@ paths:
               schema:
                 additionalProperties: true
                 type: object
-                title: Response 403 Send Slack Notification For Datamate Access Notification Send Datamate
-                  Request Post
+                title: Response 403 Send Slack Notification For Datamate Access Notification Send Datamate Request Post
         '422':
           description: Validation Error
           content:
@@ -208,19 +206,57 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    NotificationRequest:
+    NotificationResponse:
       properties:
-        name:
-          type: string
-          title: Name
+        notifications:
+          items:
+            $ref: '#/components/schemas/Notification'
+          type: array
+          title: Notifications
+      type: object
+      required:
+      - notifications
+      title: NotificationResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    SendSlackNotificationRequest:
+      properties:
         webhook_url:
           type: string
           title: Webhook Url
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
       type: object
       required:
-      - name
       - webhook_url
-      title: NotificationRequest
+      - payload
+      title: SendSlackNotificationRequest
+    FeatureRequestNotificationRequest:
+      properties:
+        request_type:
+          type: string
+          title: Request Type
+          default: datamate
+      type: object
+      title: FeatureRequestNotificationRequest
     ValidationError:
       properties:
         loc:
@@ -242,24 +278,19 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
+    NotificationRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
+        name:
+          type: string
+          title: Name
+        webhook_url:
+          type: string
+          title: Webhook Url
       type: object
       required:
-      - ok
-      title: StandardResponse
+      - name
+      - webhook_url
+      title: NotificationRequest
     SendSlackNotificationResponse:
       properties:
         ok:
@@ -269,47 +300,6 @@ components:
       required:
       - ok
       title: SendSlackNotificationResponse
-    NotificationResponse:
-      properties:
-        notifications:
-          items:
-            $ref: '#/components/schemas/Notification'
-          type: array
-          title: Notifications
-      type: object
-      required:
-      - notifications
-      title: NotificationResponse
-    SendSlackNotificationRequest:
-      properties:
-        webhook_url:
-          type: string
-          title: Webhook Url
-        payload:
-          additionalProperties: true
-          type: object
-          title: Payload
-      type: object
-      required:
-      - webhook_url
-      - payload
-      title: SendSlackNotificationRequest
-    Notification:
-      properties:
-        id:
-          type: integer
-          title: Id
-        type:
-          type: string
-          title: Type
-        config:
-          $ref: '#/components/schemas/NotificationConfigPublic'
-      type: object
-      required:
-      - id
-      - type
-      - config
-      title: Notification
     NotificationConfigPublic:
       properties:
         name:
@@ -329,18 +319,23 @@ components:
         the display name is surfaced over the API; the backend looks up the
 
         URL internally via `get_notification_by_id`.'
-    FeatureRequestNotificationRequest:
+    Notification:
       properties:
-        request_type:
+        id:
+          type: integer
+          title: Id
+        type:
           type: string
-          title: Request Type
-          default: datamate
+          title: Type
+        config:
+          $ref: '#/components/schemas/NotificationConfigPublic'
       type: object
-      title: FeatureRequestNotificationRequest
+      required:
+      - id
+      - type
+      - config
+      title: Notification
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

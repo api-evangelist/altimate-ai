@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS CUSTOM_TAGS API
+  title: Fast CUSTOM TAGS API
   version: 0.1.0
 tags:
-- name: CUSTOM_TAGS
+- name: Custom Tags
 paths:
   /custom/tags/:
     post:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Create Custom Tag
       description: Create a new custom tag
       operationId: create_custom_tag_custom_tags__post
@@ -37,10 +37,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Get Custom Tags
-      description: "Get all custom tags with optional entity filter and pagination\n\nArgs:\n    search:\
-        \ Optional search string to filter tags by display_name"
+      description: 'Get all custom tags with optional entity filter and pagination
+
+
+        Args:
+
+        search: Optional search string to filter tags by display_name'
       operationId: get_custom_tags_custom_tags__get
       security:
       - HTTPBearer: []
@@ -91,7 +95,7 @@ paths:
   /custom/tags/{tag_rk}:
     get:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Get Custom Tag
       description: Get a specific custom tag by ID
       operationId: get_custom_tag_custom_tags__tag_rk__get
@@ -121,7 +125,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Delete Custom Tag
       description: Delete a custom tag by rk
       operationId: delete_custom_tag_custom_tags__tag_rk__delete
@@ -158,7 +162,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     patch:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Update Custom Tag
       description: Update a custom tag by rk
       operationId: update_custom_tag_custom_tags__tag_rk__patch
@@ -195,7 +199,7 @@ paths:
   /custom/tags/associate:
     post:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Create Tag Association
       description: Associate a tag with a user and entity
       operationId: create_tag_association_custom_tags_associate_post
@@ -252,7 +256,7 @@ paths:
   /custom/tags/entity/:
     get:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Get Entity Tags
       description: Get all tags associated with a specific entity based on EntityAssociation
       operationId: get_entity_tags_custom_tags_entity__get
@@ -285,7 +289,7 @@ paths:
   /custom/tags/associate/{tag_rk}:
     delete:
       tags:
-      - CUSTOM_TAGS
+      - Custom Tags
       summary: Delete Tag Association
       description: Delete a tag association from a user and entity
       operationId: delete_tag_association_custom_tags_associate__tag_rk__delete
@@ -331,6 +335,38 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    CustomTagCreate:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tag_type:
+          type: string
+          title: Tag Type
+      type: object
+      required:
+      - rk
+      - tag_type
+      title: CustomTagCreate
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     CustomTagAssociationCreate:
       properties:
         tag_rk:
@@ -343,74 +379,6 @@ components:
       - tag_rk
       - entity
       title: CustomTagAssociationCreate
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Page_CustomTagResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CustomTagResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[CustomTagResponse]
     CustomTagResponse:
       properties:
         rk:
@@ -458,29 +426,65 @@ components:
       - is_deleted
       - created_by
       title: CustomTagResponse
-    CustomTagCreate:
+    Page_CustomTagResponse_:
       properties:
-        rk:
-          type: string
-          title: Rk
-        display_name:
+        items:
+          items:
+            $ref: '#/components/schemas/CustomTagResponse'
+          type: array
+          title: Items
+        total:
           anyOf:
-          - type: string
+          - type: integer
+            minimum: 0.0
           - type: 'null'
-          title: Display Name
-        description:
+          title: Total
+        page:
           anyOf:
-          - type: string
+          - type: integer
+            minimum: 1.0
           - type: 'null'
-          title: Description
-        tag_type:
-          type: string
-          title: Tag Type
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
       required:
-      - rk
-      - tag_type
-      title: CustomTagCreate
+      - items
+      - total
+      - page
+      - size
+      title: Page[CustomTagResponse]
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     CustomTagUpdate:
       properties:
         display_name:
@@ -530,6 +534,3 @@ components:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

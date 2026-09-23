@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS FEEDBACKS API
+  title: Fast FEEDBACKS API
   version: 0.1.0
 tags:
-- name: FEEDBACKS
+- name: Feedbacks
 paths:
   /feedbacks/term:
     post:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Term Feeedback
       operationId: term_feeedback_feedbacks_term_post
       requestBody:
@@ -53,7 +53,7 @@ paths:
   /feedbacks/rule:
     post:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Rule Feedback
       operationId: rule_feedback_feedbacks_rule_post
       requestBody:
@@ -98,7 +98,7 @@ paths:
   /feedbacks/:
     post:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Feedback
       operationId: feedback_feedbacks__post
       requestBody:
@@ -143,7 +143,7 @@ paths:
   /feedbacks/ai:
     get:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Get Ai Feedback
       operationId: get_ai_feedback_feedbacks_ai_get
       security:
@@ -193,7 +193,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Post Ai Feedback
       operationId: post_ai_feedback_feedbacks_ai_post
       deprecated: true
@@ -251,7 +251,7 @@ paths:
   /feedbacks/ai/fb:
     post:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Post Oneway Feedback
       operationId: post_oneway_feedback_feedbacks_ai_fb_post
       requestBody:
@@ -296,7 +296,7 @@ paths:
   /feedbacks/studio:
     post:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Post Studio Feedback
       description: 'Submit feedback for Studio sessions.
 
@@ -343,7 +343,7 @@ paths:
   /feedbacks/playground:
     post:
       tags:
-      - FEEDBACKS
+      - Feedbacks
       summary: Post Playground Feedback
       description: 'Submit feedback for AI Playground sessions.
 
@@ -390,21 +390,53 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    PlaygroundFeedbackResponse:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
       properties:
         ok:
           type: boolean
           title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
       type: object
       required:
       - ok
+      title: StandardResponse
+    TermGenerationFeedbackRequest:
+      properties:
+        term_generation_id:
+          type: string
+          title: Term Generation Id
+        feedback:
+          $ref: '#/components/schemas/FeedbackEnum'
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - term_generation_id
+      - feedback
       - message
-      title: PlaygroundFeedbackResponse
+      title: TermGenerationFeedbackRequest
+    RuleRecommendationFeedbackRequest:
+      properties:
+        rule_recommendation_id:
+          type: string
+          title: Rule Recommendation Id
+        updated_rule:
+          type: string
+          title: Updated Rule
+      type: object
+      required:
+      - rule_recommendation_id
+      - updated_rule
+      title: RuleRecommendationFeedbackRequest
     OneWayFeedbackPostRequest:
       properties:
         feedback_value:
@@ -425,7 +457,81 @@ components:
       - data
       - feedback_text
       title: OneWayFeedbackPostRequest
-    RuleRecommendationFeedbackResponse:
+    FeedbackFormInput:
+      properties:
+        label:
+          type: string
+          title: Label
+        type:
+          type: string
+          title: Type
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+      type: object
+      required:
+      - label
+      - type
+      title: FeedbackFormInput
+    FeedbackForm:
+      properties:
+        good_form:
+          items:
+            $ref: '#/components/schemas/FeedbackFormInput'
+          type: array
+          title: Good Form
+        bad_form:
+          items:
+            $ref: '#/components/schemas/FeedbackFormInput'
+          type: array
+          title: Bad Form
+      type: object
+      required:
+      - good_form
+      - bad_form
+      title: FeedbackForm
+    PlaygroundFeedbackResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      - message
+      title: PlaygroundFeedbackResponse
+    FeebackAIResponse:
+      properties:
+        feedback_id:
+          type: string
+          title: Feedback Id
+        feedback_type:
+          type: string
+          title: Feedback Type
+        is_submitted:
+          type: boolean
+          title: Is Submitted
+        feedback_value:
+          anyOf:
+          - $ref: '#/components/schemas/FeedbackValue'
+          - type: 'null'
+        full_form:
+          $ref: '#/components/schemas/FeedbackForm'
+      type: object
+      required:
+      - feedback_id
+      - feedback_type
+      - is_submitted
+      - full_form
+      title: FeebackAIResponse
+    TermGenerationFeedbackResponse:
       properties:
         ok:
           type: boolean
@@ -433,52 +539,7 @@ components:
       type: object
       required:
       - ok
-      title: RuleRecommendationFeedbackResponse
-    FeedbackType:
-      type: string
-      enum:
-      - datapilot
-      - query_tag
-      - table_insights
-      - dbtpu-extension
-      - summary
-      title: FeedbackType
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    FeedbackEnum:
-      type: string
-      enum:
-      - good
-      - bad
-      title: FeedbackEnum
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      title: TermGenerationFeedbackResponse
     PlaygroundFeedbackRequest:
       properties:
         messageId:
@@ -497,30 +558,12 @@ components:
       - sessionId
       - feedback
       title: PlaygroundFeedbackRequest
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     FeedbackValue:
       type: string
       enum:
       - good
       - bad
       title: FeedbackValue
-    TermGenerationFeedbackResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: TermGenerationFeedbackResponse
     FeedbackRequest:
       properties:
         session_id:
@@ -547,23 +590,27 @@ components:
       - workflow_type
       - feedback
       title: FeedbackRequest
-    FeedbackForm:
+    ValidationError:
       properties:
-        good_form:
+        loc:
           items:
-            $ref: '#/components/schemas/FeedbackFormInput'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Good Form
-        bad_form:
-          items:
-            $ref: '#/components/schemas/FeedbackFormInput'
-          type: array
-          title: Bad Form
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - good_form
-      - bad_form
-      title: FeedbackForm
+      - loc
+      - msg
+      - type
+      title: ValidationError
     FeebackAIPostRequest:
       properties:
         feedback_value:
@@ -575,81 +622,31 @@ components:
       - feedback_value
       - full_form
       title: FeebackAIPostRequest
-    TermGenerationFeedbackRequest:
+    FeedbackEnum:
+      type: string
+      enum:
+      - good
+      - bad
+      title: FeedbackEnum
+    RuleRecommendationFeedbackResponse:
       properties:
-        term_generation_id:
-          type: string
-          title: Term Generation Id
-        feedback:
-          $ref: '#/components/schemas/FeedbackEnum'
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - term_generation_id
-      - feedback
-      - message
-      title: TermGenerationFeedbackRequest
-    FeedbackFormInput:
-      properties:
-        label:
-          type: string
-          title: Label
-        type:
-          type: string
-          title: Type
-        value:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Value
-      type: object
-      required:
-      - label
-      - type
-      title: FeedbackFormInput
-    RuleRecommendationFeedbackRequest:
-      properties:
-        rule_recommendation_id:
-          type: string
-          title: Rule Recommendation Id
-        updated_rule:
-          type: string
-          title: Updated Rule
-      type: object
-      required:
-      - rule_recommendation_id
-      - updated_rule
-      title: RuleRecommendationFeedbackRequest
-    FeebackAIResponse:
-      properties:
-        feedback_id:
-          type: string
-          title: Feedback Id
-        feedback_type:
-          type: string
-          title: Feedback Type
-        is_submitted:
+        ok:
           type: boolean
-          title: Is Submitted
-        feedback_value:
-          anyOf:
-          - $ref: '#/components/schemas/FeedbackValue'
-          - type: 'null'
-        full_form:
-          $ref: '#/components/schemas/FeedbackForm'
+          title: Ok
       type: object
       required:
-      - feedback_id
-      - feedback_type
-      - is_submitted
-      - full_form
-      title: FeebackAIResponse
+      - ok
+      title: RuleRecommendationFeedbackResponse
+    FeedbackType:
+      type: string
+      enum:
+      - datapilot
+      - query_tag
+      - table_insights
+      - dbtpu-extension
+      - summary
+      title: FeedbackType
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS SCHEDULER API
+  title: Fast SCHEDULER API
   version: 0.1.0
 tags:
-- name: SCHEDULER
+- name: Scheduler
 paths:
   /scheduler/{contract_id}:
     get:
       tags:
-      - SCHEDULER
+      - Scheduler
       summary: Fetch Scheduler Script
       description: 'Fetches a contract by id.
 
@@ -64,7 +64,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - SCHEDULER
+      - Scheduler
       summary: Contract Scheduler Toggle
       description: 'Fetches a contract by id.
 
@@ -115,7 +115,7 @@ paths:
   /scheduler/sync/{data_store_id}:
     post:
       tags:
-      - SCHEDULER
+      - Scheduler
       summary: Datastore Sync Scheduler Toggle
       description: 'Fetches a datastoer by id.
 
@@ -163,6 +163,31 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    DatastoreSyncSchedulerToggleResponse:
+      properties:
+        periodic_task_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Periodic Task Ids
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: DatastoreSyncSchedulerToggleResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ContractSchedulerToggleResponse:
       properties:
         periodic_task_id:
@@ -198,31 +223,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    DatastoreSyncSchedulerToggleResponse:
-      properties:
-        periodic_task_ids:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Periodic Task Ids
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: DatastoreSyncSchedulerToggleResponse
     SchedulerFetchResponse:
       properties:
         script:
@@ -240,6 +240,3 @@ components:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

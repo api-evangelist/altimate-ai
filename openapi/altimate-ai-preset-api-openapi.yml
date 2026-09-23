@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS PRESET API
+  title: Fast PRESET API
   version: 0.1.0
 tags:
-- name: PRESET
+- name: preset
 paths:
   /preset/:
     get:
       tags:
-      - PRESET
+      - preset
       summary: Get Presets
       operationId: get_presets_preset__get
       security:
@@ -64,7 +64,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - PRESET
+      - preset
       summary: Create Preset
       operationId: create_preset_preset__post
       security:
@@ -115,7 +115,7 @@ paths:
   /preset/{preset_id}:
     get:
       tags:
-      - PRESET
+      - preset
       summary: Get Preset
       operationId: get_preset_preset__preset_id__get
       deprecated: true
@@ -166,7 +166,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     patch:
       tags:
-      - PRESET
+      - preset
       summary: Update Preset
       operationId: update_preset_preset__preset_id__patch
       security:
@@ -222,7 +222,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - PRESET
+      - preset
       summary: Delete Preset
       operationId: delete_preset_preset__preset_id__delete
       security:
@@ -272,30 +272,51 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UpdatePresetRequest:
+    GetAllPresetResponse:
       properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        data:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Data
-        applicable_for:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Applicable For
-        type:
-          anyOf:
-          - $ref: '#/components/schemas/Preset'
-          - type: 'null'
+        presets:
+          items:
+            $ref: '#/components/schemas/PresetModel'
+          type: array
+          title: Presets
       type: object
-      title: UpdatePresetRequest
+      required:
+      - presets
+      title: GetAllPresetResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CreatePresetResponse:
+      properties:
+        preset_id:
+          type: integer
+          title: Preset Id
+      type: object
+      required:
+      - preset_id
+      title: CreatePresetResponse
+    Preset:
+      type: string
+      enum:
+      - filter
+      - column_picker
+      - optin_features
+      title: Preset
+    UpdatePresetResponse:
+      properties:
+        preset_id:
+          type: integer
+          title: Preset Id
+      type: object
+      required:
+      - preset_id
+      title: UpdatePresetResponse
     PresetModel:
       properties:
         name:
@@ -322,13 +343,30 @@ components:
       - applicable_for
       - type
       title: PresetModel
-    Preset:
-      type: string
-      enum:
-      - filter
-      - column_picker
-      - optin_features
-      title: Preset
+    UpdatePresetRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        applicable_for:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Applicable For
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/Preset'
+          - type: 'null'
+      type: object
+      title: UpdatePresetRequest
     ValidationError:
       properties:
         loc:
@@ -350,61 +388,6 @@ components:
       - msg
       - type
       title: ValidationError
-    GetPresetResponse:
-      properties:
-        preset:
-          $ref: '#/components/schemas/PresetModel'
-      type: object
-      required:
-      - preset
-      title: GetPresetResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    UpdatePresetResponse:
-      properties:
-        preset_id:
-          type: integer
-          title: Preset Id
-      type: object
-      required:
-      - preset_id
-      title: UpdatePresetResponse
-    DeletePresetResponse:
-      properties:
-        preset_id:
-          type: integer
-          title: Preset Id
-      type: object
-      required:
-      - preset_id
-      title: DeletePresetResponse
-    GetAllPresetResponse:
-      properties:
-        presets:
-          items:
-            $ref: '#/components/schemas/PresetModel'
-          type: array
-          title: Presets
-      type: object
-      required:
-      - presets
-      title: GetAllPresetResponse
-    CreatePresetResponse:
-      properties:
-        preset_id:
-          type: integer
-          title: Preset Id
-      type: object
-      required:
-      - preset_id
-      title: CreatePresetResponse
     CreatePresetRequest:
       properties:
         name:
@@ -426,10 +409,24 @@ components:
       - applicable_for
       - type
       title: CreatePresetRequest
+    GetPresetResponse:
+      properties:
+        preset:
+          $ref: '#/components/schemas/PresetModel'
+      type: object
+      required:
+      - preset
+      title: GetPresetResponse
+    DeletePresetResponse:
+      properties:
+        preset_id:
+          type: integer
+          title: Preset Id
+      type: object
+      required:
+      - preset_id
+      title: DeletePresetResponse
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

@@ -1,21 +1,20 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS RESOURCES API
+  title: Fast RESOURCES API
   version: 0.1.0
 tags:
-- name: RESOURCES
+- name: Resources
 paths:
   /data_stores/{data_store_id}/resources:
     post:
       tags:
-      - RESOURCES
+      - Resources
       summary: Create Resource
       description: 'Create a data store in the database.
 
         :param db: The database session for accessing the database.
 
-        :param data_store_creation_request: The data store creation request containing the data store
-        definition and other
+        :param data_store_creation_request: The data store creation request containing the data store definition and other
 
         metadata.
 
@@ -71,7 +70,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
-      - RESOURCES
+      - Resources
       summary: Get Resource
       description: 'Get resources given data store id from the database.
 
@@ -119,7 +118,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     put:
       tags:
-      - RESOURCES
+      - Resources
       summary: Update Resource
       description: ':param db: The database session for accessing the database.
 
@@ -180,7 +179,7 @@ paths:
   /data_stores/{data_store_id}/resources/{resource_id}/metadata:
     post:
       tags:
-      - RESOURCES
+      - Resources
       summary: Add Metadata
       description: 'Get resources given data store id from the database.
 
@@ -223,8 +222,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 400 Add Metadata Data Stores  Data Store Id  Resources  Resource Id  Metadata
-                  Post
+                title: Response 400 Add Metadata Data Stores  Data Store Id  Resources  Resource Id  Metadata Post
         '403':
           description: Not supported for public user
           content:
@@ -232,8 +230,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 403 Add Metadata Data Stores  Data Store Id  Resources  Resource Id  Metadata
-                  Post
+                title: Response 403 Add Metadata Data Stores  Data Store Id  Resources  Resource Id  Metadata Post
         '422':
           description: Validation Error
           content:
@@ -242,6 +239,122 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ResourceUpdateRequest:
+      properties:
+        identifier:
+          type: string
+          title: Identifier
+        resource_schema:
+          additionalProperties: true
+          type: object
+          title: Resource Schema
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - identifier
+      - resource_schema
+      title: ResourceUpdateRequest
+    ResourceCreationRequest:
+      properties:
+        identifier:
+          type: string
+          title: Identifier
+        resource_schema:
+          additionalProperties: true
+          type: object
+          title: Resource Schema
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - identifier
+      - resource_schema
+      title: ResourceCreationRequest
+    MetadataCreationRequest:
+      properties:
+        resource:
+          additionalProperties: true
+          type: object
+          title: Resource
+        columns:
+          additionalProperties: true
+          type: object
+          title: Columns
+      type: object
+      required:
+      - resource
+      - columns
+      title: MetadataCreationRequest
+    ResourceCreationResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - id
+      - message
+      title: ResourceCreationResponse
+    MetadataCreationResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: MetadataCreationResponse
+    ResourceFetchResponse:
+      properties:
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceResponse'
+          type: array
+          title: Resources
+      type: object
+      required:
+      - resources
+      title: ResourceFetchResponse
+    ResourceResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        identifier:
+          type: string
+          title: Identifier
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - id
+      - identifier
+      title: ResourceResponse
     ValidationError:
       properties:
         loc:
@@ -263,111 +376,6 @@ components:
       - msg
       - type
       title: ValidationError
-    MetadataCreationRequest:
-      properties:
-        resource:
-          additionalProperties: true
-          type: object
-          title: Resource
-        columns:
-          additionalProperties: true
-          type: object
-          title: Columns
-      type: object
-      required:
-      - resource
-      - columns
-      title: MetadataCreationRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ResourceCreationRequest:
-      properties:
-        identifier:
-          type: string
-          title: Identifier
-        resource_schema:
-          additionalProperties: true
-          type: object
-          title: Resource Schema
-        options:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Options
-      type: object
-      required:
-      - identifier
-      - resource_schema
-      title: ResourceCreationRequest
-    ResourceCreationResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - id
-      - message
-      title: ResourceCreationResponse
-    ResourceResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        identifier:
-          type: string
-          title: Identifier
-        options:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Options
-      type: object
-      required:
-      - id
-      - identifier
-      title: ResourceResponse
-    MetadataCreationResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: MetadataCreationResponse
-    ResourceUpdateRequest:
-      properties:
-        identifier:
-          type: string
-          title: Identifier
-        resource_schema:
-          additionalProperties: true
-          type: object
-          title: Resource Schema
-        options:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Options
-      type: object
-      required:
-      - identifier
-      - resource_schema
-      title: ResourceUpdateRequest
     ResourceUpdateResponse:
       properties:
         id:
@@ -381,21 +389,7 @@ components:
       - id
       - message
       title: ResourceUpdateResponse
-    ResourceFetchResponse:
-      properties:
-        resources:
-          items:
-            $ref: '#/components/schemas/ResourceResponse'
-          type: array
-          title: Resources
-      type: object
-      required:
-      - resources
-      title: ResourceFetchResponse
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

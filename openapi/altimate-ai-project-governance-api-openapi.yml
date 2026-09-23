@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS PROJECT_GOVERNANCE API
+  title: Fast PROJECT GOVERNANCE API
   version: 0.1.0
 tags:
 - name: PROJECT_GOVERNANCE
@@ -275,11 +275,8 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ProjectGovernanceUpdateCheckRequest:
+    ProjectGovernanceCreateCheckRequest:
       properties:
-        name:
-          type: string
-          title: Name
         description:
           type: string
           title: Description
@@ -287,31 +284,9 @@ components:
           $ref: '#/components/schemas/AuditType'
       type: object
       required:
-      - name
       - description
       - type
-      title: ProjectGovernanceUpdateCheckRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      title: ProjectGovernanceCreateCheckRequest
     HTTPValidationError:
       properties:
         detail:
@@ -330,55 +305,6 @@ components:
       required:
       - ok
       title: StandardResponse
-    AuditType:
-      type: string
-      enum:
-      - documentation
-      - tests
-      - model
-      - file_structure
-      title: AuditType
-    ProjectGovernanceCreateCheckResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - name
-      - description
-      title: ProjectGovernanceCreateCheckResponse
-    ProjectGovernanceCreateCheckRequest:
-      properties:
-        description:
-          type: string
-          title: Description
-        type:
-          $ref: '#/components/schemas/AuditType'
-      type: object
-      required:
-      - description
-      - type
-      title: ProjectGovernanceCreateCheckRequest
-    ProjectGovernanceUpdateCheckResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        type:
-          $ref: '#/components/schemas/AuditType'
-      type: object
-      required:
-      - name
-      - description
-      - type
-      title: ProjectGovernanceUpdateCheckResponse
     ProjectGovernanceRunChecksResponse:
       properties:
         results:
@@ -390,30 +316,30 @@ components:
       required:
       - results
       title: ProjectGovernanceRunChecksResponse
-    CheckRunResult:
+    ProjectGovernanceUpdateCheckRequest:
       properties:
         name:
           type: string
           title: Name
-        answer:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Answer
+        description:
+          type: string
+          title: Description
         type:
-          type: string
-          title: Type
-        id:
-          type: string
-          title: Id
+          $ref: '#/components/schemas/AuditType'
       type: object
       required:
       - name
-      - answer
+      - description
       - type
-      - id
-      title: CheckRunResult
+      title: ProjectGovernanceUpdateCheckRequest
+    AuditType:
+      type: string
+      enum:
+      - documentation
+      - tests
+      - model
+      - file_structure
+      title: AuditType
     ProjectGovernanceRunChecksRequest:
       properties:
         manifest_path:
@@ -454,6 +380,59 @@ components:
       required:
       - check_names
       title: ProjectGovernanceRunChecksRequest
+    CheckRunResult:
+      properties:
+        name:
+          type: string
+          title: Name
+        answer:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Answer
+        type:
+          type: string
+          title: Type
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - name
+      - answer
+      - type
+      - id
+      title: CheckRunResult
+    ProjectGovernanceUpdateCheckResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        type:
+          $ref: '#/components/schemas/AuditType'
+      type: object
+      required:
+      - name
+      - description
+      - type
+      title: ProjectGovernanceUpdateCheckResponse
+    ProjectGovernanceCreateCheckResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - name
+      - description
+      title: ProjectGovernanceCreateCheckResponse
     ProjectGovernanceStoreCheckRequest:
       properties:
         name:
@@ -470,10 +449,28 @@ components:
       - description
       - type
       title: ProjectGovernanceStoreCheckRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS DBT_MODELS API
+  title: Fast DBT MODELS API
   version: 0.1.0
 tags:
 - name: DBT_MODELS
@@ -577,24 +577,86 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    TestMetadata:
+    SQLLineageResponse:
       properties:
-        name:
-          type: string
-          title: Name
+        tableEdges:
+          items:
+            prefixItems:
+            - type: string
+            - type: string
+            type: array
+            maxItems: 2
+            minItems: 2
+          type: array
+          title: Tableedges
+        details:
+          additionalProperties: true
+          type: object
+          title: Details
+        nodePositions:
+          anyOf:
+          - additionalProperties:
+              prefixItems:
+              - type: number
+              - type: number
+              type: array
+              maxItems: 2
+              minItems: 2
+            type: object
+          - type: 'null'
+          title: Nodepositions
       type: object
       required:
-      - name
-      title: TestMetadata
-    DBTModelDetailByRkRequest:
+      - tableEdges
+      - details
+      title: SQLLineageResponse
+    Page_DBTModelPageResponse_:
       properties:
-        dbt_model_rk:
-          type: string
-          title: Dbt Model Rk
+        items:
+          items:
+            $ref: '#/components/schemas/DBTModelPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
       required:
-      - dbt_model_rk
-      title: DBTModelDetailByRkRequest
+      - items
+      - total
+      - page
+      - size
+      title: Page[DBTModelPageResponse]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     DBTModelPageResponse:
       properties:
         project_name:
@@ -676,6 +738,238 @@ components:
       - columns
       - is_stale
       title: DBTModelPageResponse
+    TableNodeResponse:
+      properties:
+        table:
+          type: string
+          title: Table
+        upstream_count:
+          type: integer
+          title: Upstream Count
+        downstream_count:
+          type: integer
+          title: Downstream Count
+        id:
+          anyOf:
+          - type: integer
+          - type: string
+          - type: 'null'
+          title: Id
+        materialization:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Materialization
+        label:
+          type: string
+          title: Label
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        resource_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Type
+        tests:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/TestMetadata'
+            type: array
+          - type: 'null'
+          title: Tests
+        source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
+        is_stale:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Stale
+        last_seen:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Seen
+      type: object
+      required:
+      - table
+      - upstream_count
+      - downstream_count
+      - label
+      title: TableNodeResponse
+    IntegrationFilterOption:
+      properties:
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+        integration_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Type
+          default: dbt_core
+        connection_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Connection Name
+      type: object
+      title: IntegrationFilterOption
+      description: Filter option with integration type for dbt integrations (dbt_core or dbt_cloud)
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    app__schemas__dbt_models__dbt_models__FilterOption:
+      properties:
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+      type: object
+      title: FilterOption
+    Edge:
+      properties:
+        src:
+          type: string
+          title: Src
+        dst:
+          type: string
+          title: Dst
+      type: object
+      required:
+      - src
+      - dst
+      title: Edge
+    DBTModelInsight:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        severity:
+          type: string
+          title: Severity
+        insight_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Insight Metadata
+      type: object
+      required:
+      - name
+      - type
+      - severity
+      - insight_metadata
+      title: DBTModelInsight
+    ColumnLineageEdge:
+      properties:
+        source:
+          type: string
+          title: Source
+        target:
+          type: string
+          title: Target
+        extra:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra
+      type: object
+      required:
+      - source
+      - target
+      title: ColumnLineageEdge
+    ColumnLineageResponse:
+      properties:
+        highlight_edges:
+          items:
+            $ref: '#/components/schemas/ColumnLineageEdge'
+          type: array
+          title: Highlight Edges
+      type: object
+      required:
+      - highlight_edges
+      title: ColumnLineageResponse
+    ConnectedColumnsRequest:
+      properties:
+        column_fqns:
+          items:
+            type: string
+          type: array
+          title: Column Fqns
+        edges:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Edge'
+            type: array
+          - type: 'null'
+          title: Edges
+          default: []
+        nodes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Nodes
+          default: []
+        upstreamExpansion:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Upstreamexpansion
+          default: false
+        showIndirectEdges:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Showindirectedges
+          default: false
+      type: object
+      required:
+      - column_fqns
+      title: ConnectedColumnsRequest
     DBTModelFilterResponse:
       properties:
         dbt_integrations:
@@ -726,43 +1020,33 @@ components:
       - resource_types
       - materializations
       title: DBTModelFilterResponse
-    IntegrationFilterOption:
+    app__schemas__lineage__Tag:
       properties:
-        label:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        rk:
           anyOf:
           - type: string
           - type: 'null'
-          title: Label
-        value:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Value
-        integration_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Type
-          default: dbt_core
-        connection_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Connection Name
-      type: object
-      title: IntegrationFilterOption
-      description: Filter option with integration type for dbt integrations (dbt_core or dbt_cloud)
-    ColumnLineageResponse:
-      properties:
-        highlight_edges:
-          items:
-            $ref: '#/components/schemas/ColumnLineageEdge'
-          type: array
-          title: Highlight Edges
+          title: Rk
       type: object
       required:
-      - highlight_edges
-      title: ColumnLineageResponse
+      - name
+      - description
+      title: Tag
+    DBTModelDetailByRkRequest:
+      properties:
+        dbt_model_rk:
+          type: string
+          title: Dbt Model Rk
+      type: object
+      required:
+      - dbt_model_rk
+      title: DBTModelDetailByRkRequest
     DBTModelIntegrationWithEnvironments:
       properties:
         integration_value:
@@ -778,6 +1062,35 @@ components:
       - integration_value
       - environments
       title: DBTModelIntegrationWithEnvironments
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    FQNRequest:
+      properties:
+        fqn:
+          type: string
+          title: Fqn
+      type: object
+      required:
+      - fqn
+      title: FQNRequest
+    ConnectedTables:
+      properties:
+        tables:
+          items:
+            $ref: '#/components/schemas/TableNodeResponse'
+          type: array
+          title: Tables
+      type: object
+      required:
+      - tables
+      title: ConnectedTables
     DBTModelFetchResponse:
       properties:
         project_name:
@@ -875,34 +1188,31 @@ components:
       - is_stale
       - insights
       title: DBTModelFetchResponse
-    HTTPValidationError:
+    TableSchemaResponse:
       properties:
-        detail:
+        table:
+          type: string
+          title: Table
+        columns:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/SchemaMetadata'
           type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ColumnLineageEdge:
-      properties:
-        source:
-          type: string
-          title: Source
-        target:
-          type: string
-          title: Target
-        extra:
+          title: Columns
+        purpose:
           anyOf:
-          - additionalProperties: true
-            type: object
+          - type: string
           - type: 'null'
-          title: Extra
+          title: Purpose
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
       type: object
       required:
-      - source
-      - target
-      title: ColumnLineageEdge
+      - table
+      - columns
+      title: TableSchemaResponse
     SchemaMetadata:
       properties:
         table_schema_id:
@@ -946,221 +1256,6 @@ components:
       - tags
       - can_lineage_expand
       title: SchemaMetadata
-    ConnectedTables:
-      properties:
-        tables:
-          items:
-            $ref: '#/components/schemas/TableNodeResponse'
-          type: array
-          title: Tables
-      type: object
-      required:
-      - tables
-      title: ConnectedTables
-    DBTModelInsight:
-      properties:
-        name:
-          type: string
-          title: Name
-        type:
-          type: string
-          title: Type
-        severity:
-          type: string
-          title: Severity
-        insight_metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Insight Metadata
-      type: object
-      required:
-      - name
-      - type
-      - severity
-      - insight_metadata
-      title: DBTModelInsight
-    app__schemas__lineage__Tag:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        rk:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rk
-      type: object
-      required:
-      - name
-      - description
-      title: Tag
-    Edge:
-      properties:
-        src:
-          type: string
-          title: Src
-        dst:
-          type: string
-          title: Dst
-      type: object
-      required:
-      - src
-      - dst
-      title: Edge
-    Page_DBTModelPageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DBTModelPageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[DBTModelPageResponse]
-    TableSchemaResponse:
-      properties:
-        table:
-          type: string
-          title: Table
-        columns:
-          items:
-            $ref: '#/components/schemas/SchemaMetadata'
-          type: array
-          title: Columns
-        purpose:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Purpose
-        last_modified_by:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Last Modified By
-      type: object
-      required:
-      - table
-      - columns
-      title: TableSchemaResponse
-    FQNRequest:
-      properties:
-        fqn:
-          type: string
-          title: Fqn
-      type: object
-      required:
-      - fqn
-      title: FQNRequest
-    SQLLineageResponse:
-      properties:
-        tableEdges:
-          items:
-            prefixItems:
-            - type: string
-            - type: string
-            type: array
-            maxItems: 2
-            minItems: 2
-          type: array
-          title: Tableedges
-        details:
-          additionalProperties: true
-          type: object
-          title: Details
-        nodePositions:
-          anyOf:
-          - additionalProperties:
-              prefixItems:
-              - type: number
-              - type: number
-              type: array
-              maxItems: 2
-              minItems: 2
-            type: object
-          - type: 'null'
-          title: Nodepositions
-      type: object
-      required:
-      - tableEdges
-      - details
-      title: SQLLineageResponse
-    app__schemas__dbt_models__dbt_models__FilterOption:
-      properties:
-        label:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Label
-        value:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Value
-      type: object
-      title: FilterOption
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     SQLLineageRequest:
       properties:
         dbt_model_rk:
@@ -1174,114 +1269,16 @@ components:
       - dbt_model_rk
       - session_id
       title: SQLLineageRequest
-    TableNodeResponse:
+    TestMetadata:
       properties:
-        table:
+        name:
           type: string
-          title: Table
-        upstream_count:
-          type: integer
-          title: Upstream Count
-        downstream_count:
-          type: integer
-          title: Downstream Count
-        id:
-          anyOf:
-          - type: integer
-          - type: string
-          - type: 'null'
-          title: Id
-        materialization:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Materialization
-        label:
-          type: string
-          title: Label
-        schema_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schema Name
-        resource_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Resource Type
-        tests:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/TestMetadata'
-            type: array
-          - type: 'null'
-          title: Tests
-        source:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Source
-        is_stale:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Stale
-        last_seen:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Seen
+          title: Name
       type: object
       required:
-      - table
-      - upstream_count
-      - downstream_count
-      - label
-      title: TableNodeResponse
-    ConnectedColumnsRequest:
-      properties:
-        column_fqns:
-          items:
-            type: string
-          type: array
-          title: Column Fqns
-        edges:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Edge'
-            type: array
-          - type: 'null'
-          title: Edges
-          default: []
-        nodes:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Nodes
-          default: []
-        upstreamExpansion:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Upstreamexpansion
-          default: false
-        showIndirectEdges:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Showindirectedges
-          default: false
-      type: object
-      required:
-      - column_fqns
-      title: ConnectedColumnsRequest
+      - name
+      title: TestMetadata
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

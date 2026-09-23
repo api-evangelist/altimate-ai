@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS Datamates API
+  title: Fast Datamates API
   version: 0.1.0
 tags:
 - name: Datamates
@@ -298,51 +298,23 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    DatamateSkill:
+    HTTPValidationError:
       properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        content:
-          type: string
-          title: Content
-        priority:
-          type: integer
-          title: Priority
-        related_tools:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Related Tools
-        source:
-          type: string
-          title: Source
-        integration_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Id
-        always_active:
-          type: boolean
-          title: Always Active
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DatamateResponse:
+      properties:
+        datamate:
+          $ref: '#/components/schemas/DatamateModel'
       type: object
       required:
-      - id
-      - name
-      - description
-      - content
-      - priority
-      - source
-      - always_active
-      title: DatamateSkill
+      - datamate
+      title: DatamateResponse
     GetDatamateWithStatsResponse:
       properties:
         datamate:
@@ -371,157 +343,6 @@ components:
       - events
       - created_at
       title: GetDatamateWithStatsResponse
-    DatamateModel:
-      properties:
-        id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Id
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        integrations:
-          items:
-            $ref: '#/components/schemas/DatamateIntegration'
-          type: array
-          title: Integrations
-        user_id:
-          type: integer
-          title: User Id
-        memory_enabled:
-          type: boolean
-          title: Memory Enabled
-          default: false
-        knowledge_engine_enabled:
-          type: boolean
-          title: Knowledge Engine Enabled
-          default: false
-        privacy:
-          $ref: '#/components/schemas/PrivacySetting'
-          default: private
-        knowledge_bases:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Knowledge Bases
-        created_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Created At
-        skills:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/DatamateSkill'
-            type: array
-          - type: 'null'
-          title: Skills
-      type: object
-      required:
-      - name
-      - integrations
-      - user_id
-      title: DatamateModel
-    DatamateKnowledgeEngineDescriptionResponse:
-      properties:
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - description
-      title: DatamateKnowledgeEngineDescriptionResponse
-    DatamateUsageStats:
-      properties:
-        totals:
-          $ref: '#/components/schemas/DatamateUsageItem'
-        previous_totals:
-          $ref: '#/components/schemas/DatamateUsageItem'
-        datamates_usage:
-          additionalProperties:
-            $ref: '#/components/schemas/DatamateUsageItem'
-          type: object
-          title: Datamates Usage
-      type: object
-      required:
-      - totals
-      - previous_totals
-      - datamates_usage
-      title: DatamateUsageStats
-    DatamateIntegration:
-      properties:
-        id:
-          anyOf:
-          - type: string
-          - type: integer
-          title: Id
-        tools:
-          items:
-            $ref: '#/components/schemas/DatamateIntegrationTool'
-          type: array
-          title: Tools
-      type: object
-      required:
-      - id
-      - tools
-      title: DatamateIntegration
-    UpdateDatamateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        integrations:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/DatamateIntegration'
-            type: array
-          - type: 'null'
-          title: Integrations
-        memory_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Memory Enabled
-        knowledge_engine_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Knowledge Engine Enabled
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-        knowledge_bases:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Knowledge Bases
-      type: object
-      title: UpdateDatamateRequest
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
     KnowledgeBaseResponse:
       properties:
         name:
@@ -582,24 +403,221 @@ components:
       - forked
       - is_deleted
       title: KnowledgeBaseResponse
-    PageModel:
+    ValidationError:
       properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DatamateIntegration:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: integer
+          title: Id
+        tools:
+          items:
+            $ref: '#/components/schemas/DatamateIntegrationTool'
+          type: array
+          title: Tools
+      type: object
+      required:
+      - id
+      - tools
+      title: DatamateIntegration
+    DatamateKnowledgeBasesResponse:
+      properties:
+        knowledge_bases:
+          items:
+            $ref: '#/components/schemas/KnowledgeBaseResponse'
+          type: array
+          title: Knowledge Bases
+      type: object
+      required:
+      - knowledge_bases
+      title: DatamateKnowledgeBasesResponse
+    DatamateModel:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        integrations:
+          items:
+            $ref: '#/components/schemas/DatamateIntegration'
+          type: array
+          title: Integrations
+        user_id:
+          type: integer
+          title: User Id
+        memory_enabled:
+          type: boolean
+          title: Memory Enabled
+          default: false
+        knowledge_engine_enabled:
+          type: boolean
+          title: Knowledge Engine Enabled
+          default: false
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+          default: private
+        knowledge_bases:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Knowledge Bases
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        skills:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DatamateSkill'
+            type: array
+          - type: 'null'
+          title: Skills
+      type: object
+      required:
+      - name
+      - integrations
+      - user_id
+      title: DatamateModel
+    DatamateSkill:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
         content:
           type: string
           title: Content
+        priority:
+          type: integer
+          title: Priority
+        related_tools:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Related Tools
+        source:
+          type: string
+          title: Source
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        always_active:
+          type: boolean
+          title: Always Active
       type: object
       required:
+      - id
+      - name
+      - description
       - content
-      title: PageModel
-    HTTPValidationError:
+      - priority
+      - source
+      - always_active
+      title: DatamateSkill
+    CreateDatamateResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        id:
+          type: integer
+          title: Id
       type: object
-      title: HTTPValidationError
+      required:
+      - id
+      title: CreateDatamateResponse
+    GetAllDatamatesWithStatsResponse:
+      properties:
+        datamates:
+          items:
+            $ref: '#/components/schemas/DatamateModel'
+          type: array
+          title: Datamates
+        usage:
+          $ref: '#/components/schemas/DatamateUsageStats'
+      type: object
+      required:
+      - datamates
+      - usage
+      title: GetAllDatamatesWithStatsResponse
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    DatamateUsageItem:
+      properties:
+        assists:
+          type: integer
+          title: Assists
+          default: 0
+        guardrails:
+          type: integer
+          title: Guardrails
+          default: 0
+      type: object
+      title: DatamateUsageItem
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    ContentModel:
+      properties:
+        pages:
+          items:
+            $ref: '#/components/schemas/PageModel'
+          type: array
+          title: Pages
+      type: object
+      required:
+      - pages
+      title: ContentModel
     DatamateIntegrationTool:
       properties:
         key:
@@ -609,14 +627,64 @@ components:
       required:
       - key
       title: DatamateIntegrationTool
-    DatamateResponse:
+    CreateDatamateRequest:
       properties:
-        datamate:
-          $ref: '#/components/schemas/DatamateModel'
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        integrations:
+          items:
+            $ref: '#/components/schemas/DatamateIntegration'
+          type: array
+          title: Integrations
+        memory_enabled:
+          type: boolean
+          title: Memory Enabled
+          default: false
+        knowledge_engine_enabled:
+          type: boolean
+          title: Knowledge Engine Enabled
+          default: false
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+        knowledge_bases:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Knowledge Bases
       type: object
       required:
-      - datamate
-      title: DatamateResponse
+      - name
+      - integrations
+      title: CreateDatamateRequest
+    PageModel:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - content
+      title: PageModel
+    DatamateKnowledgeEngineDescriptionResponse:
+      properties:
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - description
+      title: DatamateKnowledgeEngineDescriptionResponse
     DatamateAuditEventModel:
       properties:
         id:
@@ -661,133 +729,6 @@ components:
       - timestamp
       - created_at
       title: DatamateAuditEventModel
-    CreateDatamateRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        integrations:
-          items:
-            $ref: '#/components/schemas/DatamateIntegration'
-          type: array
-          title: Integrations
-        memory_enabled:
-          type: boolean
-          title: Memory Enabled
-          default: false
-        knowledge_engine_enabled:
-          type: boolean
-          title: Knowledge Engine Enabled
-          default: false
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-          default: private
-        knowledge_bases:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Knowledge Bases
-      type: object
-      required:
-      - name
-      - integrations
-      title: CreateDatamateRequest
-    ContentModel:
-      properties:
-        pages:
-          items:
-            $ref: '#/components/schemas/PageModel'
-          type: array
-          title: Pages
-      type: object
-      required:
-      - pages
-      title: ContentModel
-    CreateDatamateResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-      type: object
-      required:
-      - id
-      title: CreateDatamateResponse
-    GetAllDatamatesWithStatsResponse:
-      properties:
-        datamates:
-          items:
-            $ref: '#/components/schemas/DatamateModel'
-          type: array
-          title: Datamates
-        usage:
-          $ref: '#/components/schemas/DatamateUsageStats'
-      type: object
-      required:
-      - datamates
-      - usage
-      title: GetAllDatamatesWithStatsResponse
-    DatamateUsageItem:
-      properties:
-        assists:
-          type: integer
-          title: Assists
-          default: 0
-        guardrails:
-          type: integer
-          title: Guardrails
-          default: 0
-      type: object
-      title: DatamateUsageItem
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    DatamateKnowledgeBasesResponse:
-      properties:
-        knowledge_bases:
-          items:
-            $ref: '#/components/schemas/KnowledgeBaseResponse'
-          type: array
-          title: Knowledge Bases
-      type: object
-      required:
-      - knowledge_bases
-      title: DatamateKnowledgeBasesResponse
     GetAllDatamatesResponse:
       properties:
         datamates:
@@ -799,10 +740,66 @@ components:
       required:
       - datamates
       title: GetAllDatamatesResponse
+    UpdateDatamateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        integrations:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DatamateIntegration'
+            type: array
+          - type: 'null'
+          title: Integrations
+        memory_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Memory Enabled
+        knowledge_engine_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Knowledge Engine Enabled
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+        knowledge_bases:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Knowledge Bases
+      type: object
+      title: UpdateDatamateRequest
+    DatamateUsageStats:
+      properties:
+        totals:
+          $ref: '#/components/schemas/DatamateUsageItem'
+        previous_totals:
+          $ref: '#/components/schemas/DatamateUsageItem'
+        datamates_usage:
+          additionalProperties:
+            $ref: '#/components/schemas/DatamateUsageItem'
+          type: object
+          title: Datamates Usage
+      type: object
+      required:
+      - totals
+      - previous_totals
+      - datamates_usage
+      title: DatamateUsageStats
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

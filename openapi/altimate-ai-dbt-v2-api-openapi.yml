@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS DBT_V2 API
+  title: Fast DBT V2 API
   version: 0.1.0
 tags:
 - name: DBT_V2
@@ -327,112 +327,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UnifiedMessage:
-      properties:
-        type:
-          $ref: '#/components/schemas/MessageType'
-        content:
-          type: string
-          title: Content
-        additional_kwargs:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Additional Kwargs
-          default: {}
-      type: object
-      required:
-      - type
-      - content
-      title: UnifiedMessage
-    ColumnDescription:
-      properties:
-        column_name:
-          type: string
-          title: Column Name
-        column_description:
-          type: string
-          title: Column Description
-        column_citations:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Citation'
-            type: array
-          - type: 'null'
-          title: Column Citations
-      type: object
-      required:
-      - column_name
-      - column_description
-      title: ColumnDescription
-    DBTQueryAnalysisRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-        model:
-          $ref: '#/components/schemas/DBTModel-Input'
-        job_type:
-          $ref: '#/components/schemas/QueryAnalysisJob'
-        user_request:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Request
-        selected_part:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Selected Part
-        history:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/UnifiedMessage'
-            type: array
-          - type: 'null'
-          title: History
-      type: object
-      required:
-      - session_id
-      - model
-      - job_type
-      title: DBTQueryAnalysisRequest
-    Citation:
-      properties:
-        id:
-          type: string
-          title: Id
-        content:
-          type: string
-          title: Content
-        taskLabel:
-          type: string
-          title: Tasklabel
-      type: object
-      required:
-      - id
-      - content
-      - taskLabel
-      title: Citation
-    FollowUpInstruction:
-      properties:
-        instruction:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Instruction
-      type: object
-      title: FollowUpInstruction
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     SelectedColumn:
       properties:
         model_node:
@@ -446,6 +340,62 @@ components:
       required:
       - column
       title: SelectedColumn
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Column:
+      properties:
+        column_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Column Name
+        data_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Data Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tests:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tests
+      type: object
+      title: Column
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     SupportedLanguage:
       type: string
       enum:
@@ -500,138 +450,29 @@ components:
       - model_dialect
       - model_info
       title: DBTColumnLineageRequestV2
-    DBTModel-Input:
-      properties:
-        model_name:
-          type: string
-          title: Model Name
-        adapter:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Adapter
-        model_description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Model Description
-        compiled_sql:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Compiled Sql
-        schedule:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schedule
-        columns:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Column'
-            type: array
-          - type: 'null'
-          title: Columns
-        dependencies:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/DBTModel-Input'
-            type: array
-          - type: 'null'
-          title: Dependencies
-      type: object
-      required:
-      - model_name
-      title: DBTModel
-    UserInstructions:
-      properties:
-        prompt_hint:
-          anyOf:
-          - $ref: '#/components/schemas/PromptHint'
-          - type: 'null'
-        language:
-          anyOf:
-          - $ref: '#/components/schemas/SupportedLanguage'
-          - type: 'null'
-        persona:
-          anyOf:
-          - $ref: '#/components/schemas/Persona'
-          - type: 'null'
-      type: object
-      title: UserInstructions
-    ModelNode:
-      properties:
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        schema_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schema Name
-        package_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Package Name
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        alias:
-          type: string
-          title: Alias
-        uniqueId:
-          type: string
-          title: Uniqueid
-        columns:
-          additionalProperties:
-            $ref: '#/components/schemas/ModelColumn'
-          type: object
-          title: Columns
-      type: object
-      required:
-      - alias
-      - uniqueId
-      - columns
-      title: ModelNode
-    PromptHint:
+    QueryAnalysisJob:
       type: string
       enum:
-      - short
-      - long
-      - funny
-      - generate
-      title: PromptHint
-    Column:
+      - explain
+      - fix
+      - modify
+      title: QueryAnalysisJob
+    DBTColumnLineageResponse:
       properties:
-        column_name:
+        column_lineage:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Column Lineage
+        confidence:
           anyOf:
-          - type: string
+          - $ref: '#/components/schemas/Confidence'
           - type: 'null'
-          title: Column Name
-        data_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Data Type
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        tests:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tests
       type: object
-      title: Column
+      required:
+      - column_lineage
+      title: DBTColumnLineageResponse
     DBTDocsGenRequestV2:
       properties:
         columns:
@@ -675,12 +516,6 @@ components:
       required:
       - dbt_model
       title: DBTDocsGenRequestV2
-    MessageType:
-      type: string
-      enum:
-      - SystemMessage
-      - HumanMessage
-      title: MessageType
     DBTDocsGenResponse:
       properties:
         model_description:
@@ -713,113 +548,15 @@ components:
           title: Chain Of Thought
       type: object
       title: DBTDocsGenResponse
-    Persona:
-      type: string
-      enum:
-      - Data Analyst
-      - Data Engineer
-      - Data Scientist
-      - Business User
-      - General User
-      - Technical User
-      title: Persona
-    QueryAnalysisJob:
-      type: string
-      enum:
-      - explain
-      - fix
-      - modify
-      title: QueryAnalysisJob
-    ModelInfo:
+    FollowUpInstruction:
       properties:
-        model_node:
-          $ref: '#/components/schemas/ModelNode'
-        compiled_sql:
+        instruction:
           anyOf:
           - type: string
           - type: 'null'
-          title: Compiled Sql
-        raw_sql:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Raw Sql
+          title: Instruction
       type: object
-      required:
-      - model_node
-      title: ModelInfo
-    Schemas:
-      properties:
-        model_name:
-          additionalProperties: true
-          type: object
-          title: Model Name
-      type: object
-      required:
-      - model_name
-      title: Schemas
-    DBTQueryFollowUpQuestionsRequest:
-      properties:
-        model:
-          $ref: '#/components/schemas/DBTModel-Input'
-        user_request:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Request
-        job_type:
-          $ref: '#/components/schemas/QueryAnalysisJob'
-          default: explain
-      type: object
-      required:
-      - model
-      title: DBTQueryFollowUpQuestionsRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DBTColumnLineageResponse:
-      properties:
-        column_lineage:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Column Lineage
-        confidence:
-          anyOf:
-          - $ref: '#/components/schemas/Confidence'
-          - type: 'null'
-      type: object
-      required:
-      - column_lineage
-      title: DBTColumnLineageResponse
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
+      title: FollowUpInstruction
     DBTTest:
       properties:
         model:
@@ -852,15 +589,220 @@ components:
       - model
       - user_request
       title: DBTTest
-    DBTBulkTestGenRequest:
+    DBTModel-Input:
       properties:
-        session_id:
+        model_name:
+          type: string
+          title: Model Name
+        adapter:
           anyOf:
           - type: string
           - type: 'null'
-          title: Session Id
+          title: Adapter
+        model_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Description
+        compiled_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compiled Sql
+        schedule:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schedule
+        columns:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Column'
+            type: array
+          - type: 'null'
+          title: Columns
+        dependencies:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DBTModel-Input'
+            type: array
+          - type: 'null'
+          title: Dependencies
       type: object
-      title: DBTBulkTestGenRequest
+      required:
+      - model_name
+      title: DBTModel
+    MessageType:
+      type: string
+      enum:
+      - SystemMessage
+      - HumanMessage
+      title: MessageType
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    Confidence:
+      properties:
+        confidence:
+          type: string
+          title: Confidence
+        operator_list:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Operator List
+      type: object
+      required:
+      - confidence
+      title: Confidence
+    DBTQueryAnalysisRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        model:
+          $ref: '#/components/schemas/DBTModel-Input'
+        job_type:
+          $ref: '#/components/schemas/QueryAnalysisJob'
+        user_request:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Request
+        selected_part:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Selected Part
+        history:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UnifiedMessage'
+            type: array
+          - type: 'null'
+          title: History
+      type: object
+      required:
+      - session_id
+      - model
+      - job_type
+      title: DBTQueryAnalysisRequest
+    ModelInfo:
+      properties:
+        model_node:
+          $ref: '#/components/schemas/ModelNode'
+        compiled_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compiled Sql
+        raw_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Sql
+      type: object
+      required:
+      - model_node
+      title: ModelInfo
+    ColumnDescription:
+      properties:
+        column_name:
+          type: string
+          title: Column Name
+        column_description:
+          type: string
+          title: Column Description
+        column_citations:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Citation'
+            type: array
+          - type: 'null'
+          title: Column Citations
+      type: object
+      required:
+      - column_name
+      - column_description
+      title: ColumnDescription
+    UnifiedMessage:
+      properties:
+        type:
+          $ref: '#/components/schemas/MessageType'
+        content:
+          type: string
+          title: Content
+        additional_kwargs:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Additional Kwargs
+          default: {}
+      type: object
+      required:
+      - type
+      - content
+      title: UnifiedMessage
+    Citation:
+      properties:
+        id:
+          type: string
+          title: Id
+        content:
+          type: string
+          title: Content
+        taskLabel:
+          type: string
+          title: Tasklabel
+      type: object
+      required:
+      - id
+      - content
+      - taskLabel
+      title: Citation
+    UserInstructions:
+      properties:
+        prompt_hint:
+          anyOf:
+          - $ref: '#/components/schemas/PromptHint'
+          - type: 'null'
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/SupportedLanguage'
+          - type: 'null'
+        persona:
+          anyOf:
+          - $ref: '#/components/schemas/Persona'
+          - type: 'null'
+      type: object
+      title: UserInstructions
+    PromptHint:
+      type: string
+      enum:
+      - short
+      - long
+      - funny
+      - generate
+      title: PromptHint
+    Persona:
+      type: string
+      enum:
+      - Data Analyst
+      - Data Engineer
+      - Data Scientist
+      - Business User
+      - General User
+      - Technical User
+      title: Persona
     ModelColumn:
       properties:
         name:
@@ -880,26 +822,81 @@ components:
       required:
       - name
       title: ModelColumn
-    Confidence:
+    DBTQueryFollowUpQuestionsRequest:
       properties:
-        confidence:
-          type: string
-          title: Confidence
-        operator_list:
+        model:
+          $ref: '#/components/schemas/DBTModel-Input'
+        user_request:
           anyOf:
-          - items:
-              type: string
-            type: array
+          - type: string
           - type: 'null'
-          title: Operator List
+          title: User Request
+        job_type:
+          $ref: '#/components/schemas/QueryAnalysisJob'
+          default: explain
       type: object
       required:
-      - confidence
-      title: Confidence
+      - model
+      title: DBTQueryFollowUpQuestionsRequest
+    Schemas:
+      properties:
+        model_name:
+          additionalProperties: true
+          type: object
+          title: Model Name
+      type: object
+      required:
+      - model_name
+      title: Schemas
+    ModelNode:
+      properties:
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        package_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Package Name
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        alias:
+          type: string
+          title: Alias
+        uniqueId:
+          type: string
+          title: Uniqueid
+        columns:
+          additionalProperties:
+            $ref: '#/components/schemas/ModelColumn'
+          type: object
+          title: Columns
+      type: object
+      required:
+      - alias
+      - uniqueId
+      - columns
+      title: ModelNode
+    DBTBulkTestGenRequest:
+      properties:
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      type: object
+      title: DBTBulkTestGenRequest
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

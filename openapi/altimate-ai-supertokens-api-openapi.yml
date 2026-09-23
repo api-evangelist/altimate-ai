@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS SUPERTOKENS API
+  title: Fast SUPERTOKENS API
   version: 0.1.0
 tags:
 - name: SUPERTOKENS
@@ -206,8 +206,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 400 Update Tenant Thirdparty Custom Supertokens Update Tenant Thirdparty
-                  Custom Post
+                title: Response 400 Update Tenant Thirdparty Custom Supertokens Update Tenant Thirdparty Custom Post
         '403':
           description: Not supported for public user
           content:
@@ -215,8 +214,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response 403 Update Tenant Thirdparty Custom Supertokens Update Tenant Thirdparty
-                  Custom Post
+                title: Response 403 Update Tenant Thirdparty Custom Supertokens Update Tenant Thirdparty Custom Post
         '422':
           description: Validation Error
           content:
@@ -398,6 +396,15 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ConfigureRequest:
       properties:
         client_id:
@@ -415,6 +422,11 @@ components:
       - client_secret
       - oidc_url
       title: ConfigureRequest
+    ConfigureProvider:
+      type: string
+      enum:
+      - okta
+      title: ConfigureProvider
     ValidationError:
       properties:
         loc:
@@ -436,30 +448,13 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ThirdPartySSO:
       type: string
       enum:
       - okta
       - active-directory
       title: ThirdPartySSO
-    ConfigureProvider:
-      type: string
-      enum:
-      - okta
-      title: ConfigureProvider
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS Databricks Cost API
+  title: Fast Databricks Cost API
   version: 0.1.0
 tags:
 - name: Databricks Cost
@@ -266,15 +266,9 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/CategoryName'
-          description: Which UI category the chart is for. Drives both the product filter and the per-row
-            segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML
-            / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values
-            return the products in that spec group.
+          description: Which UI category the chart is for. Drives both the product filter and the per-row segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return the products in that spec group.
           default: total
-        description: Which UI category the chart is for. Drives both the product filter and the per-row
-          segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML /
-          Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return
-          the products in that spec group.
+        description: Which UI category the chart is for. Drives both the product filter and the per-row segment label. ``total`` returns the 5 spec-group stack (Clusters / SQL Warehouse / AI/ML / Lakehouse / Platform). ``sql_warehouse`` returns Classic / Pro / Serverless. Other values return the products in that spec group.
       - name: navigationSource
         in: query
         required: false
@@ -855,12 +849,9 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/CategoryName'
-          description: Which UI category to segment the projection by. ``total`` → the 6 spec groups;
-            ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group.
-            Mirrors ``/cost/trends/by-product``.
+          description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
           default: total
-        description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse``
-          → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
+        description: Which UI category to segment the projection by. ``total`` → the 6 spec groups; ``sql_warehouse`` → Classic / Pro / Serverless; other values → the products of that spec group. Mirrors ``/cost/trends/by-product``.
       - name: navigationSource
         in: query
         required: false
@@ -941,11 +932,9 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/CategoryName'
-          description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for
-            the segmentation rules.
+          description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for the segmentation rules.
           default: total
-        description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for
-          the segmentation rules.
+        description: Which UI category to segment the estimate by. See ``/cost/overall/estimate`` for the segmentation rules.
       - name: navigationSource
         in: query
         required: false
@@ -1538,6 +1527,334 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ComputeTypeBreakdown:
+      properties:
+        compute_type:
+          type: string
+          title: Compute Type
+          description: 'Compute type: jobs, all_purpose, sql, other'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this compute type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this compute type
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - compute_type
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: ComputeTypeBreakdown
+      description: Breakdown by compute type (jobs, all_purpose, sql, other).
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ProductTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/ProductTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data by product
+        products:
+          items:
+            type: string
+          type: array
+          title: Products
+          description: Canonical segment labels for the chart legend, in display order. When called with a ``category``, this is the full set of expected segments for that category — empty segments are still included so the legend stays stable across date ranges.
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/CategoryName'
+          - type: 'null'
+          description: Category the response was computed for. Omitted when called without the ``category`` query param.
+      type: object
+      required:
+      - trends
+      - products
+      - granularity
+      title: ProductTrendsResponse
+      description: Response model for cost trends by product endpoint.
+    WorkspacesResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceSummary'
+          type: array
+          title: Workspaces
+          description: List of workspaces
+      type: object
+      required:
+      - workspaces
+      title: WorkspacesResponse
+      description: Response model for workspaces list endpoint.
+    CostTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/CostTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data points
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+      type: object
+      required:
+      - trends
+      - granularity
+      title: CostTrendsResponse
+      description: Response model for cost trends endpoint.
+    ProductEstimateTrendsResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/ProductEstimateItem'
+          type: array
+          title: Graph
+          description: Graph data with actual and projected costs by product
+        products:
+          items:
+            type: string
+          type: array
+          title: Products
+          description: Unique product names for chart legend
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      required:
+      - graph
+      - products
+      title: ProductEstimateTrendsResponse
+      description: Response model for product-level cost projection endpoint.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WorkspaceEfficiencyResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceEfficiencyItem'
+          type: array
+          title: Workspaces
+          description: List of workspace efficiency metrics
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs across all workspaces
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total cost across all workspaces
+      type: object
+      required:
+      - workspaces
+      - total_dbus
+      - total_cost
+      title: WorkspaceEfficiencyResponse
+      description: Response model for workspace efficiency endpoint.
+    EstimateSegmentItem:
+      properties:
+        product:
+          type: string
+          title: Product
+          description: Segment label for this category
+        cost:
+          type: number
+          title: Cost
+          description: Actual cost for the period
+          default: 0
+        cost_estimate:
+          type: number
+          title: Cost Estimate
+          description: Projected cost for the period
+          default: 0
+        percentage_change:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Change
+          description: Percentage change from the previous period
+      type: object
+      required:
+      - product
+      title: EstimateSegmentItem
+      description: 'One segment''s actual + projected cost at a single point on the estimate
+
+        graph. The segment is whatever the requested ``category`` resolves to —
+
+        a spec group (``category=total``), a product (e.g. ``category=clusters``),
+
+        or a SQL tier (``category=sql_warehouse``). ``product`` carries the same
+
+        label semantics as ``ProductTrendItem.product``.'
+    CostOverviewResponse:
+      properties:
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBU consumption
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost in USD
+        days_count:
+          type: integer
+          title: Days Count
+          description: Number of days in the period
+        workspace_count:
+          type: integer
+          title: Workspace Count
+          description: Number of active workspaces
+        sku_count:
+          type: integer
+          title: Sku Count
+          description: Number of distinct SKUs
+        delta_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Delta Pct
+          description: Percentage change vs previous period
+        daily_average_dbus:
+          type: number
+          title: Daily Average Dbus
+          description: Average daily DBU consumption
+        category_breakdown:
+          items:
+            $ref: '#/components/schemas/CostCategoryItem'
+          type: array
+          title: Category Breakdown
+          description: Per-category cost & DBU breakdown for the 5 spec groups, in canonical legend order (Clusters → SQL Warehouse → AI/ML → Lakehouse → Platform). Empty categories are included with zero values so the FE can keep colour ordering stable.
+      type: object
+      required:
+      - total_dbus
+      - estimated_cost
+      - days_count
+      - workspace_count
+      - sku_count
+      - daily_average_dbus
+      title: CostOverviewResponse
+      description: Response model for cost overview endpoint.
+    DeploymentTypeBreakdown:
+      properties:
+        deployment_type:
+          type: string
+          title: Deployment Type
+          description: 'Deployment type: serverless or provisioned'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this deployment type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this deployment type
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - deployment_type
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: DeploymentTypeBreakdown
+      description: Breakdown by deployment type (serverless vs provisioned).
+    DeploymentTypeTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        deployment_type:
+          type: string
+          title: Deployment Type
+          description: 'Deployment type: serverless or provisioned'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+type
+      type: object
+      required:
+      - period
+      - deployment_type
+      - total_dbus
+      - estimated_cost
+      title: DeploymentTypeTrendItem
+      description: Single data point for deployment type trends (serverless vs provisioned).
+    app__schemas__databricks__cost__CostBreakdownResponse:
+      properties:
+        breakdown:
+          items:
+            $ref: '#/components/schemas/CostBreakdownItem'
+          type: array
+          title: Breakdown
+          description: Cost breakdown items
+        group_by:
+          type: string
+          title: Group By
+          description: Grouping dimension (sku/workspace/product)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs across all groups
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total estimated cost
+      type: object
+      required:
+      - breakdown
+      - group_by
+      - total_dbus
+      - total_cost
+      title: CostBreakdownResponse
+      description: Response model for cost breakdown endpoint.
     EstimateSegmentTotalItem:
       properties:
         product:
@@ -1561,113 +1878,18 @@ components:
       description: 'One segment''s combined (actual + projected) cost in the total estimate.
 
         Cost-only — the projection does not forecast DBUs.'
-    DeploymentTypeTrendsResponse:
+    CloudCostTrendRow:
       properties:
-        trends:
-          items:
-            $ref: '#/components/schemas/DeploymentTypeTrendItem'
-          type: array
-          title: Trends
-          description: List of trend data by deployment type
-        deployment_types:
-          items:
-            type: string
-          type: array
-          title: Deployment Types
-          description: Unique deployment types for chart legend
-        granularity:
+        period:
           type: string
-          title: Granularity
-          description: Time granularity (day/week/month)
+          title: Period
+          description: Bucket start date, ``YYYY-MM-DD``.
+      additionalProperties: true
       type: object
       required:
-      - trends
-      - deployment_types
-      - granularity
-      title: DeploymentTypeTrendsResponse
-      description: Response model for deployment type trends endpoint.
-    CostComparisonResponse:
-      properties:
-        current_period_dbus:
-          type: number
-          title: Current Period Dbus
-          description: DBUs in current period
-        previous_period_dbus:
-          type: number
-          title: Previous Period Dbus
-          description: DBUs in previous period
-        current_period_cost:
-          type: number
-          title: Current Period Cost
-          description: Cost in current period
-        previous_period_cost:
-          type: number
-          title: Previous Period Cost
-          description: Cost in previous period
-        delta_dbus:
-          type: number
-          title: Delta Dbus
-          description: Change in DBUs
-        delta_cost:
-          type: number
-          title: Delta Cost
-          description: Change in cost
-        delta_pct:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Delta Pct
-          description: Percentage change
-      type: object
-      required:
-      - current_period_dbus
-      - previous_period_dbus
-      - current_period_cost
-      - previous_period_cost
-      - delta_dbus
-      - delta_cost
-      title: CostComparisonResponse
-      description: Response model for period comparison.
-    CostEstimateTrendsResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/CostEstimateGraphItem'
-          type: array
-          title: Graph
-          description: Graph data with actual and projected costs
-        products:
-          items:
-            type: string
-          type: array
-          title: Products
-          description: Canonical segment legend for the requested ``category``, in display order — includes
-            segments with no data so the legend stays stable across date ranges.
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-        category:
-          anyOf:
-          - $ref: '#/components/schemas/CategoryName'
-          - type: 'null'
-          description: Category the estimate was computed for
-      type: object
-      required:
-      - graph
-      title: CostEstimateTrendsResponse
-      description: Response model for cost estimate/projection endpoint.
-    CostCategory:
-      type: string
-      enum:
-      - Compute
-      - SQL
-      - AI/ML
-      - Data Platform
-      - Infrastructure
-      title: CostCategory
-      description: Cost category classification for Databricks SKUs.
+      - period
+      title: CloudCostTrendRow
+      description: "One stacked-bar period of cloud infrastructure cost by category.\n\nBesides ``period`` the row carries, as extra keys:\n  * one float per segment in :data:`CLOUD_COST_SEGMENTS` (e.g. ``Compute``),\n  * ``percentage_<segment>`` — % change vs the previous period (or ``None``),\n  * :data:`CLOUD_TOTAL_KEY` — the row total (sum of all segments),\n  * ``percentage_total`` — % change of the total vs the previous period."
     ComputeEfficiencyResponse:
       properties:
         jobs_pct:
@@ -1720,6 +1942,428 @@ components:
       - total_cost
       title: ComputeEfficiencyResponse
       description: Response model for compute efficiency breakdown.
+    EngineTypeTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        engine_type:
+          type: string
+          title: Engine Type
+          description: 'Engine type: photon or standard'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+type
+      type: object
+      required:
+      - period
+      - engine_type
+      - total_dbus
+      - estimated_cost
+      title: EngineTypeTrendItem
+      description: Single data point for engine type trends (photon vs standard).
+    DeploymentTypeTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/DeploymentTypeTrendItem'
+          type: array
+          title: Trends
+          description: List of trend data by deployment type
+        deployment_types:
+          items:
+            type: string
+          type: array
+          title: Deployment Types
+          description: Unique deployment types for chart legend
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day/week/month)
+      type: object
+      required:
+      - trends
+      - deployment_types
+      - granularity
+      title: DeploymentTypeTrendsResponse
+      description: Response model for deployment type trends endpoint.
+    CostEstimateTrendsResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/CostEstimateGraphItem'
+          type: array
+          title: Graph
+          description: Graph data with actual and projected costs
+        products:
+          items:
+            type: string
+          type: array
+          title: Products
+          description: Canonical segment legend for the requested ``category``, in display order — includes segments with no data so the legend stays stable across date ranges.
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/CategoryName'
+          - type: 'null'
+          description: Category the estimate was computed for
+      type: object
+      required:
+      - graph
+      title: CostEstimateTrendsResponse
+      description: Response model for cost estimate/projection endpoint.
+    CostTotalResponse:
+      properties:
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBU consumption
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total cost
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+        category_breakdown:
+          items:
+            $ref: '#/components/schemas/CategoryBreakdownItem'
+          type: array
+          title: Category Breakdown
+          description: Cost breakdown by category
+        days_count:
+          type: integer
+          title: Days Count
+          description: Number of days in the period
+        delta_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Delta Pct
+          description: Percentage change vs previous period
+      type: object
+      required:
+      - total_dbus
+      - total_cost
+      - category_breakdown
+      - days_count
+      title: CostTotalResponse
+      description: Response model for total cost endpoint with category breakdown.
+    CostBreakdownItem:
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Name of the group (SKU, workspace, product)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this group
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this group
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+        record_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Record Count
+          description: Number of billing records
+      type: object
+      required:
+      - name
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: CostBreakdownItem
+      description: Single item in cost breakdown.
+    CloudCostProjectionRow:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Month start date, ``YYYY-MM-01``.
+        total:
+          type: number
+          title: Total
+          description: Sum of the actual segment values.
+        total_estimate:
+          type: number
+          title: Total Estimate
+          description: Sum of the projected (estimate) segment values.
+        is_estimate:
+          type: boolean
+          title: Is Estimate
+          description: True only for fully-future months (past + current are False).
+      additionalProperties: true
+      type: object
+      required:
+      - period
+      - total
+      - total_estimate
+      - is_estimate
+      title: CloudCostProjectionRow
+      description: 'One calendar month of actual + projected cloud cost (Future State tab).
+
+
+        Past months are fully actual (``<cat>`` = month total, ``<cat>_estimate`` =
+
+        0). The current month splits into month-to-date actual (``<cat>``) +
+
+        run-rate projected remainder (``<cat>_estimate``). Future months are fully
+
+        projected (``<cat>`` = 0, ``<cat>_estimate`` = run-rate). ``percentage_*``
+
+        fields compare each segment''s full (actual + estimate) value to the prior
+
+        month.'
+    ProductTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        product:
+          type: string
+          title: Product
+          description: Product name (JOBS, SQL, etc.)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+product
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+product
+      type: object
+      required:
+      - period
+      - product
+      - total_dbus
+      - estimated_cost
+      title: ProductTrendItem
+      description: Single data point for product trends (period + product combination).
+    EngineTypeBreakdown:
+      properties:
+        engine_type:
+          type: string
+          title: Engine Type
+          description: 'Engine type: photon or standard'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this engine type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this engine type
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - engine_type
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: EngineTypeBreakdown
+      description: Breakdown by engine type (photon vs standard).
+    ProductEstimateItem:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: Period date (ISO format)
+        product:
+          type: string
+          title: Product
+          description: Product name (JOBS, SQL, etc.)
+        category:
+          type: string
+          title: Category
+          description: Category the product belongs to
+        cost:
+          type: number
+          title: Cost
+          description: Actual cost for the period
+          default: 0
+        cost_estimate:
+          type: number
+          title: Cost Estimate
+          description: Projected cost for the period
+          default: 0
+        is_estimate:
+          type: boolean
+          title: Is Estimate
+          description: Whether this is a projected period
+          default: false
+        percentage_change:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Change
+          description: Percentage change from previous period
+      type: object
+      required:
+      - date
+      - product
+      - category
+      title: ProductEstimateItem
+      description: Single data point for product-level cost projection.
+    ComputeTypeTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        compute_type:
+          type: string
+          title: Compute Type
+          description: 'Compute type: jobs, all_purpose, sql, other'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this period+type
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this period+type
+      type: object
+      required:
+      - period
+      - compute_type
+      - total_dbus
+      - estimated_cost
+      title: ComputeTypeTrendItem
+      description: Single data point for compute type trends.
+    CostTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: Period label (date or week/month)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for the period
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for the period
+      type: object
+      required:
+      - period
+      - total_dbus
+      - estimated_cost
+      title: CostTrendItem
+      description: Single data point in cost trend.
+    CategoryBreakdownItem:
+      properties:
+        category:
+          $ref: '#/components/schemas/CostCategory'
+          description: Cost category
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs for this category
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          description: Estimated cost for this category
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+          description: Percentage of total cost
+      type: object
+      required:
+      - category
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: CategoryBreakdownItem
+      description: 'Legacy 5-bucket cost breakdown item (``Compute`` / ``SQL`` / ``AI/ML`` /
+
+        ``Data Platform`` / ``Infrastructure``). Used by ``/cost/total`` and the
+
+        Future-state estimate. Prefer ``CostCategoryItem`` for new endpoints.'
+    WorkspaceSummary:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+          description: Databricks workspace ID
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+          description: Workspace display name
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+          description: Workspace status
+      type: object
+      required:
+      - workspace_id
+      title: WorkspaceSummary
+      description: Summary information for a workspace.
+    CategoryName:
+      type: string
+      enum:
+      - total
+      - clusters
+      - sql_warehouse
+      - ai_ml
+      - lakehouse
+      - platform
+      title: CategoryName
+      description: "Spec-group category identifier shared across the cost APIs.\n\nUsed by:\n\n* ``GET /cost/trends/by-product?category=<value>`` — selects which\n  products get filtered in and how each row's segment label is computed.\n* ``GET /cost/overview`` — each ``category_breakdown`` item carries one\n  of these values.\n\nSee ``CATEGORY_DEFINITIONS`` in ``app.service.databricks.cost_constants``\nfor the per-category filter list, segment label expression, and canonical\nlegend order."
+    CostTotalEstimateResponse:
+      properties:
+        total:
+          type: number
+          title: Total
+          description: Total cost (actual + projected)
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/CategoryName'
+          - type: 'null'
+          description: Category the estimate was computed for
+        segment_breakdown:
+          items:
+            $ref: '#/components/schemas/EstimateSegmentTotalItem'
+          type: array
+          title: Segment Breakdown
+          description: Per-segment combined (actual + projected) cost breakdown for the requested ``category``, in canonical legend order.
+      type: object
+      required:
+      - total
+      title: CostTotalEstimateResponse
+      description: Response model for total cost estimate endpoint.
     WorkspaceEfficiencyItem:
       properties:
         workspace_id:
@@ -1767,135 +2411,15 @@ components:
       - efficiency_score
       title: WorkspaceEfficiencyItem
       description: Efficiency metrics for a single workspace.
-    ComputeTypeBreakdown:
-      properties:
-        compute_type:
-          type: string
-          title: Compute Type
-          description: 'Compute type: jobs, all_purpose, sql, other'
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this compute type
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this compute type
-        pct_of_total:
-          type: number
-          title: Pct Of Total
-          description: Percentage of total cost
-      type: object
-      required:
-      - compute_type
-      - total_dbus
-      - estimated_cost
-      - pct_of_total
-      title: ComputeTypeBreakdown
-      description: Breakdown by compute type (jobs, all_purpose, sql, other).
-    ProductEstimateTrendsResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/ProductEstimateItem'
-          type: array
-          title: Graph
-          description: Graph data with actual and projected costs by product
-        products:
-          items:
-            type: string
-          type: array
-          title: Products
-          description: Unique product names for chart legend
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-      type: object
-      required:
-      - graph
-      - products
-      title: ProductEstimateTrendsResponse
-      description: Response model for product-level cost projection endpoint.
-    WorkspaceEfficiencyResponse:
-      properties:
-        workspaces:
-          items:
-            $ref: '#/components/schemas/WorkspaceEfficiencyItem'
-          type: array
-          title: Workspaces
-          description: List of workspace efficiency metrics
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs across all workspaces
-        total_cost:
-          type: number
-          title: Total Cost
-          description: Total cost across all workspaces
-      type: object
-      required:
-      - workspaces
-      - total_dbus
-      - total_cost
-      title: WorkspaceEfficiencyResponse
-      description: Response model for workspace efficiency endpoint.
-    WorkspacesResponse:
-      properties:
-        workspaces:
-          items:
-            $ref: '#/components/schemas/WorkspaceSummary'
-          type: array
-          title: Workspaces
-          description: List of workspaces
-      type: object
-      required:
-      - workspaces
-      title: WorkspacesResponse
-      description: Response model for workspaces list endpoint.
-    app__schemas__databricks__cost__CostBreakdownResponse:
-      properties:
-        breakdown:
-          items:
-            $ref: '#/components/schemas/CostBreakdownItem'
-          type: array
-          title: Breakdown
-          description: Cost breakdown items
-        group_by:
-          type: string
-          title: Group By
-          description: Grouping dimension (sku/workspace/product)
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs across all groups
-        total_cost:
-          type: number
-          title: Total Cost
-          description: Total estimated cost
-      type: object
-      required:
-      - breakdown
-      - group_by
-      - total_dbus
-      - total_cost
-      title: CostBreakdownResponse
-      description: Response model for cost breakdown endpoint.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    CategoryBreakdownItem:
+    CostCategoryItem:
       properties:
         category:
-          $ref: '#/components/schemas/CostCategory'
-          description: Cost category
+          $ref: '#/components/schemas/CategoryName'
+          description: Category identifier (e.g. ``clusters``, ``sql_warehouse``)
+        label:
+          type: string
+          title: Label
+          description: Display label for the category (e.g. ``Clusters``, ``SQL Warehouse``). Matches the legend label used by ``/cost/trends/by-product?category=total``.
         total_dbus:
           type: number
           title: Total Dbus
@@ -1907,192 +2431,33 @@ components:
         pct_of_total:
           type: number
           title: Pct Of Total
-          description: Percentage of total cost
+          description: Share of the overall ``estimated_cost`` (0–100, one decimal). Sums to ~100 across the breakdown.
       type: object
       required:
       - category
+      - label
       - total_dbus
       - estimated_cost
       - pct_of_total
-      title: CategoryBreakdownItem
-      description: 'Legacy 5-bucket cost breakdown item (``Compute`` / ``SQL`` / ``AI/ML`` /
+      title: CostCategoryItem
+      description: 'Per-category cost breakdown item used by ``/cost/overview``.
 
-        ``Data Platform`` / ``Infrastructure``). Used by ``/cost/total`` and the
 
-        Future-state estimate. Prefer ``CostCategoryItem`` for new endpoints.'
-    CostOverviewResponse:
-      properties:
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBU consumption
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost in USD
-        days_count:
-          type: integer
-          title: Days Count
-          description: Number of days in the period
-        workspace_count:
-          type: integer
-          title: Workspace Count
-          description: Number of active workspaces
-        sku_count:
-          type: integer
-          title: Sku Count
-          description: Number of distinct SKUs
-        delta_pct:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Delta Pct
-          description: Percentage change vs previous period
-        daily_average_dbus:
-          type: number
-          title: Daily Average Dbus
-          description: Average daily DBU consumption
-        category_breakdown:
-          items:
-            $ref: '#/components/schemas/CostCategoryItem'
-          type: array
-          title: Category Breakdown
-          description: Per-category cost & DBU breakdown for the 5 spec groups, in canonical legend order
-            (Clusters → SQL Warehouse → AI/ML → Lakehouse → Platform). Empty categories are included with
-            zero values so the FE can keep colour ordering stable.
-      type: object
-      required:
-      - total_dbus
-      - estimated_cost
-      - days_count
-      - workspace_count
-      - sku_count
-      - daily_average_dbus
-      title: CostOverviewResponse
-      description: Response model for cost overview endpoint.
-    EngineTypeBreakdown:
-      properties:
-        engine_type:
-          type: string
-          title: Engine Type
-          description: 'Engine type: photon or standard'
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this engine type
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this engine type
-        pct_of_total:
-          type: number
-          title: Pct Of Total
-          description: Percentage of total cost
-      type: object
-      required:
-      - engine_type
-      - total_dbus
-      - estimated_cost
-      - pct_of_total
-      title: EngineTypeBreakdown
-      description: Breakdown by engine type (photon vs standard).
-    CostTotalResponse:
-      properties:
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBU consumption
-        total_cost:
-          type: number
-          title: Total Cost
-          description: Total cost
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-        category_breakdown:
-          items:
-            $ref: '#/components/schemas/CategoryBreakdownItem'
-          type: array
-          title: Category Breakdown
-          description: Cost breakdown by category
-        days_count:
-          type: integer
-          title: Days Count
-          description: Number of days in the period
-        delta_pct:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Delta Pct
-          description: Percentage change vs previous period
-      type: object
-      required:
-      - total_dbus
-      - total_cost
-      - category_breakdown
-      - days_count
-      title: CostTotalResponse
-      description: Response model for total cost endpoint with category breakdown.
-    CloudCostTrendRow:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: Bucket start date, ``YYYY-MM-DD``.
-      additionalProperties: true
-      type: object
-      required:
-      - period
-      title: CloudCostTrendRow
-      description: "One stacked-bar period of cloud infrastructure cost by category.\n\nBesides ``period``\
-        \ the row carries, as extra keys:\n  * one float per segment in :data:`CLOUD_COST_SEGMENTS` (e.g.\
-        \ ``Compute``),\n  * ``percentage_<segment>`` — % change vs the previous period (or ``None``),\n\
-        \  * :data:`CLOUD_TOTAL_KEY` — the row total (sum of all segments),\n  * ``percentage_total``\
-        \ — % change of the total vs the previous period."
-    ProductEstimateItem:
-      properties:
-        date:
-          type: string
-          title: Date
-          description: Period date (ISO format)
-        product:
-          type: string
-          title: Product
-          description: Product name (JOBS, SQL, etc.)
-        category:
-          type: string
-          title: Category
-          description: Category the product belongs to
-        cost:
-          type: number
-          title: Cost
-          description: Actual cost for the period
-          default: 0
-        cost_estimate:
-          type: number
-          title: Cost Estimate
-          description: Projected cost for the period
-          default: 0
-        is_estimate:
-          type: boolean
-          title: Is Estimate
-          description: Whether this is a projected period
-          default: false
-        percentage_change:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Percentage Change
-          description: Percentage change from previous period
-      type: object
-      required:
-      - date
-      - product
-      - category
-      title: ProductEstimateItem
-      description: Single data point for product-level cost projection.
+        Mirrors the 5-spec-group categorisation that drives the tabbed cost UI.
+
+        ``category`` matches the value the FE sends to
+
+        ``/cost/trends/by-product?category=…``.'
+    CostCategory:
+      type: string
+      enum:
+      - Compute
+      - SQL
+      - AI/ML
+      - Data Platform
+      - Infrastructure
+      title: CostCategory
+      description: Cost category classification for Databricks SKUs.
     EngineTypeTrendsResponse:
       properties:
         trends:
@@ -2118,109 +2483,48 @@ components:
       - granularity
       title: EngineTypeTrendsResponse
       description: Response model for engine type trends endpoint.
-    WorkspaceSummary:
+    CostComparisonResponse:
       properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-          description: Databricks workspace ID
-        workspace_name:
+        current_period_dbus:
+          type: number
+          title: Current Period Dbus
+          description: DBUs in current period
+        previous_period_dbus:
+          type: number
+          title: Previous Period Dbus
+          description: DBUs in previous period
+        current_period_cost:
+          type: number
+          title: Current Period Cost
+          description: Cost in current period
+        previous_period_cost:
+          type: number
+          title: Previous Period Cost
+          description: Cost in previous period
+        delta_dbus:
+          type: number
+          title: Delta Dbus
+          description: Change in DBUs
+        delta_cost:
+          type: number
+          title: Delta Cost
+          description: Change in cost
+        delta_pct:
           anyOf:
-          - type: string
+          - type: number
           - type: 'null'
-          title: Workspace Name
-          description: Workspace display name
-        status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Status
-          description: Workspace status
+          title: Delta Pct
+          description: Percentage change
       type: object
       required:
-      - workspace_id
-      title: WorkspaceSummary
-      description: Summary information for a workspace.
-    CostCategoryItem:
-      properties:
-        category:
-          $ref: '#/components/schemas/CategoryName'
-          description: Category identifier (e.g. ``clusters``, ``sql_warehouse``)
-        label:
-          type: string
-          title: Label
-          description: Display label for the category (e.g. ``Clusters``, ``SQL Warehouse``). Matches
-            the legend label used by ``/cost/trends/by-product?category=total``.
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this category
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this category
-        pct_of_total:
-          type: number
-          title: Pct Of Total
-          description: Share of the overall ``estimated_cost`` (0–100, one decimal). Sums to ~100 across
-            the breakdown.
-      type: object
-      required:
-      - category
-      - label
-      - total_dbus
-      - estimated_cost
-      - pct_of_total
-      title: CostCategoryItem
-      description: 'Per-category cost breakdown item used by ``/cost/overview``.
-
-
-        Mirrors the 5-spec-group categorisation that drives the tabbed cost UI.
-
-        ``category`` matches the value the FE sends to
-
-        ``/cost/trends/by-product?category=…``.'
-    CategoryName:
-      type: string
-      enum:
-      - total
-      - clusters
-      - sql_warehouse
-      - ai_ml
-      - lakehouse
-      - platform
-      title: CategoryName
-      description: "Spec-group category identifier shared across the cost APIs.\n\nUsed by:\n\n* ``GET\
-        \ /cost/trends/by-product?category=<value>`` — selects which\n  products get filtered in and how\
-        \ each row's segment label is computed.\n* ``GET /cost/overview`` — each ``category_breakdown``\
-        \ item carries one\n  of these values.\n\nSee ``CATEGORY_DEFINITIONS`` in ``app.service.databricks.cost_constants``\n\
-        for the per-category filter list, segment label expression, and canonical\nlegend order."
-    EngineTypeTrendItem:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: Period label (date or week/month)
-        engine_type:
-          type: string
-          title: Engine Type
-          description: 'Engine type: photon or standard'
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this period+type
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this period+type
-      type: object
-      required:
-      - period
-      - engine_type
-      - total_dbus
-      - estimated_cost
-      title: EngineTypeTrendItem
-      description: Single data point for engine type trends (photon vs standard).
+      - current_period_dbus
+      - previous_period_dbus
+      - current_period_cost
+      - previous_period_cost
+      - delta_dbus
+      - delta_cost
+      title: CostComparisonResponse
+      description: Response model for period comparison.
     CostEstimateGraphItem:
       properties:
         date:
@@ -2253,170 +2557,12 @@ components:
             $ref: '#/components/schemas/EstimateSegmentItem'
           type: array
           title: Segments
-          description: Per-segment actual + projected costs for the requested ``category``, in canonical
-            legend order. The segment set matches the ``products`` array on the response.
+          description: Per-segment actual + projected costs for the requested ``category``, in canonical legend order. The segment set matches the ``products`` array on the response.
       type: object
       required:
       - date
       title: CostEstimateGraphItem
       description: Single data point in the cost estimate graph with actual + projected values.
-    ProductTrendsResponse:
-      properties:
-        trends:
-          items:
-            $ref: '#/components/schemas/ProductTrendItem'
-          type: array
-          title: Trends
-          description: List of trend data by product
-        products:
-          items:
-            type: string
-          type: array
-          title: Products
-          description: Canonical segment labels for the chart legend, in display order. When called with
-            a ``category``, this is the full set of expected segments for that category — empty segments
-            are still included so the legend stays stable across date ranges.
-        granularity:
-          type: string
-          title: Granularity
-          description: Time granularity (day/week/month)
-        category:
-          anyOf:
-          - $ref: '#/components/schemas/CategoryName'
-          - type: 'null'
-          description: Category the response was computed for. Omitted when called without the ``category``
-            query param.
-      type: object
-      required:
-      - trends
-      - products
-      - granularity
-      title: ProductTrendsResponse
-      description: Response model for cost trends by product endpoint.
-    CloudCostProjectionRow:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: Month start date, ``YYYY-MM-01``.
-        total:
-          type: number
-          title: Total
-          description: Sum of the actual segment values.
-        total_estimate:
-          type: number
-          title: Total Estimate
-          description: Sum of the projected (estimate) segment values.
-        is_estimate:
-          type: boolean
-          title: Is Estimate
-          description: True only for fully-future months (past + current are False).
-      additionalProperties: true
-      type: object
-      required:
-      - period
-      - total
-      - total_estimate
-      - is_estimate
-      title: CloudCostProjectionRow
-      description: 'One calendar month of actual + projected cloud cost (Future State tab).
-
-
-        Past months are fully actual (``<cat>`` = month total, ``<cat>_estimate`` =
-
-        0). The current month splits into month-to-date actual (``<cat>``) +
-
-        run-rate projected remainder (``<cat>_estimate``). Future months are fully
-
-        projected (``<cat>`` = 0, ``<cat>_estimate`` = run-rate). ``percentage_*``
-
-        fields compare each segment''s full (actual + estimate) value to the prior
-
-        month.'
-    DeploymentTypeBreakdown:
-      properties:
-        deployment_type:
-          type: string
-          title: Deployment Type
-          description: 'Deployment type: serverless or provisioned'
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this deployment type
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this deployment type
-        pct_of_total:
-          type: number
-          title: Pct Of Total
-          description: Percentage of total cost
-      type: object
-      required:
-      - deployment_type
-      - total_dbus
-      - estimated_cost
-      - pct_of_total
-      title: DeploymentTypeBreakdown
-      description: Breakdown by deployment type (serverless vs provisioned).
-    ProductTrendItem:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: Period label (date or week/month)
-        product:
-          type: string
-          title: Product
-          description: Product name (JOBS, SQL, etc.)
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this period+product
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this period+product
-      type: object
-      required:
-      - period
-      - product
-      - total_dbus
-      - estimated_cost
-      title: ProductTrendItem
-      description: Single data point for product trends (period + product combination).
-    CostBreakdownItem:
-      properties:
-        name:
-          type: string
-          title: Name
-          description: Name of the group (SKU, workspace, product)
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this group
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this group
-        pct_of_total:
-          type: number
-          title: Pct Of Total
-          description: Percentage of total cost
-        record_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Record Count
-          description: Number of billing records
-      type: object
-      required:
-      - name
-      - total_dbus
-      - estimated_cost
-      - pct_of_total
-      title: CostBreakdownItem
-      description: Single item in cost breakdown.
     ComputeTypeTrendsResponse:
       properties:
         trends:
@@ -2442,185 +2588,7 @@ components:
       - granularity
       title: ComputeTypeTrendsResponse
       description: Response model for compute type trends endpoint.
-    EstimateSegmentItem:
-      properties:
-        product:
-          type: string
-          title: Product
-          description: Segment label for this category
-        cost:
-          type: number
-          title: Cost
-          description: Actual cost for the period
-          default: 0
-        cost_estimate:
-          type: number
-          title: Cost Estimate
-          description: Projected cost for the period
-          default: 0
-        percentage_change:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Percentage Change
-          description: Percentage change from the previous period
-      type: object
-      required:
-      - product
-      title: EstimateSegmentItem
-      description: 'One segment''s actual + projected cost at a single point on the estimate
-
-        graph. The segment is whatever the requested ``category`` resolves to —
-
-        a spec group (``category=total``), a product (e.g. ``category=clusters``),
-
-        or a SQL tier (``category=sql_warehouse``). ``product`` carries the same
-
-        label semantics as ``ProductTrendItem.product``.'
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    CostTotalEstimateResponse:
-      properties:
-        total:
-          type: number
-          title: Total
-          description: Total cost (actual + projected)
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-        category:
-          anyOf:
-          - $ref: '#/components/schemas/CategoryName'
-          - type: 'null'
-          description: Category the estimate was computed for
-        segment_breakdown:
-          items:
-            $ref: '#/components/schemas/EstimateSegmentTotalItem'
-          type: array
-          title: Segment Breakdown
-          description: Per-segment combined (actual + projected) cost breakdown for the requested ``category``,
-            in canonical legend order.
-      type: object
-      required:
-      - total
-      title: CostTotalEstimateResponse
-      description: Response model for total cost estimate endpoint.
-    DeploymentTypeTrendItem:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: Period label (date or week/month)
-        deployment_type:
-          type: string
-          title: Deployment Type
-          description: 'Deployment type: serverless or provisioned'
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this period+type
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this period+type
-      type: object
-      required:
-      - period
-      - deployment_type
-      - total_dbus
-      - estimated_cost
-      title: DeploymentTypeTrendItem
-      description: Single data point for deployment type trends (serverless vs provisioned).
-    CostTrendItem:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: Period label (date or week/month)
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for the period
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for the period
-      type: object
-      required:
-      - period
-      - total_dbus
-      - estimated_cost
-      title: CostTrendItem
-      description: Single data point in cost trend.
-    CostTrendsResponse:
-      properties:
-        trends:
-          items:
-            $ref: '#/components/schemas/CostTrendItem'
-          type: array
-          title: Trends
-          description: List of trend data points
-        granularity:
-          type: string
-          title: Granularity
-          description: Time granularity (day/week/month)
-      type: object
-      required:
-      - trends
-      - granularity
-      title: CostTrendsResponse
-      description: Response model for cost trends endpoint.
-    ComputeTypeTrendItem:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: Period label (date or week/month)
-        compute_type:
-          type: string
-          title: Compute Type
-          description: 'Compute type: jobs, all_purpose, sql, other'
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs for this period+type
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          description: Estimated cost for this period+type
-      type: object
-      required:
-      - period
-      - compute_type
-      - total_dbus
-      - estimated_cost
-      title: ComputeTypeTrendItem
-      description: Single data point for compute type trends.
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

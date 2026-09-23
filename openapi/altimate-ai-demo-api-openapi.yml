@@ -1,20 +1,28 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS DEMO API
+  title: Fast DEMO API
   version: 0.1.0
 tags:
-- name: DEMO
+- name: Demo
 paths:
   /demo/create-demo-session:
     post:
       tags:
-      - DEMO
+      - Demo
       summary: Create Demo Session
-      description: "Create or retrieve a demo user and generate a temporary session ID.\n\nThis endpoint\
-        \ creates a dedicated demo user in the demo tenant for the calling tenant.\nEach tenant gets exactly\
-        \ one demo user (1-to-1 mapping) with email: demo@{calling_tenant}.\nReturns a session ID that\
-        \ expires in 30 minutes and can be used once to authenticate.\n\nReturns:\n    DemoSessionResponse:\
-        \ Contains the demo tenant frontend URL and session ID"
+      description: 'Create or retrieve a demo user and generate a temporary session ID.
+
+
+        This endpoint creates a dedicated demo user in the demo tenant for the calling tenant.
+
+        Each tenant gets exactly one demo user (1-to-1 mapping) with email: demo@{calling_tenant}.
+
+        Returns a session ID that expires in 30 minutes and can be used once to authenticate.
+
+
+        Returns:
+
+        DemoSessionResponse: Contains the demo tenant frontend URL and session ID'
       operationId: create_demo_session_demo_create_demo_session_post
       responses:
         '200':
@@ -45,13 +53,28 @@ paths:
   /demo/authenticate:
     post:
       tags:
-      - DEMO
+      - Demo
       summary: Authenticate Demo Session
-      description: "Authenticate a demo session using session_id.\n\nThis endpoint validates the session_id\
-        \ and returns the demo user with auth token\nif the session is valid (created within last 30 minutes).\n\
-        The session is deleted after successful authentication.\nCan only be called from the demo tenant\
-        \ and only works for demo accounts.\n\nArgs:\n    session_id: The session ID returned from create-demo-session\n\
-        \nReturns:\n    UserLoginOut: User information with auth token (same as /login)"
+      description: 'Authenticate a demo session using session_id.
+
+
+        This endpoint validates the session_id and returns the demo user with auth token
+
+        if the session is valid (created within last 30 minutes).
+
+        The session is deleted after successful authentication.
+
+        Can only be called from the demo tenant and only works for demo accounts.
+
+
+        Args:
+
+        session_id: The session ID returned from create-demo-session
+
+
+        Returns:
+
+        UserLoginOut: User information with auth token (same as /login)'
       operationId: authenticate_demo_session_demo_authenticate_post
       deprecated: true
       security:
@@ -94,6 +117,42 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PermissionsFull:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
+      type: object
+      required:
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
     UserLoginOut:
       properties:
         id:
@@ -154,6 +213,19 @@ components:
       - is_onboarded
       - uuid
       title: UserLoginOut
+    DemoSessionResponse:
+      properties:
+        demoUrl:
+          type: string
+          title: Demourl
+        sessionId:
+          type: string
+          title: Sessionid
+      type: object
+      required:
+      - demoUrl
+      - sessionId
+      title: DemoSessionResponse
     ValidationError:
       properties:
         loc:
@@ -175,15 +247,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     RolePermissionFull:
       properties:
         role_name:
@@ -211,50 +274,7 @@ components:
       - is_custom
       - permission
       title: RolePermissionFull
-    DemoSessionResponse:
-      properties:
-        demoUrl:
-          type: string
-          title: Demourl
-        sessionId:
-          type: string
-          title: Sessionid
-      type: object
-      required:
-      - demoUrl
-      - sessionId
-      title: DemoSessionResponse
-    PermissionsFull:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        name:
-          type: string
-          title: Name
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        group:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Group
-      type: object
-      required:
-      - uuid
-      - name
-      - title
-      - description
-      title: PermissionsFull
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

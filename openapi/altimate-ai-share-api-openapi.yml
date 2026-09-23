@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS SHARE API
+  title: Fast SHARE API
   version: 0.1.0
 tags:
-- name: SHARE
+- name: Share
 paths:
   /studio/share/shared/{share_id}:
     get:
       tags:
-      - SHARE
+      - Share
       summary: View Shared Session
       description: 'View a shared playground session.
 
@@ -46,7 +46,7 @@ paths:
   /studio/share:
     post:
       tags:
-      - SHARE
+      - Share
       summary: Create Share
       description: 'Create a new share link for a playground session.
 
@@ -85,7 +85,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
-      - SHARE
+      - Share
       summary: List Shares
       description: 'List share links.
 
@@ -122,7 +122,7 @@ paths:
   /studio/share/session/{session_id}:
     get:
       tags:
-      - SHARE
+      - Share
       summary: List Shares For Session
       description: List share links for a specific session.
       operationId: list_shares_for_session_studio_share_session__session_id__get
@@ -152,7 +152,7 @@ paths:
   /studio/share/{share_id}:
     get:
       tags:
-      - SHARE
+      - Share
       summary: Get Share
       description: Get details of a specific share link.
       operationId: get_share_studio_share__share_id__get
@@ -183,7 +183,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - SHARE
+      - Share
       summary: Delete Share
       description: Delete a share link.
       operationId: delete_share_studio_share__share_id__delete
@@ -210,7 +210,7 @@ paths:
   /studio/share/slack:
     post:
       tags:
-      - SHARE
+      - Share
       summary: Share To Slack
       description: Share a Studio session to Slack via incoming webhook.
       operationId: share_to_slack_studio_share_slack_post
@@ -239,7 +239,7 @@ paths:
   /playground/share/shared/{share_id}:
     get:
       tags:
-      - SHARE
+      - Share
       summary: View Shared Session
       description: 'View a shared playground session.
 
@@ -277,7 +277,7 @@ paths:
   /playground/share:
     post:
       tags:
-      - SHARE
+      - Share
       summary: Create Share
       description: 'Create a new share link for a playground session.
 
@@ -316,7 +316,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
-      - SHARE
+      - Share
       summary: List Shares
       description: 'List share links.
 
@@ -353,7 +353,7 @@ paths:
   /playground/share/session/{session_id}:
     get:
       tags:
-      - SHARE
+      - Share
       summary: List Shares For Session
       description: List share links for a specific session.
       operationId: list_shares_for_session_playground_share_session__session_id__get
@@ -383,7 +383,7 @@ paths:
   /playground/share/{share_id}:
     get:
       tags:
-      - SHARE
+      - Share
       summary: Get Share
       description: Get details of a specific share link.
       operationId: get_share_playground_share__share_id__get
@@ -414,7 +414,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - SHARE
+      - Share
       summary: Delete Share
       description: Delete a share link.
       operationId: delete_share_playground_share__share_id__delete
@@ -441,7 +441,7 @@ paths:
   /playground/share/slack:
     post:
       tags:
-      - SHARE
+      - Share
       summary: Share To Slack
       description: Share a Studio session to Slack via incoming webhook.
       operationId: share_to_slack_playground_share_slack_post
@@ -469,43 +469,15 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ShareToSlackRequest:
+    HTTPValidationError:
       properties:
-        session_id:
-          type: string
-          title: Session Id
-          description: Studio session ID to share
-        webhook_id:
-          type: integer
-          title: Webhook Id
-          description: Notification ID (from notifications table) for webhook delivery
-      type: object
-      required:
-      - session_id
-      - webhook_id
-      title: ShareToSlackRequest
-      description: Request to share a Studio session to Slack via webhook.
-    ValidationError:
-      properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Detail
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      title: HTTPValidationError
     ShareLinkListResponse:
       properties:
         share_links:
@@ -522,39 +494,6 @@ components:
       - total
       title: ShareLinkListResponse
       description: Response containing a list of share links.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ShareAccessType:
-      type: string
-      enum:
-      - anyone
-      - specific_people
-      - all_altimate_users
-      - team
-      title: ShareAccessType
-      description: Access type for share links.
-    ShareToSlackResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      title: ShareToSlackResponse
-      description: Response after sharing to Slack.
     SharedSessionResponse:
       properties:
         session_id:
@@ -591,6 +530,31 @@ components:
       - turns
       title: SharedSessionResponse
       description: Response when viewing a shared session.
+    ShareToSlackRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Studio session ID to share
+        webhook_id:
+          type: integer
+          title: Webhook Id
+          description: Notification ID (from notifications table) for webhook delivery
+      type: object
+      required:
+      - session_id
+      - webhook_id
+      title: ShareToSlackRequest
+      description: Request to share a Studio session to Slack via webhook.
+    ShareAccessType:
+      type: string
+      enum:
+      - anyone
+      - specific_people
+      - all_altimate_users
+      - team
+      title: ShareAccessType
+      description: Access type for share links.
     ShareLinkCreateRequest:
       properties:
         session_id:
@@ -637,6 +601,42 @@ components:
       - session_id
       title: ShareLinkCreateRequest
       description: Request to create a new share link.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ShareToSlackResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ShareToSlackResponse
+      description: Response after sharing to Slack.
     ShareLinkResponse:
       properties:
         id:
@@ -704,6 +704,3 @@ components:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

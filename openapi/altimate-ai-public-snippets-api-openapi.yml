@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS PUBLIC_SNIPPETS API
+  title: Fast PUBLIC SNIPPETS API
   version: 0.1.0
 tags:
 - name: PUBLIC_SNIPPETS
@@ -291,48 +291,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ExecuteSnippetRequest:
-      properties:
-        tenant:
-          type: string
-          title: Tenant
-          description: Tenant name to execute against
-        database_type:
-          type: string
-          title: Database Type
-          description: Database type to execute against (clickhouse or postgres)
-        sql:
-          type: string
-          title: Sql
-          description: SQL query to execute
-      type: object
-      required:
-      - tenant
-      - database_type
-      - sql
-      title: ExecuteSnippetRequest
-      description: Request to execute a SQL snippet against a tenant's datastore
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -342,61 +300,39 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    SnippetsFilterOptions:
+    SnippetsListResponse:
       properties:
-        database_types:
+        snippets:
           items:
-            type: string
+            $ref: '#/components/schemas/SnippetItem'
           type: array
-          title: Database Types
-          description: Available database types for filtering
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-          description: Available tags for filtering
-      type: object
-      title: SnippetsFilterOptions
-      description: Available filter options for snippets
-    CreateSnippetRequest:
-      properties:
-        title:
-          type: string
-          title: Title
-          description: Title or name of the snippet
-        description:
-          type: string
-          title: Description
-          description: Description of what the snippet does
-        database_type:
-          type: string
-          title: Database Type
-          description: Database type (e.g., clickhouse, postgres)
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-          description: Capability tags
-        type:
-          type: string
-          title: Type
-          description: 'Snippet type: data_definition or sql_example'
-        full_content:
-          additionalProperties: true
-          type: object
-          title: Full Content
-          description: Full snippet content
+          title: Snippets
+          description: List of snippets
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items per page
+        has_more:
+          type: boolean
+          title: Has More
+          description: Whether there are more pages
+        total:
+          type: integer
+          title: Total
+          description: Total number of snippets matching filters
       type: object
       required:
-      - title
-      - description
-      - database_type
-      - type
-      - full_content
-      title: CreateSnippetRequest
-      description: Request to create a new snippet
+      - snippets
+      - page
+      - page_size
+      - has_more
+      - total
+      title: SnippetsListResponse
+      description: Paginated list of snippets
     SnippetItem:
       properties:
         id:
@@ -439,6 +375,27 @@ components:
       - type
       title: SnippetItem
       description: Individual code snippet from Weaviate
+    ExecuteSnippetRequest:
+      properties:
+        tenant:
+          type: string
+          title: Tenant
+          description: Tenant name to execute against
+        database_type:
+          type: string
+          title: Database Type
+          description: Database type to execute against (clickhouse or postgres)
+        sql:
+          type: string
+          title: Sql
+          description: SQL query to execute
+      type: object
+      required:
+      - tenant
+      - database_type
+      - sql
+      title: ExecuteSnippetRequest
+      description: Request to execute a SQL snippet against a tenant's datastore
     ExecuteSnippetResponse:
       properties:
         success:
@@ -479,55 +436,6 @@ components:
       - success
       title: ExecuteSnippetResponse
       description: Response from executing a SQL snippet
-    SnippetsListResponse:
-      properties:
-        snippets:
-          items:
-            $ref: '#/components/schemas/SnippetItem'
-          type: array
-          title: Snippets
-          description: List of snippets
-        page:
-          type: integer
-          title: Page
-          description: Current page number
-        page_size:
-          type: integer
-          title: Page Size
-          description: Number of items per page
-        has_more:
-          type: boolean
-          title: Has More
-          description: Whether there are more pages
-        total:
-          type: integer
-          title: Total
-          description: Total number of snippets matching filters
-      type: object
-      required:
-      - snippets
-      - page
-      - page_size
-      - has_more
-      - total
-      title: SnippetsListResponse
-      description: Paginated list of snippets
-    DeleteSnippetResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-          description: Whether the deletion succeeded
-        message:
-          type: string
-          title: Message
-          description: Status message
-      type: object
-      required:
-      - success
-      - message
-      title: DeleteSnippetResponse
-      description: Response from deleting a snippet
     UpdateSnippetRequest:
       properties:
         title:
@@ -566,10 +474,99 @@ components:
       type: object
       title: UpdateSnippetRequest
       description: Request to update an existing snippet
+    SnippetsFilterOptions:
+      properties:
+        database_types:
+          items:
+            type: string
+          type: array
+          title: Database Types
+          description: Available database types for filtering
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+          description: Available tags for filtering
+      type: object
+      title: SnippetsFilterOptions
+      description: Available filter options for snippets
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CreateSnippetRequest:
+      properties:
+        title:
+          type: string
+          title: Title
+          description: Title or name of the snippet
+        description:
+          type: string
+          title: Description
+          description: Description of what the snippet does
+        database_type:
+          type: string
+          title: Database Type
+          description: Database type (e.g., clickhouse, postgres)
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+          description: Capability tags
+        type:
+          type: string
+          title: Type
+          description: 'Snippet type: data_definition or sql_example'
+        full_content:
+          additionalProperties: true
+          type: object
+          title: Full Content
+          description: Full snippet content
+      type: object
+      required:
+      - title
+      - description
+      - database_type
+      - type
+      - full_content
+      title: CreateSnippetRequest
+      description: Request to create a new snippet
+    DeleteSnippetResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion succeeded
+        message:
+          type: string
+          title: Message
+          description: Status message
+      type: object
+      required:
+      - success
+      - message
+      title: DeleteSnippetResponse
+      description: Response from deleting a snippet
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml

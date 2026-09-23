@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Fast ACCOUNT_COSTS MASK API
+  title: Fast MASK API
   version: 0.1.0
 tags:
 - name: MASK
@@ -98,45 +98,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    MaskingType:
-      type: string
-      enum:
-      - allow
-      - mask
-      - block
-      title: MaskingType
-    MaskDataRequest:
-      properties:
-        mask_data:
-          items:
-            $ref: '#/components/schemas/MaskData'
-          type: array
-          title: Mask Data
-      type: object
-      required:
-      - mask_data
-      title: MaskDataRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -146,18 +107,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    GetMaskDataResponse:
-      properties:
-        mask_data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Mask Data
-      type: object
-      required:
-      - mask_data
-      title: GetMaskDataResponse
     MaskData:
       properties:
         label:
@@ -181,6 +130,50 @@ components:
       - label
       - masking_type
       title: MaskData
+    MaskDataRequest:
+      properties:
+        mask_data:
+          items:
+            $ref: '#/components/schemas/MaskData'
+          type: array
+          title: Mask Data
+      type: object
+      required:
+      - mask_data
+      title: MaskDataRequest
+    GetMaskDataResponse:
+      properties:
+        mask_data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Mask Data
+      type: object
+      required:
+      - mask_data
+      title: GetMaskDataResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     MaskDataResponse:
       properties:
         ok:
@@ -195,10 +188,14 @@ components:
       required:
       - ok
       title: MaskDataResponse
+    MaskingType:
+      type: string
+      enum:
+      - allow
+      - mask
+      - block
+      title: MaskingType
   securitySchemes:
     HTTPBearer:
       type: http
       scheme: bearer
-servers:
-- url: https://api.myaltimate.com
-  description: Base URL reconciled from apis.yml
