@@ -290,28 +290,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ViolationSnoozeResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        status:
-          type: string
-          title: Status
-      type: object
-      required:
-      - id
-      - status
-      title: ViolationSnoozeResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     Page_ViolationFetchResponse_:
       properties:
         items:
@@ -350,6 +328,46 @@ components:
       - page
       - size
       title: Page[ViolationFetchResponse]
+    ViolationSummaryResponse:
+      properties:
+        last_violation_timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Violation Timestamp
+        total_error_count:
+          type: integer
+          title: Total Error Count
+        total_warning_count:
+          type: integer
+          title: Total Warning Count
+        total_policy_violation_count:
+          type: integer
+          title: Total Policy Violation Count
+        total_validation_count:
+          type: integer
+          title: Total Validation Count
+      type: object
+      required:
+      - total_error_count
+      - total_warning_count
+      - total_policy_violation_count
+      - total_validation_count
+      title: ViolationSummaryResponse
+    ViolationSnoozeResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - id
+      - status
+      title: ViolationSnoozeResponse
     ViolationFetchResponse:
       properties:
         id:
@@ -438,33 +456,6 @@ components:
       - status
       - filters
       title: ViolationFetchResponse
-    ViolationSummaryResponse:
-      properties:
-        last_violation_timestamp:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Violation Timestamp
-        total_error_count:
-          type: integer
-          title: Total Error Count
-        total_warning_count:
-          type: integer
-          title: Total Warning Count
-        total_policy_violation_count:
-          type: integer
-          title: Total Policy Violation Count
-        total_validation_count:
-          type: integer
-          title: Total Validation Count
-      type: object
-      required:
-      - total_error_count
-      - total_warning_count
-      - total_policy_violation_count
-      - total_validation_count
-      title: ViolationSummaryResponse
     ValidationError:
       properties:
         loc:
@@ -486,6 +477,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

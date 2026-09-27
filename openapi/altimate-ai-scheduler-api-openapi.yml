@@ -163,6 +163,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ContractSchedulerToggleResponse:
+      properties:
+        periodic_task_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Periodic Task Id
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: ContractSchedulerToggleResponse
     DatastoreSyncSchedulerToggleResponse:
       properties:
         periodic_task_ids:
@@ -179,29 +193,19 @@ components:
       required:
       - ok
       title: DatastoreSyncSchedulerToggleResponse
-    HTTPValidationError:
+    SchedulerFetchResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ContractSchedulerToggleResponse:
-      properties:
-        periodic_task_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Periodic Task Id
-        ok:
-          type: boolean
-          title: Ok
+        script:
+          type: string
+          title: Script
+        message:
+          type: string
+          title: Message
       type: object
       required:
-      - ok
-      title: ContractSchedulerToggleResponse
+      - script
+      - message
+      title: SchedulerFetchResponse
     ValidationError:
       properties:
         loc:
@@ -223,19 +227,15 @@ components:
       - msg
       - type
       title: ValidationError
-    SchedulerFetchResponse:
+    HTTPValidationError:
       properties:
-        script:
-          type: string
-          title: Script
-        message:
-          type: string
-          title: Message
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - script
-      - message
-      title: SchedulerFetchResponse
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

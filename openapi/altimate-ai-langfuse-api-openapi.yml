@@ -244,15 +244,23 @@ components:
       - current_page
       title: LangfuseQueriesResponse
       description: Response containing ClickHouse queries.
-    HTTPValidationError:
+    LangfusePromptsResponse:
       properties:
-        detail:
+        prompts:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/LangfusePrompt'
           type: array
-          title: Detail
+          title: Prompts
+          description: List of prompts
+        total:
+          type: integer
+          title: Total
+          description: Total number of prompts
       type: object
-      title: HTTPValidationError
+      required:
+      - total
+      title: LangfusePromptsResponse
+      description: Response containing list of Langfuse prompts.
     LangfusePromptConfig:
       properties:
         model:
@@ -370,23 +378,15 @@ components:
       - msg
       - type
       title: ValidationError
-    LangfusePromptsResponse:
+    HTTPValidationError:
       properties:
-        prompts:
+        detail:
           items:
-            $ref: '#/components/schemas/LangfusePrompt'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Prompts
-          description: List of prompts
-        total:
-          type: integer
-          title: Total
-          description: Total number of prompts
+          title: Detail
       type: object
-      required:
-      - total
-      title: LangfusePromptsResponse
-      description: Response containing list of Langfuse prompts.
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

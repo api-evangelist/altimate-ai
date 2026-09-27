@@ -421,7 +421,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    CompanyIndexResponse:
+    CompanyCreateIn:
       properties:
         name:
           anyOf:
@@ -433,25 +433,8 @@ components:
           - type: string
           - type: 'null'
           title: Country
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        created_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Created At
-        existence_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Existence Time
       type: object
-      required:
-      - uuid
-      title: CompanyIndexResponse
+      title: CompanyCreateIn
     GetCompanyByEmailResponse:
       properties:
         company:
@@ -465,6 +448,16 @@ components:
           title: Company Url
       type: object
       title: GetCompanyByEmailResponse
+    GetAllCompaniesResponse:
+      properties:
+        companies:
+          items:
+            $ref: '#/components/schemas/GetCompanyByEmailResponse'
+          type: array
+          title: Companies
+          default: []
+      type: object
+      title: GetAllCompaniesResponse
     StandardResponse:
       properties:
         ok:
@@ -512,15 +505,6 @@ components:
       - page
       - size
       title: Page[CompanyIndexResponse]
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     InviteVerifyIn:
       properties:
         token:
@@ -530,16 +514,36 @@ components:
       required:
       - token
       title: InviteVerifyIn
-    GetAllCompaniesResponse:
+    ValidationError:
       properties:
-        companies:
+        loc:
           items:
-            $ref: '#/components/schemas/GetCompanyByEmailResponse'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Companies
-          default: []
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
-      title: GetAllCompaniesResponse
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     CompanyRegister:
       properties:
         company:
@@ -582,28 +586,7 @@ components:
       - password
       - newsletter
       title: CompanyRegister
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    CompanyCreateIn:
+    CompanyIndexResponse:
       properties:
         name:
           anyOf:
@@ -615,8 +598,25 @@ components:
           - type: string
           - type: 'null'
           title: Country
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        existence_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Existence Time
       type: object
-      title: CompanyCreateIn
+      required:
+      - uuid
+      title: CompanyIndexResponse
   securitySchemes:
     HTTPBearer:
       type: http

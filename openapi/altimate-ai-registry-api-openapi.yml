@@ -319,6 +319,36 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    RegistryFetchMultipleResponse:
+      properties:
+        registries:
+          items:
+            $ref: '#/components/schemas/RegistryFetchResponse'
+          type: array
+          title: Registries
+      type: object
+      required:
+      - registries
+      title: RegistryFetchMultipleResponse
+    RegistryUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      type: object
+      title: RegistryUpdateRequest
     RegistryUpdateResponse:
       properties:
         id:
@@ -379,64 +409,6 @@ components:
       - status
       - message
       title: RegistryCreationResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    RegistryCreationRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Status
-      type: object
-      required:
-      - name
-      title: RegistryCreationRequest
-    RegistryDeletionResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: RegistryDeletionResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     RegistryFetchResponse:
       properties:
         id:
@@ -471,12 +443,10 @@ components:
           title: Status
       type: object
       title: RegistryFetchResponse
-    RegistryUpdateRequest:
+    RegistryCreationRequest:
       properties:
         name:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Name
         description:
           anyOf:
@@ -489,18 +459,48 @@ components:
           - type: 'null'
           title: Status
       type: object
-      title: RegistryUpdateRequest
-    RegistryFetchMultipleResponse:
+      required:
+      - name
+      title: RegistryCreationRequest
+    ValidationError:
       properties:
-        registries:
+        loc:
           items:
-            $ref: '#/components/schemas/RegistryFetchResponse'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Registries
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - registries
-      title: RegistryFetchMultipleResponse
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RegistryDeletionResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: RegistryDeletionResponse
   securitySchemes:
     HTTPBearer:
       type: http

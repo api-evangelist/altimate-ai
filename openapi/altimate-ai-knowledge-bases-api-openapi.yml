@@ -254,30 +254,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
     ContentModel:
       properties:
         pages:
@@ -289,12 +265,25 @@ components:
       required:
       - pages
       title: ContentModel
-    KnowledgeBaseUpdateRequest:
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    PageModel:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - content
+      title: PageModel
+    KnowledgeBaseCreateRequest:
       properties:
         name:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Name
         description:
           anyOf:
@@ -307,18 +296,17 @@ components:
           - type: 'null'
           title: Icon
         content:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Content
+          $ref: '#/components/schemas/ContentModel'
         privacy:
           anyOf:
           - $ref: '#/components/schemas/PrivacySetting'
           - type: 'null'
           default: private
       type: object
-      title: KnowledgeBaseUpdateRequest
+      required:
+      - name
+      - content
+      title: KnowledgeBaseCreateRequest
     KnowledgeBaseResponse:
       properties:
         name:
@@ -379,6 +367,45 @@ components:
       - forked
       - is_deleted
       title: KnowledgeBaseResponse
+    KnowledgeBaseUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        content:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Content
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+      type: object
+      title: KnowledgeBaseUpdateRequest
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     ValidationError:
       properties:
         loc:
@@ -400,42 +427,29 @@ components:
       - msg
       - type
       title: ValidationError
-    KnowledgeBaseCreateRequest:
+    HTTPValidationError:
       properties:
-        name:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ForkTemplateRequest:
+      properties:
+        template_name:
           type: string
-          title: Name
-        description:
+          title: Template Name
+        new_name:
           anyOf:
           - type: string
           - type: 'null'
-          title: Description
-        icon:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Icon
-        content:
-          $ref: '#/components/schemas/ContentModel'
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-          default: private
+          title: New Name
       type: object
       required:
-      - name
-      - content
-      title: KnowledgeBaseCreateRequest
-    PageModel:
-      properties:
-        content:
-          type: string
-          title: Content
-      type: object
-      required:
-      - content
-      title: PageModel
+      - template_name
+      title: ForkTemplateRequest
     TemplateResponse:
       properties:
         name:
@@ -456,20 +470,6 @@ components:
       - icon
       - content
       title: TemplateResponse
-    ForkTemplateRequest:
-      properties:
-        template_name:
-          type: string
-          title: Template Name
-        new_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: New Name
-      type: object
-      required:
-      - template_name
-      title: ForkTemplateRequest
   securitySchemes:
     HTTPBearer:
       type: http

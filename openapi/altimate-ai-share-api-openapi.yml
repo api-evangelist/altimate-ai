@@ -469,15 +469,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ShareLinkListResponse:
       properties:
         share_links:
@@ -530,6 +521,21 @@ components:
       - turns
       title: SharedSessionResponse
       description: Response when viewing a shared session.
+    ShareToSlackResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ShareToSlackResponse
+      description: Response after sharing to Slack.
     ShareToSlackRequest:
       properties:
         session_id:
@@ -546,15 +552,6 @@ components:
       - webhook_id
       title: ShareToSlackRequest
       description: Request to share a Studio session to Slack via webhook.
-    ShareAccessType:
-      type: string
-      enum:
-      - anyone
-      - specific_people
-      - all_altimate_users
-      - team
-      title: ShareAccessType
-      description: Access type for share links.
     ShareLinkCreateRequest:
       properties:
         session_id:
@@ -601,42 +598,6 @@ components:
       - session_id
       title: ShareLinkCreateRequest
       description: Request to create a new share link.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ShareToSlackResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      title: ShareToSlackResponse
-      description: Response after sharing to Slack.
     ShareLinkResponse:
       properties:
         id:
@@ -700,6 +661,45 @@ components:
       - share_url
       title: ShareLinkResponse
       description: Response containing share link details.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ShareAccessType:
+      type: string
+      enum:
+      - anyone
+      - specific_people
+      - all_altimate_users
+      - team
+      title: ShareAccessType
+      description: Access type for share links.
   securitySchemes:
     HTTPBearer:
       type: http

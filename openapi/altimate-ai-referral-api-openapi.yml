@@ -54,41 +54,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ReferralCodeCreate:
-      properties:
-        code:
-          anyOf:
-          - type: string
-            maxLength: 64
-            minLength: 4
-            pattern: ^[A-Za-z0-9_-]+$
-          - type: 'null'
-          title: Code
-          description: If omitted, a 16-char URL-safe code is generated. Stored lowercase.
-        max_uses:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Uses
-          description: Maximum redemptions. null = unlimited.
-        expires_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Expires At
-          description: null = never expires. Must be timezone-aware if provided.
-      type: object
-      title: ReferralCodeCreate
     ReferralCodeOut:
       properties:
         id:
@@ -134,27 +99,32 @@ components:
       - created_by
       - created_at
       title: ReferralCodeOut
-    ValidationError:
+    ReferralCodeCreate:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+        code:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 4
+            pattern: ^[A-Za-z0-9_-]+$
+          - type: 'null'
+          title: Code
+          description: If omitted, a 16-char URL-safe code is generated. Stored lowercase.
+        max_uses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Uses
+          description: Maximum redemptions. null = unlimited.
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+          description: null = never expires. Must be timezone-aware if provided.
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      title: ReferralCodeCreate
     ReferralCodeWithStats:
       properties:
         id:
@@ -206,6 +176,36 @@ components:
       - created_by
       - created_at
       title: ReferralCodeWithStats
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

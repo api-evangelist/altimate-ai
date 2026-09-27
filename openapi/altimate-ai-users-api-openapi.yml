@@ -417,6 +417,22 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    UserInsightItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        reasons:
+          items:
+            type: string
+          type: array
+          title: Reasons
+      type: object
+      required:
+      - name
+      - reasons
+      title: UserInsightItem
+      description: Structured insight with name and reasons
     BIUserReportItem:
       properties:
         email:
@@ -484,6 +500,27 @@ components:
       - insights
       title: BIUserReportItem
       description: User report item representing user activity and creation patterns
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -493,6 +530,24 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    BIUserSummaryItem:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: integer
+          title: Value
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+      type: object
+      required:
+      - label
+      - value
+      title: BIUserSummaryItem
     Page_BIUserReportItem_:
       properties:
         items:
@@ -531,61 +586,6 @@ components:
       - page
       - size
       title: Page[BIUserReportItem]
-    UserInsightItem:
-      properties:
-        name:
-          type: string
-          title: Name
-        reasons:
-          items:
-            type: string
-          type: array
-          title: Reasons
-      type: object
-      required:
-      - name
-      - reasons
-      title: UserInsightItem
-      description: Structured insight with name and reasons
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    BIUserSummaryItem:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: integer
-          title: Value
-        info:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Info
-      type: object
-      required:
-      - label
-      - value
-      title: BIUserSummaryItem
   securitySchemes:
     HTTPBearer:
       type: http

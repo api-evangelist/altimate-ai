@@ -277,51 +277,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ComputePoolsSummary:
-      properties:
-        total_spend:
-          type: number
-          title: Total Spend
-        average_daily_spend:
-          type: number
-          title: Average Daily Spend
-        active_pools:
-          type: integer
-          title: Active Pools
-        exclusive_pools:
-          type: integer
-          title: Exclusive Pools
-      type: object
-      required:
-      - total_spend
-      - average_daily_spend
-      - active_pools
-      - exclusive_pools
-      title: ComputePoolsSummary
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ComputePoolsDailyGraphPoint:
-      properties:
-        date:
-          type: string
-          title: Date
-        pool_spends:
-          additionalProperties:
-            type: number
-          type: object
-          title: Pool Spends
-      type: object
-      required:
-      - date
-      - pool_spends
-      title: ComputePoolsDailyGraphPoint
     ComputePoolOverview:
       properties:
         compute_pool_name:
@@ -343,6 +298,252 @@ components:
       - total_cost
       - total_runs
       title: ComputePoolOverview
+    ComputePoolsSummary:
+      properties:
+        total_spend:
+          type: number
+          title: Total Spend
+        average_daily_spend:
+          type: number
+          title: Average Daily Spend
+        active_pools:
+          type: integer
+          title: Active Pools
+        exclusive_pools:
+          type: integer
+          title: Exclusive Pools
+      type: object
+      required:
+      - total_spend
+      - average_daily_spend
+      - active_pools
+      - exclusive_pools
+      title: ComputePoolsSummary
+    ComputePoolCostEntry:
+      properties:
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        compute_pool_name:
+          type: string
+          title: Compute Pool Name
+        is_exclusive:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Exclusive
+        application_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Application Name
+        application_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Application Id
+        credits_used:
+          type: number
+          title: Credits Used
+        instance_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Id
+      type: object
+      required:
+      - compute_pool_name
+      - credits_used
+      title: ComputePoolCostEntry
+    DailyCostPoint:
+      properties:
+        date:
+          type: string
+          format: date
+          title: Date
+        cost:
+          type: number
+          title: Cost
+      type: object
+      required:
+      - date
+      - cost
+      title: DailyCostPoint
+    Page_ComputePoolCostEntry_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ComputePoolCostEntry'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[ComputePoolCostEntry]
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ComputePoolMetadata:
+      properties:
+        name:
+          type: string
+          title: Name
+        is_suspended:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Suspended
+        min_nodes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Nodes
+        max_nodes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Nodes
+        instance_family:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Family
+        auto_suspend_secs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Auto Suspend Secs
+        auto_resume:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Auto Resume
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        last_resumed:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Resumed
+        last_altered:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Altered
+        deleted:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deleted
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        owner_role_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Role Type
+        is_exclusive:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Exclusive
+        application_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Application Name
+        application_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Application Id
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+        instance_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Id
+      type: object
+      required:
+      - name
+      title: ComputePoolMetadata
     ComputePoolMetadataWithCost:
       properties:
         name:
@@ -449,222 +650,21 @@ components:
       required:
       - name
       title: ComputePoolMetadataWithCost
-    Page_ComputePoolCostEntry_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/ComputePoolCostEntry'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[ComputePoolCostEntry]
-    DailyCostPoint:
+    ComputePoolsDailyGraphPoint:
       properties:
         date:
           type: string
-          format: date
           title: Date
-        cost:
-          type: number
-          title: Cost
+        pool_spends:
+          additionalProperties:
+            type: number
+          type: object
+          title: Pool Spends
       type: object
       required:
       - date
-      - cost
-      title: DailyCostPoint
-    ComputePoolCostEntry:
-      properties:
-        start_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Start Time
-        end_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: End Time
-        compute_pool_name:
-          type: string
-          title: Compute Pool Name
-        is_exclusive:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Exclusive
-        application_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Application Name
-        application_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Application Id
-        credits_used:
-          type: number
-          title: Credits Used
-        instance_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Instance Id
-      type: object
-      required:
-      - compute_pool_name
-      - credits_used
-      title: ComputePoolCostEntry
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ComputePoolMetadata:
-      properties:
-        name:
-          type: string
-          title: Name
-        is_suspended:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Suspended
-        min_nodes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Min Nodes
-        max_nodes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Nodes
-        instance_family:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Instance Family
-        auto_suspend_secs:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Auto Suspend Secs
-        auto_resume:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Auto Resume
-        created:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Created
-        last_resumed:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Resumed
-        last_altered:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Altered
-        deleted:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Deleted
-        owner:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Owner
-        owner_role_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Owner Role Type
-        is_exclusive:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Exclusive
-        application_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Application Name
-        application_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Application Id
-        comment:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Comment
-        instance_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Instance Id
-      type: object
-      required:
-      - name
-      title: ComputePoolMetadata
+      - pool_spends
+      title: ComputePoolsDailyGraphPoint
   securitySchemes:
     HTTPBearer:
       type: http

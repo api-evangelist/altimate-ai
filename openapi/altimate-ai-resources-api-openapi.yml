@@ -239,15 +239,47 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    ResourceResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        id:
+          type: integer
+          title: Id
+        identifier:
+          type: string
+          title: Identifier
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
       type: object
-      title: HTTPValidationError
+      required:
+      - id
+      - identifier
+      title: ResourceResponse
+    ResourceUpdateResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - id
+      - message
+      title: ResourceUpdateResponse
+    MetadataCreationResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: MetadataCreationResponse
     ResourceUpdateRequest:
       properties:
         identifier:
@@ -268,6 +300,45 @@ components:
       - identifier
       - resource_schema
       title: ResourceUpdateRequest
+    ResourceFetchResponse:
+      properties:
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceResponse'
+          type: array
+          title: Resources
+      type: object
+      required:
+      - resources
+      title: ResourceFetchResponse
+    ResourceCreationResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - id
+      - message
+      title: ResourceCreationResponse
+    MetadataCreationRequest:
+      properties:
+        resource:
+          additionalProperties: true
+          type: object
+          title: Resource
+        columns:
+          additionalProperties: true
+          type: object
+          title: Columns
+      type: object
+      required:
+      - resource
+      - columns
+      title: MetadataCreationRequest
     ResourceCreationRequest:
       properties:
         identifier:
@@ -288,73 +359,6 @@ components:
       - identifier
       - resource_schema
       title: ResourceCreationRequest
-    MetadataCreationRequest:
-      properties:
-        resource:
-          additionalProperties: true
-          type: object
-          title: Resource
-        columns:
-          additionalProperties: true
-          type: object
-          title: Columns
-      type: object
-      required:
-      - resource
-      - columns
-      title: MetadataCreationRequest
-    ResourceCreationResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - id
-      - message
-      title: ResourceCreationResponse
-    MetadataCreationResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: MetadataCreationResponse
-    ResourceFetchResponse:
-      properties:
-        resources:
-          items:
-            $ref: '#/components/schemas/ResourceResponse'
-          type: array
-          title: Resources
-      type: object
-      required:
-      - resources
-      title: ResourceFetchResponse
-    ResourceResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        identifier:
-          type: string
-          title: Identifier
-        options:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Options
-      type: object
-      required:
-      - id
-      - identifier
-      title: ResourceResponse
     ValidationError:
       properties:
         loc:
@@ -376,19 +380,15 @@ components:
       - msg
       - type
       title: ValidationError
-    ResourceUpdateResponse:
+    HTTPValidationError:
       properties:
-        id:
-          type: integer
-          title: Id
-        message:
-          type: string
-          title: Message
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - id
-      - message
-      title: ResourceUpdateResponse
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

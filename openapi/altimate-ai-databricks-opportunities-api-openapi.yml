@@ -744,82 +744,31 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    app__schemas__databricks__opportunities__OversizedClustersResponse:
+    OpportunitiesSummary:
       properties:
-        opportunities:
-          items:
-            $ref: '#/components/schemas/OversizedClusterOpportunity'
-          type: array
-          title: Opportunities
-        total_count:
+        oversized_clusters:
           type: integer
-          title: Total Count
-        cpu_threshold:
-          type: number
-          title: Cpu Threshold
-        memory_threshold:
-          type: number
-          title: Memory Threshold
+          title: Oversized Clusters
+          default: 0
+        serverless_candidates:
+          type: integer
+          title: Serverless Candidates
+          default: 0
+        high_failure_jobs:
+          type: integer
+          title: High Failure Jobs
+          default: 0
+        expensive_queries:
+          type: integer
+          title: Expensive Queries
+          default: 0
+        total_opportunities:
+          type: integer
+          title: Total Opportunities
+          default: 0
       type: object
-      required:
-      - opportunities
-      - total_count
-      - cpu_threshold
-      - memory_threshold
-      title: OversizedClustersResponse
-      description: Response for oversized clusters opportunities.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ResourceOpportunity:
-      properties:
-        opportunity_type:
-          type: string
-          title: Opportunity Type
-          description: 'Type: oversized_cluster, idle_cluster, serverless_candidate, high_failure_job'
-        resource_id:
-          type: string
-          title: Resource Id
-        resource_name:
-          type: string
-          title: Resource Name
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        description:
-          type: string
-          title: Description
-        potential_savings_pct:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Potential Savings Pct
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-      type: object
-      required:
-      - opportunity_type
-      - resource_id
-      - resource_name
-      - workspace_id
-      - description
-      title: ResourceOpportunity
-      description: A generic opportunity for a specific resource.
+      title: OpportunitiesSummary
+      description: Summary of all opportunity types.
     ExpensiveQueryOpportunity:
       properties:
         statement_id:
@@ -873,30 +822,104 @@ components:
       - cost_score
       title: ExpensiveQueryOpportunity
       description: An expensive query opportunity.
-    ResourceOpportunitiesResponse:
+    OversizedClusterOpportunity:
       properties:
-        opportunities:
-          items:
-            $ref: '#/components/schemas/ResourceOpportunity'
-          type: array
-          title: Opportunities
-        total_count:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+        avg_memory:
+          type: number
+          title: Avg Memory
+        sample_count:
           type: integer
-          title: Total Count
+          title: Sample Count
+        potential_savings_pct:
+          type: number
+          title: Potential Savings Pct
+          description: Estimated potential savings percentage
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      - avg_cpu
+      - avg_memory
+      - sample_count
+      - potential_savings_pct
+      title: OversizedClusterOpportunity
+      description: An oversized cluster opportunity.
+    ResourceOpportunity:
+      properties:
+        opportunity_type:
+          type: string
+          title: Opportunity Type
+          description: 'Type: oversized_cluster, idle_cluster, serverless_candidate, high_failure_job'
         resource_id:
           type: string
           title: Resource Id
-        resource_type:
-          type: integer
-          title: Resource Type
+        resource_name:
+          type: string
+          title: Resource Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        description:
+          type: string
+          title: Description
+        potential_savings_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Potential Savings Pct
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
       type: object
       required:
-      - opportunities
-      - total_count
+      - opportunity_type
       - resource_id
-      - resource_type
-      title: ResourceOpportunitiesResponse
-      description: Response for opportunities by resource.
+      - resource_name
+      - workspace_id
+      - description
+      title: ResourceOpportunity
+      description: A generic opportunity for a specific resource.
     app__schemas__databricks__opportunities__ServerlessCandidatesResponse:
       properties:
         opportunities:
@@ -917,6 +940,74 @@ components:
       - max_auto_stop_mins
       title: ServerlessCandidatesResponse
       description: Response for serverless candidates opportunities.
+    ServerlessCandidateOpportunity:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Type
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        auto_stop_mins:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Auto Stop Mins
+        min_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Num Clusters
+        max_num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Num Clusters
+      type: object
+      required:
+      - warehouse_id
+      - warehouse_name
+      - workspace_id
+      title: ServerlessCandidateOpportunity
+      description: A serverless migration candidate.
+    IdleClustersResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/IdleClusterOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+        idle_hours:
+          type: integer
+          title: Idle Hours
+      type: object
+      required:
+      - opportunities
+      - total_count
+      - idle_hours
+      title: IdleClustersResponse
+      description: Response for idle clusters opportunities.
     HighFailureJobsResponse:
       properties:
         opportunities:
@@ -937,15 +1028,22 @@ components:
       - min_failure_rate
       title: HighFailureJobsResponse
       description: Response for high failure jobs opportunities.
-    OpportunitiesSummaryResponse:
+    ExpensiveQueriesResponse:
       properties:
-        summary:
-          $ref: '#/components/schemas/OpportunitiesSummary'
+        opportunities:
+          items:
+            $ref: '#/components/schemas/ExpensiveQueryOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
       type: object
       required:
-      - summary
-      title: OpportunitiesSummaryResponse
-      description: Response for opportunities summary.
+      - opportunities
+      - total_count
+      title: ExpensiveQueriesResponse
+      description: Response for expensive queries opportunities.
     IdleClusterOpportunity:
       properties:
         cluster_id:
@@ -993,26 +1091,54 @@ components:
       - last_state_change
       title: IdleClusterOpportunity
       description: An idle cluster opportunity.
-    IdleClustersResponse:
+    ResourceOpportunitiesResponse:
       properties:
         opportunities:
           items:
-            $ref: '#/components/schemas/IdleClusterOpportunity'
+            $ref: '#/components/schemas/ResourceOpportunity'
           type: array
           title: Opportunities
         total_count:
           type: integer
           title: Total Count
-        idle_hours:
+        resource_id:
+          type: string
+          title: Resource Id
+        resource_type:
           type: integer
-          title: Idle Hours
+          title: Resource Type
       type: object
       required:
       - opportunities
       - total_count
-      - idle_hours
-      title: IdleClustersResponse
-      description: Response for idle clusters opportunities.
+      - resource_id
+      - resource_type
+      title: ResourceOpportunitiesResponse
+      description: Response for opportunities by resource.
+    app__schemas__databricks__opportunities__OversizedClustersResponse:
+      properties:
+        opportunities:
+          items:
+            $ref: '#/components/schemas/OversizedClusterOpportunity'
+          type: array
+          title: Opportunities
+        total_count:
+          type: integer
+          title: Total Count
+        cpu_threshold:
+          type: number
+          title: Cpu Threshold
+        memory_threshold:
+          type: number
+          title: Memory Threshold
+      type: object
+      required:
+      - opportunities
+      - total_count
+      - cpu_threshold
+      - memory_threshold
+      title: OversizedClustersResponse
+      description: Response for oversized clusters opportunities.
     HighFailureJobOpportunity:
       properties:
         job_id:
@@ -1080,150 +1206,24 @@ components:
       - msg
       - type
       title: ValidationError
-    OversizedClusterOpportunity:
+    HTTPValidationError:
       properties:
-        cluster_id:
-          type: string
-          title: Cluster Id
-        cluster_name:
-          type: string
-          title: Cluster Name
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        worker_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Worker Count
-        driver_node_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Driver Node Type
-        worker_node_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Worker Node Type
-        avg_cpu:
-          type: number
-          title: Avg Cpu
-        avg_memory:
-          type: number
-          title: Avg Memory
-        sample_count:
-          type: integer
-          title: Sample Count
-        potential_savings_pct:
-          type: number
-          title: Potential Savings Pct
-          description: Estimated potential savings percentage
-      type: object
-      required:
-      - cluster_id
-      - cluster_name
-      - workspace_id
-      - avg_cpu
-      - avg_memory
-      - sample_count
-      - potential_savings_pct
-      title: OversizedClusterOpportunity
-      description: An oversized cluster opportunity.
-    ServerlessCandidateOpportunity:
-      properties:
-        warehouse_id:
-          type: string
-          title: Warehouse Id
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        warehouse_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Type
-        warehouse_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Size
-        auto_stop_mins:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Auto Stop Mins
-        min_num_clusters:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Min Num Clusters
-        max_num_clusters:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Num Clusters
-      type: object
-      required:
-      - warehouse_id
-      - warehouse_name
-      - workspace_id
-      title: ServerlessCandidateOpportunity
-      description: A serverless migration candidate.
-    OpportunitiesSummary:
-      properties:
-        oversized_clusters:
-          type: integer
-          title: Oversized Clusters
-          default: 0
-        serverless_candidates:
-          type: integer
-          title: Serverless Candidates
-          default: 0
-        high_failure_jobs:
-          type: integer
-          title: High Failure Jobs
-          default: 0
-        expensive_queries:
-          type: integer
-          title: Expensive Queries
-          default: 0
-        total_opportunities:
-          type: integer
-          title: Total Opportunities
-          default: 0
-      type: object
-      title: OpportunitiesSummary
-      description: Summary of all opportunity types.
-    ExpensiveQueriesResponse:
-      properties:
-        opportunities:
+        detail:
           items:
-            $ref: '#/components/schemas/ExpensiveQueryOpportunity'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Opportunities
-        total_count:
-          type: integer
-          title: Total Count
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    OpportunitiesSummaryResponse:
+      properties:
+        summary:
+          $ref: '#/components/schemas/OpportunitiesSummary'
       type: object
       required:
-      - opportunities
-      - total_count
-      title: ExpensiveQueriesResponse
-      description: Response for expensive queries opportunities.
+      - summary
+      title: OpportunitiesSummaryResponse
+      description: Response for opportunities summary.
   securitySchemes:
     HTTPBearer:
       type: http

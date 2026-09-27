@@ -541,85 +541,41 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    DocumentChunksResponse:
+    KnowledgeFeedbackResponse:
       properties:
-        document_id:
-          type: integer
-          title: Document Id
-        document_public_id:
-          type: string
-          title: Document Public Id
-        document_name:
-          type: string
-          title: Document Name
-        version:
-          type: integer
-          title: Version
-        total_chunks:
-          type: integer
-          title: Total Chunks
-        chunks:
-          items:
-            $ref: '#/components/schemas/ChunkModel'
-          type: array
-          title: Chunks
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
       type: object
       required:
-      - document_id
-      - document_public_id
-      - document_name
-      - version
-      - total_chunks
-      - chunks
-      title: DocumentChunksResponse
-      description: Response for document chunks
-    HTTPValidationError:
+      - ok
+      title: KnowledgeFeedbackResponse
+      description: Response for knowledge feedback submission
+    KnowledgeFeedbackRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Body_upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post:
-      properties:
-        file:
-          anyOf:
-          - type: string
-            format: binary
-          - type: 'null'
-          title: File
-        markdown_content:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Markdown Content
-        chunking_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Chunking Strategy
-          default: hybrid
-      type: object
-      title: Body_upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post
-    KnowledgeQueryResponse:
-      properties:
-        answer:
+        chunk_id:
+          type: integer
+          title: Chunk Id
+        feedback:
           type: string
-          title: Answer
-        chunks:
+          pattern: ^(helpful|not_helpful)$
+          title: Feedback
+        comment:
           anyOf:
-          - items:
-              $ref: '#/components/schemas/ChunkReference'
-            type: array
+          - type: string
           - type: 'null'
-          title: Chunks
+          title: Comment
       type: object
       required:
-      - answer
-      title: KnowledgeQueryResponse
-      description: Response from querying a knowledge base
+      - chunk_id
+      - feedback
+      title: KnowledgeFeedbackRequest
+      description: Request for submitting feedback on a knowledge chunk/learning
     PrivacySetting:
       type: string
       enum:
@@ -644,231 +600,6 @@ components:
       - knowledge_base_ids
       title: KnowledgeQueryRequest
       description: Request for querying a knowledge base
-    ChunkModel:
-      properties:
-        chunk_id:
-          type: string
-          title: Chunk Id
-        chunk_order_index:
-          type: integer
-          title: Chunk Order Index
-        content:
-          type: string
-          title: Content
-        tokens:
-          type: integer
-          title: Tokens
-        file_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: File Path
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        summary:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Summary
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
-        knowledge_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Knowledge Type
-        code_snippets:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Code Snippets
-        retrieval_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Retrieval Count
-          default: 0
-      type: object
-      required:
-      - chunk_id
-      - chunk_order_index
-      - content
-      - tokens
-      title: ChunkModel
-      description: Schema for a single document chunk
-    KnowledgeFeedbackResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: KnowledgeFeedbackResponse
-      description: Response for knowledge feedback submission
-    KnowledgeDocumentUploadResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        document_id:
-          type: integer
-          title: Document Id
-        document_public_id:
-          type: string
-          title: Document Public Id
-        knowledge_base_id:
-          type: integer
-          title: Knowledge Base Id
-        version:
-          type: integer
-          title: Version
-        processing_status:
-          type: string
-          title: Processing Status
-        celery_task_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Celery Task Id
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      - document_id
-      - document_public_id
-      - knowledge_base_id
-      - version
-      - processing_status
-      title: KnowledgeDocumentUploadResponse
-      description: Response after uploading a knowledge base document
-    KnowledgeBaseWithDocumentResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        knowledge_base_id:
-          type: integer
-          title: Knowledge Base Id
-        knowledge_base_public_id:
-          type: string
-          title: Knowledge Base Public Id
-        document_id:
-          type: integer
-          title: Document Id
-        document_public_id:
-          type: string
-          title: Document Public Id
-        name:
-          type: string
-          title: Name
-        version:
-          type: integer
-          title: Version
-        processing_status:
-          type: string
-          title: Processing Status
-        celery_task_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Celery Task Id
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      - knowledge_base_id
-      - knowledge_base_public_id
-      - document_id
-      - document_public_id
-      - name
-      - version
-      - processing_status
-      title: KnowledgeBaseWithDocumentResponse
-      description: Response after creating knowledge base with document
-    KnowledgeFeedbackRequest:
-      properties:
-        chunk_id:
-          type: integer
-          title: Chunk Id
-        feedback:
-          type: string
-          pattern: ^(helpful|not_helpful)$
-          title: Feedback
-        comment:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Comment
-      type: object
-      required:
-      - chunk_id
-      - feedback
-      title: KnowledgeFeedbackRequest
-      description: Request for submitting feedback on a knowledge chunk/learning
-    ChunkReference:
-      properties:
-        chunk_id:
-          type: string
-          title: Chunk Id
-        relevance_score:
-          type: number
-          title: Relevance Score
-        content:
-          type: string
-          title: Content
-        file_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: File Path
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        chunk_order_index:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Chunk Order Index
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-      type: object
-      required:
-      - chunk_id
-      - relevance_score
-      - content
-      title: ChunkReference
-      description: Reference to a chunk used in query response with full content
     KnowledgeBaseDetailResponse:
       properties:
         id:
@@ -1011,27 +742,6 @@ components:
       - status_message
       title: KnowledgeBaseDetailResponse
       description: Detailed response for knowledge base with current document status
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     Body_upload_with_kb_creation_knowledge_bases_v2_upload_post:
       properties:
         name:
@@ -1073,6 +783,233 @@ components:
       required:
       - name
       title: Body_upload_with_kb_creation_knowledge_bases_v2_upload_post
+    DocumentChunksResponse:
+      properties:
+        document_id:
+          type: integer
+          title: Document Id
+        document_public_id:
+          type: string
+          title: Document Public Id
+        document_name:
+          type: string
+          title: Document Name
+        version:
+          type: integer
+          title: Version
+        total_chunks:
+          type: integer
+          title: Total Chunks
+        chunks:
+          items:
+            $ref: '#/components/schemas/ChunkModel'
+          type: array
+          title: Chunks
+      type: object
+      required:
+      - document_id
+      - document_public_id
+      - document_name
+      - version
+      - total_chunks
+      - chunks
+      title: DocumentChunksResponse
+      description: Response for document chunks
+    KnowledgeQueryResponse:
+      properties:
+        answer:
+          type: string
+          title: Answer
+        chunks:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ChunkReference'
+            type: array
+          - type: 'null'
+          title: Chunks
+      type: object
+      required:
+      - answer
+      title: KnowledgeQueryResponse
+      description: Response from querying a knowledge base
+    KnowledgeDocumentUploadResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        document_id:
+          type: integer
+          title: Document Id
+        document_public_id:
+          type: string
+          title: Document Public Id
+        knowledge_base_id:
+          type: integer
+          title: Knowledge Base Id
+        version:
+          type: integer
+          title: Version
+        processing_status:
+          type: string
+          title: Processing Status
+        celery_task_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Celery Task Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      - document_id
+      - document_public_id
+      - knowledge_base_id
+      - version
+      - processing_status
+      title: KnowledgeDocumentUploadResponse
+      description: Response after uploading a knowledge base document
+    KnowledgeBaseWithDocumentResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        knowledge_base_id:
+          type: integer
+          title: Knowledge Base Id
+        knowledge_base_public_id:
+          type: string
+          title: Knowledge Base Public Id
+        document_id:
+          type: integer
+          title: Document Id
+        document_public_id:
+          type: string
+          title: Document Public Id
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        processing_status:
+          type: string
+          title: Processing Status
+        celery_task_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Celery Task Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      - knowledge_base_id
+      - knowledge_base_public_id
+      - document_id
+      - document_public_id
+      - name
+      - version
+      - processing_status
+      title: KnowledgeBaseWithDocumentResponse
+      description: Response after creating knowledge base with document
+    Body_upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post:
+      properties:
+        file:
+          anyOf:
+          - type: string
+            format: binary
+          - type: 'null'
+          title: File
+        markdown_content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Markdown Content
+        chunking_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chunking Strategy
+          default: hybrid
+      type: object
+      title: Body_upload_to_existing_kb_knowledge_bases_v2__kb_id__upload_post
+    ChunkReference:
+      properties:
+        chunk_id:
+          type: string
+          title: Chunk Id
+        relevance_score:
+          type: number
+          title: Relevance Score
+        content:
+          type: string
+          title: Content
+        file_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Path
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        chunk_order_index:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Chunk Order Index
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      required:
+      - chunk_id
+      - relevance_score
+      - content
+      title: ChunkReference
+      description: Reference to a chunk used in query response with full content
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ForkTemplateRequest:
       properties:
         template_name:
@@ -1087,6 +1024,69 @@ components:
       required:
       - template_name
       title: ForkTemplateRequest
+    ChunkModel:
+      properties:
+        chunk_id:
+          type: string
+          title: Chunk Id
+        chunk_order_index:
+          type: integer
+          title: Chunk Order Index
+        content:
+          type: string
+          title: Content
+        tokens:
+          type: integer
+          title: Tokens
+        file_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Path
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        knowledge_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Knowledge Type
+        code_snippets:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Code Snippets
+        retrieval_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Retrieval Count
+          default: 0
+      type: object
+      required:
+      - chunk_id
+      - chunk_order_index
+      - content
+      - tokens
+      title: ChunkModel
+      description: Schema for a single document chunk
   securitySchemes:
     HTTPBearer:
       type: http

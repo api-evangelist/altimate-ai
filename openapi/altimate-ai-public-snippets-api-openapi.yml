@@ -291,48 +291,44 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    UpdateSnippetRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+          description: Title or name of the snippet
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Description of what the snippet does
+        database_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database Type
+          description: Database type
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+          description: Capability tags
+        full_content:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Full Content
+          description: Full snippet content
       type: object
-      title: HTTPValidationError
-    SnippetsListResponse:
-      properties:
-        snippets:
-          items:
-            $ref: '#/components/schemas/SnippetItem'
-          type: array
-          title: Snippets
-          description: List of snippets
-        page:
-          type: integer
-          title: Page
-          description: Current page number
-        page_size:
-          type: integer
-          title: Page Size
-          description: Number of items per page
-        has_more:
-          type: boolean
-          title: Has More
-          description: Whether there are more pages
-        total:
-          type: integer
-          title: Total
-          description: Total number of snippets matching filters
-      type: object
-      required:
-      - snippets
-      - page
-      - page_size
-      - has_more
-      - total
-      title: SnippetsListResponse
-      description: Paginated list of snippets
+      title: UpdateSnippetRequest
+      description: Request to update an existing snippet
     SnippetItem:
       properties:
         id:
@@ -375,6 +371,55 @@ components:
       - type
       title: SnippetItem
       description: Individual code snippet from Weaviate
+    SnippetsListResponse:
+      properties:
+        snippets:
+          items:
+            $ref: '#/components/schemas/SnippetItem'
+          type: array
+          title: Snippets
+          description: List of snippets
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items per page
+        has_more:
+          type: boolean
+          title: Has More
+          description: Whether there are more pages
+        total:
+          type: integer
+          title: Total
+          description: Total number of snippets matching filters
+      type: object
+      required:
+      - snippets
+      - page
+      - page_size
+      - has_more
+      - total
+      title: SnippetsListResponse
+      description: Paginated list of snippets
+    DeleteSnippetResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion succeeded
+        message:
+          type: string
+          title: Message
+          description: Status message
+      type: object
+      required:
+      - success
+      - message
+      title: DeleteSnippetResponse
+      description: Response from deleting a snippet
     ExecuteSnippetRequest:
       properties:
         tenant:
@@ -436,44 +481,6 @@ components:
       - success
       title: ExecuteSnippetResponse
       description: Response from executing a SQL snippet
-    UpdateSnippetRequest:
-      properties:
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-          description: Title or name of the snippet
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          description: Description of what the snippet does
-        database_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database Type
-          description: Database type
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
-          description: Capability tags
-        full_content:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Full Content
-          description: Full snippet content
-      type: object
-      title: UpdateSnippetRequest
-      description: Request to update an existing snippet
     SnippetsFilterOptions:
       properties:
         database_types:
@@ -512,6 +519,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     CreateSnippetRequest:
       properties:
         title:
@@ -550,22 +566,6 @@ components:
       - full_content
       title: CreateSnippetRequest
       description: Request to create a new snippet
-    DeleteSnippetResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-          description: Whether the deletion succeeded
-        message:
-          type: string
-          title: Message
-          description: Status message
-      type: object
-      required:
-      - success
-      - message
-      title: DeleteSnippetResponse
-      description: Response from deleting a snippet
   securitySchemes:
     HTTPBearer:
       type: http

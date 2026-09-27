@@ -206,6 +206,27 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    FeatureRequestNotificationRequest:
+      properties:
+        request_type:
+          type: string
+          title: Request Type
+          default: datamate
+      type: object
+      title: FeatureRequestNotificationRequest
+    NotificationRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        webhook_url:
+          type: string
+          title: Webhook Url
+      type: object
+      required:
+      - name
+      - webhook_url
+      title: NotificationRequest
     NotificationResponse:
       properties:
         notifications:
@@ -217,15 +238,6 @@ components:
       required:
       - notifications
       title: NotificationResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     StandardResponse:
       properties:
         ok:
@@ -235,28 +247,41 @@ components:
       required:
       - ok
       title: StandardResponse
-    SendSlackNotificationRequest:
+    Notification:
       properties:
-        webhook_url:
+        id:
+          type: integer
+          title: Id
+        type:
           type: string
-          title: Webhook Url
-        payload:
-          additionalProperties: true
-          type: object
-          title: Payload
+          title: Type
+        config:
+          $ref: '#/components/schemas/NotificationConfigPublic'
       type: object
       required:
-      - webhook_url
-      - payload
-      title: SendSlackNotificationRequest
-    FeatureRequestNotificationRequest:
+      - id
+      - type
+      - config
+      title: Notification
+    NotificationConfigPublic:
       properties:
-        request_type:
-          type: string
-          title: Request Type
-          default: datamate
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
       type: object
-      title: FeatureRequestNotificationRequest
+      title: NotificationConfigPublic
+      description: 'Public-facing slice of a notification''s `config`.
+
+
+        The stored config contains the webhook URL, which is itself the
+
+        credential — anyone who reads it can post to Slack directly. Only
+
+        the display name is surfaced over the API; the backend looks up the
+
+        URL internally via `get_notification_by_id`.'
     ValidationError:
       properties:
         loc:
@@ -278,19 +303,15 @@ components:
       - msg
       - type
       title: ValidationError
-    NotificationRequest:
+    HTTPValidationError:
       properties:
-        name:
-          type: string
-          title: Name
-        webhook_url:
-          type: string
-          title: Webhook Url
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - name
-      - webhook_url
-      title: NotificationRequest
+      title: HTTPValidationError
     SendSlackNotificationResponse:
       properties:
         ok:
@@ -300,41 +321,20 @@ components:
       required:
       - ok
       title: SendSlackNotificationResponse
-    NotificationConfigPublic:
+    SendSlackNotificationRequest:
       properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-      type: object
-      title: NotificationConfigPublic
-      description: 'Public-facing slice of a notification''s `config`.
-
-
-        The stored config contains the webhook URL, which is itself the
-
-        credential — anyone who reads it can post to Slack directly. Only
-
-        the display name is surfaced over the API; the backend looks up the
-
-        URL internally via `get_notification_by_id`.'
-    Notification:
-      properties:
-        id:
-          type: integer
-          title: Id
-        type:
+        webhook_url:
           type: string
-          title: Type
-        config:
-          $ref: '#/components/schemas/NotificationConfigPublic'
+          title: Webhook Url
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
       type: object
       required:
-      - id
-      - type
-      - config
-      title: Notification
+      - webhook_url
+      - payload
+      title: SendSlackNotificationRequest
   securitySchemes:
     HTTPBearer:
       type: http

@@ -69,6 +69,67 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CreatePublicPromptRequest:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        prompt_text:
+          type: string
+          minLength: 1
+          title: Prompt Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+      type: object
+      required:
+      - prompt_text
+      title: CreatePublicPromptRequest
+      description: Request schema for creating public prompts (service user only)
     PromptResponse:
       properties:
         id:
@@ -133,67 +194,6 @@ components:
       - updated_at
       title: PromptResponse
       description: Response schema for a single prompt
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    CreatePublicPromptRequest:
-      properties:
-        title:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Title
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        prompt_text:
-          type: string
-          minLength: 1
-          title: Prompt Text
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-        attributes:
-          additionalProperties: true
-          type: object
-          title: Attributes
-      type: object
-      required:
-      - prompt_text
-      title: CreatePublicPromptRequest
-      description: Request schema for creating public prompts (service user only)
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http

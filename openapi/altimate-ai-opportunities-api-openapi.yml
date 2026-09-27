@@ -2021,6 +2021,17 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    UpdateCommentRequest:
+      properties:
+        comment:
+          type: string
+          maxLength: 10000
+          minLength: 1
+          title: Comment
+      type: object
+      required:
+      - comment
+      title: UpdateCommentRequest
     Page_GetOpportunitiesDataResponse_:
       properties:
         items:
@@ -2059,57 +2070,133 @@ components:
       - page
       - size
       title: Page[GetOpportunitiesDataResponse]
-    CommentResponse:
+    InsightExplanationRequest:
       properties:
-        id:
-          type: string
-          title: Id
+        resource_type:
+          type: integer
+          title: Resource Type
+        resource_uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Uri
+        opportunity:
+          additionalProperties: true
+          type: object
+          title: Opportunity
+        query_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Hash
+        query_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Id
+        period_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period Type
+        source_views:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Source Views
+      type: object
+      required:
+      - resource_type
+      - opportunity
+      title: InsightExplanationRequest
+    JiraTicketRequest:
+      properties:
         opportunity_id:
           type: string
           title: Opportunity Id
-        instance_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Instance Id
-        comment:
+        project_key:
           type: string
-          title: Comment
-        created_by:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Created By
-        timestamp:
+          title: Project Key
+          default: AI
+        issue_type:
           type: string
-          format: date-time
-          title: Timestamp
-        updated_at:
+          title: Issue Type
+          default: Task
+        priority:
           anyOf:
           - type: string
-            format: date-time
           - type: 'null'
-          title: Updated At
-        edited:
-          type: boolean
-          title: Edited
+          title: Priority
+          default: Medium
+        assignee:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assignee
+        additional_fields:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Additional Fields
+        altimate_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Altimate Url
+        query_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Id
+        create_jira_ticket:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Create Jira Ticket
           default: false
+        action:
+          anyOf:
+          - $ref: '#/components/schemas/Action'
+          - type: 'null'
+          default: create_jira_ticket
       type: object
       required:
-      - id
       - opportunity_id
-      - comment
-      - timestamp
-      title: CommentResponse
-    HTTPValidationError:
+      title: JiraTicketRequest
+    GetOpportunitiesResourceNameFilterResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        items:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
+            type: array
+          - type: 'null'
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pages
       type: object
-      title: HTTPValidationError
+      title: GetOpportunitiesResourceNameFilterResponse
     OpportunityDetailResponse:
       properties:
         opportunity_id:
@@ -2213,6 +2300,66 @@ components:
       - effort
       - status
       title: OpportunityDetailResponse
+    OpportunityUpdatesResponse:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+      type: object
+      required:
+      - opportunity_id
+      - timestamp
+      title: OpportunityUpdatesResponse
+    GetOpportunitiesUserFilterResponse:
+      properties:
+        items:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
+            type: array
+          - type: 'null'
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pages
+      type: object
+      title: GetOpportunitiesUserFilterResponse
     GetImplementedOpportunitiesDataResponse:
       properties:
         opportunity_id:
@@ -2313,122 +2460,22 @@ components:
         consumer would see a contract that doesn''t match the schema''s
 
         request side (whose `?from=/?to=` filters bind to the same column).'
-    PutOpportunitiesDataRequest:
+    GetOpportunitiesSummaryResponse:
       properties:
-        changes:
-          items:
-            $ref: '#/components/schemas/Changes'
-          type: array
-          title: Changes
-        user_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: User Id
-        start_date:
+        label:
+          type: string
+          title: Label
+        value:
           anyOf:
           - type: string
-            format: date-time
-          - type: 'null'
-          title: Start Date
-        end_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: End Date
+          - additionalProperties: true
+            type: object
+          title: Value
       type: object
       required:
-      - changes
-      title: PutOpportunitiesDataRequest
-    EffortLabel:
-      type: integer
-      enum:
-      - 1
-      - 2
-      - 3
-      title: EffortLabel
-    OpportunityMetadata:
-      properties:
-        agent_instructions:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Agent Instructions
-      additionalProperties: true
-      type: object
-      title: OpportunityMetadata
-      description: 'Agent-actionable metadata attached to an opportunity.
-
-
-        `agent_instructions` is the canonical, pre-formatted markdown the detail
-
-        page renders. `extra="allow"` forwards every other metadata key untouched
-
-        so new keys are never silently dropped.'
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    UpdateCommentRequest:
-      properties:
-        comment:
-          type: string
-          maxLength: 10000
-          minLength: 1
-          title: Comment
-      type: object
-      required:
-      - comment
-      title: UpdateCommentRequest
-    GetOpportunitiesUserFilterResponse:
-      properties:
-        items:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
-            type: array
-          - type: 'null'
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Pages
-      type: object
-      title: GetOpportunitiesUserFilterResponse
+      - label
+      - value
+      title: GetOpportunitiesSummaryResponse
     Changes:
       properties:
         opportunity_id:
@@ -2449,480 +2496,6 @@ components:
       required:
       - opportunity_id
       title: Changes
-    GetOpportunitiesResourceNameFilterResponse:
-      properties:
-        items:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
-            type: array
-          - type: 'null'
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Pages
-      type: object
-      title: GetOpportunitiesResourceNameFilterResponse
-    ResourceTypes:
-      type: integer
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-      - 8
-      - 9
-      - 10
-      - 11
-      - 12
-      - 13
-      - 14
-      - 15
-      - 16
-      - 17
-      - 18
-      - 19
-      - 20
-      - 21
-      - 22
-      - 23
-      - 24
-      title: ResourceTypes
-    GroupedOpportunityResponse:
-      properties:
-        opportunity_name:
-          type: string
-          title: Opportunity Name
-        cost_savings_max:
-          type: number
-          title: Cost Savings Max
-        cost_savings_min:
-          type: number
-          title: Cost Savings Min
-        time_savings_max:
-          type: number
-          title: Time Savings Max
-        time_savings_min:
-          type: number
-          title: Time Savings Min
-        occurrences:
-          type: integer
-          title: Occurrences
-        resource_type:
-          type: integer
-          title: Resource Type
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - opportunity_name
-      - cost_savings_max
-      - cost_savings_min
-      - time_savings_max
-      - time_savings_min
-      - occurrences
-      - resource_type
-      - description
-      title: GroupedOpportunityResponse
-    JiraTicketRequest:
-      properties:
-        opportunity_id:
-          type: string
-          title: Opportunity Id
-        project_key:
-          type: string
-          title: Project Key
-          default: AI
-        issue_type:
-          type: string
-          title: Issue Type
-          default: Task
-        priority:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Priority
-          default: Medium
-        assignee:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Assignee
-        additional_fields:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Additional Fields
-        altimate_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Altimate Url
-        query_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Id
-        create_jira_ticket:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Create Jira Ticket
-          default: false
-        action:
-          anyOf:
-          - $ref: '#/components/schemas/Action'
-          - type: 'null'
-          default: create_jira_ticket
-      type: object
-      required:
-      - opportunity_id
-      title: JiraTicketRequest
-    Action:
-      type: string
-      enum:
-      - create_jira_ticket
-      - solve_issue
-      title: Action
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    GetOpportunitiesDataResponse:
-      properties:
-        opportunity_id:
-          type: string
-          title: Opportunity Id
-        instance_id:
-          type: integer
-          title: Instance Id
-        resource_name:
-          type: string
-          title: Resource Name
-        resource_type:
-          $ref: '#/components/schemas/ResourceTypes'
-        resource_uri:
-          type: string
-          title: Resource Uri
-        opportunity_name:
-          type: string
-          title: Opportunity Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        last_seen:
-          type: string
-          format: date-time
-          title: Last Seen
-        first_seen:
-          type: string
-          format: date-time
-          title: First Seen
-        count:
-          type: integer
-          title: Count
-        total_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total Count
-        resources:
-          items:
-            $ref: '#/components/schemas/app__schemas__opportunities__Resource'
-          type: array
-          title: Resources
-        money_savings:
-          additionalProperties:
-            type: string
-          type: object
-          title: Money Savings
-        time_savings:
-          type: string
-          title: Time Savings
-        effort:
-          $ref: '#/components/schemas/EffortLabel'
-        owner:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Owner
-        status:
-          $ref: '#/components/schemas/OpportunityStatus'
-      type: object
-      required:
-      - opportunity_id
-      - instance_id
-      - resource_name
-      - resource_type
-      - resource_uri
-      - opportunity_name
-      - last_seen
-      - first_seen
-      - count
-      - resources
-      - money_savings
-      - time_savings
-      - effort
-      - status
-      title: GetOpportunitiesDataResponse
-    OpportunityStatus:
-      type: integer
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-      title: OpportunityStatus
-    GetOpportunitiesWarehouseFilterResponse:
-      properties:
-        items:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
-            type: array
-          - type: 'null'
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Pages
-      type: object
-      title: GetOpportunitiesWarehouseFilterResponse
-    OpportunityUpdatesResponse:
-      properties:
-        opportunity_id:
-          type: string
-          title: Opportunity Id
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        owner:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Owner
-        status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Status
-        created_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Created By
-      type: object
-      required:
-      - opportunity_id
-      - timestamp
-      title: OpportunityUpdatesResponse
-    Page_GetImplementedOpportunitiesDataResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/GetImplementedOpportunitiesDataResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[GetImplementedOpportunitiesDataResponse]
-    AddCommentRequest:
-      properties:
-        opportunity_id:
-          type: string
-          title: Opportunity Id
-        instance_id:
-          type: integer
-          title: Instance Id
-        comment:
-          type: string
-          maxLength: 10000
-          minLength: 1
-          title: Comment
-      type: object
-      required:
-      - opportunity_id
-      - instance_id
-      - comment
-      title: AddCommentRequest
-    GetOpportunitiesSummaryResponse:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          anyOf:
-          - type: string
-          - additionalProperties: true
-            type: object
-          title: Value
-      type: object
-      required:
-      - label
-      - value
-      title: GetOpportunitiesSummaryResponse
-    InsightExplanationRequest:
-      properties:
-        resource_type:
-          type: integer
-          title: Resource Type
-        resource_uri:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Resource Uri
-        opportunity:
-          additionalProperties: true
-          type: object
-          title: Opportunity
-        query_hash:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Hash
-        query_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Id
-        period_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period Type
-        source_views:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Source Views
-      type: object
-      required:
-      - resource_type
-      - opportunity
-      title: InsightExplanationRequest
-    app__schemas__opportunities__FilterResponse:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: string
-          title: Value
-      type: object
-      required:
-      - label
-      - value
-      title: FilterResponse
-    app__schemas__opportunities__Resource:
-      properties:
-        resource_name:
-          type: string
-          title: Resource Name
-        resource_uri:
-          type: string
-          title: Resource Uri
-        resource_type:
-          $ref: '#/components/schemas/ResourceTypes'
-      type: object
-      required:
-      - resource_name
-      - resource_uri
-      - resource_type
-      title: Resource
-    SimpleInsightExplanationRequest:
-      properties:
-        opportunity_id:
-          type: string
-          title: Opportunity Id
-        query_hash:
-          type: string
-          title: Query Hash
-        query_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Id
-      type: object
-      required:
-      - opportunity_id
-      - query_hash
-      title: SimpleInsightExplanationRequest
     PriorityOpportunityResponse:
       properties:
         opportunity_id:
@@ -3012,6 +2585,433 @@ components:
       - effort
       - status
       title: PriorityOpportunityResponse
+    CommentResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        comment:
+          type: string
+          title: Comment
+        created_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Created By
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        edited:
+          type: boolean
+          title: Edited
+          default: false
+      type: object
+      required:
+      - id
+      - opportunity_id
+      - comment
+      - timestamp
+      title: CommentResponse
+    PutOpportunitiesDataRequest:
+      properties:
+        changes:
+          items:
+            $ref: '#/components/schemas/Changes'
+          type: array
+          title: Changes
+        user_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: User Id
+        start_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      type: object
+      required:
+      - changes
+      title: PutOpportunitiesDataRequest
+    GroupedOpportunityResponse:
+      properties:
+        opportunity_name:
+          type: string
+          title: Opportunity Name
+        cost_savings_max:
+          type: number
+          title: Cost Savings Max
+        cost_savings_min:
+          type: number
+          title: Cost Savings Min
+        time_savings_max:
+          type: number
+          title: Time Savings Max
+        time_savings_min:
+          type: number
+          title: Time Savings Min
+        occurrences:
+          type: integer
+          title: Occurrences
+        resource_type:
+          type: integer
+          title: Resource Type
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - opportunity_name
+      - cost_savings_max
+      - cost_savings_min
+      - time_savings_max
+      - time_savings_min
+      - occurrences
+      - resource_type
+      - description
+      title: GroupedOpportunityResponse
+    EffortLabel:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      title: EffortLabel
+    OpportunityStatus:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      title: OpportunityStatus
+    OpportunityMetadata:
+      properties:
+        agent_instructions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Instructions
+      additionalProperties: true
+      type: object
+      title: OpportunityMetadata
+      description: 'Agent-actionable metadata attached to an opportunity.
+
+
+        `agent_instructions` is the canonical, pre-formatted markdown the detail
+
+        page renders. `extra="allow"` forwards every other metadata key untouched
+
+        so new keys are never silently dropped.'
+    Page_GetImplementedOpportunitiesDataResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/GetImplementedOpportunitiesDataResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[GetImplementedOpportunitiesDataResponse]
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    GetOpportunitiesDataResponse:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          type: integer
+          title: Instance Id
+        resource_name:
+          type: string
+          title: Resource Name
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypes'
+        resource_uri:
+          type: string
+          title: Resource Uri
+        opportunity_name:
+          type: string
+          title: Opportunity Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        last_seen:
+          type: string
+          format: date-time
+          title: Last Seen
+        first_seen:
+          type: string
+          format: date-time
+          title: First Seen
+        count:
+          type: integer
+          title: Count
+        total_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Count
+        resources:
+          items:
+            $ref: '#/components/schemas/app__schemas__opportunities__Resource'
+          type: array
+          title: Resources
+        money_savings:
+          additionalProperties:
+            type: string
+          type: object
+          title: Money Savings
+        time_savings:
+          type: string
+          title: Time Savings
+        effort:
+          $ref: '#/components/schemas/EffortLabel'
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+        status:
+          $ref: '#/components/schemas/OpportunityStatus'
+      type: object
+      required:
+      - opportunity_id
+      - instance_id
+      - resource_name
+      - resource_type
+      - resource_uri
+      - opportunity_name
+      - last_seen
+      - first_seen
+      - count
+      - resources
+      - money_savings
+      - time_savings
+      - effort
+      - status
+      title: GetOpportunitiesDataResponse
+    GetOpportunitiesWarehouseFilterResponse:
+      properties:
+        items:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/app__schemas__opportunities__FilterResponse'
+            type: array
+          - type: 'null'
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pages
+      type: object
+      title: GetOpportunitiesWarehouseFilterResponse
+    SimpleInsightExplanationRequest:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        query_hash:
+          type: string
+          title: Query Hash
+        query_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Id
+      type: object
+      required:
+      - opportunity_id
+      - query_hash
+      title: SimpleInsightExplanationRequest
+    AddCommentRequest:
+      properties:
+        opportunity_id:
+          type: string
+          title: Opportunity Id
+        instance_id:
+          type: integer
+          title: Instance Id
+        comment:
+          type: string
+          maxLength: 10000
+          minLength: 1
+          title: Comment
+      type: object
+      required:
+      - opportunity_id
+      - instance_id
+      - comment
+      title: AddCommentRequest
+    app__schemas__opportunities__FilterResponse:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: FilterResponse
+    app__schemas__opportunities__Resource:
+      properties:
+        resource_name:
+          type: string
+          title: Resource Name
+        resource_uri:
+          type: string
+          title: Resource Uri
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypes'
+      type: object
+      required:
+      - resource_name
+      - resource_uri
+      - resource_type
+      title: Resource
+    ResourceTypes:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 20
+      - 21
+      - 22
+      - 23
+      - 24
+      title: ResourceTypes
+    Action:
+      type: string
+      enum:
+      - create_jira_ticket
+      - solve_issue
+      title: Action
   securitySchemes:
     HTTPBearer:
       type: http

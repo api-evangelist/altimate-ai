@@ -649,16 +649,7 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    DataStoreFetchDatabasesRequest:
+    DataStoreCreationRequest:
       properties:
         name:
           type: string
@@ -669,242 +660,51 @@ components:
         description:
           type: string
           title: Description
-        account:
+        connection_hash:
+          type: string
+          title: Connection Hash
+        connection_info:
+          type: string
+          title: Connection Info
+        key:
           anyOf:
           - type: string
           - type: 'null'
-          title: Account
-        user:
+          title: Key
+        jump_info:
           anyOf:
-          - type: string
+          - additionalProperties: true
+            type: object
           - type: 'null'
-          title: User
-        password:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Password
-        role:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Role
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        warehouse:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse
-        key_pair:
-          anyOf:
-          - $ref: '#/components/schemas/KeyPair'
-          - type: 'null'
+          title: Jump Info
         auth_type:
           anyOf:
           - $ref: '#/components/schemas/AuthType'
           - type: 'null'
           default: password
-        host:
+        key_pair:
           anyOf:
-          - type: string
+          - $ref: '#/components/schemas/KeyPair'
           - type: 'null'
-          title: Host
-        port:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Port
       type: object
       required:
       - name
       - type
       - description
-      title: DataStoreFetchDatabasesRequest
-    KeyPair:
+      - connection_hash
+      - connection_info
+      title: DataStoreCreationRequest
+    DataStoreFetchAllResponse:
       properties:
-        type:
-          $ref: '#/components/schemas/PrivateKeyType'
-          default: pem
-        private_key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Private Key
-        passphrase:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Passphrase
-      type: object
-      title: KeyPair
-    DataStoreTestConnectionResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        site_role:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Site Role
-        can_publish_workbooks:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Can Publish Workbooks
-      type: object
-      required:
-      - ok
-      title: DataStoreTestConnectionResponse
-    ValidationError:
-      properties:
-        loc:
+        data_stores:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/DataStoreWithMetadata'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Data Stores
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DataStoreTypesResponse:
-      properties:
-        value:
-          type: string
-          title: Value
-        enabled:
-          type: boolean
-          title: Enabled
-        is_standalone:
-          type: boolean
-          title: Is Standalone
-      type: object
-      required:
-      - value
-      - enabled
-      - is_standalone
-      title: DataStoreTypesResponse
-    DataStoreTestConnectionRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        type:
-          type: string
-          title: Type
-        description:
-          type: string
-          title: Description
-        account:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Account
-        user:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User
-        password:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Password
-        role:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Role
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        warehouse:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse
-        host:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Host
-        port:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Port
-        pat_secret:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Pat Secret
-        pat_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Pat Name
-        site_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Site Name
-        url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Url
-        key_pair:
-          anyOf:
-          - $ref: '#/components/schemas/KeyPair'
-          - type: 'null'
-        auth_type:
-          anyOf:
-          - $ref: '#/components/schemas/AuthType'
-          - type: 'null'
-          default: password
-        datastore_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Datastore Id
-        source_site_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Source Site Name
-      type: object
-      required:
-      - name
-      - type
-      - description
-      title: DataStoreTestConnectionRequest
-    PrivateKeyType:
-      type: string
-      enum:
-      - pem
-      - der
-      title: PrivateKeyType
+      - data_stores
+      title: DataStoreFetchAllResponse
     DataStoreCreationUsingFormRequest:
       properties:
         name:
@@ -1016,126 +816,6 @@ components:
       - BUSINESS_CRITICAL
       - NA
       title: InstanceEdition
-    DataStoreDeletionResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: DataStoreDeletionResponse
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    DataStoreCreationRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        type:
-          type: string
-          title: Type
-        description:
-          type: string
-          title: Description
-        connection_hash:
-          type: string
-          title: Connection Hash
-        connection_info:
-          type: string
-          title: Connection Info
-        key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Key
-        jump_info:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Jump Info
-        auth_type:
-          anyOf:
-          - $ref: '#/components/schemas/AuthType'
-          - type: 'null'
-          default: password
-        key_pair:
-          anyOf:
-          - $ref: '#/components/schemas/KeyPair'
-          - type: 'null'
-      type: object
-      required:
-      - name
-      - type
-      - description
-      - connection_hash
-      - connection_info
-      title: DataStoreCreationRequest
-    BasicDataStoreCreationRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        type:
-          type: string
-          title: Type
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - name
-      - type
-      - description
-      title: BasicDataStoreCreationRequest
-    DataStoreCreationResponse:
-      properties:
-        id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Id
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Type
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: DataStoreCreationResponse
-    DataStoreFetchAllResponse:
-      properties:
-        data_stores:
-          items:
-            $ref: '#/components/schemas/DataStoreWithMetadata'
-          type: array
-          title: Data Stores
-      type: object
-      required:
-      - data_stores
-      title: DataStoreFetchAllResponse
     DataStoreUpdateRequest:
       properties:
         name:
@@ -1165,6 +845,368 @@ components:
           title: Key
       type: object
       title: DataStoreUpdateRequest
+    AuthType:
+      type: string
+      enum:
+      - password
+      - key_pair
+      title: AuthType
+    DataStoreTestConnectionResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        site_role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Role
+        can_publish_workbooks:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Can Publish Workbooks
+      type: object
+      required:
+      - ok
+      title: DataStoreTestConnectionResponse
+    KeyPair:
+      properties:
+        type:
+          $ref: '#/components/schemas/PrivateKeyType'
+          default: pem
+        private_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Private Key
+        passphrase:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Passphrase
+      type: object
+      title: KeyPair
+    DataStoreTestConnectionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          type: string
+          title: Description
+        account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account
+        user:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User
+        password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Password
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        warehouse:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse
+        host:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Host
+        port:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Port
+        pat_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Secret
+        pat_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Name
+        site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Name
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        key_pair:
+          anyOf:
+          - $ref: '#/components/schemas/KeyPair'
+          - type: 'null'
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/AuthType'
+          - type: 'null'
+          default: password
+        datastore_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Datastore Id
+        source_site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Site Name
+      type: object
+      required:
+      - name
+      - type
+      - description
+      title: DataStoreTestConnectionRequest
+    DataStoreCreationResponse:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: DataStoreCreationResponse
+    AvailableDatabasesResponse:
+      properties:
+        used_databases:
+          items:
+            type: string
+          type: array
+          title: Used Databases
+        unused_databases:
+          items:
+            type: string
+          type: array
+          title: Unused Databases
+      type: object
+      required:
+      - used_databases
+      - unused_databases
+      title: AvailableDatabasesResponse
+    DataStoreTypesResponse:
+      properties:
+        value:
+          type: string
+          title: Value
+        enabled:
+          type: boolean
+          title: Enabled
+        is_standalone:
+          type: boolean
+          title: Is Standalone
+      type: object
+      required:
+      - value
+      - enabled
+      - is_standalone
+      title: DataStoreTypesResponse
+    DataStoreDeletionResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: DataStoreDeletionResponse
+    PrivateKeyType:
+      type: string
+      enum:
+      - pem
+      - der
+      title: PrivateKeyType
+    DataStoreFetchDatabasesRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          type: string
+          title: Description
+        account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account
+        user:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User
+        password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Password
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        warehouse:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse
+        key_pair:
+          anyOf:
+          - $ref: '#/components/schemas/KeyPair'
+          - type: 'null'
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/AuthType'
+          - type: 'null'
+          default: password
+        host:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Host
+        port:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Port
+      type: object
+      required:
+      - name
+      - type
+      - description
+      title: DataStoreFetchDatabasesRequest
+    DataStoreUpdateResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Created By
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - id
+      - name
+      - type
+      - message
+      title: DataStoreUpdateResponse
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     DataStoreWithMetadata:
       properties:
         id:
@@ -1240,17 +1282,8 @@ components:
       - name
       - type
       title: DataStoreWithMetadata
-    AuthType:
-      type: string
-      enum:
-      - password
-      - key_pair
-      title: AuthType
-    DataStoreUpdateResponse:
+    BasicDataStoreCreationRequest:
       properties:
-        id:
-          type: integer
-          title: Id
         name:
           type: string
           title: Name
@@ -1258,47 +1291,14 @@ components:
           type: string
           title: Type
         description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        created_by:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Created By
-        last_modified_by:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Last Modified By
-        message:
           type: string
-          title: Message
+          title: Description
       type: object
       required:
-      - id
       - name
       - type
-      - message
-      title: DataStoreUpdateResponse
-    AvailableDatabasesResponse:
-      properties:
-        used_databases:
-          items:
-            type: string
-          type: array
-          title: Used Databases
-        unused_databases:
-          items:
-            type: string
-          type: array
-          title: Unused Databases
-      type: object
-      required:
-      - used_databases
-      - unused_databases
-      title: AvailableDatabasesResponse
+      - description
+      title: BasicDataStoreCreationRequest
   securitySchemes:
     HTTPBearer:
       type: http

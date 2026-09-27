@@ -37,6 +37,29 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    Embedding:
+      properties:
+        object:
+          type: string
+          const: embedding
+          title: Object
+          default: embedding
+        embedding:
+          anyOf:
+          - items:
+              type: number
+            type: array
+          - type: string
+            format: binary
+          title: Embedding
+        index:
+          type: integer
+          title: Index
+      type: object
+      required:
+      - embedding
+      - index
+      title: Embedding
     EmbeddingsResponse:
       properties:
         object:
@@ -60,28 +83,6 @@ components:
       - model
       - usage
       title: EmbeddingsResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    EmbeddingsUsage:
-      properties:
-        prompt_tokens:
-          type: integer
-          title: Prompt Tokens
-        total_tokens:
-          type: integer
-          title: Total Tokens
-      type: object
-      required:
-      - prompt_tokens
-      - total_tokens
-      title: EmbeddingsUsage
     EmbeddingsRequest:
       properties:
         input:
@@ -144,29 +145,28 @@ components:
       - msg
       - type
       title: ValidationError
-    Embedding:
+    HTTPValidationError:
       properties:
-        object:
-          type: string
-          const: embedding
-          title: Object
-          default: embedding
-        embedding:
-          anyOf:
-          - items:
-              type: number
-            type: array
-          - type: string
-            format: binary
-          title: Embedding
-        index:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    EmbeddingsUsage:
+      properties:
+        prompt_tokens:
           type: integer
-          title: Index
+          title: Prompt Tokens
+        total_tokens:
+          type: integer
+          title: Total Tokens
       type: object
       required:
-      - embedding
-      - index
-      title: Embedding
+      - prompt_tokens
+      - total_tokens
+      title: EmbeddingsUsage
   securitySchemes:
     HTTPBearer:
       type: http

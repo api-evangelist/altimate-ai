@@ -621,28 +621,44 @@ components:
       - page
       - size
       title: Page[AllNotebookResponse]
-    NotebookTagResponse:
+    AllPreconfiguredNotebookResponse:
       properties:
         id:
           type: integer
           title: Id
-        tag:
+        name:
           type: string
-          title: Tag
+          title: Name
+        data:
+          additionalProperties: true
+          type: object
+          title: Data
+        description:
+          type: string
+          title: Description
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+        updated_on:
+          type: string
+          format: date-time
+          title: Updated On
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
       type: object
       required:
       - id
-      - tag
-      title: NotebookTagResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - name
+      - data
+      - description
+      - created_on
+      - updated_on
+      - tags
+      title: AllPreconfiguredNotebookResponse
     UserIndexResponse:
       properties:
         id:
@@ -744,15 +760,6 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     AddUpdateNotebookRequest:
       properties:
         name:
@@ -786,71 +793,6 @@ components:
           - type: 'null'
       type: object
       title: AddUpdateNotebookRequest
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    AllPreconfiguredNotebookResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        data:
-          additionalProperties: true
-          type: object
-          title: Data
-        description:
-          type: string
-          title: Description
-        created_on:
-          type: string
-          format: date-time
-          title: Created On
-        updated_on:
-          type: string
-          format: date-time
-          title: Updated On
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-      type: object
-      required:
-      - id
-      - name
-      - data
-      - description
-      - created_on
-      - updated_on
-      - tags
-      title: AllPreconfiguredNotebookResponse
     AddPreconfiguredNotebookRequest:
       properties:
         name:
@@ -877,6 +819,55 @@ components:
       - name
       - data
       title: AddPreconfiguredNotebookRequest
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    NotebookTagResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        tag:
+          type: string
+          title: Tag
+      type: object
+      required:
+      - id
+      - tag
+      title: NotebookTagResponse
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AllNotebookResponse:
       properties:
         id:
@@ -921,6 +912,15 @@ components:
       - privacy
       - created_by_user
       title: AllNotebookResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

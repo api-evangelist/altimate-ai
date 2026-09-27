@@ -160,15 +160,18 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    WorkloadAttributes:
       properties:
-        detail:
+        options:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/WorkloadAttribute'
           type: array
-          title: Detail
+          title: Options
       type: object
-      title: HTTPValidationError
+      required:
+      - options
+      title: WorkloadAttributes
+      description: Response schema for available workload attributes.
     WorkloadAttribute:
       properties:
         key:
@@ -215,6 +218,15 @@ components:
       - size
       title: WorkloadAttributeValues
       description: Response schema for distinct values of a workload attribute (for filter dropdowns).
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -236,18 +248,6 @@ components:
       - msg
       - type
       title: ValidationError
-    WorkloadAttributes:
-      properties:
-        options:
-          items:
-            $ref: '#/components/schemas/WorkloadAttribute'
-          type: array
-          title: Options
-      type: object
-      required:
-      - options
-      title: WorkloadAttributes
-      description: Response schema for available workload attributes.
   securitySchemes:
     HTTPBearer:
       type: http

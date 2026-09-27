@@ -42,29 +42,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AccountOption:
-      properties:
-        account_id:
-          type: string
-          title: Account Id
-        workspace_count:
-          type: integer
-          title: Workspace Count
-      type: object
-      required:
-      - account_id
-      - workspace_count
-      title: AccountOption
-      description: A grantable Databricks account (grants cover all its workspaces).
     AccessRuleOptionsResponse:
       properties:
         accounts:
@@ -83,6 +60,38 @@ components:
       - workspaces
       title: AccessRuleOptionsResponse
       description: Catalog of accounts/workspaces a team's access rules can target.
+    WorkspaceOption:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          type: string
+          title: Workspace Name
+        account_id:
+          type: string
+          title: Account Id
+      type: object
+      required:
+      - workspace_id
+      - workspace_name
+      - account_id
+      title: WorkspaceOption
+      description: A grantable Databricks workspace, with its parent account.
+    AccountOption:
+      properties:
+        account_id:
+          type: string
+          title: Account Id
+        workspace_count:
+          type: integer
+          title: Workspace Count
+      type: object
+      required:
+      - account_id
+      - workspace_count
+      title: AccountOption
+      description: A grantable Databricks account (grants cover all its workspaces).
     ValidationError:
       properties:
         loc:
@@ -104,24 +113,15 @@ components:
       - msg
       - type
       title: ValidationError
-    WorkspaceOption:
+    HTTPValidationError:
       properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          type: string
-          title: Workspace Name
-        account_id:
-          type: string
-          title: Account Id
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - workspace_id
-      - workspace_name
-      - account_id
-      title: WorkspaceOption
-      description: A grantable Databricks workspace, with its parent account.
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

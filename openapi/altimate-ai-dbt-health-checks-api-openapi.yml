@@ -230,15 +230,92 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    DbtModelInsightResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        rk:
+          type: string
+          title: Rk
+        batch_id:
+          type: string
+          title: Batch Id
+        health_check_rk:
+          type: string
+          title: Health Check Rk
+        unique_id:
+          type: string
+          title: Unique Id
+        project_name:
+          type: string
+          title: Project Name
+        package_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Package Name
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        original_file_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Original File Path
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+        severity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Severity
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        recommendation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation
+        reason_to_flag:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason To Flag
+        insight_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Insight Metadata
       type: object
-      title: HTTPValidationError
+      required:
+      - rk
+      - batch_id
+      - health_check_rk
+      - unique_id
+      - project_name
+      - package_name
+      - path
+      - original_file_path
+      - name
+      - type
+      - severity
+      - message
+      - recommendation
+      - reason_to_flag
+      - insight_metadata
+      title: DbtModelInsightResponse
     DbtHealthCheckResponse:
       properties:
         rk:
@@ -333,92 +410,6 @@ components:
       - model_insights
       - project_insights
       title: DbtHealthCheckResponse
-    DbtModelInsightResponse:
-      properties:
-        rk:
-          type: string
-          title: Rk
-        batch_id:
-          type: string
-          title: Batch Id
-        health_check_rk:
-          type: string
-          title: Health Check Rk
-        unique_id:
-          type: string
-          title: Unique Id
-        project_name:
-          type: string
-          title: Project Name
-        package_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Package Name
-        path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Path
-        original_file_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Original File Path
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Type
-        severity:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Severity
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        recommendation:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Recommendation
-        reason_to_flag:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason To Flag
-        insight_metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Insight Metadata
-      type: object
-      required:
-      - rk
-      - batch_id
-      - health_check_rk
-      - unique_id
-      - project_name
-      - package_name
-      - path
-      - original_file_path
-      - name
-      - type
-      - severity
-      - message
-      - recommendation
-      - reason_to_flag
-      - insight_metadata
-      title: DbtModelInsightResponse
     DbtProjectInsightResponse:
       properties:
         rk:
@@ -485,27 +476,6 @@ components:
       - reason_to_flag
       - insight_metadata
       title: DbtProjectInsightResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     DbtHealthCheckListResponse:
       properties:
         results:
@@ -529,6 +499,36 @@ components:
       - limit
       - offset
       title: DbtHealthCheckListResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

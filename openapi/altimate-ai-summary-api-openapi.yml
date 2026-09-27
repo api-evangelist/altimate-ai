@@ -383,38 +383,23 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    SummaryTotalSavingsResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        total_cost_savings_ui:
+          type: string
+          title: Total Cost Savings Ui
+        overall_actual_cost_savings_ui:
+          type: string
+          title: Overall Actual Cost Savings Ui
+        experimentation_savings_ui:
+          type: string
+          title: Experimentation Savings Ui
       type: object
-      title: HTTPValidationError
-    SummarySidePanelResponse:
-      properties:
-        total_annual_spend:
-          anyOf:
-          - $ref: '#/components/schemas/SidePanelModel'
-          - type: 'null'
-        total_annual_savings:
-          anyOf:
-          - $ref: '#/components/schemas/SidePanelModel'
-          - type: 'null'
-        total_time_savings:
-          anyOf:
-          - $ref: '#/components/schemas/TimeSidePanelModel'
-          - type: 'null'
-      type: object
-      title: SummarySidePanelResponse
-    SummaryType:
-      type: string
-      enum:
-      - header
-      - insight
-      - side_panel
-      title: SummaryType
+      required:
+      - total_cost_savings_ui
+      - overall_actual_cost_savings_ui
+      - experimentation_savings_ui
+      title: SummaryTotalSavingsResponse
     SummaryConfigRequest:
       properties:
         dormant_period:
@@ -424,6 +409,54 @@ components:
       required:
       - dormant_period
       title: SummaryConfigRequest
+    SummaryConfigResponse:
+      properties:
+        dormant_period:
+          type: integer
+          title: Dormant Period
+      type: object
+      required:
+      - dormant_period
+      title: SummaryConfigResponse
+    SummaryGraphRequest:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        insight_type:
+          $ref: '#/components/schemas/InsightType'
+      type: object
+      required:
+      - period
+      - insight_type
+      title: SummaryGraphRequest
+    SummaryType:
+      type: string
+      enum:
+      - header
+      - insight
+      - side_panel
+      title: SummaryType
+    ComparisonResponse:
+      properties:
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+      type: object
+      required:
+      - data
+      title: ComparisonResponse
+    InsightType:
+      type: string
+      enum:
+      - cost
+      - storage
+      - governance
+      - cost_overall
+      - auto
+      title: InsightType
     SidePanelModel:
       properties:
         title:
@@ -443,6 +476,24 @@ components:
       - title
       - value
       title: SidePanelModel
+    Period:
+      type: integer
+      enum:
+      - 365
+      - 29
+      - 30
+      - 7
+      - 1
+      - 28
+      title: Period
+    ComparisonRequest:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+      type: object
+      required:
+      - period
+      title: ComparisonRequest
     InsightData:
       properties:
         title:
@@ -468,78 +519,6 @@ components:
           title: Attributes
       type: object
       title: InsightData
-    Period:
-      type: integer
-      enum:
-      - 365
-      - 29
-      - 30
-      - 7
-      - 1
-      - 28
-      title: Period
-    InsightType:
-      type: string
-      enum:
-      - cost
-      - storage
-      - governance
-      - cost_overall
-      - auto
-      title: InsightType
-    SummaryGraphRequest:
-      properties:
-        period:
-          $ref: '#/components/schemas/Period'
-        insight_type:
-          $ref: '#/components/schemas/InsightType'
-      type: object
-      required:
-      - period
-      - insight_type
-      title: SummaryGraphRequest
-    ComparisonRequest:
-      properties:
-        period:
-          $ref: '#/components/schemas/Period'
-      type: object
-      required:
-      - period
-      title: ComparisonRequest
-    SummaryInsightsResponse:
-      properties:
-        insight_type:
-          $ref: '#/components/schemas/InsightType'
-        summary_type:
-          $ref: '#/components/schemas/SummaryType'
-        summary_data:
-          items:
-            $ref: '#/components/schemas/InsightData'
-          type: array
-          title: Summary Data
-      type: object
-      required:
-      - insight_type
-      - summary_type
-      - summary_data
-      title: SummaryInsightsResponse
-    SummaryTotalSavingsResponse:
-      properties:
-        total_cost_savings_ui:
-          type: string
-          title: Total Cost Savings Ui
-        overall_actual_cost_savings_ui:
-          type: string
-          title: Overall Actual Cost Savings Ui
-        experimentation_savings_ui:
-          type: string
-          title: Experimentation Savings Ui
-      type: object
-      required:
-      - total_cost_savings_ui
-      - overall_actual_cost_savings_ui
-      - experimentation_savings_ui
-      title: SummaryTotalSavingsResponse
     TimeSidePanelModel:
       properties:
         title:
@@ -559,27 +538,6 @@ components:
       - title
       - value
       title: TimeSidePanelModel
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     TopInfoItem:
       properties:
         value:
@@ -609,18 +567,69 @@ components:
       - value
       - display
       title: TopInfoItem
-    ComparisonResponse:
+    ValidationError:
       properties:
-        data:
+        loc:
           items:
-            additionalProperties: true
-            type: object
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Data
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - data
-      title: ComparisonResponse
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SummaryInsightsResponse:
+      properties:
+        insight_type:
+          $ref: '#/components/schemas/InsightType'
+        summary_type:
+          $ref: '#/components/schemas/SummaryType'
+        summary_data:
+          items:
+            $ref: '#/components/schemas/InsightData'
+          type: array
+          title: Summary Data
+      type: object
+      required:
+      - insight_type
+      - summary_type
+      - summary_data
+      title: SummaryInsightsResponse
+    SummarySidePanelResponse:
+      properties:
+        total_annual_spend:
+          anyOf:
+          - $ref: '#/components/schemas/SidePanelModel'
+          - type: 'null'
+        total_annual_savings:
+          anyOf:
+          - $ref: '#/components/schemas/SidePanelModel'
+          - type: 'null'
+        total_time_savings:
+          anyOf:
+          - $ref: '#/components/schemas/TimeSidePanelModel'
+          - type: 'null'
+      type: object
+      title: SummarySidePanelResponse
     SummaryGraphResponse:
       properties:
         graph_data:
@@ -640,15 +649,6 @@ components:
       required:
       - graph_data
       title: SummaryGraphResponse
-    SummaryConfigResponse:
-      properties:
-        dormant_period:
-          type: integer
-          title: Dormant Period
-      type: object
-      required:
-      - dormant_period
-      title: SummaryConfigResponse
   securitySchemes:
     HTTPBearer:
       type: http

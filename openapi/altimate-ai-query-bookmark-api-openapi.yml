@@ -401,53 +401,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    Page_AllQueryBookmarkResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AllQueryBookmarkResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[AllQueryBookmarkResponse]
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     UserIndexResponse:
       properties:
         id:
@@ -549,6 +502,92 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    Page_AllQueryBookmarkResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AllQueryBookmarkResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[AllQueryBookmarkResponse]
+    AddQueryBookmarkRequest:
+      properties:
+        bookmark_name:
+          type: string
+          title: Bookmark Name
+        raw_sql:
+          type: string
+          title: Raw Sql
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        adapter_type:
+          type: string
+          title: Adapter Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        tags_list:
+          items:
+            type: string
+          type: array
+          title: Tags List
+          default: []
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+        is_editable:
+          type: boolean
+          title: Is Editable
+          default: false
+      type: object
+      required:
+      - bookmark_name
+      - raw_sql
+      - compiled_sql
+      - adapter_type
+      title: AddQueryBookmarkRequest
     StandardResponse:
       properties:
         ok:
@@ -558,12 +597,6 @@ components:
       required:
       - ok
       title: StandardResponse
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
     AllQueryBookmarkResponse:
       properties:
         id:
@@ -615,48 +648,6 @@ components:
       - privacy
       - created_by_user
       title: AllQueryBookmarkResponse
-    AddQueryBookmarkRequest:
-      properties:
-        bookmark_name:
-          type: string
-          title: Bookmark Name
-        raw_sql:
-          type: string
-          title: Raw Sql
-        compiled_sql:
-          type: string
-          title: Compiled Sql
-        adapter_type:
-          type: string
-          title: Adapter Type
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          default: ''
-        tags_list:
-          items:
-            type: string
-          type: array
-          title: Tags List
-          default: []
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-          default: private
-        is_editable:
-          type: boolean
-          title: Is Editable
-          default: false
-      type: object
-      required:
-      - bookmark_name
-      - raw_sql
-      - compiled_sql
-      - adapter_type
-      title: AddQueryBookmarkRequest
     ValidationError:
       properties:
         loc:
@@ -678,6 +669,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     QueryBookmarkTagResponse:
       properties:
         id:

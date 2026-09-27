@@ -878,523 +878,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    DbtCloudProcessedRunResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        dbt_cloud_run_id:
-          type: string
-          title: Dbt Cloud Run Id
-        project_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Project Name
-        environment_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Environment Name
-        run_finished_at:
-          type: string
-          format: date-time
-          title: Run Finished At
-        processed_at:
-          type: string
-          format: date-time
-          title: Processed At
-        artifacts_downloaded:
-          items:
-            type: string
-          type: array
-          title: Artifacts Downloaded
-        status:
-          type: string
-          title: Status
-        error_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Message
-        sync_details:
-          anyOf:
-          - $ref: '#/components/schemas/DbtCloudSyncDetails'
-          - type: 'null'
-      type: object
-      required:
-      - id
-      - dbt_cloud_run_id
-      - run_finished_at
-      - processed_at
-      - artifacts_downloaded
-      - status
-      title: DbtCloudProcessedRunResponse
-      description: Processed run information.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    DbtCloudProjectUpdateRequest:
-      properties:
-        is_enabled:
-          type: boolean
-          title: Is Enabled
-          description: Enable/disable sync for this project
-      type: object
-      required:
-      - is_enabled
-      title: DbtCloudProjectUpdateRequest
-      description: Request to update a dbt Cloud project.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DbtCloudScheduleUpdateRequest:
-      properties:
-        sync_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Sync Type
-          description: 'Sync type: ''scheduled'' or ''real_time'''
-        cron_expr:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cron Expr
-          description: Cron expression for sync schedule
-        lookback_days:
-          anyOf:
-          - type: integer
-            maximum: 365.0
-            minimum: 1.0
-          - type: 'null'
-          title: Lookback Days
-          description: Days to look back for runs
-        is_active:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Active
-          description: Enable/disable the schedule
-      type: object
-      title: DbtCloudScheduleUpdateRequest
-      description: Request to update the sync schedule.
-    DbtCloudProjectResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        external_project_id:
-          type: string
-          title: External Project Id
-        project_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Project Name
-        dbt_core_integration_id:
-          type: integer
-          title: Dbt Core Integration Id
-        is_enabled:
-          type: boolean
-          title: Is Enabled
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        last_modified_at:
-          type: string
-          format: date-time
-          title: Last Modified At
-        environments:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/DbtCloudEnvironmentResponse'
-            type: array
-          - type: 'null'
-          title: Environments
-      type: object
-      required:
-      - id
-      - external_project_id
-      - project_name
-      - dbt_core_integration_id
-      - is_enabled
-      - created_at
-      - last_modified_at
-      title: DbtCloudProjectResponse
-      description: dbt Cloud project information.
-    DbtCloudDiscoveredEnvironment:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        environment_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Environment Type
-      type: object
-      required:
-      - id
-      title: DbtCloudDiscoveredEnvironment
-      description: Discovered environment from dbt Cloud (not yet persisted).
-    DbtCloudDiscoveredProject:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        environments:
-          items:
-            $ref: '#/components/schemas/DbtCloudDiscoveredEnvironment'
-          type: array
-          title: Environments
-          default: []
-      type: object
-      required:
-      - id
-      title: DbtCloudDiscoveredProject
-      description: Discovered project from dbt Cloud (not yet persisted).
-    DbtCloudConnectionResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        account_id:
-          type: string
-          title: Account Id
-        api_base_url:
-          type: string
-          title: Api Base Url
-        is_active:
-          type: boolean
-          title: Is Active
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        last_modified_at:
-          type: string
-          format: date-time
-          title: Last Modified At
-        created_by:
-          type: integer
-          title: Created By
-        last_modified_by:
-          type: integer
-          title: Last Modified By
-        projects:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/DbtCloudProjectResponse'
-            type: array
-          - type: 'null'
-          title: Projects
-        schedule:
-          anyOf:
-          - $ref: '#/components/schemas/DbtCloudScheduleResponse'
-          - type: 'null'
-      type: object
-      required:
-      - id
-      - name
-      - account_id
-      - api_base_url
-      - is_active
-      - created_at
-      - last_modified_at
-      - created_by
-      - last_modified_by
-      title: DbtCloudConnectionResponse
-      description: dbt Cloud connection information.
-    DbtCloudSyncDetails:
-      properties:
-        synced_files:
-          items:
-            type: string
-          type: array
-          title: Synced Files
-          default: []
-        failed_files:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Failed Files
-          default: []
-        missing_artifacts:
-          items:
-            type: string
-          type: array
-          title: Missing Artifacts
-          default: []
-        errors:
-          items:
-            type: string
-          type: array
-          title: Errors
-          default: []
-        ingestion_error:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ingestion Error
-      type: object
-      title: DbtCloudSyncDetails
-      description: Detailed sync information for a processed run.
-    DbtCloudConnectionListResponse:
-      properties:
-        connections:
-          items:
-            $ref: '#/components/schemas/DbtCloudConnectionResponse'
-          type: array
-          title: Connections
-      type: object
-      required:
-      - connections
-      title: DbtCloudConnectionListResponse
-      description: List of dbt Cloud connections.
-    DbtCloudConnectionUpdateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 128
-            minLength: 1
-          - type: 'null'
-          title: Name
-          description: Connection name
-        api_token:
-          anyOf:
-          - type: string
-            minLength: 1
-          - type: 'null'
-          title: Api Token
-          description: dbt Cloud service token (if updating credentials)
-        api_base_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Api Base Url
-          description: API base URL (for single-tenant or regional deployments)
-      type: object
-      title: DbtCloudConnectionUpdateRequest
-      description: Request to update an existing dbt Cloud connection.
-    DbtCloudEnvironmentUpdateRequest:
-      properties:
-        is_enabled:
-          type: boolean
-          title: Is Enabled
-          description: Enable/disable sync for this environment
-      type: object
-      required:
-      - is_enabled
-      title: DbtCloudEnvironmentUpdateRequest
-      description: Request to update a dbt Cloud environment.
-    DbtCloudEnvironmentResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        external_environment_id:
-          type: string
-          title: External Environment Id
-        environment_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Environment Name
-        environment_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Environment Type
-        dbt_core_integration_environment_id:
-          type: integer
-          title: Dbt Core Integration Environment Id
-        is_enabled:
-          type: boolean
-          title: Is Enabled
-        last_processed_run_finished_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Processed Run Finished At
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        last_modified_at:
-          type: string
-          format: date-time
-          title: Last Modified At
-        processed_runs_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Processed Runs Count
-      type: object
-      required:
-      - id
-      - external_environment_id
-      - environment_name
-      - environment_type
-      - dbt_core_integration_environment_id
-      - is_enabled
-      - last_processed_run_finished_at
-      - created_at
-      - last_modified_at
-      title: DbtCloudEnvironmentResponse
-      description: dbt Cloud environment information.
-    DbtCloudValidateTokenRequest:
-      properties:
-        api_token:
-          type: string
-          minLength: 1
-          title: Api Token
-          description: dbt Cloud service token
-        account_id:
-          type: string
-          maxLength: 64
-          minLength: 1
-          title: Account Id
-          description: dbt Cloud account ID
-        api_base_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Api Base Url
-          description: API base URL (for single-tenant or regional deployments)
-          default: https://cloud.getdbt.com/api/v2/
-      type: object
-      required:
-      - api_token
-      - account_id
-      title: DbtCloudValidateTokenRequest
-      description: Request to validate a dbt Cloud API token.
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    DbtCloudDiscoveryResponse:
-      properties:
-        connection_id:
-          type: integer
-          title: Connection Id
-        projects_discovered:
-          type: integer
-          title: Projects Discovered
-        environments_discovered:
-          type: integer
-          title: Environments Discovered
-        projects:
-          items:
-            $ref: '#/components/schemas/DbtCloudProjectResponse'
-          type: array
-          title: Projects
-      type: object
-      required:
-      - connection_id
-      - projects_discovered
-      - environments_discovered
-      - projects
-      title: DbtCloudDiscoveryResponse
-      description: Response after discovering projects/environments.
-    DbtCloudScheduleResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        sync_type:
-          type: string
-          title: Sync Type
-        cron_expr:
-          type: string
-          title: Cron Expr
-        lookback_days:
-          type: integer
-          title: Lookback Days
-        is_active:
-          type: boolean
-          title: Is Active
-        last_sync_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Sync At
-        last_sync_status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Sync Status
-        last_sync_error:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Sync Error
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        last_modified_at:
-          type: string
-          format: date-time
-          title: Last Modified At
-      type: object
-      required:
-      - id
-      - sync_type
-      - cron_expr
-      - lookback_days
-      - is_active
-      - created_at
-      - last_modified_at
-      title: DbtCloudScheduleResponse
-      description: Sync schedule configuration.
     DbtCloudSyncResponse:
       properties:
         sync_triggered:
@@ -1423,86 +906,6 @@ components:
       - environments_queued
       title: DbtCloudSyncResponse
       description: Response after triggering a sync.
-    DbtCloudValidationResponse:
-      properties:
-        valid:
-          type: boolean
-          title: Valid
-        account_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Account Id
-        account_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Account Name
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        projects_discovered:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Projects Discovered
-        environments_discovered:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Environments Discovered
-        projects:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/DbtCloudDiscoveredProject'
-            type: array
-          - type: 'null'
-          title: Projects
-      type: object
-      required:
-      - valid
-      title: DbtCloudValidationResponse
-      description: Response after validating API token.
-    DbtCloudSyncHistoryResponse:
-      properties:
-        connection_id:
-          type: integer
-          title: Connection Id
-        environments:
-          items:
-            $ref: '#/components/schemas/DbtCloudEnvironmentResponse'
-          type: array
-          title: Environments
-        recent_runs:
-          items:
-            $ref: '#/components/schemas/DbtCloudProcessedRunResponse'
-          type: array
-          title: Recent Runs
-        page:
-          type: integer
-          title: Page
-        pages:
-          type: integer
-          title: Pages
-        size:
-          type: integer
-          title: Size
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - connection_id
-      - environments
-      - recent_runs
-      - page
-      - pages
-      - size
-      - total
-      title: DbtCloudSyncHistoryResponse
-      description: Sync history for a connection with pagination.
     DbtCloudConnectionCreateRequest:
       properties:
         name:
@@ -1559,6 +962,603 @@ components:
       - account_id
       title: DbtCloudConnectionCreateRequest
       description: Request to create a new dbt Cloud connection.
+    DbtCloudScheduleResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        sync_type:
+          type: string
+          title: Sync Type
+        cron_expr:
+          type: string
+          title: Cron Expr
+        lookback_days:
+          type: integer
+          title: Lookback Days
+        is_active:
+          type: boolean
+          title: Is Active
+        last_sync_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Sync At
+        last_sync_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Sync Status
+        last_sync_error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Sync Error
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+      type: object
+      required:
+      - id
+      - sync_type
+      - cron_expr
+      - lookback_days
+      - is_active
+      - created_at
+      - last_modified_at
+      title: DbtCloudScheduleResponse
+      description: Sync schedule configuration.
+    DbtCloudConnectionResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        account_id:
+          type: string
+          title: Account Id
+        api_base_url:
+          type: string
+          title: Api Base Url
+        is_active:
+          type: boolean
+          title: Is Active
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+        created_by:
+          type: integer
+          title: Created By
+        last_modified_by:
+          type: integer
+          title: Last Modified By
+        projects:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DbtCloudProjectResponse'
+            type: array
+          - type: 'null'
+          title: Projects
+        schedule:
+          anyOf:
+          - $ref: '#/components/schemas/DbtCloudScheduleResponse'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - name
+      - account_id
+      - api_base_url
+      - is_active
+      - created_at
+      - last_modified_at
+      - created_by
+      - last_modified_by
+      title: DbtCloudConnectionResponse
+      description: dbt Cloud connection information.
+    DbtCloudDiscoveredEnvironment:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        environment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Type
+      type: object
+      required:
+      - id
+      title: DbtCloudDiscoveredEnvironment
+      description: Discovered environment from dbt Cloud (not yet persisted).
+    DbtCloudEnvironmentUpdateRequest:
+      properties:
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+          description: Enable/disable sync for this environment
+      type: object
+      required:
+      - is_enabled
+      title: DbtCloudEnvironmentUpdateRequest
+      description: Request to update a dbt Cloud environment.
+    DbtCloudValidationResponse:
+      properties:
+        valid:
+          type: boolean
+          title: Valid
+        account_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Id
+        account_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Name
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        projects_discovered:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Projects Discovered
+        environments_discovered:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Environments Discovered
+        projects:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DbtCloudDiscoveredProject'
+            type: array
+          - type: 'null'
+          title: Projects
+      type: object
+      required:
+      - valid
+      title: DbtCloudValidationResponse
+      description: Response after validating API token.
+    DbtCloudScheduleUpdateRequest:
+      properties:
+        sync_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sync Type
+          description: 'Sync type: ''scheduled'' or ''real_time'''
+        cron_expr:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cron Expr
+          description: Cron expression for sync schedule
+        lookback_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Lookback Days
+          description: Days to look back for runs
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+          description: Enable/disable the schedule
+      type: object
+      title: DbtCloudScheduleUpdateRequest
+      description: Request to update the sync schedule.
+    DbtCloudDiscoveredProject:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        environments:
+          items:
+            $ref: '#/components/schemas/DbtCloudDiscoveredEnvironment'
+          type: array
+          title: Environments
+          default: []
+      type: object
+      required:
+      - id
+      title: DbtCloudDiscoveredProject
+      description: Discovered project from dbt Cloud (not yet persisted).
+    DbtCloudDiscoveryResponse:
+      properties:
+        connection_id:
+          type: integer
+          title: Connection Id
+        projects_discovered:
+          type: integer
+          title: Projects Discovered
+        environments_discovered:
+          type: integer
+          title: Environments Discovered
+        projects:
+          items:
+            $ref: '#/components/schemas/DbtCloudProjectResponse'
+          type: array
+          title: Projects
+      type: object
+      required:
+      - connection_id
+      - projects_discovered
+      - environments_discovered
+      - projects
+      title: DbtCloudDiscoveryResponse
+      description: Response after discovering projects/environments.
+    DbtCloudSyncHistoryResponse:
+      properties:
+        connection_id:
+          type: integer
+          title: Connection Id
+        environments:
+          items:
+            $ref: '#/components/schemas/DbtCloudEnvironmentResponse'
+          type: array
+          title: Environments
+        recent_runs:
+          items:
+            $ref: '#/components/schemas/DbtCloudProcessedRunResponse'
+          type: array
+          title: Recent Runs
+        page:
+          type: integer
+          title: Page
+        pages:
+          type: integer
+          title: Pages
+        size:
+          type: integer
+          title: Size
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - connection_id
+      - environments
+      - recent_runs
+      - page
+      - pages
+      - size
+      - total
+      title: DbtCloudSyncHistoryResponse
+      description: Sync history for a connection with pagination.
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DbtCloudProjectUpdateRequest:
+      properties:
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+          description: Enable/disable sync for this project
+      type: object
+      required:
+      - is_enabled
+      title: DbtCloudProjectUpdateRequest
+      description: Request to update a dbt Cloud project.
+    DbtCloudEnvironmentResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        external_environment_id:
+          type: string
+          title: External Environment Id
+        environment_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Name
+        environment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Type
+        dbt_core_integration_environment_id:
+          type: integer
+          title: Dbt Core Integration Environment Id
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+        last_processed_run_finished_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Processed Run Finished At
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+        processed_runs_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Processed Runs Count
+      type: object
+      required:
+      - id
+      - external_environment_id
+      - environment_name
+      - environment_type
+      - dbt_core_integration_environment_id
+      - is_enabled
+      - last_processed_run_finished_at
+      - created_at
+      - last_modified_at
+      title: DbtCloudEnvironmentResponse
+      description: dbt Cloud environment information.
+    DbtCloudConnectionListResponse:
+      properties:
+        connections:
+          items:
+            $ref: '#/components/schemas/DbtCloudConnectionResponse'
+          type: array
+          title: Connections
+      type: object
+      required:
+      - connections
+      title: DbtCloudConnectionListResponse
+      description: List of dbt Cloud connections.
+    DbtCloudProcessedRunResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        dbt_cloud_run_id:
+          type: string
+          title: Dbt Cloud Run Id
+        project_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Name
+        environment_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment Name
+        run_finished_at:
+          type: string
+          format: date-time
+          title: Run Finished At
+        processed_at:
+          type: string
+          format: date-time
+          title: Processed At
+        artifacts_downloaded:
+          items:
+            type: string
+          type: array
+          title: Artifacts Downloaded
+        status:
+          type: string
+          title: Status
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        sync_details:
+          anyOf:
+          - $ref: '#/components/schemas/DbtCloudSyncDetails'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - dbt_cloud_run_id
+      - run_finished_at
+      - processed_at
+      - artifacts_downloaded
+      - status
+      title: DbtCloudProcessedRunResponse
+      description: Processed run information.
+    DbtCloudSyncDetails:
+      properties:
+        synced_files:
+          items:
+            type: string
+          type: array
+          title: Synced Files
+          default: []
+        failed_files:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Failed Files
+          default: []
+        missing_artifacts:
+          items:
+            type: string
+          type: array
+          title: Missing Artifacts
+          default: []
+        errors:
+          items:
+            type: string
+          type: array
+          title: Errors
+          default: []
+        ingestion_error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ingestion Error
+      type: object
+      title: DbtCloudSyncDetails
+      description: Detailed sync information for a processed run.
+    DbtCloudValidateTokenRequest:
+      properties:
+        api_token:
+          type: string
+          minLength: 1
+          title: Api Token
+          description: dbt Cloud service token
+        account_id:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Account Id
+          description: dbt Cloud account ID
+        api_base_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Base Url
+          description: API base URL (for single-tenant or regional deployments)
+          default: https://cloud.getdbt.com/api/v2/
+      type: object
+      required:
+      - api_token
+      - account_id
+      title: DbtCloudValidateTokenRequest
+      description: Request to validate a dbt Cloud API token.
+    DbtCloudConnectionUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 128
+            minLength: 1
+          - type: 'null'
+          title: Name
+          description: Connection name
+        api_token:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Api Token
+          description: dbt Cloud service token (if updating credentials)
+        api_base_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Base Url
+          description: API base URL (for single-tenant or regional deployments)
+      type: object
+      title: DbtCloudConnectionUpdateRequest
+      description: Request to update an existing dbt Cloud connection.
+    DbtCloudProjectResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        external_project_id:
+          type: string
+          title: External Project Id
+        project_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Name
+        dbt_core_integration_id:
+          type: integer
+          title: Dbt Core Integration Id
+        is_enabled:
+          type: boolean
+          title: Is Enabled
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_modified_at:
+          type: string
+          format: date-time
+          title: Last Modified At
+        environments:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DbtCloudEnvironmentResponse'
+            type: array
+          - type: 'null'
+          title: Environments
+      type: object
+      required:
+      - id
+      - external_project_id
+      - project_name
+      - dbt_core_integration_id
+      - is_enabled
+      - created_at
+      - last_modified_at
+      title: DbtCloudProjectResponse
+      description: dbt Cloud project information.
   securitySchemes:
     HTTPBearer:
       type: http
