@@ -710,37 +710,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    NotifierConfig:
-      properties:
-        type:
-          type: string
-          title: Type
-          description: '''email'', ''slack'', or ''webhook'''
-        recipients:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Recipients
-          description: Email addresses; used when type is 'email'
-        channel:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Channel
-          description: Slack notification ID; used when type is 'slack'
-        webhook_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Webhook Url
-          description: HTTP(S) URL for POST delivery; used when type is 'webhook'
-      type: object
-      required:
-      - type
-      title: NotifierConfig
-      description: Single delivery destination (email, Slack, or webhook).
     EvaluateRequest:
       properties:
         dry_run:
@@ -749,53 +718,208 @@ components:
           default: true
       type: object
       title: EvaluateRequest
-    MetricFilter:
+    RulesListResponse:
       properties:
-        key:
-          type: string
-          title: Key
-          description: Filter dimension name, e.g. 'warehouse'
-        value:
-          items:
-            type: string
-          type: array
-          title: Value
-          description: Filter values, e.g. ['WH1', 'WH2'], ['all'], or ['ANY']
-        order:
+        total:
           type: integer
-          title: Order
-          description: Display order of this filter
-          default: 0
+          title: Total
+        active:
+          type: integer
+          title: Active
+        alerts:
+          type: integer
+          title: Alerts
+        reports:
+          type: integer
+          title: Reports
       type: object
       required:
-      - key
-      title: MetricFilter
-      description: A single dimension filter for a metric query.
-    NotificationTestResponse:
+      - total
+      - active
+      - alerts
+      - reports
+      title: RulesListResponse
+    QueryLogResponse:
       properties:
-        ok:
-          type: boolean
-          title: Ok
-        target:
+        label:
           type: string
-          title: Target
-          description: Channel type — 'email', 'slack', or 'webhook'
-        chart_url:
+          title: Label
+        sql:
+          type: string
+          title: Sql
+        params:
+          additionalProperties: true
+          type: object
+          title: Params
+        period_start:
           anyOf:
           - type: string
           - type: 'null'
-          title: Chart Url
-        error:
+          title: Period Start
+        period_end:
           anyOf:
           - type: string
           - type: 'null'
-          title: Error
+          title: Period End
+        value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Value
+        elapsed_ms:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Elapsed Ms
       type: object
       required:
-      - ok
-      - target
-      title: NotificationTestResponse
-      description: Result of a test notification dispatch.
+      - label
+      - sql
+      title: QueryLogResponse
+    RuleUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 2000
+          - type: 'null'
+          title: Description
+        rule_type:
+          anyOf:
+          - type: string
+            pattern: ^(alert|report)$
+          - type: 'null'
+          title: Rule Type
+        platform:
+          anyOf:
+          - type: string
+            pattern: ^(snowflake|databricks)$
+          - type: 'null'
+          title: Platform
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+        metric_config:
+          anyOf:
+          - $ref: '#/components/schemas/MetricConfig'
+          - type: 'null'
+        delivery:
+          anyOf:
+          - $ref: '#/components/schemas/DeliveryConfig'
+          - type: 'null'
+        alert_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alert Message
+        status:
+          anyOf:
+          - type: string
+            pattern: ^(active|inactive)$
+          - type: 'null'
+          title: Status
+      type: object
+      title: RuleUpdateRequest
+    NotificationTestRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+          default: Test alert
+        rule_type:
+          type: string
+          pattern: ^(alert|report)$
+          title: Rule Type
+          default: alert
+        platform:
+          anyOf:
+          - type: string
+            pattern: ^(snowflake|databricks)$
+          - type: 'null'
+          title: Platform
+        entity_type:
+          type: string
+          title: Entity Type
+        metric_config:
+          $ref: '#/components/schemas/MetricConfig'
+        alert_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alert Message
+        notifier:
+          $ref: '#/components/schemas/NotifierConfig'
+          description: Single channel to test (email, slack, or webhook).
+        reference_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reference Time
+          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
+      type: object
+      required:
+      - entity_type
+      - metric_config
+      - notifier
+      title: NotificationTestRequest
+      description: 'Send a test notification using a draft rule config.
+
+
+        Alert tests run the same evaluator + chart pipeline as a real alert.
+
+        Report tests build the corresponding report payload directly so the test
+
+        message matches scheduled report delivery instead of alert delivery.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DeliveryConfig:
+      properties:
+        schedule:
+          anyOf:
+          - $ref: '#/components/schemas/DeliverySchedule'
+          - type: 'null'
+          description: When to run; None uses default cron.
+        notifiers:
+          items:
+            $ref: '#/components/schemas/NotifierConfig'
+          type: array
+          title: Notifiers
+          description: Where to send (email, Slack, etc.).
+      type: object
+      title: DeliveryConfig
+      description: When and where to deliver alert/report (schedule + notifiers).
     RunResponse:
       properties:
         id:
@@ -841,26 +965,6 @@ components:
       - status
       - created_at
       title: RunResponse
-    AdminExecuteRequest:
-      properties:
-        reason:
-          type: string
-          maxLength: 500
-          minLength: 1
-          title: Reason
-          description: Why this manual execution is needed (logged for audit).
-        reference_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Reference Time
-          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
-      type: object
-      required:
-      - reason
-      title: AdminExecuteRequest
-      description: Request body for admin on-demand rule execution.
     RuleResponse:
       properties:
         id:
@@ -942,212 +1046,6 @@ components:
       - updated_at
       - created_by
       title: RuleResponse
-    RuleCreateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 2000
-          - type: 'null'
-          title: Description
-        rule_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rule Type
-          default: alert
-        platform:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Platform
-        entity_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Entity Type
-        metric_config:
-          anyOf:
-          - $ref: '#/components/schemas/MetricConfig'
-          - type: 'null'
-        delivery:
-          anyOf:
-          - $ref: '#/components/schemas/DeliveryConfig'
-          - type: 'null'
-        alert_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Alert Message
-      type: object
-      title: RuleCreateRequest
-      description: 'Create request — field-level validation happens in validate_rule_create()
-
-        so we get contextual error codes instead of generic Pydantic 422s.'
-    RulesListResponse:
-      properties:
-        total:
-          type: integer
-          title: Total
-        active:
-          type: integer
-          title: Active
-        alerts:
-          type: integer
-          title: Alerts
-        reports:
-          type: integer
-          title: Reports
-      type: object
-      required:
-      - total
-      - active
-      - alerts
-      - reports
-      title: RulesListResponse
-    MetricConfig:
-      properties:
-        metric_name:
-          type: string
-          title: Metric Name
-          description: Metric identifier, e.g. 'warehouse_daily_cost'
-        params:
-          $ref: '#/components/schemas/MetricParams'
-        filters:
-          items:
-            $ref: '#/components/schemas/MetricFilter'
-          type: array
-          title: Filters
-        category:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Category
-          description: Entity type echo; included by templates
-      type: object
-      required:
-      - metric_name
-      title: MetricConfig
-      description: Typed representation of the metric_config JSON stored in alert rules.
-    RuleUpdateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 2000
-          - type: 'null'
-          title: Description
-        rule_type:
-          anyOf:
-          - type: string
-            pattern: ^(alert|report)$
-          - type: 'null'
-          title: Rule Type
-        platform:
-          anyOf:
-          - type: string
-            pattern: ^(snowflake|databricks)$
-          - type: 'null'
-          title: Platform
-        entity_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Entity Type
-        metric_config:
-          anyOf:
-          - $ref: '#/components/schemas/MetricConfig'
-          - type: 'null'
-        delivery:
-          anyOf:
-          - $ref: '#/components/schemas/DeliveryConfig'
-          - type: 'null'
-        alert_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Alert Message
-        status:
-          anyOf:
-          - type: string
-            pattern: ^(active|inactive)$
-          - type: 'null'
-          title: Status
-      type: object
-      title: RuleUpdateRequest
-    QueryLogResponse:
-      properties:
-        label:
-          type: string
-          title: Label
-        sql:
-          type: string
-          title: Sql
-        params:
-          additionalProperties: true
-          type: object
-          title: Params
-        period_start:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period Start
-        period_end:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period End
-        value:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Value
-        elapsed_ms:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Elapsed Ms
-      type: object
-      required:
-      - label
-      - sql
-      title: QueryLogResponse
-    RunsListResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/RunResponse'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: RunsListResponse
     MetricParams:
       properties:
         comparison_type:
@@ -1184,232 +1082,6 @@ components:
       type: object
       title: MetricParams
       description: Evaluation parameters within a metric config.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    RecentRunResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        status:
-          type: string
-          title: Status
-        executed_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Executed At
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - id
-      - status
-      title: RecentRunResponse
-      description: Lightweight run summary for embedding in RuleResponse.recent_runs.
-    DeliverySchedule:
-      properties:
-        cron:
-          type: string
-          title: Cron
-          description: Cron expression, e.g. '0 14 * * *'
-          default: 0 14 * * *
-        timezone:
-          type: string
-          title: Timezone
-          description: Timezone for the schedule
-          default: UTC
-      type: object
-      title: DeliverySchedule
-      description: When to run the alert/report.
-    NotificationTestRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Name
-          default: Test alert
-        rule_type:
-          type: string
-          pattern: ^(alert|report)$
-          title: Rule Type
-          default: alert
-        platform:
-          anyOf:
-          - type: string
-            pattern: ^(snowflake|databricks)$
-          - type: 'null'
-          title: Platform
-        entity_type:
-          type: string
-          title: Entity Type
-        metric_config:
-          $ref: '#/components/schemas/MetricConfig'
-        alert_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Alert Message
-        notifier:
-          $ref: '#/components/schemas/NotifierConfig'
-          description: Single channel to test (email, slack, or webhook).
-        reference_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Reference Time
-          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
-      type: object
-      required:
-      - entity_type
-      - metric_config
-      - notifier
-      title: NotificationTestRequest
-      description: 'Send a test notification using a draft rule config.
-
-
-        Alert tests run the same evaluator + chart pipeline as a real alert.
-
-        Report tests build the corresponding report payload directly so the test
-
-        message matches scheduled report delivery instead of alert delivery.'
-    PreviewRequest:
-      properties:
-        metric_config:
-          $ref: '#/components/schemas/MetricConfig'
-        rule_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rule Type
-          description: '''alert'' or ''report'' — reports may show resource-wise splits'
-      type: object
-      required:
-      - metric_config
-      title: PreviewRequest
-    Page_RuleResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/RuleResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[RuleResponse]
-    DryRunRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Name
-          default: Dry Run
-        rule_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rule Type
-          default: alert
-        platform:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Platform
-        entity_type:
-          type: string
-          title: Entity Type
-        metric_config:
-          $ref: '#/components/schemas/MetricConfig'
-        delivery:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Delivery
-          description: Ignored for evaluation; accepted so full rule JSON can be pasted.
-        reference_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Reference Time
-          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
-      type: object
-      required:
-      - entity_type
-      - metric_config
-      title: DryRunRequest
-      description: 'Run evaluation against a rule config without saving.
-
-
-        Accepts the same shape as RuleCreateRequest so the payload can be
-
-        copy-pasted from the saved column / frontend config JSON.'
     RunResultResponse:
       properties:
         run_id:
@@ -1488,22 +1160,350 @@ components:
       - status
       - executed_at
       title: RunResultResponse
-    DeliveryConfig:
+    RecentRunResponse:
       properties:
-        schedule:
+        id:
+          type: integer
+          title: Id
+        status:
+          type: string
+          title: Status
+        executed_at:
           anyOf:
-          - $ref: '#/components/schemas/DeliverySchedule'
+          - type: string
+            format: date-time
           - type: 'null'
-          description: When to run; None uses default cron.
-        notifiers:
-          items:
-            $ref: '#/components/schemas/NotifierConfig'
-          type: array
-          title: Notifiers
-          description: Where to send (email, Slack, etc.).
+          title: Executed At
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
       type: object
-      title: DeliveryConfig
-      description: When and where to deliver alert/report (schedule + notifiers).
+      required:
+      - id
+      - status
+      title: RecentRunResponse
+      description: Lightweight run summary for embedding in RuleResponse.recent_runs.
+    DryRunRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+          default: Dry Run
+        rule_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rule Type
+          default: alert
+        platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Platform
+        entity_type:
+          type: string
+          title: Entity Type
+        metric_config:
+          $ref: '#/components/schemas/MetricConfig'
+        delivery:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Delivery
+          description: Ignored for evaluation; accepted so full rule JSON can be pasted.
+        reference_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reference Time
+          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
+      type: object
+      required:
+      - entity_type
+      - metric_config
+      title: DryRunRequest
+      description: 'Run evaluation against a rule config without saving.
+
+
+        Accepts the same shape as RuleCreateRequest so the payload can be
+
+        copy-pasted from the saved column / frontend config JSON.'
+    RuleCreateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 2000
+          - type: 'null'
+          title: Description
+        rule_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rule Type
+          default: alert
+        platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Platform
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+        metric_config:
+          anyOf:
+          - $ref: '#/components/schemas/MetricConfig'
+          - type: 'null'
+        delivery:
+          anyOf:
+          - $ref: '#/components/schemas/DeliveryConfig'
+          - type: 'null'
+        alert_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alert Message
+      type: object
+      title: RuleCreateRequest
+      description: 'Create request — field-level validation happens in validate_rule_create()
+
+        so we get contextual error codes instead of generic Pydantic 422s.'
+    DeliverySchedule:
+      properties:
+        cron:
+          type: string
+          title: Cron
+          description: Cron expression, e.g. '0 14 * * *'
+          default: 0 14 * * *
+        timezone:
+          type: string
+          title: Timezone
+          description: Timezone for the schedule
+          default: UTC
+      type: object
+      title: DeliverySchedule
+      description: When to run the alert/report.
+    PreviewRequest:
+      properties:
+        metric_config:
+          $ref: '#/components/schemas/MetricConfig'
+        rule_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rule Type
+          description: '''alert'' or ''report'' — reports may show resource-wise splits'
+      type: object
+      required:
+      - metric_config
+      title: PreviewRequest
+    NotifierConfig:
+      properties:
+        type:
+          type: string
+          title: Type
+          description: '''email'', ''slack'', or ''webhook'''
+        recipients:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Recipients
+          description: Email addresses; used when type is 'email'
+        channel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Channel
+          description: Slack notification ID; used when type is 'slack'
+        webhook_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Webhook Url
+          description: HTTP(S) URL for POST delivery; used when type is 'webhook'
+      type: object
+      required:
+      - type
+      title: NotifierConfig
+      description: Single delivery destination (email, Slack, or webhook).
+    RunsListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/RunResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: RunsListResponse
+    AdminExecuteRequest:
+      properties:
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+          title: Reason
+          description: Why this manual execution is needed (logged for audit).
+        reference_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reference Time
+          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
+      type: object
+      required:
+      - reason
+      title: AdminExecuteRequest
+      description: Request body for admin on-demand rule execution.
+    MetricConfig:
+      properties:
+        metric_name:
+          type: string
+          title: Metric Name
+          description: Metric identifier, e.g. 'warehouse_daily_cost'
+        params:
+          $ref: '#/components/schemas/MetricParams'
+        filters:
+          items:
+            $ref: '#/components/schemas/MetricFilter'
+          type: array
+          title: Filters
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+          description: Entity type echo; included by templates
+      type: object
+      required:
+      - metric_name
+      title: MetricConfig
+      description: Typed representation of the metric_config JSON stored in alert rules.
+    Page_RuleResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/RuleResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[RuleResponse]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MetricFilter:
+      properties:
+        key:
+          type: string
+          title: Key
+          description: Filter dimension name, e.g. 'warehouse'
+        value:
+          items:
+            type: string
+          type: array
+          title: Value
+          description: Filter values, e.g. ['WH1', 'WH2'], ['all'], or ['ANY']
+        order:
+          type: integer
+          title: Order
+          description: Display order of this filter
+          default: 0
+      type: object
+      required:
+      - key
+      title: MetricFilter
+      description: A single dimension filter for a metric query.
+    NotificationTestResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        target:
+          type: string
+          title: Target
+          description: Channel type — 'email', 'slack', or 'webhook'
+        chart_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chart Url
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      required:
+      - ok
+      - target
+      title: NotificationTestResponse
+      description: Result of a test notification dispatch.
   securitySchemes:
     HTTPBearer:
       type: http

@@ -93,6 +93,55 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    AuditTrailEventType:
+      type: string
+      enum:
+      - assist
+      - guard_rail
+      - memory_created
+      - memory_retrieved
+      title: AuditTrailEventType
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AuditTrailBatchPayload:
+      properties:
+        events:
+          items:
+            $ref: '#/components/schemas/AuditTrailPayload'
+          type: array
+          title: Events
+      type: object
+      required:
+      - events
+      title: AuditTrailBatchPayload
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     AuditTrailPayload:
       properties:
         type:
@@ -124,55 +173,6 @@ components:
       - teammate_id
       - timestamp
       title: AuditTrailPayload
-    AuditTrailBatchPayload:
-      properties:
-        events:
-          items:
-            $ref: '#/components/schemas/AuditTrailPayload'
-          type: array
-          title: Events
-      type: object
-      required:
-      - events
-      title: AuditTrailBatchPayload
-    AuditTrailEventType:
-      type: string
-      enum:
-      - assist
-      - guard_rail
-      - memory_created
-      - memory_retrieved
-      title: AuditTrailEventType
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

@@ -150,112 +150,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ComputeSummary:
-      properties:
-        total_clusters:
-          type: integer
-          title: Total Clusters
-          default: 0
-        total_warehouses:
-          type: integer
-          title: Total Warehouses
-          default: 0
-      type: object
-      title: ComputeSummary
-      description: Summary of compute resources.
-    app__schemas__databricks__insights__CostSummary:
-      properties:
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          default: 0
-        days_count:
-          type: integer
-          title: Days Count
-          default: 0
-        workspace_count:
-          type: integer
-          title: Workspace Count
-          default: 0
-      type: object
-      title: CostSummary
-      description: Summary of costs.
-    DatabricksOverview:
-      properties:
-        compute:
-          $ref: '#/components/schemas/ComputeSummary'
-        job_health:
-          $ref: '#/components/schemas/JobHealthSummary'
-        query_health:
-          $ref: '#/components/schemas/QueryHealthSummary'
-        cost:
-          $ref: '#/components/schemas/app__schemas__databricks__insights__CostSummary'
-        top_cost_drivers:
-          items:
-            $ref: '#/components/schemas/CostDriver'
-          type: array
-          title: Top Cost Drivers
-        utilization:
-          $ref: '#/components/schemas/UtilizationInsights'
-      type: object
-      required:
-      - compute
-      - job_health
-      - query_health
-      - cost
-      - top_cost_drivers
-      - utilization
-      title: DatabricksOverview
-      description: Complete overview of Databricks environment.
-    CostDriver:
-      properties:
-        sku_name:
-          type: string
-          title: Sku Name
-        total_dbus:
-          type: number
-          title: Total Dbus
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-        pct_of_total:
-          type: number
-          title: Pct Of Total
-      type: object
-      required:
-      - sku_name
-      - total_dbus
-      - estimated_cost
-      - pct_of_total
-      title: CostDriver
-      description: A top cost driver.
-    WorkspaceActivity:
-      properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        job_runs:
-          type: integer
-          title: Job Runs
-          default: 0
-        query_count:
-          type: integer
-          title: Query Count
-          default: 0
-      type: object
-      required:
-      - workspace_id
-      title: WorkspaceActivity
-      description: Activity summary for a workspace.
     UtilizationInsights:
       properties:
         total_clusters_with_data:
@@ -279,6 +173,15 @@ components:
       type: object
       title: UtilizationInsights
       description: Utilization insights.
+    DatabricksOverviewResponse:
+      properties:
+        overview:
+          $ref: '#/components/schemas/DatabricksOverview'
+      type: object
+      required:
+      - overview
+      title: DatabricksOverviewResponse
+      description: Response for Databricks overview.
     JobHealthSummary:
       properties:
         total_jobs:
@@ -317,45 +220,54 @@ components:
       - workspaces
       title: WorkspaceActivityResponse
       description: Response for workspace activity.
-    DatabricksOverviewResponse:
+    DatabricksOverview:
       properties:
-        overview:
-          $ref: '#/components/schemas/DatabricksOverview'
+        compute:
+          $ref: '#/components/schemas/ComputeSummary'
+        job_health:
+          $ref: '#/components/schemas/JobHealthSummary'
+        query_health:
+          $ref: '#/components/schemas/QueryHealthSummary'
+        cost:
+          $ref: '#/components/schemas/app__schemas__databricks__insights__CostSummary'
+        top_cost_drivers:
+          items:
+            $ref: '#/components/schemas/CostDriver'
+          type: array
+          title: Top Cost Drivers
+        utilization:
+          $ref: '#/components/schemas/UtilizationInsights'
       type: object
       required:
-      - overview
-      title: DatabricksOverviewResponse
-      description: Response for Databricks overview.
-    QueryHealthSummary:
+      - compute
+      - job_health
+      - query_health
+      - cost
+      - top_cost_drivers
+      - utilization
+      title: DatabricksOverview
+      description: Complete overview of Databricks environment.
+    app__schemas__databricks__insights__CostSummary:
       properties:
-        total_queries:
-          type: integer
-          title: Total Queries
-          default: 0
-        failed_queries:
-          type: integer
-          title: Failed Queries
-          default: 0
-        failure_rate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Failure Rate
-        slow_queries:
-          type: integer
-          title: Slow Queries
-          default: 0
-        spill_queries:
-          type: integer
-          title: Spill Queries
-          default: 0
-        avg_duration_ms:
+        total_dbus:
           type: number
-          title: Avg Duration Ms
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+        days_count:
+          type: integer
+          title: Days Count
+          default: 0
+        workspace_count:
+          type: integer
+          title: Workspace Count
           default: 0
       type: object
-      title: QueryHealthSummary
-      description: Summary of query health.
+      title: CostSummary
+      description: Summary of costs.
     ValidationError:
       properties:
         loc:
@@ -386,6 +298,94 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    WorkspaceActivity:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        job_runs:
+          type: integer
+          title: Job Runs
+          default: 0
+        query_count:
+          type: integer
+          title: Query Count
+          default: 0
+      type: object
+      required:
+      - workspace_id
+      title: WorkspaceActivity
+      description: Activity summary for a workspace.
+    QueryHealthSummary:
+      properties:
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        failure_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Failure Rate
+        slow_queries:
+          type: integer
+          title: Slow Queries
+          default: 0
+        spill_queries:
+          type: integer
+          title: Spill Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+      type: object
+      title: QueryHealthSummary
+      description: Summary of query health.
+    ComputeSummary:
+      properties:
+        total_clusters:
+          type: integer
+          title: Total Clusters
+          default: 0
+        total_warehouses:
+          type: integer
+          title: Total Warehouses
+          default: 0
+      type: object
+      title: ComputeSummary
+      description: Summary of compute resources.
+    CostDriver:
+      properties:
+        sku_name:
+          type: string
+          title: Sku Name
+        total_dbus:
+          type: number
+          title: Total Dbus
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+        pct_of_total:
+          type: number
+          title: Pct Of Total
+      type: object
+      required:
+      - sku_name
+      - total_dbus
+      - estimated_cost
+      - pct_of_total
+      title: CostDriver
+      description: A top cost driver.
   securitySchemes:
     HTTPBearer:
       type: http

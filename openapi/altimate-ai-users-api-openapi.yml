@@ -417,6 +417,24 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    BIUserSummaryItem:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: integer
+          title: Value
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+      type: object
+      required:
+      - label
+      - value
+      title: BIUserSummaryItem
     UserInsightItem:
       properties:
         name:
@@ -433,6 +451,65 @@ components:
       - reasons
       title: UserInsightItem
       description: Structured insight with name and reasons
+    Page_BIUserReportItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BIUserReportItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[BIUserReportItem]
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     BIUserReportItem:
       properties:
         email:
@@ -500,27 +577,6 @@ components:
       - insights
       title: BIUserReportItem
       description: User report item representing user activity and creation patterns
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -530,62 +586,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    BIUserSummaryItem:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: integer
-          title: Value
-        info:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Info
-      type: object
-      required:
-      - label
-      - value
-      title: BIUserSummaryItem
-    Page_BIUserReportItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/BIUserReportItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[BIUserReportItem]
   securitySchemes:
     HTTPBearer:
       type: http

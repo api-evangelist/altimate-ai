@@ -621,110 +621,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ScheduleRunsListResponse:
-      properties:
-        runs:
-          items:
-            $ref: '#/components/schemas/ScheduleRunResponse'
-          type: array
-          title: Runs
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - runs
-      - total
-      title: ScheduleRunsListResponse
-      description: Response containing a list of schedule runs.
-    app__schemas__ai_playground__schedules__ScheduleResponse:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        name:
-          type: string
-          title: Name
-        session_id:
-          type: string
-          title: Session Id
-        content_scope:
-          $ref: '#/components/schemas/ContentScope'
-        cron_expr:
-          type: string
-          title: Cron Expr
-        destination_type:
-          $ref: '#/components/schemas/DestinationType'
-        emails:
-          items:
-            type: string
-          type: array
-          title: Emails
-        slack_webhook_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Slack Webhook Id
-        enabled:
-          type: boolean
-          title: Enabled
-        last_run:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Run
-        next_run:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Next Run
-        created_by:
-          type: integer
-          title: Created By
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        day_of_week:
-          anyOf:
-          - type: integer
-            maximum: 6.0
-            minimum: 0.0
-          - type: 'null'
-          title: Day Of Week
-          description: Cron weekday (0=Sunday … 6=Saturday) when frequency is weekly
-        day_of_month:
-          anyOf:
-          - type: integer
-            maximum: 31.0
-            minimum: 1.0
-          - type: 'null'
-          title: Day Of Month
-          description: Cron day-of-month (1-31) when frequency is monthly
-      type: object
-      required:
-      - id
-      - name
-      - session_id
-      - content_scope
-      - cron_expr
-      - destination_type
-      - emails
-      - enabled
-      - last_run
-      - next_run
-      - created_by
-      - created_at
-      - updated_at
-      title: ScheduleResponse
-      description: Response containing schedule details.
     ScheduleFrequency:
       type: string
       enum:
@@ -734,43 +630,6 @@ components:
       - custom
       title: ScheduleFrequency
       description: Predefined schedule frequencies.
-    ContentScope:
-      type: string
-      enum:
-      - first_query
-      - last_answer
-      - full_chat
-      title: ContentScope
-      description: What content to include in the scheduled report.
-    app__schemas__ai_playground__schedules__ScheduleListResponse:
-      properties:
-        schedules:
-          items:
-            $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
-          type: array
-          title: Schedules
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - schedules
-      - total
-      title: ScheduleListResponse
-      description: Response containing a list of schedules.
-    DestinationType:
-      type: string
-      enum:
-      - email
-      - slack
-      - multi
-      title: DestinationType
-      description: 'How to deliver the scheduled report.
-
-
-        Derived from `destination_config` at save time — `MULTI` means both
-
-        emails and a Slack webhook are configured on the same schedule.'
     app__schemas__ai_playground__schedules__ScheduleCreateRequest:
       properties:
         name:
@@ -890,6 +749,14 @@ components:
       - failed_count
       title: ScheduleRunResponse
       description: Response for a single schedule run.
+    ContentScope:
+      type: string
+      enum:
+      - first_query
+      - last_answer
+      - full_chat
+      title: ContentScope
+      description: What content to include in the scheduled report.
     app__schemas__ai_playground__schedules__ScheduleUpdateRequest:
       properties:
         name:
@@ -956,6 +823,110 @@ components:
       type: object
       title: ScheduleUpdateRequest
       description: "Request to update an existing schedule.\n\n``slack_webhook_id``:\n  - ``None`` (omitted) → leave webhook unchanged\n  - ``0`` → clear the current webhook\n  - any positive integer → set the webhook to that notification id"
+    ScheduleRunsListResponse:
+      properties:
+        runs:
+          items:
+            $ref: '#/components/schemas/ScheduleRunResponse'
+          type: array
+          title: Runs
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - runs
+      - total
+      title: ScheduleRunsListResponse
+      description: Response containing a list of schedule runs.
+    app__schemas__ai_playground__schedules__ScheduleResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        session_id:
+          type: string
+          title: Session Id
+        content_scope:
+          $ref: '#/components/schemas/ContentScope'
+        cron_expr:
+          type: string
+          title: Cron Expr
+        destination_type:
+          $ref: '#/components/schemas/DestinationType'
+        emails:
+          items:
+            type: string
+          type: array
+          title: Emails
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Slack Webhook Id
+        enabled:
+          type: boolean
+          title: Enabled
+        last_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Run
+        next_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Next Run
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Cron weekday (0=Sunday … 6=Saturday) when frequency is weekly
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: Cron day-of-month (1-31) when frequency is monthly
+      type: object
+      required:
+      - id
+      - name
+      - session_id
+      - content_scope
+      - cron_expr
+      - destination_type
+      - emails
+      - enabled
+      - last_run
+      - next_run
+      - created_by
+      - created_at
+      - updated_at
+      title: ScheduleResponse
+      description: Response containing schedule details.
     ValidationError:
       properties:
         loc:
@@ -986,6 +957,35 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    app__schemas__ai_playground__schedules__ScheduleListResponse:
+      properties:
+        schedules:
+          items:
+            $ref: '#/components/schemas/app__schemas__ai_playground__schedules__ScheduleResponse'
+          type: array
+          title: Schedules
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - schedules
+      - total
+      title: ScheduleListResponse
+      description: Response containing a list of schedules.
+    DestinationType:
+      type: string
+      enum:
+      - email
+      - slack
+      - multi
+      title: DestinationType
+      description: 'How to deliver the scheduled report.
+
+
+        Derived from `destination_config` at save time — `MULTI` means both
+
+        emails and a Slack webhook are configured on the same schedule.'
   securitySchemes:
     HTTPBearer:
       type: http

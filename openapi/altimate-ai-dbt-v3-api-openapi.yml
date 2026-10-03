@@ -545,118 +545,24 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ModelColumn:
+    ModelInfo:
       properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        data_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Data Type
-      type: object
-      required:
-      - name
-      title: ModelColumn
-    DBTTranslateExplainRequest:
-      properties:
-        user_sql:
-          type: string
-          title: User Sql
-        translated_sql:
-          type: string
-          title: Translated Sql
-        source_dialect:
-          type: string
-          title: Source Dialect
-        target_dialect:
-          type: string
-          title: Target Dialect
-      type: object
-      required:
-      - user_sql
-      - translated_sql
-      - source_dialect
-      - target_dialect
-      title: DBTTranslateExplainRequest
-    SQLLineageResponse:
-      properties:
-        tableEdges:
-          items:
-            prefixItems:
-            - type: string
-            - type: string
-            type: array
-            maxItems: 2
-            minItems: 2
-          type: array
-          title: Tableedges
-        details:
-          additionalProperties: true
-          type: object
-          title: Details
-        nodePositions:
-          anyOf:
-          - additionalProperties:
-              prefixItems:
-              - type: number
-              - type: number
-              type: array
-              maxItems: 2
-              minItems: 2
-            type: object
-          - type: 'null'
-          title: Nodepositions
-      type: object
-      required:
-      - tableEdges
-      - details
-      title: SQLLineageResponse
-    Confidence:
-      properties:
-        confidence:
-          type: string
-          title: Confidence
-        operator_list:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Operator List
-      type: object
-      required:
-      - confidence
-      title: Confidence
-    DBTSQLLineageRequestV3:
-      properties:
-        model_dialect:
-          type: string
-          title: Model Dialect
-        model_info:
-          items:
-            $ref: '#/components/schemas/ModelInfo'
-          type: array
-          title: Model Info
+        model_node:
+          $ref: '#/components/schemas/ModelNode'
         compiled_sql:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Compiled Sql
-        session_id:
-          type: string
-          title: Session Id
+        raw_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Sql
       type: object
       required:
-      - model_dialect
-      - model_info
-      - compiled_sql
-      - session_id
-      title: DBTSQLLineageRequestV3
+      - model_node
+      title: ModelInfo
     DBTShareQueryItemResponse:
       properties:
         id:
@@ -705,313 +611,6 @@ components:
       - created_by
       - created_on
       title: DBTShareQueryItemResponse
-    DBTShareQueryItem:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        model_name:
-          type: string
-          title: Model Name
-        compiled_sql:
-          type: string
-          title: Compiled Sql
-        share_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Share Url
-        attributes:
-          additionalProperties: true
-          type: object
-          title: Attributes
-        sharing_status:
-          type: boolean
-          title: Sharing Status
-        created_by:
-          type: integer
-          title: Created By
-        created_on:
-          type: string
-          format: date-time
-          title: Created On
-      type: object
-      required:
-      - id
-      - name
-      - model_name
-      - compiled_sql
-      - attributes
-      - sharing_status
-      - created_by
-      - created_on
-      title: DBTShareQueryItem
-    SelectedColumn:
-      properties:
-        model_node:
-          anyOf:
-          - $ref: '#/components/schemas/ModelNode'
-          - type: 'null'
-        column:
-          type: string
-          title: Column
-      type: object
-      required:
-      - column
-      title: SelectedColumn
-    Page_DBTShareQueryItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DBTShareQueryItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[DBTShareQueryItem]
-    ModelNode:
-      properties:
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        schema_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schema Name
-        package_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Package Name
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        alias:
-          type: string
-          title: Alias
-        uniqueId:
-          type: string
-          title: Uniqueid
-        columns:
-          additionalProperties:
-            $ref: '#/components/schemas/ModelColumn'
-          type: object
-          title: Columns
-      type: object
-      required:
-      - alias
-      - uniqueId
-      - columns
-      title: ModelNode
-    DBTShareQueryRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        compiled_sql:
-          type: string
-          title: Compiled Sql
-        csv_result:
-          type: string
-          title: Csv Result
-        attributes:
-          additionalProperties: true
-          type: object
-          title: Attributes
-        model_name:
-          type: string
-          title: Model Name
-      type: object
-      required:
-      - name
-      - compiled_sql
-      - csv_result
-      - attributes
-      - model_name
-      title: DBTShareQueryRequest
-    DBTTranslateResponse:
-      properties:
-        translated_sql:
-          type: string
-          title: Translated Sql
-      type: object
-      required:
-      - translated_sql
-      title: DBTTranslateResponse
-    ColumnLineageLink:
-      properties:
-        source:
-          $ref: '#/components/schemas/ColumnIdentifier'
-        target:
-          $ref: '#/components/schemas/ColumnIdentifier'
-        type:
-          type: string
-          title: Type
-        views_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Views Type
-        views_code:
-          items:
-            prefixItems:
-            - type: string
-            - type: string
-            type: array
-            maxItems: 2
-            minItems: 2
-          type: array
-          title: Views Code
-      type: object
-      required:
-      - source
-      - target
-      - type
-      - views_code
-      title: ColumnLineageLink
-    DBTTranslateRequest:
-      properties:
-        sql:
-          type: string
-          title: Sql
-        source_dialect:
-          type: string
-          title: Source Dialect
-        target_dialect:
-          type: string
-          title: Target Dialect
-      type: object
-      required:
-      - sql
-      - source_dialect
-      - target_dialect
-      title: DBTTranslateRequest
-    DBTColumnLineageResponseV3:
-      properties:
-        column_lineage:
-          items:
-            $ref: '#/components/schemas/ColumnLineageLink'
-          type: array
-          title: Column Lineage
-        confidence:
-          anyOf:
-          - $ref: '#/components/schemas/Confidence'
-          - type: 'null'
-      type: object
-      required:
-      - column_lineage
-      title: DBTColumnLineageResponseV3
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ColumnIdentifier:
-      properties:
-        uniqueId:
-          type: string
-          title: Uniqueid
-        column_name:
-          type: string
-          title: Column Name
-      type: object
-      required:
-      - uniqueId
-      - column_name
-      title: ColumnIdentifier
-    ModelInfo:
-      properties:
-        model_node:
-          $ref: '#/components/schemas/ModelNode'
-        compiled_sql:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Compiled Sql
-        raw_sql:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Raw Sql
-      type: object
-      required:
-      - model_node
-      title: ModelInfo
-    DBTShareQueryPatchRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        sharing_status:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Sharing Status
-      type: object
-      title: DBTShareQueryPatchRequest
     DBTColumnLineageRequestV3:
       properties:
         targets:
@@ -1068,6 +667,407 @@ components:
       required:
       - model_name
       title: Schemas
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DBTShareQueryItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        model_name:
+          type: string
+          title: Model Name
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        share_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Url
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+        sharing_status:
+          type: boolean
+          title: Sharing Status
+        created_by:
+          type: integer
+          title: Created By
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+      type: object
+      required:
+      - id
+      - name
+      - model_name
+      - compiled_sql
+      - attributes
+      - sharing_status
+      - created_by
+      - created_on
+      title: DBTShareQueryItem
+    ColumnLineageLink:
+      properties:
+        source:
+          $ref: '#/components/schemas/ColumnIdentifier'
+        target:
+          $ref: '#/components/schemas/ColumnIdentifier'
+        type:
+          type: string
+          title: Type
+        views_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Views Type
+        views_code:
+          items:
+            prefixItems:
+            - type: string
+            - type: string
+            type: array
+            maxItems: 2
+            minItems: 2
+          type: array
+          title: Views Code
+      type: object
+      required:
+      - source
+      - target
+      - type
+      - views_code
+      title: ColumnLineageLink
+    SelectedColumn:
+      properties:
+        model_node:
+          anyOf:
+          - $ref: '#/components/schemas/ModelNode'
+          - type: 'null'
+        column:
+          type: string
+          title: Column
+      type: object
+      required:
+      - column
+      title: SelectedColumn
+    ModelNode:
+      properties:
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        package_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Package Name
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        alias:
+          type: string
+          title: Alias
+        uniqueId:
+          type: string
+          title: Uniqueid
+        columns:
+          additionalProperties:
+            $ref: '#/components/schemas/ModelColumn'
+          type: object
+          title: Columns
+      type: object
+      required:
+      - alias
+      - uniqueId
+      - columns
+      title: ModelNode
+    ModelColumn:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        data_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Data Type
+      type: object
+      required:
+      - name
+      title: ModelColumn
+    DBTTranslateExplainRequest:
+      properties:
+        user_sql:
+          type: string
+          title: User Sql
+        translated_sql:
+          type: string
+          title: Translated Sql
+        source_dialect:
+          type: string
+          title: Source Dialect
+        target_dialect:
+          type: string
+          title: Target Dialect
+      type: object
+      required:
+      - user_sql
+      - translated_sql
+      - source_dialect
+      - target_dialect
+      title: DBTTranslateExplainRequest
+    DBTShareQueryPatchRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        sharing_status:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Sharing Status
+      type: object
+      title: DBTShareQueryPatchRequest
+    DBTTranslateResponse:
+      properties:
+        translated_sql:
+          type: string
+          title: Translated Sql
+      type: object
+      required:
+      - translated_sql
+      title: DBTTranslateResponse
+    ColumnIdentifier:
+      properties:
+        uniqueId:
+          type: string
+          title: Uniqueid
+        column_name:
+          type: string
+          title: Column Name
+      type: object
+      required:
+      - uniqueId
+      - column_name
+      title: ColumnIdentifier
+    Confidence:
+      properties:
+        confidence:
+          type: string
+          title: Confidence
+        operator_list:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Operator List
+      type: object
+      required:
+      - confidence
+      title: Confidence
+    DBTShareQueryRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        csv_result:
+          type: string
+          title: Csv Result
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+        model_name:
+          type: string
+          title: Model Name
+      type: object
+      required:
+      - name
+      - compiled_sql
+      - csv_result
+      - attributes
+      - model_name
+      title: DBTShareQueryRequest
+    DBTSQLLineageRequestV3:
+      properties:
+        model_dialect:
+          type: string
+          title: Model Dialect
+        model_info:
+          items:
+            $ref: '#/components/schemas/ModelInfo'
+          type: array
+          title: Model Info
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        session_id:
+          type: string
+          title: Session Id
+      type: object
+      required:
+      - model_dialect
+      - model_info
+      - compiled_sql
+      - session_id
+      title: DBTSQLLineageRequestV3
+    Page_DBTShareQueryItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DBTShareQueryItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DBTShareQueryItem]
+    DBTTranslateRequest:
+      properties:
+        sql:
+          type: string
+          title: Sql
+        source_dialect:
+          type: string
+          title: Source Dialect
+        target_dialect:
+          type: string
+          title: Target Dialect
+      type: object
+      required:
+      - sql
+      - source_dialect
+      - target_dialect
+      title: DBTTranslateRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DBTColumnLineageResponseV3:
+      properties:
+        column_lineage:
+          items:
+            $ref: '#/components/schemas/ColumnLineageLink'
+          type: array
+          title: Column Lineage
+        confidence:
+          anyOf:
+          - $ref: '#/components/schemas/Confidence'
+          - type: 'null'
+      type: object
+      required:
+      - column_lineage
+      title: DBTColumnLineageResponseV3
+    SQLLineageResponse:
+      properties:
+        tableEdges:
+          items:
+            prefixItems:
+            - type: string
+            - type: string
+            type: array
+            maxItems: 2
+            minItems: 2
+          type: array
+          title: Tableedges
+        details:
+          additionalProperties: true
+          type: object
+          title: Details
+        nodePositions:
+          anyOf:
+          - additionalProperties:
+              prefixItems:
+              - type: number
+              - type: number
+              type: array
+              maxItems: 2
+              minItems: 2
+            type: object
+          - type: 'null'
+          title: Nodepositions
+      type: object
+      required:
+      - tableEdges
+      - details
+      title: SQLLineageResponse
   securitySchemes:
     HTTPBearer:
       type: http

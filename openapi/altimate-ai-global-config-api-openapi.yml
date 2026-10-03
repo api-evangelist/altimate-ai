@@ -374,33 +374,35 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UpsertCostAttributionRequest:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        mode:
-          type: string
-          title: Mode
-          default: warehouse
-      type: object
-      title: UpsertCostAttributionRequest
-    AddQueryTagRequest:
-      properties:
-        tag:
-          type: string
-          title: Tag
-      type: object
-      required:
-      - tag
-      title: AddQueryTagRequest
     DomainStatus:
       type: string
       enum:
       - active
       - paused
       title: DomainStatus
+    UpdateEmailDomainStatusRequest:
+      properties:
+        domain:
+          type: string
+          title: Domain
+        status:
+          $ref: '#/components/schemas/DomainStatus'
+      type: object
+      required:
+      - domain
+      - status
+      title: UpdateEmailDomainStatusRequest
+    EmailDomainAllowlistResponse:
+      properties:
+        domains:
+          items:
+            $ref: '#/components/schemas/EmailDomainEntry'
+          type: array
+          title: Domains
+      type: object
+      required:
+      - domains
+      title: EmailDomainAllowlistResponse
     AddEmailDomainRequest:
       properties:
         domain:
@@ -410,35 +412,6 @@ components:
       required:
       - domain
       title: AddEmailDomainRequest
-    GlobalConfigType:
-      type: string
-      enum:
-      - summary
-      - dbt_s3_prefix
-      - query_profile
-      - ingestion_worker_config
-      - tenant_info
-      - audit_s3_prefix
-      - snowflake_job
-      - altimate_db_and_schema
-      - cost_per_credit
-      - query_tag_keys
-      - altimate_tableau_site
-      - cost_attribution
-      - knowledge_private_link_enabled
-      - use_account_usage
-      - snowflake_enterprise
-      - instance_edition
-      - dbt_ingestion_failures_email
-      - skip_dbt_lineage
-      - ingestion_config
-      - snowflake_ddl_tool
-      - cost_projections
-      - auto_resize_ignore_list
-      - recipient_email_domain_allowlist
-      - databricks_service_principal_config
-      - infra_savings_multiplier
-      title: GlobalConfigType
     CostAttributionResponse:
       properties:
         enabled:
@@ -504,29 +477,56 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    UpdateEmailDomainStatusRequest:
+    AddQueryTagRequest:
       properties:
-        domain:
+        tag:
           type: string
-          title: Domain
-        status:
-          $ref: '#/components/schemas/DomainStatus'
+          title: Tag
       type: object
       required:
-      - domain
-      - status
-      title: UpdateEmailDomainStatusRequest
-    EmailDomainAllowlistResponse:
+      - tag
+      title: AddQueryTagRequest
+    GlobalConfigType:
+      type: string
+      enum:
+      - summary
+      - dbt_s3_prefix
+      - query_profile
+      - ingestion_worker_config
+      - tenant_info
+      - audit_s3_prefix
+      - snowflake_job
+      - altimate_db_and_schema
+      - cost_per_credit
+      - query_tag_keys
+      - altimate_tableau_site
+      - cost_attribution
+      - knowledge_private_link_enabled
+      - use_account_usage
+      - snowflake_enterprise
+      - instance_edition
+      - dbt_ingestion_failures_email
+      - skip_dbt_lineage
+      - ingestion_config
+      - snowflake_ddl_tool
+      - cost_projections
+      - auto_resize_ignore_list
+      - recipient_email_domain_allowlist
+      - databricks_service_principal_config
+      - infra_savings_multiplier
+      title: GlobalConfigType
+    UpsertCostAttributionRequest:
       properties:
-        domains:
-          items:
-            $ref: '#/components/schemas/EmailDomainEntry'
-          type: array
-          title: Domains
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        mode:
+          type: string
+          title: Mode
+          default: warehouse
       type: object
-      required:
-      - domains
-      title: EmailDomainAllowlistResponse
+      title: UpsertCostAttributionRequest
   securitySchemes:
     HTTPBearer:
       type: http

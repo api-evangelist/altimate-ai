@@ -402,48 +402,23 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UpdatePromptRequest:
+    StarterPromptsResponse:
       properties:
-        title:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Title
-        description:
+        hello_message:
           anyOf:
           - type: string
           - type: 'null'
-          title: Description
-        prompt_text:
-          anyOf:
-          - type: string
-            minLength: 1
-          - type: 'null'
-          title: Prompt Text
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
-        teams:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Teams
-        attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Attributes
+          title: Hello Message
+        prompts:
+          items:
+            $ref: '#/components/schemas/PromptResponse'
+          type: array
+          title: Prompts
       type: object
-      title: UpdatePromptRequest
-      description: Request schema for updating an existing prompt
+      required:
+      - prompts
+      title: StarterPromptsResponse
+      description: Response schema for starter prompts with contextual hello message
     CreatePromptRequest:
       properties:
         title:
@@ -482,23 +457,36 @@ components:
       - prompt_text
       title: CreatePromptRequest
       description: Request schema for creating a new prompt
-    StarterPromptsResponse:
+    ValidationError:
       properties:
-        hello_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Hello Message
-        prompts:
+        loc:
           items:
-            $ref: '#/components/schemas/PromptResponse'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Prompts
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - prompts
-      title: StarterPromptsResponse
-      description: Response schema for starter prompts with contextual hello message
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     Page_PromptResponse_:
       properties:
         items:
@@ -549,36 +537,6 @@ components:
       - tags
       title: TagsResponse
       description: Response schema for unique tags
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     PromptResponse:
       properties:
         id:
@@ -643,6 +601,48 @@ components:
       - updated_at
       title: PromptResponse
       description: Response schema for a single prompt
+    UpdatePromptRequest:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        prompt_text:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Prompt Text
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        teams:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Teams
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
+      type: object
+      title: UpdatePromptRequest
+      description: Request schema for updating an existing prompt
   securitySchemes:
     HTTPBearer:
       type: http

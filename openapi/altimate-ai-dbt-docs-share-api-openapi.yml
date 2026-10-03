@@ -765,175 +765,56 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    DBTDocsShareVerifyUploadRequest:
+    DBTDocsConversationResponse:
       properties:
-        share_id:
-          type: integer
-          title: Share Id
+        dbt_docs_share_conversations:
+          items:
+            $ref: '#/components/schemas/ConversationGroupModel'
+          type: array
+          title: Dbt Docs Share Conversations
       type: object
       required:
-      - share_id
-      title: DBTDocsShareVerifyUploadRequest
-    DBTDocsShareGetResponse:
+      - dbt_docs_share_conversations
+      title: DBTDocsConversationResponse
+    DBTDocsShareVerifyUploadResponse:
       properties:
-        name:
+        dbt_docs_share_url:
           type: string
-          title: Name
-        manifest_presigned_url:
-          type: string
-          title: Manifest Presigned Url
-        catalog_presigned_url:
-          type: string
-          title: Catalog Presigned Url
-        app_url:
-          type: string
-          title: App Url
+          title: Dbt Docs Share Url
       type: object
       required:
-      - name
-      - manifest_presigned_url
-      - catalog_presigned_url
-      - app_url
-      title: DBTDocsShareGetResponse
-    DBTDocsConversationGroupResolveRequest:
+      - dbt_docs_share_url
+      title: DBTDocsShareVerifyUploadResponse
+    ValidationError:
       properties:
-        resolved:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
           type: boolean
-          title: Resolved
+          title: Ok
       type: object
       required:
-      - resolved
-      title: DBTDocsConversationGroupResolveRequest
-    ConversationGroupResponse:
-      properties:
-        conversation_group_id:
-          type: integer
-          title: Conversation Group Id
-        conversation_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Conversation Id
-      type: object
-      required:
-      - conversation_group_id
-      title: ConversationGroupResponse
-    Page_DBTDocsShareGetAllResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DBTDocsShareGetAllResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[DBTDocsShareGetAllResponse]
-    DBTDocsShareGetAllResponse:
-      properties:
-        share_id:
-          type: integer
-          title: Share Id
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        expires_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Expires At
-        created_at:
-          type: string
-          title: Created At
-        updated_at:
-          type: string
-          title: Updated At
-        owner:
-          type: integer
-          title: Owner
-        open_conversations:
-          type: integer
-          title: Open Conversations
-          default: 0
-        resolved_conversations:
-          type: integer
-          title: Resolved Conversations
-          default: 0
-        user:
-          $ref: '#/components/schemas/UserIndexResponse'
-        project_name:
-          type: string
-          title: Project Name
-        project_metadata:
-          additionalProperties: true
-          type: object
-          title: Project Metadata
-        conversation_group:
-          anyOf:
-          - items: {}
-            type: array
-          - type: 'null'
-          title: Conversation Group
-      type: object
-      required:
-      - share_id
-      - name
-      - created_at
-      - updated_at
-      - owner
-      - user
-      - project_name
-      - project_metadata
-      title: DBTDocsShareGetAllResponse
-    DBTDocsShareFiltersResponse:
-      properties:
-        names:
-          items:
-            type: string
-          type: array
-          title: Names
-        owners:
-          items:
-            $ref: '#/components/schemas/UserIndexResponse'
-          type: array
-          title: Owners
-      type: object
-      required:
-      - names
-      - owners
-      title: DBTDocsShareFiltersResponse
+      - ok
+      title: StandardResponse
     UserIndexResponse:
       properties:
         id:
@@ -1035,87 +916,15 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
-    DBTDocsShareVerifyUploadResponse:
+    DBTDocsConversationGroupResolveRequest:
       properties:
-        dbt_docs_share_url:
-          type: string
-          title: Dbt Docs Share Url
-      type: object
-      required:
-      - dbt_docs_share_url
-      title: DBTDocsShareVerifyUploadResponse
-    DBTDocsShareRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        project_name:
-          type: string
-          title: Project Name
-      type: object
-      required:
-      - name
-      - project_name
-      title: DBTDocsShareRequest
-    StandardResponse:
-      properties:
-        ok:
+        resolved:
           type: boolean
-          title: Ok
+          title: Resolved
       type: object
       required:
-      - ok
-      title: StandardResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DBTDocsConversationGroupRequest:
-      properties:
-        message:
-          type: string
-          title: Message
-        meta:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Meta
-      type: object
-      required:
-      - message
-      title: DBTDocsConversationGroupRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - resolved
+      title: DBTDocsConversationGroupResolveRequest
     DBTDocsConversationRequest:
       properties:
         message:
@@ -1125,48 +934,6 @@ components:
       required:
       - message
       title: DBTDocsConversationRequest
-    DBTDocsShareResponse:
-      properties:
-        share_id:
-          type: integer
-          title: Share Id
-        manifest_presigned_url:
-          type: string
-          title: Manifest Presigned Url
-        catalog_presigned_url:
-          type: string
-          title: Catalog Presigned Url
-      type: object
-      required:
-      - share_id
-      - manifest_presigned_url
-      - catalog_presigned_url
-      title: DBTDocsShareResponse
-    ConversationModel:
-      properties:
-        conversation_id:
-          type: integer
-          title: Conversation Id
-        uuid:
-          type: string
-          title: Uuid
-        user_id:
-          type: integer
-          title: User Id
-        message:
-          type: string
-          title: Message
-        timestamp:
-          type: string
-          title: Timestamp
-      type: object
-      required:
-      - conversation_id
-      - uuid
-      - user_id
-      - message
-      - timestamp
-      title: ConversationModel
     ConversationGroupModel:
       properties:
         conversation_group_id:
@@ -1195,17 +962,250 @@ components:
       - status
       - conversations
       title: ConversationGroupModel
-    DBTDocsConversationResponse:
+    ConversationModel:
       properties:
-        dbt_docs_share_conversations:
-          items:
-            $ref: '#/components/schemas/ConversationGroupModel'
-          type: array
-          title: Dbt Docs Share Conversations
+        conversation_id:
+          type: integer
+          title: Conversation Id
+        uuid:
+          type: string
+          title: Uuid
+        user_id:
+          type: integer
+          title: User Id
+        message:
+          type: string
+          title: Message
+        timestamp:
+          type: string
+          title: Timestamp
       type: object
       required:
-      - dbt_docs_share_conversations
-      title: DBTDocsConversationResponse
+      - conversation_id
+      - uuid
+      - user_id
+      - message
+      - timestamp
+      title: ConversationModel
+    DBTDocsShareGetResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        manifest_presigned_url:
+          type: string
+          title: Manifest Presigned Url
+        catalog_presigned_url:
+          type: string
+          title: Catalog Presigned Url
+        app_url:
+          type: string
+          title: App Url
+      type: object
+      required:
+      - name
+      - manifest_presigned_url
+      - catalog_presigned_url
+      - app_url
+      title: DBTDocsShareGetResponse
+    DBTDocsShareFiltersResponse:
+      properties:
+        names:
+          items:
+            type: string
+          type: array
+          title: Names
+        owners:
+          items:
+            $ref: '#/components/schemas/UserIndexResponse'
+          type: array
+          title: Owners
+      type: object
+      required:
+      - names
+      - owners
+      title: DBTDocsShareFiltersResponse
+    DBTDocsShareGetAllResponse:
+      properties:
+        share_id:
+          type: integer
+          title: Share Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        expires_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Expires At
+        created_at:
+          type: string
+          title: Created At
+        updated_at:
+          type: string
+          title: Updated At
+        owner:
+          type: integer
+          title: Owner
+        open_conversations:
+          type: integer
+          title: Open Conversations
+          default: 0
+        resolved_conversations:
+          type: integer
+          title: Resolved Conversations
+          default: 0
+        user:
+          $ref: '#/components/schemas/UserIndexResponse'
+        project_name:
+          type: string
+          title: Project Name
+        project_metadata:
+          additionalProperties: true
+          type: object
+          title: Project Metadata
+        conversation_group:
+          anyOf:
+          - items: {}
+            type: array
+          - type: 'null'
+          title: Conversation Group
+      type: object
+      required:
+      - share_id
+      - name
+      - created_at
+      - updated_at
+      - owner
+      - user
+      - project_name
+      - project_metadata
+      title: DBTDocsShareGetAllResponse
+    DBTDocsConversationGroupRequest:
+      properties:
+        message:
+          type: string
+          title: Message
+        meta:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Meta
+      type: object
+      required:
+      - message
+      title: DBTDocsConversationGroupRequest
+    DBTDocsShareRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        project_name:
+          type: string
+          title: Project Name
+      type: object
+      required:
+      - name
+      - project_name
+      title: DBTDocsShareRequest
+    DBTDocsShareVerifyUploadRequest:
+      properties:
+        share_id:
+          type: integer
+          title: Share Id
+      type: object
+      required:
+      - share_id
+      title: DBTDocsShareVerifyUploadRequest
+    ConversationGroupResponse:
+      properties:
+        conversation_group_id:
+          type: integer
+          title: Conversation Group Id
+        conversation_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Conversation Id
+      type: object
+      required:
+      - conversation_group_id
+      title: ConversationGroupResponse
+    DBTDocsShareResponse:
+      properties:
+        share_id:
+          type: integer
+          title: Share Id
+        manifest_presigned_url:
+          type: string
+          title: Manifest Presigned Url
+        catalog_presigned_url:
+          type: string
+          title: Catalog Presigned Url
+      type: object
+      required:
+      - share_id
+      - manifest_presigned_url
+      - catalog_presigned_url
+      title: DBTDocsShareResponse
+    Page_DBTDocsShareGetAllResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DBTDocsShareGetAllResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DBTDocsShareGetAllResponse]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

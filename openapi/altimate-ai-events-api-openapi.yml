@@ -630,6 +630,136 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    AnalyticsHistory:
+      properties:
+        day:
+          anyOf:
+          - type: string
+          - type: integer
+          title: Day
+        executions:
+          type: integer
+          title: Executions
+      type: object
+      required:
+      - day
+      - executions
+      title: AnalyticsHistory
+    TimelineEventFetchResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        contract_id:
+          type: integer
+          title: Contract Id
+        event_type:
+          type: string
+          title: Event Type
+        event_message:
+          type: string
+          title: Event Message
+        user_first_name:
+          type: string
+          title: User First Name
+        user_last_name:
+          type: string
+          title: User Last Name
+        user_email:
+          type: string
+          title: User Email
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+      type: object
+      required:
+      - id
+      - contract_id
+      - event_type
+      - event_message
+      - user_first_name
+      - user_last_name
+      - user_email
+      - created_on
+      title: TimelineEventFetchResponse
+    SyncStatus:
+      type: string
+      enum:
+      - success
+      - running
+      - failed
+      title: SyncStatus
+    ContractResource:
+      properties:
+        resource:
+          $ref: '#/components/schemas/app__schemas__events__Resource'
+        alias:
+          type: string
+          title: Alias
+      type: object
+      required:
+      - resource
+      - alias
+      title: ContractResource
+    Contract:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        schedule:
+          type: string
+          title: Schedule
+        contract_resources:
+          items:
+            $ref: '#/components/schemas/ContractResource'
+          type: array
+          title: Contract Resources
+        data_store:
+          $ref: '#/components/schemas/DataStore'
+      type: object
+      required:
+      - id
+      - name
+      - schedule
+      - contract_resources
+      - data_store
+      title: Contract
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TimelineEventFetchAllResponse:
+      properties:
+        timeline_events:
+          items:
+            $ref: '#/components/schemas/TimelineEventFetchResponse'
+          type: array
+          title: Timeline Events
+      type: object
+      required:
+      - timeline_events
+      title: TimelineEventFetchAllResponse
     app__schemas__events__Resource:
       properties:
         identifier:
@@ -643,27 +773,6 @@ components:
       - identifier
       - id
       title: Resource
-    ExecutionHistoryByUser:
-      properties:
-        user_id:
-          type: integer
-          title: User Id
-        executions:
-          type: integer
-          title: Executions
-        display_name:
-          type: string
-          title: Display Name
-        percentage_executions:
-          type: number
-          title: Percentage Executions
-      type: object
-      required:
-      - user_id
-      - executions
-      - display_name
-      - percentage_executions
-      title: ExecutionHistoryByUser
     Table:
       properties:
         resource_id:
@@ -693,6 +802,149 @@ components:
       - tablename
       - path
       title: Table
+    Alert:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        threshold:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Threshold
+      type: object
+      title: Alert
+    ExecutionAnalyticsPeriods:
+      type: string
+      enum:
+      - week
+      - month
+      - all_time
+      title: ExecutionAnalyticsPeriods
+    ValidationEventFetchAllResponse:
+      properties:
+        validation_events:
+          items:
+            $ref: '#/components/schemas/ValidationEventFetchResponse'
+          type: array
+          title: Validation Events
+      type: object
+      required:
+      - validation_events
+      title: ValidationEventFetchAllResponse
+    ExecutionsNameValue:
+      properties:
+        name:
+          type: string
+          title: Name
+        count:
+          type: integer
+          title: Count
+          default: 0
+        value:
+          type: integer
+          title: Value
+          default: 0
+        value_charged:
+          type: integer
+          title: Value Charged
+          default: 0
+      type: object
+      required:
+      - name
+      title: ExecutionsNameValue
+    Page_SyncHistoryFetchResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SyncHistoryFetchResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[SyncHistoryFetchResponse]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Page_ValidationEventsFetchPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ValidationEventsFetchPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[ValidationEventsFetchPageResponse]
     SyncHistoryFetchResponse:
       properties:
         id:
@@ -724,32 +976,21 @@ components:
       - sync_event_type
       - created_on
       title: SyncHistoryFetchResponse
-    ValidationEventFetchResponse:
+    ExecutionHistoryResponse:
       properties:
-        id:
-          type: integer
-          title: Id
-        contract_id:
-          type: integer
-          title: Contract Id
-        validation_status:
+        execution:
+          items:
+            $ref: '#/components/schemas/ExecutionsNameValue'
+          type: array
+          title: Execution
+        start_date:
           type: string
-          title: Validation Status
-        number_of_violations:
-          type: integer
-          title: Number Of Violations
-        validated_on:
-          type: string
-          format: date-time
-          title: Validated On
+          title: Start Date
       type: object
       required:
-      - id
-      - contract_id
-      - validation_status
-      - number_of_violations
-      - validated_on
-      title: ValidationEventFetchResponse
+      - execution
+      - start_date
+      title: ExecutionHistoryResponse
     DataStore:
       properties:
         name:
@@ -799,248 +1040,28 @@ components:
       - validated_on
       - contract
       title: ValidationEventsFetchPageResponse
-    ExecutionAnalyticsPeriods:
-      type: string
-      enum:
-      - week
-      - month
-      - all_time
-      title: ExecutionAnalyticsPeriods
-    ExecutionsNameValue:
+    EventDetail:
       properties:
-        name:
+        timestamp:
           type: string
-          title: Name
-        count:
-          type: integer
-          title: Count
-          default: 0
-        value:
-          type: integer
-          title: Value
-          default: 0
-        value_charged:
-          type: integer
-          title: Value Charged
-          default: 0
-      type: object
-      required:
-      - name
-      title: ExecutionsNameValue
-    TimelineEventFetchAllResponse:
-      properties:
-        timeline_events:
-          items:
-            $ref: '#/components/schemas/TimelineEventFetchResponse'
-          type: array
-          title: Timeline Events
-      type: object
-      required:
-      - timeline_events
-      title: TimelineEventFetchAllResponse
-    ValidationEventFetchAllResponse:
-      properties:
-        validation_events:
-          items:
-            $ref: '#/components/schemas/ValidationEventFetchResponse'
-          type: array
-          title: Validation Events
-      type: object
-      required:
-      - validation_events
-      title: ValidationEventFetchAllResponse
-    Contract:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        schedule:
-          type: string
-          title: Schedule
-        contract_resources:
-          items:
-            $ref: '#/components/schemas/ContractResource'
-          type: array
-          title: Contract Resources
-        data_store:
-          $ref: '#/components/schemas/DataStore'
-      type: object
-      required:
-      - id
-      - name
-      - schedule
-      - contract_resources
-      - data_store
-      title: Contract
-    TimelineEventFetchResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        contract_id:
-          type: integer
-          title: Contract Id
-        event_type:
-          type: string
-          title: Event Type
-        event_message:
-          type: string
-          title: Event Message
-        user_first_name:
-          type: string
-          title: User First Name
-        user_last_name:
-          type: string
-          title: User Last Name
+          format: date-time
+          title: Timestamp
         user_email:
           type: string
           title: User Email
-        created_on:
+        feature_name:
           type: string
-          format: date-time
-          title: Created On
+          title: Feature Name
+        num_credits:
+          type: number
+          title: Num Credits
       type: object
       required:
-      - id
-      - contract_id
-      - event_type
-      - event_message
-      - user_first_name
-      - user_last_name
+      - timestamp
       - user_email
-      - created_on
-      title: TimelineEventFetchResponse
-    Page_SyncHistoryFetchResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SyncHistoryFetchResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[SyncHistoryFetchResponse]
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AnalyticsHistory:
-      properties:
-        day:
-          anyOf:
-          - type: string
-          - type: integer
-          title: Day
-        executions:
-          type: integer
-          title: Executions
-      type: object
-      required:
-      - day
-      - executions
-      title: AnalyticsHistory
-    SyncStatus:
-      type: string
-      enum:
-      - success
-      - running
-      - failed
-      title: SyncStatus
-    Page_AlertEventsFetchPageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AlertEventsFetchPageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[AlertEventsFetchPageResponse]
+      - feature_name
+      - num_credits
+      title: EventDetail
     AnalyticsHistoryResponse:
       properties:
         analytics_history:
@@ -1086,55 +1107,6 @@ components:
       - month
       - start_date
       title: AnalyticsHistoryResponse
-    ExecutionHistoryResponse:
-      properties:
-        execution:
-          items:
-            $ref: '#/components/schemas/ExecutionsNameValue'
-          type: array
-          title: Execution
-        start_date:
-          type: string
-          title: Start Date
-      type: object
-      required:
-      - execution
-      - start_date
-      title: ExecutionHistoryResponse
-    ContractResource:
-      properties:
-        resource:
-          $ref: '#/components/schemas/app__schemas__events__Resource'
-        alias:
-          type: string
-          title: Alias
-      type: object
-      required:
-      - resource
-      - alias
-      title: ContractResource
-    EventDetail:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        user_email:
-          type: string
-          title: User Email
-        feature_name:
-          type: string
-          title: Feature Name
-        num_credits:
-          type: number
-          title: Num Credits
-      type: object
-      required:
-      - timestamp
-      - user_email
-      - feature_name
-      - num_credits
-      title: EventDetail
     AlertEventsFetchPageResponse:
       properties:
         id:
@@ -1183,30 +1155,32 @@ components:
       - status
       - alert
       title: AlertEventsFetchPageResponse
-    Alert:
+    ExecutionHistoryByUser:
       properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        threshold:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Threshold
+        user_id:
+          type: integer
+          title: User Id
+        executions:
+          type: integer
+          title: Executions
+        display_name:
+          type: string
+          title: Display Name
+        percentage_executions:
+          type: number
+          title: Percentage Executions
       type: object
-      title: Alert
-    Page_ValidationEventsFetchPageResponse_:
+      required:
+      - user_id
+      - executions
+      - display_name
+      - percentage_executions
+      title: ExecutionHistoryByUser
+    Page_AlertEventsFetchPageResponse_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/ValidationEventsFetchPageResponse'
+            $ref: '#/components/schemas/AlertEventsFetchPageResponse'
           type: array
           title: Items
         total:
@@ -1239,7 +1213,33 @@ components:
       - total
       - page
       - size
-      title: Page[ValidationEventsFetchPageResponse]
+      title: Page[AlertEventsFetchPageResponse]
+    ValidationEventFetchResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        contract_id:
+          type: integer
+          title: Contract Id
+        validation_status:
+          type: string
+          title: Validation Status
+        number_of_violations:
+          type: integer
+          title: Number Of Violations
+        validated_on:
+          type: string
+          format: date-time
+          title: Validated On
+      type: object
+      required:
+      - id
+      - contract_id
+      - validation_status
+      - number_of_violations
+      - validated_on
+      title: ValidationEventFetchResponse
   securitySchemes:
     HTTPBearer:
       type: http

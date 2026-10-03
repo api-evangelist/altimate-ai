@@ -2181,12 +2181,22 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ComputeGraphResponse:
+    OverallGraphResponse:
       properties:
         date:
           type: string
           format: date-time
           title: Date
+        total:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total
+        total_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Estimate
         compute:
           anyOf:
           - type: number
@@ -2197,9 +2207,84 @@ components:
           - type: number
           - type: 'null'
           title: Compute Estimate
+        storage:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage
+        storage_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage Estimate
+        serverless:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Serverless
+        serverless_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Serverless Estimate
+        cloud_services:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cloud Services
+        cloud_services_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cloud Services Estimate
+        ai_services:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ai Services
+        ai_services_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ai Services Estimate
+        other:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Other
+        other_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Other Estimate
+        percentage_total:
+          type: number
+          title: Percentage Total
+          default: 0
         percentage_compute:
           type: number
           title: Percentage Compute
+          default: 0
+        percentage_storage:
+          type: number
+          title: Percentage Storage
+          default: 0
+        percentage_serverless:
+          type: number
+          title: Percentage Serverless
+          default: 0
+        percentage_cloud_services:
+          type: number
+          title: Percentage Cloud Services
+          default: 0
+        percentage_ai_services:
+          type: number
+          title: Percentage Ai Services
+          default: 0
+        percentage_other:
+          type: number
+          title: Percentage Other
+          default: 0
         is_estimate:
           anyOf:
           - type: boolean
@@ -2209,29 +2294,110 @@ components:
       type: object
       required:
       - date
-      - percentage_compute
-      title: ComputeGraphResponse
-    app__schemas__summary__AssistedSavingsResponse:
+      title: OverallGraphResponse
+    AggregatedAutonomousSavingsResponse:
       properties:
-        total_assisted_savings:
-          type: number
-          title: Total Assisted Savings
-          default: 0
-        time_saved:
-          type: string
-          title: Time Saved
-          default: 0 Days
+        graph:
+          items:
+            $ref: '#/components/schemas/AutonomousSavingsSummaryResponse'
+          type: array
+          title: Graph
         currency:
           type: string
           title: Currency
-        opportunities:
-          type: integer
-          title: Opportunities
-          default: 0
       type: object
       required:
+      - graph
       - currency
-      title: AssistedSavingsResponse
+      title: AggregatedAutonomousSavingsResponse
+    CostAnalysisSubscriptionStatusResponse:
+      properties:
+        subscription_active:
+          type: boolean
+          title: Subscription Active
+        schedule:
+          anyOf:
+          - $ref: '#/components/schemas/ScheduleConfig'
+          - type: 'null'
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+        enable_rca:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Rca
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+      type: object
+      required:
+      - subscription_active
+      title: CostAnalysisSubscriptionStatusResponse
+    AggregateCloudServicesGraphResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/CloudServicesGraphResponse'
+          type: array
+          title: Graph
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - graph
+      - currency
+      title: AggregateCloudServicesGraphResponse
+    AggregateServerlessGraphResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/ServerlessGraphResponse'
+          type: array
+          title: Graph
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - graph
+      - currency
+      title: AggregateServerlessGraphResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SummaryDatapilotAnalysisTypes:
+      type: string
+      enum:
+      - analyze_cost
+      - analyze_savings
+      - predict_future
+      title: SummaryDatapilotAnalysisTypes
     StartChatSessionRequest:
       properties:
         message:
@@ -2255,6 +2421,302 @@ components:
       - message
       - session_id
       title: StartChatSessionRequest
+    OverallSavingsResponseEstimate:
+      properties:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+        time_saved:
+          type: string
+          title: Time Saved
+        total_autonomous_savings:
+          type: number
+          title: Total Autonomous Savings
+        total_savings:
+          type: number
+          title: Total Savings
+        currency:
+          type: string
+          title: Currency
+        total_assisted_savings_estimate:
+          type: number
+          title: Total Assisted Savings Estimate
+        total_autonomous_savings_estimate:
+          type: number
+          title: Total Autonomous Savings Estimate
+        total_time_saved_estimate:
+          type: string
+          title: Total Time Saved Estimate
+        total_savings_estimate:
+          type: number
+          title: Total Savings Estimate
+        min_total_autonomous_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min Total Autonomous Savings
+        max_total_autonomous_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Max Total Autonomous Savings
+      type: object
+      required:
+      - total_assisted_savings
+      - time_saved
+      - total_autonomous_savings
+      - total_savings
+      - currency
+      - total_assisted_savings_estimate
+      - total_autonomous_savings_estimate
+      - total_time_saved_estimate
+      - total_savings_estimate
+      title: OverallSavingsResponseEstimate
+    OverallSummaryResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/OverallGraphResponse'
+          type: array
+          title: Graph
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - graph
+      - currency
+      title: OverallSummaryResponse
+    AggregateComputeGraphResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/ComputeGraphResponse'
+          type: array
+          title: Graph
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - graph
+      - currency
+      title: AggregateComputeGraphResponse
+    ChatContext:
+      properties:
+        start_date:
+          type: string
+          format: date-time
+          title: Start Date
+        end_date:
+          type: string
+          format: date-time
+          title: End Date
+        aggregation:
+          $ref: '#/components/schemas/SummaryAggregationType'
+        analysis_type:
+          $ref: '#/components/schemas/AnalysisType'
+        chart_type:
+          $ref: '#/components/schemas/ChartType'
+        cost_type:
+          anyOf:
+          - $ref: '#/components/schemas/CostType'
+          - type: 'null'
+          description: Required if analysis_type is cost
+        savings_analysis_type:
+          anyOf:
+          - $ref: '#/components/schemas/SavingsAnalysisType'
+          - type: 'null'
+          description: Required if analysis_type is savings
+      type: object
+      required:
+      - start_date
+      - end_date
+      - aggregation
+      - analysis_type
+      - chart_type
+      title: ChatContext
+    SummaryDatapilotAnalysisRequest:
+      properties:
+        start_date:
+          type: string
+          format: date-time
+          title: Start Date
+        end_date:
+          type: string
+          format: date-time
+          title: End Date
+        timezone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Timezone
+        summary_analysis_type:
+          $ref: '#/components/schemas/SummaryDatapilotAnalysisTypes'
+        instance_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Id
+          default: all
+      type: object
+      required:
+      - start_date
+      - end_date
+      - summary_analysis_type
+      title: SummaryDatapilotAnalysisRequest
+    OverallSavingsResponse:
+      properties:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+        time_saved:
+          type: string
+          title: Time Saved
+        total_autonomous_savings:
+          type: number
+          title: Total Autonomous Savings
+        total_savings:
+          type: number
+          title: Total Savings
+        currency:
+          type: string
+          title: Currency
+        min_total_autonomous_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min Total Autonomous Savings
+        max_total_autonomous_savings:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Max Total Autonomous Savings
+      type: object
+      required:
+      - total_assisted_savings
+      - time_saved
+      - total_autonomous_savings
+      - total_savings
+      - currency
+      title: OverallSavingsResponse
+    CloudServicesGraphResponse:
+      properties:
+        date:
+          type: string
+          format: date-time
+          title: Date
+        cloud_services:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cloud Services
+        adj_for_incl_cloud_services:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Adj For Incl Cloud Services
+        percentage_cloud_services:
+          type: number
+          title: Percentage Cloud Services
+          default: 0
+        percentage_adj_for_incl_cloud_services:
+          type: number
+          title: Percentage Adj For Incl Cloud Services
+          default: 0
+        cloud_services_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cloud Services Estimate
+        adj_for_incl_cloud_services_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Adj For Incl Cloud Services Estimate
+        total:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total
+        total_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Estimate
+        is_estimate:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Estimate
+          default: false
+      type: object
+      required:
+      - date
+      title: CloudServicesGraphResponse
+    AnalysisType:
+      type: string
+      enum:
+      - cost
+      - savings
+      title: AnalysisType
+    CostAnalysisSubscriptionResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        schedule:
+          anyOf:
+          - $ref: '#/components/schemas/ScheduleConfig'
+          - type: 'null'
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+        enable_rca:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Rca
+      type: object
+      required:
+      - message
+      title: CostAnalysisSubscriptionResponse
+    SavingsAnalysisType:
+      type: string
+      enum:
+      - autonomous
+      - manual
+      title: SavingsAnalysisType
+    AggregateStorageGraphResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/StorageGraphResponse'
+          type: array
+          title: Graph
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - graph
+      - currency
+      title: AggregateStorageGraphResponse
+    CostType:
+      type: string
+      enum:
+      - storage
+      - compute
+      - serverless
+      - overall
+      - cloud_services
+      - ai_services
+      - other
+      title: CostType
     OverallResponse:
       properties:
         total:
@@ -2288,77 +2750,45 @@ components:
       - ai_services
       - other
       title: OverallResponse
-    StorageGraphResponse:
+    ScheduleInterval:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      title: ScheduleInterval
+    CostAnalysisUnsubscribeResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        unsubscribed:
+          type: boolean
+          title: Unsubscribed
+      type: object
+      required:
+      - message
+      - unsubscribed
+      title: CostAnalysisUnsubscribeResponse
+    ComputeGraphResponse:
       properties:
         date:
           type: string
           format: date-time
           title: Date
-        storage:
+        compute:
           anyOf:
           - type: number
           - type: 'null'
-          title: Storage
-        storage_estimate:
+          title: Compute
+        compute_estimate:
           anyOf:
           - type: number
           - type: 'null'
-          title: Storage Estimate
-        stage:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Stage
-        stage_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Stage Estimate
-        failsafe:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Failsafe
-        failsafe_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Failsafe Estimate
-        hybrid_table_storage:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Hybrid Table Storage
-        hybrid_table_storage_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Hybrid Table Storage Estimate
-        total_storage:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Total Storage
-        total_storage_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Total Storage Estimate
-        percentage_storage:
+          title: Compute Estimate
+        percentage_compute:
           type: number
-          title: Percentage Storage
-        percentage_stage:
-          type: number
-          title: Percentage Stage
-        percentage_failsafe:
-          type: number
-          title: Percentage Failsafe
-        percentage_hybrid_table_storage:
-          type: number
-          title: Percentage Hybrid Table Storage
-        percentage_total_storage:
-          type: number
-          title: Percentage Total Storage
+          title: Percentage Compute
         is_estimate:
           anyOf:
           - type: boolean
@@ -2368,47 +2798,132 @@ components:
       type: object
       required:
       - date
-      - percentage_storage
-      - percentage_stage
-      - percentage_failsafe
-      - percentage_hybrid_table_storage
-      - percentage_total_storage
-      title: StorageGraphResponse
-    CostAnalysisSubscriptionStatusResponse:
+      - percentage_compute
+      title: ComputeGraphResponse
+    OpportunityResponse:
       properties:
-        subscription_active:
-          type: boolean
-          title: Subscription Active
-        schedule:
+        label:
+          type: string
+          title: Label
+        value:
+          type: number
+          title: Value
+        params:
+          type: string
+          title: Params
+      type: object
+      required:
+      - label
+      - value
+      - params
+      title: OpportunityResponse
+    SummaryAggregationType:
+      type: string
+      enum:
+      - day
+      - week
+      - month
+      title: SummaryAggregationType
+    ChartType:
+      type: string
+      enum:
+      - current
+      - future
+      title: ChartType
+    AutonomousSavingsSummaryResponse:
+      properties:
+        date:
+          type: string
+          format: date-time
+          title: Date
+        value:
           anyOf:
-          - $ref: '#/components/schemas/ScheduleConfig'
+          - type: number
           - type: 'null'
-        emails:
+          title: Value
+        value_estimate:
           anyOf:
-          - items:
-              type: string
-            type: array
+          - type: number
           - type: 'null'
-          title: Emails
-        enable_rca:
+          title: Value Estimate
+        percentage_saved:
           anyOf:
-          - type: boolean
+          - type: number
           - type: 'null'
-          title: Enable Rca
-        instance_id:
+          title: Percentage Saved
+        percentage_saved_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Saved Estimate
+        number_of_decisions:
           anyOf:
           - type: integer
           - type: 'null'
-          title: Instance Id
+          title: Number Of Decisions
+        number_of_decisions_estimate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Number Of Decisions Estimate
+        is_estimate:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Estimate
+          default: false
+        min_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min Value
+        max_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Max Value
       type: object
       required:
-      - subscription_active
-      title: CostAnalysisSubscriptionStatusResponse
-    AggregateComputeGraphResponse:
+      - date
+      title: AutonomousSavingsSummaryResponse
+    ScheduleConfig:
+      properties:
+        interval:
+          $ref: '#/components/schemas/ScheduleInterval'
+        day_of_week:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Day Of Week
+        day_of_month:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Day Of Month
+        hour:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Hour
+        minute:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Minute
+        timezone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Timezone
+      type: object
+      required:
+      - interval
+      title: ScheduleConfig
+    AggregateAiServicesGraphResponse:
       properties:
         graph:
           items:
-            $ref: '#/components/schemas/ComputeGraphResponse'
+            $ref: '#/components/schemas/AiServicesGraphResponse'
           type: array
           title: Graph
         currency:
@@ -2418,7 +2933,82 @@ components:
       required:
       - graph
       - currency
-      title: AggregateComputeGraphResponse
+      title: AggregateAiServicesGraphResponse
+    CostAnalysisSubscribeRequest:
+      properties:
+        emails:
+          items:
+            type: string
+          type: array
+          title: Emails
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        schedule:
+          anyOf:
+          - $ref: '#/components/schemas/ScheduleConfig'
+          - type: 'null'
+        enable_rca:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Rca
+          default: false
+      type: object
+      required:
+      - emails
+      title: CostAnalysisSubscribeRequest
+    ClaudeCodeRequest:
+      properties:
+        question:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Question
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prompt
+      type: object
+      title: ClaudeCodeRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    app__schemas__summary__AssistedSavingsResponse:
+      properties:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          default: 0 Days
+        currency:
+          type: string
+          title: Currency
+        opportunities:
+          type: integer
+          title: Opportunities
+          default: 0
+      type: object
+      required:
+      - currency
+      title: AssistedSavingsResponse
     ServerlessGraphResponse:
       properties:
         date:
@@ -2815,449 +3405,12 @@ components:
         ``percentage_*`` field if the FE also promotes the category to a
 
         top-level tooltip row.'
-    OverallSavingsResponseEstimate:
-      properties:
-        total_assisted_savings:
-          type: number
-          title: Total Assisted Savings
-        time_saved:
-          type: string
-          title: Time Saved
-        total_autonomous_savings:
-          type: number
-          title: Total Autonomous Savings
-        total_savings:
-          type: number
-          title: Total Savings
-        currency:
-          type: string
-          title: Currency
-        total_assisted_savings_estimate:
-          type: number
-          title: Total Assisted Savings Estimate
-        total_autonomous_savings_estimate:
-          type: number
-          title: Total Autonomous Savings Estimate
-        total_time_saved_estimate:
-          type: string
-          title: Total Time Saved Estimate
-        total_savings_estimate:
-          type: number
-          title: Total Savings Estimate
-        min_total_autonomous_savings:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Min Total Autonomous Savings
-        max_total_autonomous_savings:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Max Total Autonomous Savings
-      type: object
-      required:
-      - total_assisted_savings
-      - time_saved
-      - total_autonomous_savings
-      - total_savings
-      - currency
-      - total_assisted_savings_estimate
-      - total_autonomous_savings_estimate
-      - total_time_saved_estimate
-      - total_savings_estimate
-      title: OverallSavingsResponseEstimate
-    ScheduleConfig:
-      properties:
-        interval:
-          $ref: '#/components/schemas/ScheduleInterval'
-        day_of_week:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Day Of Week
-        day_of_month:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Day Of Month
-        hour:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Hour
-        minute:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Minute
-        timezone:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Timezone
-      type: object
-      required:
-      - interval
-      title: ScheduleConfig
-    OpportunityResponse:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: number
-          title: Value
-        params:
-          type: string
-          title: Params
-      type: object
-      required:
-      - label
-      - value
-      - params
-      title: OpportunityResponse
-    SummaryAggregationType:
-      type: string
-      enum:
-      - day
-      - week
-      - month
-      title: SummaryAggregationType
-    SummaryDatapilotAnalysisTypes:
-      type: string
-      enum:
-      - analyze_cost
-      - analyze_savings
-      - predict_future
-      title: SummaryDatapilotAnalysisTypes
-    CostAnalysisUnsubscribeResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        unsubscribed:
-          type: boolean
-          title: Unsubscribed
-      type: object
-      required:
-      - message
-      - unsubscribed
-      title: CostAnalysisUnsubscribeResponse
-    AggregateServerlessGraphResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/ServerlessGraphResponse'
-          type: array
-          title: Graph
-        currency:
-          type: string
-          title: Currency
-      type: object
-      required:
-      - graph
-      - currency
-      title: AggregateServerlessGraphResponse
-    ChatContext:
-      properties:
-        start_date:
-          type: string
-          format: date-time
-          title: Start Date
-        end_date:
-          type: string
-          format: date-time
-          title: End Date
-        aggregation:
-          $ref: '#/components/schemas/SummaryAggregationType'
-        analysis_type:
-          $ref: '#/components/schemas/AnalysisType'
-        chart_type:
-          $ref: '#/components/schemas/ChartType'
-        cost_type:
-          anyOf:
-          - $ref: '#/components/schemas/CostType'
-          - type: 'null'
-          description: Required if analysis_type is cost
-        savings_analysis_type:
-          anyOf:
-          - $ref: '#/components/schemas/SavingsAnalysisType'
-          - type: 'null'
-          description: Required if analysis_type is savings
-      type: object
-      required:
-      - start_date
-      - end_date
-      - aggregation
-      - analysis_type
-      - chart_type
-      title: ChatContext
-    AggregatedAutonomousSavingsResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/AutonomousSavingsSummaryResponse'
-          type: array
-          title: Graph
-        currency:
-          type: string
-          title: Currency
-      type: object
-      required:
-      - graph
-      - currency
-      title: AggregatedAutonomousSavingsResponse
-    CloudServicesGraphResponse:
+    StorageGraphResponse:
       properties:
         date:
           type: string
           format: date-time
           title: Date
-        cloud_services:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Cloud Services
-        adj_for_incl_cloud_services:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Adj For Incl Cloud Services
-        percentage_cloud_services:
-          type: number
-          title: Percentage Cloud Services
-          default: 0
-        percentage_adj_for_incl_cloud_services:
-          type: number
-          title: Percentage Adj For Incl Cloud Services
-          default: 0
-        cloud_services_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Cloud Services Estimate
-        adj_for_incl_cloud_services_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Adj For Incl Cloud Services Estimate
-        total:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Total
-        total_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Total Estimate
-        is_estimate:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Estimate
-          default: false
-      type: object
-      required:
-      - date
-      title: CloudServicesGraphResponse
-    SummaryDatapilotAnalysisRequest:
-      properties:
-        start_date:
-          type: string
-          format: date-time
-          title: Start Date
-        end_date:
-          type: string
-          format: date-time
-          title: End Date
-        timezone:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Timezone
-        summary_analysis_type:
-          $ref: '#/components/schemas/SummaryDatapilotAnalysisTypes'
-        instance_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Instance Id
-          default: all
-      type: object
-      required:
-      - start_date
-      - end_date
-      - summary_analysis_type
-      title: SummaryDatapilotAnalysisRequest
-    ScheduleInterval:
-      type: string
-      enum:
-      - daily
-      - weekly
-      - monthly
-      title: ScheduleInterval
-    AggregateCloudServicesGraphResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/CloudServicesGraphResponse'
-          type: array
-          title: Graph
-        currency:
-          type: string
-          title: Currency
-      type: object
-      required:
-      - graph
-      - currency
-      title: AggregateCloudServicesGraphResponse
-    SavingsAnalysisType:
-      type: string
-      enum:
-      - autonomous
-      - manual
-      title: SavingsAnalysisType
-    CostType:
-      type: string
-      enum:
-      - storage
-      - compute
-      - serverless
-      - overall
-      - cloud_services
-      - ai_services
-      - other
-      title: CostType
-    AnalysisType:
-      type: string
-      enum:
-      - cost
-      - savings
-      title: AnalysisType
-    OverallSummaryResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/OverallGraphResponse'
-          type: array
-          title: Graph
-        currency:
-          type: string
-          title: Currency
-      type: object
-      required:
-      - graph
-      - currency
-      title: OverallSummaryResponse
-    AutonomousSavingsSummaryResponse:
-      properties:
-        date:
-          type: string
-          format: date-time
-          title: Date
-        value:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Value
-        value_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Value Estimate
-        percentage_saved:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Percentage Saved
-        percentage_saved_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Percentage Saved Estimate
-        number_of_decisions:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Number Of Decisions
-        number_of_decisions_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Number Of Decisions Estimate
-        is_estimate:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Estimate
-          default: false
-        min_value:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Min Value
-        max_value:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Max Value
-      type: object
-      required:
-      - date
-      title: AutonomousSavingsSummaryResponse
-    CostAnalysisSubscribeRequest:
-      properties:
-        emails:
-          items:
-            type: string
-          type: array
-          title: Emails
-        instance_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Instance Id
-        schedule:
-          anyOf:
-          - $ref: '#/components/schemas/ScheduleConfig'
-          - type: 'null'
-        enable_rca:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enable Rca
-          default: false
-      type: object
-      required:
-      - emails
-      title: CostAnalysisSubscribeRequest
-    OverallGraphResponse:
-      properties:
-        date:
-          type: string
-          format: date-time
-          title: Date
-        total:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Total
-        total_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Total Estimate
-        compute:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Compute
-        compute_estimate:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Compute Estimate
         storage:
           anyOf:
           - type: number
@@ -3268,74 +3421,61 @@ components:
           - type: number
           - type: 'null'
           title: Storage Estimate
-        serverless:
+        stage:
           anyOf:
           - type: number
           - type: 'null'
-          title: Serverless
-        serverless_estimate:
+          title: Stage
+        stage_estimate:
           anyOf:
           - type: number
           - type: 'null'
-          title: Serverless Estimate
-        cloud_services:
+          title: Stage Estimate
+        failsafe:
           anyOf:
           - type: number
           - type: 'null'
-          title: Cloud Services
-        cloud_services_estimate:
+          title: Failsafe
+        failsafe_estimate:
           anyOf:
           - type: number
           - type: 'null'
-          title: Cloud Services Estimate
-        ai_services:
+          title: Failsafe Estimate
+        hybrid_table_storage:
           anyOf:
           - type: number
           - type: 'null'
-          title: Ai Services
-        ai_services_estimate:
+          title: Hybrid Table Storage
+        hybrid_table_storage_estimate:
           anyOf:
           - type: number
           - type: 'null'
-          title: Ai Services Estimate
-        other:
+          title: Hybrid Table Storage Estimate
+        total_storage:
           anyOf:
           - type: number
           - type: 'null'
-          title: Other
-        other_estimate:
+          title: Total Storage
+        total_storage_estimate:
           anyOf:
           - type: number
           - type: 'null'
-          title: Other Estimate
-        percentage_total:
-          type: number
-          title: Percentage Total
-          default: 0
-        percentage_compute:
-          type: number
-          title: Percentage Compute
-          default: 0
+          title: Total Storage Estimate
         percentage_storage:
           type: number
           title: Percentage Storage
-          default: 0
-        percentage_serverless:
+        percentage_stage:
           type: number
-          title: Percentage Serverless
-          default: 0
-        percentage_cloud_services:
+          title: Percentage Stage
+        percentage_failsafe:
           type: number
-          title: Percentage Cloud Services
-          default: 0
-        percentage_ai_services:
+          title: Percentage Failsafe
+        percentage_hybrid_table_storage:
           type: number
-          title: Percentage Ai Services
-          default: 0
-        percentage_other:
+          title: Percentage Hybrid Table Storage
+        percentage_total_storage:
           type: number
-          title: Percentage Other
-          default: 0
+          title: Percentage Total Storage
         is_estimate:
           anyOf:
           - type: boolean
@@ -3345,53 +3485,12 @@ components:
       type: object
       required:
       - date
-      title: OverallGraphResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    CostAnalysisSubscriptionResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        schedule:
-          anyOf:
-          - $ref: '#/components/schemas/ScheduleConfig'
-          - type: 'null'
-        emails:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Emails
-        enable_rca:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enable Rca
-      type: object
-      required:
-      - message
-      title: CostAnalysisSubscriptionResponse
+      - percentage_storage
+      - percentage_stage
+      - percentage_failsafe
+      - percentage_hybrid_table_storage
+      - percentage_total_storage
+      title: StorageGraphResponse
     AiServicesGraphResponse:
       properties:
         date:
@@ -3628,105 +3727,6 @@ components:
       required:
       - date
       title: AiServicesGraphResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AggregateAiServicesGraphResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/AiServicesGraphResponse'
-          type: array
-          title: Graph
-        currency:
-          type: string
-          title: Currency
-      type: object
-      required:
-      - graph
-      - currency
-      title: AggregateAiServicesGraphResponse
-    OverallSavingsResponse:
-      properties:
-        total_assisted_savings:
-          type: number
-          title: Total Assisted Savings
-        time_saved:
-          type: string
-          title: Time Saved
-        total_autonomous_savings:
-          type: number
-          title: Total Autonomous Savings
-        total_savings:
-          type: number
-          title: Total Savings
-        currency:
-          type: string
-          title: Currency
-        min_total_autonomous_savings:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Min Total Autonomous Savings
-        max_total_autonomous_savings:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Max Total Autonomous Savings
-      type: object
-      required:
-      - total_assisted_savings
-      - time_saved
-      - total_autonomous_savings
-      - total_savings
-      - currency
-      title: OverallSavingsResponse
-    ClaudeCodeRequest:
-      properties:
-        question:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Question
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        prompt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Prompt
-      type: object
-      title: ClaudeCodeRequest
-    AggregateStorageGraphResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/StorageGraphResponse'
-          type: array
-          title: Graph
-        currency:
-          type: string
-          title: Currency
-      type: object
-      required:
-      - graph
-      - currency
-      title: AggregateStorageGraphResponse
-    ChartType:
-      type: string
-      enum:
-      - current
-      - future
-      title: ChartType
   securitySchemes:
     HTTPBearer:
       type: http

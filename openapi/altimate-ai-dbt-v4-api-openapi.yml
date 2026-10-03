@@ -329,94 +329,24 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ModelColumn:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        data_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Data Type
-      type: object
-      required:
-      - name
-      title: ModelColumn
-    Confidence:
-      properties:
-        confidence:
-          type: string
-          title: Confidence
-        operator_list:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Operator List
-      type: object
-      required:
-      - confidence
-      title: Confidence
-    StandardUrlResponse:
-      properties:
-        url:
-          type: string
-          title: Url
-      type: object
-      required:
-      - url
-      title: StandardUrlResponse
-    SelectedColumn:
+    ModelInfo:
       properties:
         model_node:
+          $ref: '#/components/schemas/ModelNode'
+        compiled_sql:
           anyOf:
-          - $ref: '#/components/schemas/ModelNode'
+          - type: string
           - type: 'null'
-        column:
-          type: string
-          title: Column
+          title: Compiled Sql
+        raw_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Sql
       type: object
       required:
-      - column
-      title: SelectedColumn
-    DBTColumnLineageResponseV4:
-      properties:
-        column_lineage:
-          items:
-            $ref: '#/components/schemas/ColumnLineageLink'
-          type: array
-          title: Column Lineage
-        confidence:
-          anyOf:
-          - $ref: '#/components/schemas/Confidence'
-          - type: 'null'
-        errors:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Errors
-        errors_dict:
-          anyOf:
-          - additionalProperties:
-              items:
-                type: string
-              type: array
-            type: object
-          - type: 'null'
-          title: Errors Dict
-      type: object
-      required:
-      - column_lineage
-      title: DBTColumnLineageResponseV4
+      - model_node
+      title: ModelInfo
     ExportLineageResponse:
       properties:
         id:
@@ -462,45 +392,49 @@ components:
       - lineage_data
       title: ExportLineageResponse
       description: Response schema for export lineage (GET output)
-    ModelNode:
+    ValidationError:
       properties:
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        schema_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schema Name
-        package_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Package Name
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        alias:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Alias
-        uniqueId:
+          title: Message
+        type:
           type: string
-          title: Uniqueid
-        columns:
-          additionalProperties:
-            $ref: '#/components/schemas/ModelColumn'
-          type: object
-          title: Columns
+          title: Error Type
       type: object
       required:
-      - alias
-      - uniqueId
-      - columns
-      title: ModelNode
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SelectedColumn:
+      properties:
+        model_node:
+          anyOf:
+          - $ref: '#/components/schemas/ModelNode'
+          - type: 'null'
+        column:
+          type: string
+          title: Column
+      type: object
+      required:
+      - column
+      title: SelectedColumn
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     UserBasicResponse:
       properties:
         uuid:
@@ -553,72 +487,6 @@ components:
       - is_onboarded
       - is_verified
       title: UserBasicResponse
-    BulkDocsPropCreditRequest:
-      properties:
-        num_columns:
-          type: integer
-          title: Num Columns
-        session_id:
-          type: string
-          title: Session Id
-      type: object
-      required:
-      - num_columns
-      - session_id
-      title: BulkDocsPropCreditRequest
-    ColumnLineageLink:
-      properties:
-        source:
-          $ref: '#/components/schemas/ColumnIdentifier'
-        target:
-          $ref: '#/components/schemas/ColumnIdentifier'
-        type:
-          type: string
-          title: Type
-        views_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Views Type
-        views_code:
-          items:
-            prefixItems:
-            - type: string
-            - type: string
-            type: array
-            maxItems: 2
-            minItems: 2
-          type: array
-          title: Views Code
-      type: object
-      required:
-      - source
-      - target
-      - type
-      - views_code
-      title: ColumnLineageLink
-    ExportLineageRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        lineage_data:
-          $ref: '#/components/schemas/ExportLineageData'
-      type: object
-      required:
-      - name
-      - lineage_data
-      title: ExportLineageRequest
-      description: Request schema for creating export lineage (POST input)
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     ExportLineageData:
       properties:
         selectedColumn:
@@ -661,36 +529,95 @@ components:
       - columnEdges
       - details
       title: ExportLineageData
-    ValidationError:
+    ModelNode:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        package_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Package Name
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        alias:
           type: string
-          title: Message
-        type:
+          title: Alias
+        uniqueId:
           type: string
-          title: Error Type
+          title: Uniqueid
+        columns:
+          additionalProperties:
+            $ref: '#/components/schemas/ModelColumn'
+          type: object
+          title: Columns
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
+      - alias
+      - uniqueId
+      - columns
+      title: ModelNode
+    ModelColumn:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        data_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Data Type
       type: object
-      title: HTTPValidationError
+      required:
+      - name
+      title: ModelColumn
+    DBTColumnLineageResponseV4:
+      properties:
+        column_lineage:
+          items:
+            $ref: '#/components/schemas/ColumnLineageLink'
+          type: array
+          title: Column Lineage
+        confidence:
+          anyOf:
+          - $ref: '#/components/schemas/Confidence'
+          - type: 'null'
+        errors:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Errors
+        errors_dict:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Errors Dict
+      type: object
+      required:
+      - column_lineage
+      title: DBTColumnLineageResponseV4
     DBTColumnLineageRequestV4:
       properties:
         model_dialect:
@@ -746,19 +673,15 @@ components:
       - model_info
       - targets
       title: DBTColumnLineageRequestV4
-    TableColumn:
+    StandardUrlResponse:
       properties:
-        name:
+        url:
           type: string
-          title: Name
-        table:
-          type: string
-          title: Table
+          title: Url
       type: object
       required:
-      - name
-      - table
-      title: TableColumn
+      - url
+      title: StandardUrlResponse
     ColumnIdentifier:
       properties:
         uniqueId:
@@ -772,24 +695,22 @@ components:
       - uniqueId
       - column_name
       title: ColumnIdentifier
-    ModelInfo:
+    Confidence:
       properties:
-        model_node:
-          $ref: '#/components/schemas/ModelNode'
-        compiled_sql:
+        confidence:
+          type: string
+          title: Confidence
+        operator_list:
           anyOf:
-          - type: string
+          - items:
+              type: string
+            type: array
           - type: 'null'
-          title: Compiled Sql
-        raw_sql:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Raw Sql
+          title: Operator List
       type: object
       required:
-      - model_node
-      title: ModelInfo
+      - confidence
+      title: Confidence
     Page_ExportLineageResponse_:
       properties:
         items:
@@ -828,6 +749,85 @@ components:
       - page
       - size
       title: Page[ExportLineageResponse]
+    TableColumn:
+      properties:
+        name:
+          type: string
+          title: Name
+        table:
+          type: string
+          title: Table
+      type: object
+      required:
+      - name
+      - table
+      title: TableColumn
+    BulkDocsPropCreditRequest:
+      properties:
+        num_columns:
+          type: integer
+          title: Num Columns
+        session_id:
+          type: string
+          title: Session Id
+      type: object
+      required:
+      - num_columns
+      - session_id
+      title: BulkDocsPropCreditRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ExportLineageRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        lineage_data:
+          $ref: '#/components/schemas/ExportLineageData'
+      type: object
+      required:
+      - name
+      - lineage_data
+      title: ExportLineageRequest
+      description: Request schema for creating export lineage (POST input)
+    ColumnLineageLink:
+      properties:
+        source:
+          $ref: '#/components/schemas/ColumnIdentifier'
+        target:
+          $ref: '#/components/schemas/ColumnIdentifier'
+        type:
+          type: string
+          title: Type
+        views_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Views Type
+        views_code:
+          items:
+            prefixItems:
+            - type: string
+            - type: string
+            type: array
+            maxItems: 2
+            minItems: 2
+          type: array
+          title: Views Code
+      type: object
+      required:
+      - source
+      - target
+      - type
+      - views_code
+      title: ColumnLineageLink
   securitySchemes:
     HTTPBearer:
       type: http

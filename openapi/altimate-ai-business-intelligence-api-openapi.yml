@@ -1143,11 +1143,126 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    Page_DashboardAccessActivity_:
+    BIInsightStreamRequest:
+      properties:
+        dashboard_id:
+          type: string
+          title: Dashboard Id
+        view:
+          type: string
+          title: View
+      type: object
+      required:
+      - dashboard_id
+      - view
+      title: BIInsightStreamRequest
+    DashboardInsightItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - name
+      title: DashboardInsightItem
+      description: Dashboard insight with name and description
+    TableauProject:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        parent_project_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Project Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        content_permissions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Permissions
+      type: object
+      required:
+      - id
+      - name
+      title: TableauProject
+      description: Response model for Tableau project information.
+    BIUserSummaryItem:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: integer
+          title: Value
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+      type: object
+      required:
+      - label
+      - value
+      title: BIUserSummaryItem
+    TableauProjectsRequest:
+      properties:
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Name
+        pat_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Name
+        pat_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Secret
+        datastore_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Datastore Id
+        source_site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Site Name
+      type: object
+      title: TableauProjectsRequest
+      description: Request model for fetching Tableau projects before datastore creation.
+    Page_DashboardRefreshActivity_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/DashboardAccessActivity'
+            $ref: '#/components/schemas/DashboardRefreshActivity'
           type: array
           title: Items
         total:
@@ -1180,90 +1295,7 @@ components:
       - total
       - page
       - size
-      title: Page[DashboardAccessActivity]
-    UserInsightItem:
-      properties:
-        name:
-          type: string
-          title: Name
-        reasons:
-          items:
-            type: string
-          type: array
-          title: Reasons
-      type: object
-      required:
-      - name
-      - reasons
-      title: UserInsightItem
-      description: Structured insight with name and reasons
-    BIUserReportItem:
-      properties:
-        email:
-          type: string
-          title: Email
-        views:
-          type: integer
-          title: Views
-        dashboards_created:
-          type: integer
-          title: Dashboards Created
-        workbooks_created:
-          type: integer
-          title: Workbooks Created
-        insights:
-          items:
-            anyOf:
-            - type: string
-            - $ref: '#/components/schemas/UserInsightItem'
-          type: array
-          title: Insights
-        last_activity:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Activity
-        full_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Full Name
-        views_received:
-          type: integer
-          title: Views Received
-          default: 0
-        current_license_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Current License Type
-        instance_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Instance Name
-        user_rk:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Rk
-        opportunities:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Opportunities
-          default: []
-      type: object
-      required:
-      - email
-      - views
-      - dashboards_created
-      - workbooks_created
-      - insights
-      title: BIUserReportItem
-      description: User report item representing user activity and creation patterns
+      title: Page[DashboardRefreshActivity]
     BIDashboardItem:
       properties:
         rk:
@@ -1396,47 +1428,186 @@ components:
       - refreshes_30d
       - tableauTags
       title: BIDashboardItem
-    DashboardInsightItem:
+    UserInsightItem:
       properties:
         name:
           type: string
           title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
+        reasons:
+          items:
+            type: string
+          type: array
+          title: Reasons
       type: object
       required:
       - name
-      title: DashboardInsightItem
-      description: Dashboard insight with name and description
-    BIInsightStreamRequest:
+      - reasons
+      title: UserInsightItem
+      description: Structured insight with name and reasons
+    Page_BIUserReportItem_:
       properties:
-        dashboard_id:
-          type: string
-          title: Dashboard Id
-        view:
-          type: string
-          title: View
+        items:
+          items:
+            $ref: '#/components/schemas/BIUserReportItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
       required:
-      - dashboard_id
-      - view
-      title: BIInsightStreamRequest
-    DashboardRefreshActivity:
+      - items
+      - total
+      - page
+      - size
+      title: Page[BIUserReportItem]
+    Page_DashboardAccessActivity_:
       properties:
-        date:
+        items:
+          items:
+            $ref: '#/components/schemas/DashboardAccessActivity'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DashboardAccessActivity]
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Date
-        count:
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    BIUserReportItem:
+      properties:
+        email:
+          type: string
+          title: Email
+        views:
           type: integer
-          title: Count
+          title: Views
+        dashboards_created:
+          type: integer
+          title: Dashboards Created
+        workbooks_created:
+          type: integer
+          title: Workbooks Created
+        insights:
+          items:
+            anyOf:
+            - type: string
+            - $ref: '#/components/schemas/UserInsightItem'
+          type: array
+          title: Insights
+        last_activity:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Activity
+        full_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Full Name
+        views_received:
+          type: integer
+          title: Views Received
+          default: 0
+        current_license_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current License Type
+        instance_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance Name
+        user_rk:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Rk
+        opportunities:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Opportunities
+          default: []
       type: object
       required:
-      - date
-      - count
-      title: DashboardRefreshActivity
+      - email
+      - views
+      - dashboards_created
+      - workbooks_created
+      - insights
+      title: BIUserReportItem
+      description: User report item representing user activity and creation patterns
     Page_BIDashboardItem_:
       properties:
         items:
@@ -1488,44 +1659,6 @@ components:
       - date
       - count
       title: DashboardAccessActivity
-    Page_DashboardRefreshActivity_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DashboardRefreshActivity'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[DashboardRefreshActivity]
     BISummaryItem:
       properties:
         label:
@@ -1544,27 +1677,19 @@ components:
       - label
       - value
       title: BISummaryItem
-    ValidationError:
+    DashboardRefreshActivity:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        date:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Date
+        count:
+          type: integer
+          title: Count
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - date
+      - count
+      title: DashboardRefreshActivity
     HTTPValidationError:
       properties:
         detail:
@@ -1574,131 +1699,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    TableauProject:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        parent_project_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Parent Project Id
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Path
-        content_permissions:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content Permissions
-      type: object
-      required:
-      - id
-      - name
-      title: TableauProject
-      description: Response model for Tableau project information.
-    BIUserSummaryItem:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: integer
-          title: Value
-        info:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Info
-      type: object
-      required:
-      - label
-      - value
-      title: BIUserSummaryItem
-    TableauProjectsRequest:
-      properties:
-        url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Url
-        site_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Site Name
-        pat_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Pat Name
-        pat_secret:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Pat Secret
-        datastore_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Datastore Id
-        source_site_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Source Site Name
-      type: object
-      title: TableauProjectsRequest
-      description: Request model for fetching Tableau projects before datastore creation.
-    Page_BIUserReportItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/BIUserReportItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[BIUserReportItem]
   securitySchemes:
     HTTPBearer:
       type: http

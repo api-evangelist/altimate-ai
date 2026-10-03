@@ -269,100 +269,6 @@ components:
       - http_path
       - access_token
       title: DatabricksConnectionTestRequestPAT
-    DatabricksConnectionCreateOAuthM2M:
-      properties:
-        type:
-          type: string
-          title: Type
-          default: databricks
-        server_hostname:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
-          title: Server Hostname
-          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
-        http_path:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
-          title: Http Path
-          description: SQL warehouse HTTP path
-        name:
-          type: string
-          maxLength: 64
-          minLength: 1
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 512
-          - type: 'null'
-          title: Description
-        auth_type:
-          type: string
-          const: oauth_m2m
-          title: Auth Type
-        client_id:
-          type: string
-          minLength: 1
-          title: Client Id
-        client_secret:
-          type: string
-          minLength: 1
-          title: Client Secret
-        azure_tenant_id:
-          anyOf:
-          - type: string
-            minLength: 1
-          - type: 'null'
-          title: Azure Tenant Id
-      type: object
-      required:
-      - server_hostname
-      - http_path
-      - name
-      - auth_type
-      - client_id
-      - client_secret
-      title: DatabricksConnectionCreateOAuthM2M
-    DatabricksConnectionTestResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        workspace_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Id
-        catalogs:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Catalogs
-        current_catalog:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Current Catalog
-        metastore_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Metastore Id
-      type: object
-      required:
-      - ok
-      title: DatabricksConnectionTestResponse
     DatabricksConnectionCreatePAT:
       properties:
         type:
@@ -410,102 +316,6 @@ components:
       - name
       - access_token
       title: DatabricksConnectionCreatePAT
-    DatabricksConnectionTestRequestOAuthM2M:
-      properties:
-        type:
-          type: string
-          title: Type
-          default: databricks
-        server_hostname:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
-          title: Server Hostname
-          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
-        http_path:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
-          title: Http Path
-          description: SQL warehouse HTTP path
-        name:
-          type: string
-          title: Name
-          default: connection_test
-        auth_type:
-          type: string
-          const: oauth_m2m
-          title: Auth Type
-        client_id:
-          type: string
-          minLength: 1
-          title: Client Id
-        client_secret:
-          type: string
-          minLength: 1
-          title: Client Secret
-        azure_tenant_id:
-          anyOf:
-          - type: string
-            minLength: 1
-          - type: 'null'
-          title: Azure Tenant Id
-      type: object
-      required:
-      - server_hostname
-      - http_path
-      - auth_type
-      - client_id
-      - client_secret
-      title: DatabricksConnectionTestRequestOAuthM2M
-    DatabricksAuthType:
-      type: string
-      enum:
-      - pat
-      - oauth_m2m
-      title: DatabricksAuthType
-      description: 'Stored auth methods for Databricks connections.
-
-
-        Entra-managed service principals are not a separate type — they are
-
-        ``oauth_m2m`` rows whose ``azure_tenant_id`` lives in
-
-        ``connection_info``; its presence routes token minting to Microsoft
-
-        Entra ID instead of the workspace OIDC endpoint.'
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     DatabricksConnectionResponse:
       properties:
         id:
@@ -580,6 +390,196 @@ components:
       - created_at
       - last_modified_at
       title: DatabricksConnectionResponse
+    DatabricksConnectionTestResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        catalogs:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Catalogs
+        current_catalog:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Catalog
+        metastore_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Metastore Id
+      type: object
+      required:
+      - ok
+      title: DatabricksConnectionTestResponse
+    DatabricksAuthType:
+      type: string
+      enum:
+      - pat
+      - oauth_m2m
+      title: DatabricksAuthType
+      description: 'Stored auth methods for Databricks connections.
+
+
+        Entra-managed service principals are not a separate type — they are
+
+        ``oauth_m2m`` rows whose ``azure_tenant_id`` lives in
+
+        ``connection_info``; its presence routes token minting to Microsoft
+
+        Entra ID instead of the workspace OIDC endpoint.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DatabricksConnectionCreateOAuthM2M:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        auth_type:
+          type: string
+          const: oauth_m2m
+          title: Auth Type
+        client_id:
+          type: string
+          minLength: 1
+          title: Client Id
+        client_secret:
+          type: string
+          minLength: 1
+          title: Client Secret
+        azure_tenant_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Azure Tenant Id
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - name
+      - auth_type
+      - client_id
+      - client_secret
+      title: DatabricksConnectionCreateOAuthM2M
+    DatabricksConnectionTestRequestOAuthM2M:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path
+        name:
+          type: string
+          title: Name
+          default: connection_test
+        auth_type:
+          type: string
+          const: oauth_m2m
+          title: Auth Type
+        client_id:
+          type: string
+          minLength: 1
+          title: Client Id
+        client_secret:
+          type: string
+          minLength: 1
+          title: Client Secret
+        azure_tenant_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Azure Tenant Id
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - auth_type
+      - client_id
+      - client_secret
+      title: DatabricksConnectionTestRequestOAuthM2M
   securitySchemes:
     HTTPBearer:
       type: http

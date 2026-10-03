@@ -377,23 +377,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AutonomousSavingsResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/SavingsGraphItem'
-          type: array
-          title: Graph
-          description: Graph data (always empty for Databricks)
-          default: []
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-      type: object
-      title: AutonomousSavingsResponse
-      description: Response model for autonomous savings endpoint.
     TrackedAssistedSavingsResponse:
       properties:
         total_assisted_savings:
@@ -419,6 +402,102 @@ components:
       type: object
       title: TrackedAssistedSavingsResponse
       description: Response model for tracked assisted savings from PostgreSQL (parity with Snowflake).
+    app__schemas__databricks__savings__AssistedSavingsResponse:
+      properties:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Total money saved from implemented opportunities
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          description: Human-readable time savings
+          default: 0 days
+        opportunities:
+          type: integer
+          title: Opportunities
+          description: Count of opportunities contributing to savings
+          default: 0
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: AssistedSavingsResponse
+      description: Response model for assisted savings endpoint.
+    SavingsOverallResponse:
+      properties:
+        total_savings:
+          type: number
+          title: Total Savings
+          description: Total savings (autonomous + assisted)
+        total_autonomous_savings:
+          type: number
+          title: Total Autonomous Savings
+          description: Autonomous savings (always 0 for Databricks)
+          default: 0
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Assisted savings from opportunities
+          default: 0
+        min_total_autonomous_savings:
+          type: number
+          title: Min Total Autonomous Savings
+          description: Min autonomous savings range
+          default: 0
+        max_total_autonomous_savings:
+          type: number
+          title: Max Total Autonomous Savings
+          description: Max autonomous savings range
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          description: Total time saved
+          default: 0 days
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      required:
+      - total_savings
+      title: SavingsOverallResponse
+      description: Response model for overall savings endpoint.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     SavingsOverallEstimateResponse:
       properties:
         total_savings:
@@ -501,102 +580,23 @@ components:
       - date
       title: SavingsGraphItem
       description: Single data point in savings graph.
-    SavingsOverallResponse:
+    AutonomousSavingsResponse:
       properties:
-        total_savings:
-          type: number
-          title: Total Savings
-          description: Total savings (autonomous + assisted)
-        total_autonomous_savings:
-          type: number
-          title: Total Autonomous Savings
-          description: Autonomous savings (always 0 for Databricks)
-          default: 0
-        total_assisted_savings:
-          type: number
-          title: Total Assisted Savings
-          description: Assisted savings from opportunities
-          default: 0
-        min_total_autonomous_savings:
-          type: number
-          title: Min Total Autonomous Savings
-          description: Min autonomous savings range
-          default: 0
-        max_total_autonomous_savings:
-          type: number
-          title: Max Total Autonomous Savings
-          description: Max autonomous savings range
-          default: 0
-        time_saved:
-          type: string
-          title: Time Saved
-          description: Total time saved
-          default: 0 days
+        graph:
+          items:
+            $ref: '#/components/schemas/SavingsGraphItem'
+          type: array
+          title: Graph
+          description: Graph data (always empty for Databricks)
+          default: []
         currency:
           type: string
           title: Currency
           description: Currency code
           default: USD
       type: object
-      required:
-      - total_savings
-      title: SavingsOverallResponse
-      description: Response model for overall savings endpoint.
-    app__schemas__databricks__savings__AssistedSavingsResponse:
-      properties:
-        total_assisted_savings:
-          type: number
-          title: Total Assisted Savings
-          description: Total money saved from implemented opportunities
-          default: 0
-        time_saved:
-          type: string
-          title: Time Saved
-          description: Human-readable time savings
-          default: 0 days
-        opportunities:
-          type: integer
-          title: Opportunities
-          description: Count of opportunities contributing to savings
-          default: 0
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-      type: object
-      title: AssistedSavingsResponse
-      description: Response model for assisted savings endpoint.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      title: AutonomousSavingsResponse
+      description: Response model for autonomous savings endpoint.
   securitySchemes:
     HTTPBearer:
       type: http

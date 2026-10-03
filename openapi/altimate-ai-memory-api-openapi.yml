@@ -227,6 +227,15 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    MemoryResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: MemoryResponse
     MemoryOptions:
       properties:
         metadata:
@@ -252,46 +261,6 @@ components:
           title: Project Id
       type: object
       title: MemoryOptions
-    MemoryResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: MemoryResponse
-    AddMemoryRequest:
-      properties:
-        messages:
-          items:
-            $ref: '#/components/schemas/Message'
-          type: array
-          title: Messages
-        memory_options:
-          anyOf:
-          - $ref: '#/components/schemas/MemoryOptions'
-          - type: 'null'
-      type: object
-      required:
-      - messages
-      title: AddMemoryRequest
-    Message:
-      properties:
-        content:
-          type: string
-          title: Content
-        role:
-          type: string
-          enum:
-          - user
-          - assistant
-          title: Role
-      type: object
-      required:
-      - content
-      - role
-      title: Message
     ValidationError:
       properties:
         loc:
@@ -313,6 +282,22 @@ components:
       - msg
       - type
       title: ValidationError
+    Message:
+      properties:
+        content:
+          type: string
+          title: Content
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+          title: Role
+      type: object
+      required:
+      - content
+      - role
+      title: Message
     HTTPValidationError:
       properties:
         detail:
@@ -322,6 +307,21 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    AddMemoryRequest:
+      properties:
+        messages:
+          items:
+            $ref: '#/components/schemas/Message'
+          type: array
+          title: Messages
+        memory_options:
+          anyOf:
+          - $ref: '#/components/schemas/MemoryOptions'
+          - type: 'null'
+      type: object
+      required:
+      - messages
+      title: AddMemoryRequest
   securitySchemes:
     HTTPBearer:
       type: http

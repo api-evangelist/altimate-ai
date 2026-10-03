@@ -869,6 +869,341 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ConflictResolutionAction:
+      type: string
+      enum:
+      - accept_sso
+      - dismiss
+      title: ConflictResolutionAction
+    InviteUserResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        email:
+          type: string
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        is_active:
+          type: boolean
+          title: Is Active
+        is_verified:
+          type: boolean
+          title: Is Verified
+        is_invited:
+          type: boolean
+          title: Is Invited
+        is_onboarded:
+          type: boolean
+          title: Is Onboarded
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        role_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role Title
+      type: object
+      required:
+      - id
+      - uuid
+      - email
+      - is_active
+      - is_verified
+      - is_invited
+      - is_onboarded
+      - created_at
+      title: InviteUserResponse
+    PermissionsFull:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
+      type: object
+      required:
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
+    app__schemas__responses__UsersResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/UserIndexResponse'
+          type: array
+          title: Users
+        meta:
+          anyOf:
+          - $ref: '#/components/schemas/PaginationMeta'
+          - type: 'null'
+      type: object
+      required:
+      - users
+      title: UsersResponse
+    RolePermissionFull:
+      properties:
+        role_name:
+          type: string
+          title: Role Name
+        role_description:
+          type: string
+          title: Role Description
+        role_title:
+          type: string
+          title: Role Title
+        is_custom:
+          type: boolean
+          title: Is Custom
+        permission:
+          items:
+            $ref: '#/components/schemas/PermissionsFull'
+          type: array
+          title: Permission
+      type: object
+      required:
+      - role_name
+      - role_description
+      - role_title
+      - is_custom
+      - permission
+      title: RolePermissionFull
+    ResolveRoleConflictRequest:
+      properties:
+        user_uuid:
+          type: string
+          format: uuid
+          title: User Uuid
+        action:
+          $ref: '#/components/schemas/ConflictResolutionAction'
+      type: object
+      required:
+      - user_uuid
+      - action
+      title: ResolveRoleConflictRequest
+    UserRoleUpdateRequest:
+      properties:
+        user_uuid:
+          type: string
+          format: uuid
+          title: User Uuid
+        role_title:
+          $ref: '#/components/schemas/Roles'
+      type: object
+      required:
+      - user_uuid
+      - role_title
+      title: UserRoleUpdateRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UserSelfResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        email:
+          type: string
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        is_active:
+          type: boolean
+          title: Is Active
+        is_verified:
+          type: boolean
+          title: Is Verified
+        is_invited:
+          type: boolean
+          title: Is Invited
+        is_onboarded:
+          type: boolean
+          title: Is Onboarded
+        created_at:
+          type: string
+          title: Created At
+        role_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role Title
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
+        tz:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tz
+      type: object
+      required:
+      - id
+      - uuid
+      - email
+      - is_active
+      - is_verified
+      - is_invited
+      - is_onboarded
+      - created_at
+      title: UserSelfResponse
+    UserInviteIn:
+      properties:
+        company:
+          type: string
+          title: Company
+        email:
+          type: string
+          format: email
+          title: Email
+        role:
+          $ref: '#/components/schemas/Roles'
+      type: object
+      required:
+      - company
+      - email
+      - role
+      title: UserInviteIn
+    Roles:
+      type: string
+      enum:
+      - Owner
+      - Admin
+      - User
+      - Owner (Read Only)
+      title: Roles
+    PaginationMeta:
+      properties:
+        page:
+          type: integer
+          title: Page
+          default: 1
+        size:
+          type: integer
+          title: Size
+          default: 20
+        count:
+          type: integer
+          title: Count
+          default: 0
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 0
+        has_next:
+          type: boolean
+          title: Has Next
+          default: false
+        has_prev:
+          type: boolean
+          title: Has Prev
+          default: false
+      type: object
+      title: PaginationMeta
+    UserSelfUpdate:
+      properties:
+        tz:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tz
+      type: object
+      title: UserSelfUpdate
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     UserIndexResponse:
       properties:
         id:
@@ -970,82 +1305,6 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
-    UserRoleUpdateRequest:
-      properties:
-        user_uuid:
-          type: string
-          format: uuid
-          title: User Uuid
-        role_title:
-          $ref: '#/components/schemas/Roles'
-      type: object
-      required:
-      - user_uuid
-      - role_title
-      title: UserRoleUpdateRequest
-    ResolveRoleConflictRequest:
-      properties:
-        user_uuid:
-          type: string
-          format: uuid
-          title: User Uuid
-        action:
-          $ref: '#/components/schemas/ConflictResolutionAction'
-      type: object
-      required:
-      - user_uuid
-      - action
-      title: ResolveRoleConflictRequest
-    UserInviteIn:
-      properties:
-        company:
-          type: string
-          title: Company
-        email:
-          type: string
-          format: email
-          title: Email
-        role:
-          $ref: '#/components/schemas/Roles'
-      type: object
-      required:
-      - company
-      - email
-      - role
-      title: UserInviteIn
-    ConflictResolutionAction:
-      type: string
-      enum:
-      - accept_sso
-      - dismiss
-      title: ConflictResolutionAction
-    RolePermissionFull:
-      properties:
-        role_name:
-          type: string
-          title: Role Name
-        role_description:
-          type: string
-          title: Role Description
-        role_title:
-          type: string
-          title: Role Title
-        is_custom:
-          type: boolean
-          title: Is Custom
-        permission:
-          items:
-            $ref: '#/components/schemas/PermissionsFull'
-          type: array
-          title: Permission
-      type: object
-      required:
-      - role_name
-      - role_description
-      - role_title
-      - is_custom
-      - permission
-      title: RolePermissionFull
     UserUpdateIn:
       properties:
         first_name:
@@ -1113,265 +1372,6 @@ components:
           title: Attributes
       type: object
       title: UserUpdateIn
-    UserSelfUpdate:
-      properties:
-        tz:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Tz
-      type: object
-      title: UserSelfUpdate
-    InviteUserResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        first_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: First Name
-        last_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Name
-        email:
-          type: string
-          title: Email
-        phone:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Phone
-        is_active:
-          type: boolean
-          title: Is Active
-        is_verified:
-          type: boolean
-          title: Is Verified
-        is_invited:
-          type: boolean
-          title: Is Invited
-        is_onboarded:
-          type: boolean
-          title: Is Onboarded
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        role_title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Role Title
-      type: object
-      required:
-      - id
-      - uuid
-      - email
-      - is_active
-      - is_verified
-      - is_invited
-      - is_onboarded
-      - created_at
-      title: InviteUserResponse
-    UserSelfResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        first_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: First Name
-        last_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Name
-        email:
-          type: string
-          title: Email
-        phone:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Phone
-        is_active:
-          type: boolean
-          title: Is Active
-        is_verified:
-          type: boolean
-          title: Is Verified
-        is_invited:
-          type: boolean
-          title: Is Invited
-        is_onboarded:
-          type: boolean
-          title: Is Onboarded
-        created_at:
-          type: string
-          title: Created At
-        role_title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Role Title
-        display_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Display Name
-        attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Attributes
-        tz:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Tz
-      type: object
-      required:
-      - id
-      - uuid
-      - email
-      - is_active
-      - is_verified
-      - is_invited
-      - is_onboarded
-      - created_at
-      title: UserSelfResponse
-    app__schemas__responses__UsersResponse:
-      properties:
-        users:
-          items:
-            $ref: '#/components/schemas/UserIndexResponse'
-          type: array
-          title: Users
-        meta:
-          anyOf:
-          - $ref: '#/components/schemas/PaginationMeta'
-          - type: 'null'
-      type: object
-      required:
-      - users
-      title: UsersResponse
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    PermissionsFull:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        name:
-          type: string
-          title: Name
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        group:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Group
-      type: object
-      required:
-      - uuid
-      - name
-      - title
-      - description
-      title: PermissionsFull
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    PaginationMeta:
-      properties:
-        page:
-          type: integer
-          title: Page
-          default: 1
-        size:
-          type: integer
-          title: Size
-          default: 20
-        count:
-          type: integer
-          title: Count
-          default: 0
-        total_pages:
-          type: integer
-          title: Total Pages
-          default: 0
-        has_next:
-          type: boolean
-          title: Has Next
-          default: false
-        has_prev:
-          type: boolean
-          title: Has Prev
-          default: false
-      type: object
-      title: PaginationMeta
-    Roles:
-      type: string
-      enum:
-      - Owner
-      - Admin
-      - User
-      - Owner (Read Only)
-      title: Roles
   securitySchemes:
     HTTPBearer:
       type: http

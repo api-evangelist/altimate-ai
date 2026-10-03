@@ -239,25 +239,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ResourceResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        identifier:
-          type: string
-          title: Identifier
-        options:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Options
-      type: object
-      required:
-      - id
-      - identifier
-      title: ResourceResponse
     ResourceUpdateResponse:
       properties:
         id:
@@ -271,6 +252,42 @@ components:
       - id
       - message
       title: ResourceUpdateResponse
+    MetadataCreationRequest:
+      properties:
+        resource:
+          additionalProperties: true
+          type: object
+          title: Resource
+        columns:
+          additionalProperties: true
+          type: object
+          title: Columns
+      type: object
+      required:
+      - resource
+      - columns
+      title: MetadataCreationRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     MetadataCreationResponse:
       properties:
         message:
@@ -300,17 +317,25 @@ components:
       - identifier
       - resource_schema
       title: ResourceUpdateRequest
-    ResourceFetchResponse:
+    ResourceResponse:
       properties:
-        resources:
-          items:
-            $ref: '#/components/schemas/ResourceResponse'
-          type: array
-          title: Resources
+        id:
+          type: integer
+          title: Id
+        identifier:
+          type: string
+          title: Identifier
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
       type: object
       required:
-      - resources
-      title: ResourceFetchResponse
+      - id
+      - identifier
+      title: ResourceResponse
     ResourceCreationResponse:
       properties:
         id:
@@ -324,21 +349,6 @@ components:
       - id
       - message
       title: ResourceCreationResponse
-    MetadataCreationRequest:
-      properties:
-        resource:
-          additionalProperties: true
-          type: object
-          title: Resource
-        columns:
-          additionalProperties: true
-          type: object
-          title: Columns
-      type: object
-      required:
-      - resource
-      - columns
-      title: MetadataCreationRequest
     ResourceCreationRequest:
       properties:
         identifier:
@@ -359,27 +369,6 @@ components:
       - identifier
       - resource_schema
       title: ResourceCreationRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -389,6 +378,17 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ResourceFetchResponse:
+      properties:
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceResponse'
+          type: array
+          title: Resources
+      type: object
+      required:
+      - resources
+      title: ResourceFetchResponse
   securitySchemes:
     HTTPBearer:
       type: http

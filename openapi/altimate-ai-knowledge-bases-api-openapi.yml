@@ -254,6 +254,71 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    PageModel:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - content
+      title: PageModel
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TemplateResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        icon:
+          type: string
+          title: Icon
+        content:
+          $ref: '#/components/schemas/ContentModel'
+      type: object
+      required:
+      - name
+      - description
+      - icon
+      - content
+      title: TemplateResponse
     ContentModel:
       properties:
         pages:
@@ -265,48 +330,15 @@ components:
       required:
       - pages
       title: ContentModel
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
-    PageModel:
+    HTTPValidationError:
       properties:
-        content:
-          type: string
-          title: Content
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - content
-      title: PageModel
-    KnowledgeBaseCreateRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        icon:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Icon
-        content:
-          $ref: '#/components/schemas/ContentModel'
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-          default: private
-      type: object
-      required:
-      - name
-      - content
-      title: KnowledgeBaseCreateRequest
+      title: HTTPValidationError
     KnowledgeBaseResponse:
       properties:
         name:
@@ -397,45 +429,33 @@ components:
           default: private
       type: object
       title: KnowledgeBaseUpdateRequest
-    StandardResponse:
+    KnowledgeBaseCreateRequest:
       properties:
-        ok:
-          type: boolean
-          title: Ok
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        content:
+          $ref: '#/components/schemas/ContentModel'
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
       type: object
       required:
-      - ok
-      title: StandardResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - name
+      - content
+      title: KnowledgeBaseCreateRequest
     ForkTemplateRequest:
       properties:
         template_name:
@@ -450,26 +470,6 @@ components:
       required:
       - template_name
       title: ForkTemplateRequest
-    TemplateResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        icon:
-          type: string
-          title: Icon
-        content:
-          $ref: '#/components/schemas/ContentModel'
-      type: object
-      required:
-      - name
-      - description
-      - icon
-      - content
-      title: TemplateResponse
   securitySchemes:
     HTTPBearer:
       type: http

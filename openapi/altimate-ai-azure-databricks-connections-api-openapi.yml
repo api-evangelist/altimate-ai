@@ -65,41 +65,54 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    AzureDatabricksPrivateLinkConnectionRequest:
+    ValidationError:
       properties:
-        name:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          default: ''
-        workspace_resource_id:
+          title: Message
+        type:
           type: string
-          title: Workspace Resource Id
-        workspace_url:
-          type: string
-          title: Workspace Url
-        storage_account_resource_id:
-          type: string
-          title: Storage Account Resource Id
-        storage_account_fqdn:
-          type: string
-          title: Storage Account Fqdn
-        azure_region:
-          type: string
-          title: Azure Region
+          title: Error Type
       type: object
       required:
-      - name
-      - workspace_resource_id
-      - workspace_url
-      - storage_account_resource_id
-      - storage_account_fqdn
-      - azure_region
-      title: AzureDatabricksPrivateLinkConnectionRequest
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SavedConnectionResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        config_type:
+          type: string
+          title: Config Type
+        saved_at:
+          type: string
+          title: Saved At
+          description: ISO timestamp when the row was created
+      type: object
+      required:
+      - id
+      - config_type
+      - saved_at
+      title: SavedConnectionResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     AzureDatabricksConnectionRequest:
       properties:
         name:
@@ -158,54 +171,41 @@ components:
       - sql_warehouse_id
       - system_catalog_scope
       title: AzureDatabricksConnectionRequest
-    ValidationError:
+    AzureDatabricksPrivateLinkConnectionRequest:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        name:
           type: string
-          title: Message
-        type:
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        workspace_resource_id:
           type: string
-          title: Error Type
+          title: Workspace Resource Id
+        workspace_url:
+          type: string
+          title: Workspace Url
+        storage_account_resource_id:
+          type: string
+          title: Storage Account Resource Id
+        storage_account_fqdn:
+          type: string
+          title: Storage Account Fqdn
+        azure_region:
+          type: string
+          title: Azure Region
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    SavedConnectionResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        config_type:
-          type: string
-          title: Config Type
-        saved_at:
-          type: string
-          title: Saved At
-          description: ISO timestamp when the row was created
-      type: object
-      required:
-      - id
-      - config_type
-      - saved_at
-      title: SavedConnectionResponse
+      - name
+      - workspace_resource_id
+      - workspace_url
+      - storage_account_resource_id
+      - storage_account_fqdn
+      - azure_region
+      title: AzureDatabricksPrivateLinkConnectionRequest
   securitySchemes:
     HTTPBearer:
       type: http

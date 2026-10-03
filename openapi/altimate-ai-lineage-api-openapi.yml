@@ -652,101 +652,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ConnectedColumnsRequest:
-      properties:
-        column_fqns:
-          items:
-            type: string
-          type: array
-          title: Column Fqns
-        edges:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Edge'
-            type: array
-          - type: 'null'
-          title: Edges
-          default: []
-        nodes:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Nodes
-          default: []
-        upstreamExpansion:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Upstreamexpansion
-          default: false
-        showIndirectEdges:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Showindirectedges
-          default: false
-      type: object
-      required:
-      - column_fqns
-      title: ConnectedColumnsRequest
-    DashboardAsset:
-      properties:
-        asset_rk:
-          type: string
-          title: Asset Rk
-        asset_type:
-          type: string
-          title: Asset Type
-          default: dashboard
-        upstream_count:
-          type: integer
-          title: Upstream Count
-          default: 0
-        downstream_count:
-          type: integer
-          title: Downstream Count
-          default: 0
-        dashboard_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Dashboard Id
-        dashboard_name:
-          type: string
-          title: Dashboard Name
-        dashboard_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Dashboard Url
-        workbook_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workbook Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        created_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Created By
-        last_modified:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Modified
-      type: object
-      required:
-      - asset_rk
-      - dashboard_name
-      title: DashboardAsset
-      description: Dashboard asset with dashboard-specific fields
     app__schemas__lineage__Tag:
       properties:
         name:
@@ -765,109 +670,6 @@ components:
       - name
       - description
       title: Tag
-    DbtInfoResponse:
-      properties:
-        dbt_info:
-          anyOf:
-          - $ref: '#/components/schemas/DbtInfo'
-          - type: 'null'
-      type: object
-      title: DbtInfoResponse
-    Edge:
-      properties:
-        src:
-          type: string
-          title: Src
-        dst:
-          type: string
-          title: Dst
-      type: object
-      required:
-      - src
-      - dst
-      title: Edge
-    ConnectedAssets:
-      properties:
-        assets:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/TableAsset'
-            - $ref: '#/components/schemas/DashboardAsset'
-          type: array
-          title: Assets
-      type: object
-      required:
-      - assets
-      title: ConnectedAssets
-      description: Response containing list of connected assets
-    TableAsset:
-      properties:
-        asset_rk:
-          type: string
-          title: Asset Rk
-        asset_type:
-          type: string
-          title: Asset Type
-          default: table
-        upstream_count:
-          type: integer
-          title: Upstream Count
-          default: 0
-        downstream_count:
-          type: integer
-          title: Downstream Count
-          default: 0
-        table:
-          type: string
-          title: Table
-        id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Id
-        materialization:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Materialization
-        label:
-          type: string
-          title: Label
-        schema_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schema Name
-        resource_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Resource Type
-        tests:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/TestMetadata'
-            type: array
-          - type: 'null'
-          title: Tests
-      type: object
-      required:
-      - asset_rk
-      - table
-      - label
-      title: TableAsset
-      description: Table asset with table-specific fields
-    ColumnLineageResponse:
-      properties:
-        highlight_edges:
-          items:
-            $ref: '#/components/schemas/ColumnLineageEdge'
-          type: array
-          title: Highlight Edges
-      type: object
-      required:
-      - highlight_edges
-      title: ColumnLineageResponse
     DbtInfo:
       properties:
         project_name:
@@ -902,40 +704,46 @@ components:
           title: Last Run Duration
       type: object
       title: DbtInfo
-    TableSchemaResponse:
+    ValidationError:
       properties:
-        table:
-          type: string
-          title: Table
-        columns:
+        loc:
           items:
-            $ref: '#/components/schemas/SchemaMetadata'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Columns
-        purpose:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Purpose
-        last_modified_by:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Last Modified By
-      type: object
-      required:
-      - table
-      - columns
-      title: TableSchemaResponse
-    TestMetadata:
-      properties:
-        name:
+          title: Location
+        msg:
           type: string
-          title: Name
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - name
-      title: TestMetadata
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ColumnLineageEdge:
+      properties:
+        source:
+          type: string
+          title: Source
+        target:
+          type: string
+          title: Target
+        extra:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra
+      type: object
+      required:
+      - source
+      - target
+      title: ColumnLineageEdge
     TableNodeResponse:
       properties:
         table:
@@ -1001,25 +809,15 @@ components:
       - downstream_count
       - label
       title: TableNodeResponse
-    ColumnLineageEdge:
+    FQNRequest:
       properties:
-        source:
+        fqn:
           type: string
-          title: Source
-        target:
-          type: string
-          title: Target
-        extra:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Extra
+          title: Fqn
       type: object
       required:
-      - source
-      - target
-      title: ColumnLineageEdge
+      - fqn
+      title: FQNRequest
     SchemaMetadata:
       properties:
         table_schema_id:
@@ -1063,56 +861,38 @@ components:
       - tags
       - can_lineage_expand
       title: SchemaMetadata
-    ValidationError:
+    Edge:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        src:
           type: string
-          title: Message
-        type:
+          title: Src
+        dst:
           type: string
-          title: Error Type
+          title: Dst
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
+      - src
+      - dst
+      title: Edge
+    DbtInfoResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        dbt_info:
+          anyOf:
+          - $ref: '#/components/schemas/DbtInfo'
+          - type: 'null'
       type: object
-      title: HTTPValidationError
-    ConnectedTables:
+      title: DbtInfoResponse
+    ColumnLineageResponse:
       properties:
-        tables:
+        highlight_edges:
           items:
-            $ref: '#/components/schemas/TableNodeResponse'
+            $ref: '#/components/schemas/ColumnLineageEdge'
           type: array
-          title: Tables
+          title: Highlight Edges
       type: object
       required:
-      - tables
-      title: ConnectedTables
-    FQNRequest:
-      properties:
-        fqn:
-          type: string
-          title: Fqn
-      type: object
-      required:
-      - fqn
-      title: FQNRequest
+      - highlight_edges
+      title: ColumnLineageResponse
     SnowflakeStageResponse:
       properties:
         rk:
@@ -1146,6 +926,226 @@ components:
       - rk
       - name
       title: SnowflakeStageResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ConnectedAssets:
+      properties:
+        assets:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/TableAsset'
+            - $ref: '#/components/schemas/DashboardAsset'
+          type: array
+          title: Assets
+      type: object
+      required:
+      - assets
+      title: ConnectedAssets
+      description: Response containing list of connected assets
+    TestMetadata:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: TestMetadata
+    TableAsset:
+      properties:
+        asset_rk:
+          type: string
+          title: Asset Rk
+        asset_type:
+          type: string
+          title: Asset Type
+          default: table
+        upstream_count:
+          type: integer
+          title: Upstream Count
+          default: 0
+        downstream_count:
+          type: integer
+          title: Downstream Count
+          default: 0
+        table:
+          type: string
+          title: Table
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        materialization:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Materialization
+        label:
+          type: string
+          title: Label
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        resource_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Type
+        tests:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/TestMetadata'
+            type: array
+          - type: 'null'
+          title: Tests
+      type: object
+      required:
+      - asset_rk
+      - table
+      - label
+      title: TableAsset
+      description: Table asset with table-specific fields
+    ConnectedColumnsRequest:
+      properties:
+        column_fqns:
+          items:
+            type: string
+          type: array
+          title: Column Fqns
+        edges:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Edge'
+            type: array
+          - type: 'null'
+          title: Edges
+          default: []
+        nodes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Nodes
+          default: []
+        upstreamExpansion:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Upstreamexpansion
+          default: false
+        showIndirectEdges:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Showindirectedges
+          default: false
+      type: object
+      required:
+      - column_fqns
+      title: ConnectedColumnsRequest
+    ConnectedTables:
+      properties:
+        tables:
+          items:
+            $ref: '#/components/schemas/TableNodeResponse'
+          type: array
+          title: Tables
+      type: object
+      required:
+      - tables
+      title: ConnectedTables
+    TableSchemaResponse:
+      properties:
+        table:
+          type: string
+          title: Table
+        columns:
+          items:
+            $ref: '#/components/schemas/SchemaMetadata'
+          type: array
+          title: Columns
+        purpose:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Purpose
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+      type: object
+      required:
+      - table
+      - columns
+      title: TableSchemaResponse
+    DashboardAsset:
+      properties:
+        asset_rk:
+          type: string
+          title: Asset Rk
+        asset_type:
+          type: string
+          title: Asset Type
+          default: dashboard
+        upstream_count:
+          type: integer
+          title: Upstream Count
+          default: 0
+        downstream_count:
+          type: integer
+          title: Downstream Count
+          default: 0
+        dashboard_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dashboard Id
+        dashboard_name:
+          type: string
+          title: Dashboard Name
+        dashboard_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dashboard Url
+        workbook_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workbook Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+        last_modified:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Modified
+      type: object
+      required:
+      - asset_rk
+      - dashboard_name
+      title: DashboardAsset
+      description: Dashboard asset with dashboard-specific fields
   securitySchemes:
     HTTPBearer:
       type: http

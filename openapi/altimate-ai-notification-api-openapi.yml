@@ -206,14 +206,17 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    FeatureRequestNotificationRequest:
+    NotificationResponse:
       properties:
-        request_type:
-          type: string
-          title: Request Type
-          default: datamate
+        notifications:
+          items:
+            $ref: '#/components/schemas/Notification'
+          type: array
+          title: Notifications
       type: object
-      title: FeatureRequestNotificationRequest
+      required:
+      - notifications
+      title: NotificationResponse
     NotificationRequest:
       properties:
         name:
@@ -227,17 +230,86 @@ components:
       - name
       - webhook_url
       title: NotificationRequest
-    NotificationResponse:
+    NotificationConfigPublic:
       properties:
-        notifications:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      title: NotificationConfigPublic
+      description: 'Public-facing slice of a notification''s `config`.
+
+
+        The stored config contains the webhook URL, which is itself the
+
+        credential — anyone who reads it can post to Slack directly. Only
+
+        the display name is surfaced over the API; the backend looks up the
+
+        URL internally via `get_notification_by_id`.'
+    FeatureRequestNotificationRequest:
+      properties:
+        request_type:
+          type: string
+          title: Request Type
+          default: datamate
+      type: object
+      title: FeatureRequestNotificationRequest
+    ValidationError:
+      properties:
+        loc:
           items:
-            $ref: '#/components/schemas/Notification'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Notifications
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - notifications
-      title: NotificationResponse
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SendSlackNotificationResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: SendSlackNotificationResponse
+    SendSlackNotificationRequest:
+      properties:
+        webhook_url:
+          type: string
+          title: Webhook Url
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+      type: object
+      required:
+      - webhook_url
+      - payload
+      title: SendSlackNotificationRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     StandardResponse:
       properties:
         ok:
@@ -263,78 +335,6 @@ components:
       - type
       - config
       title: Notification
-    NotificationConfigPublic:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-      type: object
-      title: NotificationConfigPublic
-      description: 'Public-facing slice of a notification''s `config`.
-
-
-        The stored config contains the webhook URL, which is itself the
-
-        credential — anyone who reads it can post to Slack directly. Only
-
-        the display name is surfaced over the API; the backend looks up the
-
-        URL internally via `get_notification_by_id`.'
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    SendSlackNotificationResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: SendSlackNotificationResponse
-    SendSlackNotificationRequest:
-      properties:
-        webhook_url:
-          type: string
-          title: Webhook Url
-        payload:
-          additionalProperties: true
-          type: object
-          title: Payload
-      type: object
-      required:
-      - webhook_url
-      - payload
-      title: SendSlackNotificationRequest
   securitySchemes:
     HTTPBearer:
       type: http

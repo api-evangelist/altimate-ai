@@ -347,6 +347,106 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    Body_upload_user_team_file_teams_user_team_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_user_team_file_teams_user_team_file_post
+    app__schemas__team__CostSummary:
+      properties:
+        total_spend:
+          type: number
+          title: Total Spend
+        active_teams:
+          type: integer
+          title: Active Teams
+        average_daily_spend:
+          type: number
+          title: Average Daily Spend
+        unaccounted_spend:
+          type: number
+          title: Unaccounted Spend
+      type: object
+      required:
+      - total_spend
+      - active_teams
+      - average_daily_spend
+      - unaccounted_spend
+      title: CostSummary
+    TeamSpend:
+      properties:
+        team:
+          type: string
+          title: Team
+        team_spends:
+          type: number
+          title: Team Spends
+        percentage_spend:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Spend
+        percentage_change_from_previous_period:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentage Change From Previous Period
+      type: object
+      required:
+      - team
+      - team_spends
+      title: TeamSpend
+    DailyTeamSpend:
+      properties:
+        date:
+          type: string
+          title: Date
+        team_spends:
+          additionalProperties:
+            type: number
+          type: object
+          title: Team Spends
+      type: object
+      required:
+      - date
+      - team_spends
+      title: DailyTeamSpend
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Body_upload_team_rule_file_teams_team_rule_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_team_rule_file_teams_team_rule_file_post
     Page_TeamSpend_:
       properties:
         items:
@@ -385,50 +485,15 @@ components:
       - page
       - size
       title: Page[TeamSpend]
-    TeamSpend:
+    HTTPValidationError:
       properties:
-        team:
-          type: string
-          title: Team
-        team_spends:
-          type: number
-          title: Team Spends
-        percentage_spend:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Percentage Spend
-        percentage_change_from_previous_period:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Percentage Change From Previous Period
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - team
-      - team_spends
-      title: TeamSpend
-    app__schemas__team__CostSummary:
-      properties:
-        total_spend:
-          type: number
-          title: Total Spend
-        active_teams:
-          type: integer
-          title: Active Teams
-        average_daily_spend:
-          type: number
-          title: Average Daily Spend
-        unaccounted_spend:
-          type: number
-          title: Unaccounted Spend
-      type: object
-      required:
-      - total_spend
-      - active_teams
-      - average_daily_spend
-      - unaccounted_spend
-      title: CostSummary
+      title: HTTPValidationError
     CostGraphResponse:
       properties:
         summary:
@@ -450,71 +515,6 @@ components:
       - spend_by_teams
       - meta
       title: CostGraphResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Body_upload_user_team_file_teams_user_team_file_post:
-      properties:
-        file:
-          type: string
-          format: binary
-          title: File
-      type: object
-      required:
-      - file
-      title: Body_upload_user_team_file_teams_user_team_file_post
-    Body_upload_team_rule_file_teams_team_rule_file_post:
-      properties:
-        file:
-          type: string
-          format: binary
-          title: File
-      type: object
-      required:
-      - file
-      title: Body_upload_team_rule_file_teams_team_rule_file_post
-    DailyTeamSpend:
-      properties:
-        date:
-          type: string
-          title: Date
-        team_spends:
-          additionalProperties:
-            type: number
-          type: object
-          title: Team Spends
-      type: object
-      required:
-      - date
-      - team_spends
-      title: DailyTeamSpend
   securitySchemes:
     HTTPBearer:
       type: http

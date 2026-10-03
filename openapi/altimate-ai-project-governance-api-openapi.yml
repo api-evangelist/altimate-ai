@@ -275,6 +275,19 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    ProjectGovernanceCreateCheckResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - name
+      - description
+      title: ProjectGovernanceCreateCheckResponse
     ProjectGovernanceCreateCheckRequest:
       properties:
         description:
@@ -287,15 +300,7 @@ components:
       - description
       - type
       title: ProjectGovernanceCreateCheckRequest
-    AuditType:
-      type: string
-      enum:
-      - documentation
-      - tests
-      - model
-      - file_structure
-      title: AuditType
-    ProjectGovernanceUpdateCheckResponse:
+    ProjectGovernanceUpdateCheckRequest:
       properties:
         name:
           type: string
@@ -310,67 +315,28 @@ components:
       - name
       - description
       - type
-      title: ProjectGovernanceUpdateCheckResponse
-    ProjectGovernanceStoreCheckRequest:
+      title: ProjectGovernanceUpdateCheckRequest
+    ValidationError:
       properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        type:
-          $ref: '#/components/schemas/AuditType'
-      type: object
-      required:
-      - name
-      - description
-      - type
-      title: ProjectGovernanceStoreCheckRequest
-    CheckRunResult:
-      properties:
-        name:
-          type: string
-          title: Name
-        answer:
+        loc:
           items:
-            additionalProperties: true
-            type: object
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Answer
+          title: Location
+        msg:
+          type: string
+          title: Message
         type:
           type: string
-          title: Type
-        id:
-          type: string
-          title: Id
+          title: Error Type
       type: object
       required:
-      - name
-      - answer
+      - loc
+      - msg
       - type
-      - id
-      title: CheckRunResult
-    ProjectGovernanceRunChecksResponse:
-      properties:
-        results:
-          items:
-            $ref: '#/components/schemas/CheckRunResult'
-          type: array
-          title: Results
-      type: object
-      required:
-      - results
-      title: ProjectGovernanceRunChecksResponse
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
+      title: ValidationError
     ProjectGovernanceRunChecksRequest:
       properties:
         manifest_path:
@@ -411,50 +377,7 @@ components:
       required:
       - check_names
       title: ProjectGovernanceRunChecksRequest
-    ProjectGovernanceCreateCheckResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - name
-      - description
-      title: ProjectGovernanceCreateCheckResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ProjectGovernanceUpdateCheckRequest:
+    ProjectGovernanceStoreCheckRequest:
       properties:
         name:
           type: string
@@ -469,7 +392,84 @@ components:
       - name
       - description
       - type
-      title: ProjectGovernanceUpdateCheckRequest
+      title: ProjectGovernanceStoreCheckRequest
+    AuditType:
+      type: string
+      enum:
+      - documentation
+      - tests
+      - model
+      - file_structure
+      title: AuditType
+    ProjectGovernanceRunChecksResponse:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/CheckRunResult'
+          type: array
+          title: Results
+      type: object
+      required:
+      - results
+      title: ProjectGovernanceRunChecksResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ProjectGovernanceUpdateCheckResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        type:
+          $ref: '#/components/schemas/AuditType'
+      type: object
+      required:
+      - name
+      - description
+      - type
+      title: ProjectGovernanceUpdateCheckResponse
+    CheckRunResult:
+      properties:
+        name:
+          type: string
+          title: Name
+        answer:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Answer
+        type:
+          type: string
+          title: Type
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - name
+      - answer
+      - type
+      - id
+      title: CheckRunResult
   securitySchemes:
     HTTPBearer:
       type: http

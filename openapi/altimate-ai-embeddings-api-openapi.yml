@@ -37,52 +37,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    Embedding:
-      properties:
-        object:
-          type: string
-          const: embedding
-          title: Object
-          default: embedding
-        embedding:
-          anyOf:
-          - items:
-              type: number
-            type: array
-          - type: string
-            format: binary
-          title: Embedding
-        index:
-          type: integer
-          title: Index
-      type: object
-      required:
-      - embedding
-      - index
-      title: Embedding
-    EmbeddingsResponse:
-      properties:
-        object:
-          type: string
-          const: list
-          title: Object
-          default: list
-        data:
-          items:
-            $ref: '#/components/schemas/Embedding'
-          type: array
-          title: Data
-        model:
-          type: string
-          title: Model
-        usage:
-          $ref: '#/components/schemas/EmbeddingsUsage'
-      type: object
-      required:
-      - data
-      - model
-      - usage
-      title: EmbeddingsResponse
     EmbeddingsRequest:
       properties:
         input:
@@ -145,15 +99,29 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
+    Embedding:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        object:
+          type: string
+          const: embedding
+          title: Object
+          default: embedding
+        embedding:
+          anyOf:
+          - items:
+              type: number
+            type: array
+          - type: string
+            format: binary
+          title: Embedding
+        index:
+          type: integer
+          title: Index
       type: object
-      title: HTTPValidationError
+      required:
+      - embedding
+      - index
+      title: Embedding
     EmbeddingsUsage:
       properties:
         prompt_tokens:
@@ -167,6 +135,38 @@ components:
       - prompt_tokens
       - total_tokens
       title: EmbeddingsUsage
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    EmbeddingsResponse:
+      properties:
+        object:
+          type: string
+          const: list
+          title: Object
+          default: list
+        data:
+          items:
+            $ref: '#/components/schemas/Embedding'
+          type: array
+          title: Data
+        model:
+          type: string
+          title: Model
+        usage:
+          $ref: '#/components/schemas/EmbeddingsUsage'
+      type: object
+      required:
+      - data
+      - model
+      - usage
+      title: EmbeddingsResponse
   securitySchemes:
     HTTPBearer:
       type: http
