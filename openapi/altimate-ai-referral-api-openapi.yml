@@ -54,6 +54,27 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     ReferralCodeCreate:
       properties:
         code:
@@ -80,27 +101,57 @@ components:
           description: null = never expires. Must be timezone-aware if provided.
       type: object
       title: ReferralCodeCreate
-    ValidationError:
+    ReferralCodeWithStats:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        id:
+          type: integer
+          title: Id
+        code:
           type: string
-          title: Message
-        type:
+          title: Code
+        is_active:
+          type: boolean
+          title: Is Active
+        max_uses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Uses
+        used_count:
+          type: integer
+          title: Used Count
+        remaining_uses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Remaining Uses
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+        created_at:
           type: string
-          title: Error Type
+          format: date-time
+          title: Created At
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - id
+      - code
+      - is_active
+      - max_uses
+      - used_count
+      - remaining_uses
+      - expires_at
+      - created_by
+      - created_at
+      title: ReferralCodeWithStats
     ReferralCodeOut:
       properties:
         id:
@@ -155,57 +206,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    ReferralCodeWithStats:
-      properties:
-        id:
-          type: integer
-          title: Id
-        code:
-          type: string
-          title: Code
-        is_active:
-          type: boolean
-          title: Is Active
-        max_uses:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Uses
-        used_count:
-          type: integer
-          title: Used Count
-        remaining_uses:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Remaining Uses
-        expires_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Expires At
-        created_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Created By
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - code
-      - is_active
-      - max_uses
-      - used_count
-      - remaining_uses
-      - expires_at
-      - created_by
-      - created_at
-      title: ReferralCodeWithStats
   securitySchemes:
     HTTPBearer:
       type: http

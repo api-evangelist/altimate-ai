@@ -469,22 +469,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ShareToSlackRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-          description: Studio session ID to share
-        webhook_id:
-          type: integer
-          title: Webhook Id
-          description: Notification ID (from notifications table) for webhook delivery
-      type: object
-      required:
-      - session_id
-      - webhook_id
-      title: ShareToSlackRequest
-      description: Request to share a Studio session to Slack via webhook.
     ShareLinkCreateRequest:
       properties:
         session_id:
@@ -531,6 +515,79 @@ components:
       - session_id
       title: ShareLinkCreateRequest
       description: Request to create a new share link.
+    SharedSessionResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        session_name:
+          type: string
+          title: Session Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        share_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Title
+        turns:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Turns
+        is_read_only:
+          type: boolean
+          title: Is Read Only
+          default: true
+      type: object
+      required:
+      - session_id
+      - session_name
+      - created_at
+      - share_title
+      - turns
+      title: SharedSessionResponse
+      description: Response when viewing a shared session.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ShareToSlackRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Studio session ID to share
+        webhook_id:
+          type: integer
+          title: Webhook Id
+          description: Notification ID (from notifications table) for webhook delivery
+      type: object
+      required:
+      - session_id
+      - webhook_id
+      title: ShareToSlackRequest
+      description: Request to share a Studio session to Slack via webhook.
     ShareLinkResponse:
       properties:
         id:
@@ -594,87 +651,6 @@ components:
       - share_url
       title: ShareLinkResponse
       description: Response containing share link details.
-    SharedSessionResponse:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-        session_name:
-          type: string
-          title: Session Name
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        share_title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Share Title
-        turns:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Turns
-        is_read_only:
-          type: boolean
-          title: Is Read Only
-          default: true
-      type: object
-      required:
-      - session_id
-      - session_name
-      - created_at
-      - share_title
-      - turns
-      title: SharedSessionResponse
-      description: Response when viewing a shared session.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ShareToSlackResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      title: ShareToSlackResponse
-      description: Response after sharing to Slack.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ShareLinkListResponse:
       properties:
         share_links:
@@ -700,6 +676,30 @@ components:
       - team
       title: ShareAccessType
       description: Access type for share links.
+    ShareToSlackResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ShareToSlackResponse
+      description: Response after sharing to Slack.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

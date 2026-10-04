@@ -383,41 +383,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ExperimentUpdateRequest:
-      properties:
-        experiment_status:
-          $ref: '#/components/schemas/ExperimentStatusUpdateReq'
-      type: object
-      required:
-      - experiment_status
-      title: ExperimentUpdateRequest
-    ExperimentEntity:
-      properties:
-        entity_rk:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Entity Rk
-        entity_type:
-          type: string
-          title: Entity Type
-        entity_name:
-          type: string
-          title: Entity Name
-        insights:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Insights
-      type: object
-      required:
-      - entity_rk
-      - entity_type
-      - entity_name
-      title: ExperimentEntity
     ValidationError:
       properties:
         loc:
@@ -439,133 +404,6 @@ components:
       - msg
       - type
       title: ValidationError
-    ExperimentStatus:
-      type: string
-      enum:
-      - Planned
-      - In Progress
-      - Completed
-      - Aborted
-      title: ExperimentStatus
-    ExperimentMetric:
-      properties:
-        metric_type:
-          type: string
-          title: Metric Type
-      type: object
-      required:
-      - metric_type
-      title: ExperimentMetric
-    ExperimentStatusUpdateReq:
-      type: string
-      enum:
-      - Planned
-      - In Progress
-      - Aborted
-      - success
-      - failure
-      title: ExperimentStatusUpdateReq
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Page_ExperimentItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/ExperimentItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[ExperimentItem]
-    ExperimentItem:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        hypothesis:
-          type: string
-          title: Hypothesis
-        effort_level:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Effort Level
-        experiment_start:
-          type: string
-          format: date-time
-          title: Experiment Start
-        experiment_end:
-          type: string
-          format: date-time
-          title: Experiment End
-        instructions:
-          type: string
-          title: Instructions
-        experiment_status:
-          $ref: '#/components/schemas/ExperimentStatus'
-        entities:
-          items:
-            $ref: '#/components/schemas/ExperimentEntity'
-          type: array
-          title: Entities
-        created_by:
-          type: integer
-          title: Created By
-        created_on:
-          type: string
-          format: date-time
-          title: Created On
-      type: object
-      required:
-      - id
-      - name
-      - hypothesis
-      - experiment_start
-      - experiment_end
-      - instructions
-      - experiment_status
-      - entities
-      - created_by
-      - created_on
-      title: ExperimentItem
     SchemaMetadataItem:
       properties:
         rk:
@@ -623,6 +461,168 @@ components:
       - entities
       - metrics
       title: ExperimentCreateRequest
+    ExperimentItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        hypothesis:
+          type: string
+          title: Hypothesis
+        effort_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Effort Level
+        experiment_start:
+          type: string
+          format: date-time
+          title: Experiment Start
+        experiment_end:
+          type: string
+          format: date-time
+          title: Experiment End
+        instructions:
+          type: string
+          title: Instructions
+        experiment_status:
+          $ref: '#/components/schemas/ExperimentStatus'
+        entities:
+          items:
+            $ref: '#/components/schemas/ExperimentEntity'
+          type: array
+          title: Entities
+        created_by:
+          type: integer
+          title: Created By
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+      type: object
+      required:
+      - id
+      - name
+      - hypothesis
+      - experiment_start
+      - experiment_end
+      - instructions
+      - experiment_status
+      - entities
+      - created_by
+      - created_on
+      title: ExperimentItem
+    Page_ExperimentItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ExperimentItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[ExperimentItem]
+    ExperimentMetric:
+      properties:
+        metric_type:
+          type: string
+          title: Metric Type
+      type: object
+      required:
+      - metric_type
+      title: ExperimentMetric
+    ExperimentUpdateRequest:
+      properties:
+        experiment_status:
+          $ref: '#/components/schemas/ExperimentStatusUpdateReq'
+      type: object
+      required:
+      - experiment_status
+      title: ExperimentUpdateRequest
+    ExperimentStatusUpdateReq:
+      type: string
+      enum:
+      - Planned
+      - In Progress
+      - Aborted
+      - success
+      - failure
+      title: ExperimentStatusUpdateReq
+    ExperimentStatus:
+      type: string
+      enum:
+      - Planned
+      - In Progress
+      - Completed
+      - Aborted
+      title: ExperimentStatus
+    ExperimentEntity:
+      properties:
+        entity_rk:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Entity Rk
+        entity_type:
+          type: string
+          title: Entity Type
+        entity_name:
+          type: string
+          title: Entity Name
+        insights:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Insights
+      type: object
+      required:
+      - entity_rk
+      - entity_type
+      - entity_name
+      title: ExperimentEntity
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

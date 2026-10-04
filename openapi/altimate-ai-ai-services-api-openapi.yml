@@ -835,143 +835,37 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AIServiceGraphPoint:
+    AIServiceGraphResponse:
       properties:
-        date:
+        service_type:
           type: string
-          format: date-time
-          title: Date
-        cost:
-          type: number
-          title: Cost
-        credits:
-          type: number
-          title: Credits
-        record_count:
-          type: integer
-          title: Record Count
-      type: object
-      required:
-      - date
-      - cost
-      - credits
-      - record_count
-      title: AIServiceGraphPoint
-    AIServiceType:
-      type: string
-      enum:
-      - cortex_analyst
-      - cortex_document_processing
-      - cortex_fine_tuning
-      - cortex_functions
-      - cortex_search
-      - cortex_code_cli
-      - cortex_code_snowsight
-      - cortex_agent
-      - snowflake_intelligence
-      - cortex_code_desktop
-      - reader_ai_services
-      - reader_ai_inference
-      - reader_cortex_code_snowsight
-      - ai_inference
-      - ai_services_other
-      title: AIServiceType
-    AIServicesSummaryResponse:
-      properties:
-        services:
+          title: Service Type
+        service_name:
+          type: string
+          title: Service Name
+        graph:
           items:
-            $ref: '#/components/schemas/AIServiceSummaryItem'
+            $ref: '#/components/schemas/AIServiceGraphPoint'
           type: array
-          title: Services
+          title: Graph
         total_cost:
           type: number
           title: Total Cost
+        total_credits:
+          type: number
+          title: Total Credits
         currency:
           type: string
           title: Currency
       type: object
       required:
-      - services
-      - total_cost
-      - currency
-      title: AIServicesSummaryResponse
-    AIServiceBreakdownPoint:
-      properties:
-        date:
-          type: string
-          format: date-time
-          title: Date
-        dimension_value:
-          type: string
-          title: Dimension Value
-        cost:
-          type: number
-          title: Cost
-        credits:
-          type: number
-          title: Credits
-      type: object
-      required:
-      - date
-      - dimension_value
-      - cost
-      - credits
-      title: AIServiceBreakdownPoint
-    AIServiceUsageResponse:
-      properties:
-        service_type:
-          type: string
-          title: Service Type
-        data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Data
-        pagination:
-          $ref: '#/components/schemas/app__schemas__ai_services_detail__PaginationInfo'
-        columns:
-          items:
-            $ref: '#/components/schemas/ColumnDefinition'
-          type: array
-          title: Columns
-      type: object
-      required:
       - service_type
-      - data
-      - pagination
-      - columns
-      title: AIServiceUsageResponse
-    ColumnDefinition:
-      properties:
-        key:
-          type: string
-          title: Key
-        label:
-          type: string
-          title: Label
-        sortable:
-          type: boolean
-          title: Sortable
-        data_type:
-          type: string
-          title: Data Type
-        link_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Link Type
-        filterable:
-          type: boolean
-          title: Filterable
-          default: false
-      type: object
-      required:
-      - key
-      - label
-      - sortable
-      - data_type
-      title: ColumnDefinition
+      - service_name
+      - graph
+      - total_cost
+      - total_credits
+      - currency
+      title: AIServiceGraphResponse
     ValidationError:
       properties:
         loc:
@@ -993,6 +887,84 @@ components:
       - msg
       - type
       title: ValidationError
+    AIServicesSummaryResponse:
+      properties:
+        services:
+          items:
+            $ref: '#/components/schemas/AIServiceSummaryItem'
+          type: array
+          title: Services
+        total_cost:
+          type: number
+          title: Total Cost
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - services
+      - total_cost
+      - currency
+      title: AIServicesSummaryResponse
+    AIServiceType:
+      type: string
+      enum:
+      - cortex_analyst
+      - cortex_document_processing
+      - cortex_fine_tuning
+      - cortex_functions
+      - cortex_search
+      - cortex_code_cli
+      - cortex_code_snowsight
+      - cortex_agent
+      - snowflake_intelligence
+      - cortex_code_desktop
+      - reader_ai_services
+      - reader_ai_inference
+      - reader_cortex_code_snowsight
+      - ai_inference
+      - ai_services_other
+      title: AIServiceType
+    AIServiceFilterValuesResponse:
+      properties:
+        column:
+          type: string
+          title: Column
+        values:
+          items:
+            type: string
+          type: array
+          title: Values
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - column
+      - values
+      - total
+      title: AIServiceFilterValuesResponse
+    app__schemas__ai_services_detail__PaginationInfo:
+      properties:
+        page:
+          type: integer
+          title: Page
+        pages:
+          type: integer
+          title: Pages
+        size:
+          type: integer
+          title: Size
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - page
+      - pages
+      - size
+      - total
+      title: PaginationInfo
     AIServiceBreakdownResponse:
       properties:
         service_type:
@@ -1033,93 +1005,58 @@ components:
       - data
       - currency
       title: AIServiceBreakdownResponse
-    AIServiceGraphResponse:
+    ColumnDefinition:
       properties:
-        service_type:
+        key:
           type: string
-          title: Service Type
-        service_name:
+          title: Key
+        label:
           type: string
-          title: Service Name
-        graph:
-          items:
-            $ref: '#/components/schemas/AIServiceGraphPoint'
-          type: array
-          title: Graph
-        total_cost:
+          title: Label
+        sortable:
+          type: boolean
+          title: Sortable
+        data_type:
+          type: string
+          title: Data Type
+        link_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Link Type
+        filterable:
+          type: boolean
+          title: Filterable
+          default: false
+      type: object
+      required:
+      - key
+      - label
+      - sortable
+      - data_type
+      title: ColumnDefinition
+    AIServiceBreakdownPoint:
+      properties:
+        date:
+          type: string
+          format: date-time
+          title: Date
+        dimension_value:
+          type: string
+          title: Dimension Value
+        cost:
           type: number
-          title: Total Cost
-        total_credits:
+          title: Cost
+        credits:
           type: number
-          title: Total Credits
-        currency:
-          type: string
-          title: Currency
+          title: Credits
       type: object
       required:
-      - service_type
-      - service_name
-      - graph
-      - total_cost
-      - total_credits
-      - currency
-      title: AIServiceGraphResponse
-    SummaryAggregationType:
-      type: string
-      enum:
-      - day
-      - week
-      - month
-      title: SummaryAggregationType
-    app__schemas__ai_services_detail__PaginationInfo:
-      properties:
-        page:
-          type: integer
-          title: Page
-        pages:
-          type: integer
-          title: Pages
-        size:
-          type: integer
-          title: Size
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - page
-      - pages
-      - size
-      - total
-      title: PaginationInfo
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AIServiceFilterValuesResponse:
-      properties:
-        column:
-          type: string
-          title: Column
-        values:
-          items:
-            type: string
-          type: array
-          title: Values
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - column
-      - values
-      - total
-      title: AIServiceFilterValuesResponse
+      - date
+      - dimension_value
+      - cost
+      - credits
+      title: AIServiceBreakdownPoint
     AIServiceSummaryItem:
       properties:
         service_type:
@@ -1149,6 +1086,69 @@ components:
       - record_count
       - percentage_of_total
       title: AIServiceSummaryItem
+    AIServiceUsageResponse:
+      properties:
+        service_type:
+          type: string
+          title: Service Type
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+        pagination:
+          $ref: '#/components/schemas/app__schemas__ai_services_detail__PaginationInfo'
+        columns:
+          items:
+            $ref: '#/components/schemas/ColumnDefinition'
+          type: array
+          title: Columns
+      type: object
+      required:
+      - service_type
+      - data
+      - pagination
+      - columns
+      title: AIServiceUsageResponse
+    SummaryAggregationType:
+      type: string
+      enum:
+      - day
+      - week
+      - month
+      title: SummaryAggregationType
+    AIServiceGraphPoint:
+      properties:
+        date:
+          type: string
+          format: date-time
+          title: Date
+        cost:
+          type: number
+          title: Cost
+        credits:
+          type: number
+          title: Credits
+        record_count:
+          type: integer
+          title: Record Count
+      type: object
+      required:
+      - date
+      - cost
+      - credits
+      - record_count
+      title: AIServiceGraphPoint
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

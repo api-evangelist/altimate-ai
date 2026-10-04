@@ -147,6 +147,45 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ConnectionCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        integration_id:
+          type: string
+          title: Integration Id
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+      type: object
+      required:
+      - name
+      - integration_id
+      - config
+      title: ConnectionCreate
     ConnectionTestResponse:
       properties:
         success:
@@ -161,6 +200,26 @@ components:
       required:
       - success
       title: ConnectionTestResponse
+    ConnectionTest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Config
+      type: object
+      title: ConnectionTest
     ConnectionInDB:
       properties:
         name:
@@ -208,94 +267,6 @@ components:
       - is_valid
       - created_at
       title: ConnectionInDB
-    ConnectionTest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        integration_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Id
-        config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Config
-      type: object
-      title: ConnectionTest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ConnectionListResponse:
-      properties:
-        connections:
-          items:
-            $ref: '#/components/schemas/ConnectionInDB'
-          type: array
-          title: Connections
-      type: object
-      required:
-      - connections
-      title: ConnectionListResponse
-    ConnectionCreate:
-      properties:
-        name:
-          type: string
-          title: Name
-        integration_id:
-          type: string
-          title: Integration Id
-        config:
-          additionalProperties: true
-          type: object
-          title: Config
-      type: object
-      required:
-      - name
-      - integration_id
-      - config
-      title: ConnectionCreate
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     ConnectionUpdate:
       properties:
         name:
@@ -316,6 +287,35 @@ components:
           title: Config
       type: object
       title: ConnectionUpdate
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ConnectionListResponse:
+      properties:
+        connections:
+          items:
+            $ref: '#/components/schemas/ConnectionInDB'
+          type: array
+          title: Connections
+      type: object
+      required:
+      - connections
+      title: ConnectionListResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

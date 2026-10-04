@@ -1725,287 +1725,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    QueryComputesResponse:
-      properties:
-        computes:
-          items:
-            $ref: '#/components/schemas/ComputeFilterOption'
-          type: array
-          title: Computes
-        total_pages:
-          type: integer
-          title: Total Pages
-          default: 1
-      type: object
-      title: QueryComputesResponse
-      description: 'Paginated unified compute options (warehouse + cluster + pipeline).
-
-
-        Dedicated single-list response (separate from the aggregate
-
-        ``/queries/filters``) so the typed ``prefix`` only ever scans the
-
-        compute list, never the other filter lists.'
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    QuerySummary:
-      properties:
-        total_queries:
-          type: integer
-          title: Total Queries
-          default: 0
-        unique_statement_types:
-          type: integer
-          title: Unique Statement Types
-          default: 0
-        successful_queries:
-          type: integer
-          title: Successful Queries
-          default: 0
-        failed_queries:
-          type: integer
-          title: Failed Queries
-          default: 0
-        avg_duration_ms:
-          type: number
-          title: Avg Duration Ms
-          default: 0
-        total_read_bytes:
-          type: integer
-          title: Total Read Bytes
-          default: 0
-        total_spilled_bytes:
-          type: integer
-          title: Total Spilled Bytes
-          default: 0
-        total_cost:
-          type: number
-          title: Total Cost
-          default: 0
-      type: object
-      title: QuerySummary
-      description: Summary metrics for queries.
-    QueryWorkspacesResponse:
-      properties:
-        workspaces:
-          items:
-            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
-          type: array
-          title: Workspaces
-        total_pages:
-          type: integer
-          title: Total Pages
-          default: 1
-      type: object
-      title: QueryWorkspacesResponse
-      description: 'Paginated distinct query-history workspaces (id + name).
-
-
-        Dedicated single-list response (separate from the aggregate
-
-        ``/queries/filters``) so the typed ``prefix`` only ever scans the
-
-        workspace list. A tenant can have thousands of workspaces, so this is
-
-        searchable rather than a capped list.'
-    QueryDetailResponse:
-      properties:
-        query:
-          $ref: '#/components/schemas/QueryDetail'
-      type: object
-      required:
-      - query
-      title: QueryDetailResponse
-      description: Response for query detail.
-    QueryCostTrendsByUserResponse:
-      properties:
-        trends:
-          items:
-            $ref: '#/components/schemas/QueryCostTrendByUserPoint'
-          type: array
-          title: Trends
-        granularity:
-          type: string
-          title: Granularity
-        users:
-          items:
-            type: string
-          type: array
-          title: Users
-          description: List of unique users in the data (for chart legend)
-      type: object
-      required:
-      - trends
-      - granularity
-      title: QueryCostTrendsByUserResponse
-      description: Response for query cost trends broken down by user.
-    SpillQueriesResponse:
-      properties:
-        queries:
-          items:
-            $ref: '#/components/schemas/QueryRecord'
-          type: array
-          title: Queries
-        min_spill_bytes:
-          type: integer
-          title: Min Spill Bytes
-        total_count:
-          type: integer
-          title: Total Count
-      type: object
-      required:
-      - queries
-      - min_spill_bytes
-      - total_count
-      title: SpillQueriesResponse
-      description: Response for queries with memory spills.
-    QueryTrendPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        total_queries:
-          type: integer
-          title: Total Queries
-          default: 0
-        successful_queries:
-          type: integer
-          title: Successful Queries
-          default: 0
-        failed_queries:
-          type: integer
-          title: Failed Queries
-          default: 0
-        avg_duration_ms:
-          type: number
-          title: Avg Duration Ms
-          default: 0
-        total_read_bytes:
-          type: integer
-          title: Total Read Bytes
-          default: 0
-      type: object
-      required:
-      - period
-      title: QueryTrendPoint
-      description: A single point in query trends.
-    QueriesResponse:
-      properties:
-        queries:
-          items:
-            $ref: '#/components/schemas/QueryRecord'
-          type: array
-          title: Queries
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of queries returned
-      type: object
-      required:
-      - queries
-      - total_count
-      title: QueriesResponse
-      description: Response for listing queries.
-    QuerySummaryResponse:
-      properties:
-        summary:
-          $ref: '#/components/schemas/QuerySummary'
-      type: object
-      required:
-      - summary
-      title: QuerySummaryResponse
-      description: Response for query summary.
-    QueryRecord:
-      properties:
-        statement_id:
-          type: string
-          title: Statement Id
-        statement_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Statement Type
-        execution_status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Execution Status
-        start_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Start Time
-        end_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: End Time
-        total_duration_ms:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total Duration Ms
-        read_bytes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Read Bytes
-        spilled_local_bytes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Spilled Local Bytes
-        workspace_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        warehouse_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Id
-        user_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Name
-        error_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Message
-      type: object
-      required:
-      - statement_id
-      title: QueryRecord
-      description: A single query record.
     StatementTypeStats:
       properties:
         statement_type:
@@ -2028,22 +1747,27 @@ components:
       - total_read_bytes
       title: StatementTypeStats
       description: Statistics for a statement type.
-    FailedQueriesResponse:
+    UserQueryBreakdownResponse:
       properties:
-        queries:
+        breakdown:
           items:
-            $ref: '#/components/schemas/QueryRecord'
+            $ref: '#/components/schemas/UserQueryStats'
           type: array
-          title: Queries
-        total_count:
-          type: integer
-          title: Total Count
+          title: Breakdown
       type: object
       required:
-      - queries
-      - total_count
-      title: FailedQueriesResponse
-      description: Response for failed queries.
+      - breakdown
+      title: UserQueryBreakdownResponse
+      description: Response for user query breakdown.
+    QueryDetailResponse:
+      properties:
+        query:
+          $ref: '#/components/schemas/QueryDetail'
+      type: object
+      required:
+      - query
+      title: QueryDetailResponse
+      description: Response for query detail.
     QueryDetail:
       properties:
         statement_id:
@@ -2250,95 +1974,6 @@ components:
       - statement_id
       title: QueryDetail
       description: Detailed query information.
-    SlowQueriesResponse:
-      properties:
-        queries:
-          items:
-            $ref: '#/components/schemas/QueryRecord'
-          type: array
-          title: Queries
-        min_duration_ms:
-          type: integer
-          title: Min Duration Ms
-        total_count:
-          type: integer
-          title: Total Count
-      type: object
-      required:
-      - queries
-      - min_duration_ms
-      - total_count
-      title: SlowQueriesResponse
-      description: Response for slow queries.
-    QueryUserNamesResponse:
-      properties:
-        user_names:
-          items:
-            type: string
-          type: array
-          title: User Names
-        total_pages:
-          type: integer
-          title: Total Pages
-          default: 1
-      type: object
-      title: QueryUserNamesResponse
-      description: 'Paginated distinct query-history user names.
-
-
-        Dedicated single-list response (separate from the aggregate
-
-        ``/queries/filters``) so the typed ``prefix`` only ever scans the user
-
-        list, never the other filter lists.'
-    QueryCostTrendByUserPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        user_name:
-          type: string
-          title: User Name
-        estimated_cost_usd:
-          type: number
-          title: Estimated Cost Usd
-          default: 0
-      type: object
-      required:
-      - period
-      - user_name
-      title: QueryCostTrendByUserPoint
-      description: A single point in query cost trends by user.
-    QueryFilterOptions:
-      properties:
-        statement_types:
-          items:
-            type: string
-          type: array
-          title: Statement Types
-        user_names:
-          items:
-            type: string
-          type: array
-          title: User Names
-        warehouses:
-          items:
-            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
-          type: array
-          title: Warehouses
-        computes:
-          items:
-            $ref: '#/components/schemas/ComputeFilterOption'
-          type: array
-          title: Computes
-        workspaces:
-          items:
-            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
-          type: array
-          title: Workspaces
-      type: object
-      title: QueryFilterOptions
-      description: Filter options for queries.
     UnifiedQueryRecord:
       properties:
         statement_id:
@@ -2475,6 +2110,27 @@ components:
       - statement_id
       title: UnifiedQueryRecord
       description: A query record with computed insight tags.
+    QueryUserNamesResponse:
+      properties:
+        user_names:
+          items:
+            type: string
+          type: array
+          title: User Names
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      title: QueryUserNamesResponse
+      description: 'Paginated distinct query-history user names.
+
+
+        Dedicated single-list response (separate from the aggregate
+
+        ``/queries/filters``) so the typed ``prefix`` only ever scans the user
+
+        list, never the other filter lists.'
     StatementTypeBreakdownResponse:
       properties:
         breakdown:
@@ -2487,6 +2143,220 @@ components:
       - breakdown
       title: StatementTypeBreakdownResponse
       description: Response for statement type breakdown.
+    QueryCostTrendByUserPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        user_name:
+          type: string
+          title: User Name
+        estimated_cost_usd:
+          type: number
+          title: Estimated Cost Usd
+          default: 0
+      type: object
+      required:
+      - period
+      - user_name
+      title: QueryCostTrendByUserPoint
+      description: A single point in query cost trends by user.
+    QuerySummaryResponse:
+      properties:
+        summary:
+          $ref: '#/components/schemas/QuerySummary'
+      type: object
+      required:
+      - summary
+      title: QuerySummaryResponse
+      description: Response for query summary.
+    QuerySummary:
+      properties:
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        unique_statement_types:
+          type: integer
+          title: Unique Statement Types
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+        total_spilled_bytes:
+          type: integer
+          title: Total Spilled Bytes
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          default: 0
+      type: object
+      title: QuerySummary
+      description: Summary metrics for queries.
+    FullScanQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        min_read_bytes:
+          type: integer
+          title: Min Read Bytes
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - queries
+      - min_read_bytes
+      - total_count
+      title: FullScanQueriesResponse
+      description: Response for queries with full scans.
+    QueryTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/QueryTrendPoint'
+          type: array
+          title: Trends
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - trends
+      - granularity
+      title: QueryTrendsResponse
+      description: Response for query trends.
+    FailedQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - queries
+      - total_count
+      title: FailedQueriesResponse
+      description: Response for failed queries.
+    UserQueryStats:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        query_count:
+          type: integer
+          title: Query Count
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+      type: object
+      required:
+      - user_name
+      - query_count
+      - avg_duration_ms
+      - total_read_bytes
+      title: UserQueryStats
+      description: Query statistics for a user.
+    app__schemas__databricks__query__QuerySqlLineageResponse:
+      properties:
+        tableEdges:
+          items:
+            items: {}
+            type: array
+          type: array
+          title: Tableedges
+          description: List of [source, target] table edges
+        details:
+          additionalProperties: true
+          type: object
+          title: Details
+          description: Details about each node (tables/CTEs) in the lineage
+        nodePositions:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Nodepositions
+          description: Positions for each node in the visualization
+        is_lineage:
+          type: boolean
+          title: Is Lineage
+          description: Whether lineage data is available
+          default: false
+        is_error:
+          type: boolean
+          title: Is Error
+          description: Whether there was an error parsing the SQL
+          default: false
+      type: object
+      title: QuerySqlLineageResponse
+      description: Response for SQL lineage visualization.
+    SpillQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        min_spill_bytes:
+          type: integer
+          title: Min Spill Bytes
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - queries
+      - min_spill_bytes
+      - total_count
+      title: SpillQueriesResponse
+      description: Response for queries with memory spills.
+    QueryCostTrendsByUserResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/QueryCostTrendByUserPoint'
+          type: array
+          title: Trends
+        granularity:
+          type: string
+          title: Granularity
+        users:
+          items:
+            type: string
+          type: array
+          title: Users
+          description: List of unique users in the data (for chart legend)
+      type: object
+      required:
+      - trends
+      - granularity
+      title: QueryCostTrendsByUserResponse
+      description: Response for query cost trends broken down by user.
     QueryStatementIdsResponse:
       properties:
         statement_ids:
@@ -2503,6 +2373,213 @@ components:
       type: object
       title: QueryStatementIdsResponse
       description: Statement IDs matching a Query ID filter search (server-side, paged).
+    QueryWorkspacesResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
+          type: array
+          title: Workspaces
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      title: QueryWorkspacesResponse
+      description: 'Paginated distinct query-history workspaces (id + name).
+
+
+        Dedicated single-list response (separate from the aggregate
+
+        ``/queries/filters``) so the typed ``prefix`` only ever scans the
+
+        workspace list. A tenant can have thousands of workspaces, so this is
+
+        searchable rather than a capped list.'
+    QueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of queries returned
+      type: object
+      required:
+      - queries
+      - total_count
+      title: QueriesResponse
+      description: Response for listing queries.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    QueryFilterOptions:
+      properties:
+        statement_types:
+          items:
+            type: string
+          type: array
+          title: Statement Types
+        user_names:
+          items:
+            type: string
+          type: array
+          title: User Names
+        warehouses:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
+          type: array
+          title: Warehouses
+        computes:
+          items:
+            $ref: '#/components/schemas/ComputeFilterOption'
+          type: array
+          title: Computes
+        workspaces:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__filters__FilterOption'
+          type: array
+          title: Workspaces
+      type: object
+      title: QueryFilterOptions
+      description: Filter options for queries.
+    QueryRecord:
+      properties:
+        statement_id:
+          type: string
+          title: Statement Id
+        statement_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statement Type
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        total_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Duration Ms
+        read_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Read Bytes
+        spilled_local_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Spilled Local Bytes
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Id
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+      type: object
+      required:
+      - statement_id
+      title: QueryRecord
+      description: A single query record.
+    app__schemas__databricks__filters__FilterOption:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - id
+      - name
+      title: FilterOption
+      description: Generic id/name pair for filter dropdowns.
+    QueryTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+      type: object
+      required:
+      - period
+      title: QueryTrendPoint
+      description: A single point in query trends.
     UnifiedQueriesResponse:
       properties:
         queries:
@@ -2535,40 +2612,47 @@ components:
       - total_count
       title: UnifiedQueriesResponse
       description: Response for unified queries with insights.
-    UserQueryBreakdownResponse:
+    QueryComputesResponse:
       properties:
-        breakdown:
+        computes:
           items:
-            $ref: '#/components/schemas/UserQueryStats'
+            $ref: '#/components/schemas/ComputeFilterOption'
           type: array
-          title: Breakdown
+          title: Computes
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
       type: object
-      required:
-      - breakdown
-      title: UserQueryBreakdownResponse
-      description: Response for user query breakdown.
-    UserQueryStats:
+      title: QueryComputesResponse
+      description: 'Paginated unified compute options (warehouse + cluster + pipeline).
+
+
+        Dedicated single-list response (separate from the aggregate
+
+        ``/queries/filters``) so the typed ``prefix`` only ever scans the
+
+        compute list, never the other filter lists.'
+    SlowQueriesResponse:
       properties:
-        user_name:
-          type: string
-          title: User Name
-        query_count:
+        queries:
+          items:
+            $ref: '#/components/schemas/QueryRecord'
+          type: array
+          title: Queries
+        min_duration_ms:
           type: integer
-          title: Query Count
-        avg_duration_ms:
-          type: number
-          title: Avg Duration Ms
-        total_read_bytes:
+          title: Min Duration Ms
+        total_count:
           type: integer
-          title: Total Read Bytes
+          title: Total Count
       type: object
       required:
-      - user_name
-      - query_count
-      - avg_duration_ms
-      - total_read_bytes
-      title: UserQueryStats
-      description: Query statistics for a user.
+      - queries
+      - min_duration_ms
+      - total_count
+      title: SlowQueriesResponse
+      description: Response for slow queries.
     ComputeFilterOption:
       properties:
         kind:
@@ -2612,40 +2696,6 @@ components:
         ``display`` matches the column rendering verbatim so the dropdown
 
         and the table cell read identically.'
-    app__schemas__databricks__filters__FilterOption:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-      type: object
-      required:
-      - id
-      - name
-      title: FilterOption
-      description: Generic id/name pair for filter dropdowns.
-    FullScanQueriesResponse:
-      properties:
-        queries:
-          items:
-            $ref: '#/components/schemas/QueryRecord'
-          type: array
-          title: Queries
-        min_read_bytes:
-          type: integer
-          title: Min Read Bytes
-        total_count:
-          type: integer
-          title: Total Count
-      type: object
-      required:
-      - queries
-      - min_read_bytes
-      - total_count
-      title: FullScanQueriesResponse
-      description: Response for queries with full scans.
     HTTPValidationError:
       properties:
         detail:
@@ -2655,56 +2705,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    QueryTrendsResponse:
-      properties:
-        trends:
-          items:
-            $ref: '#/components/schemas/QueryTrendPoint'
-          type: array
-          title: Trends
-        granularity:
-          type: string
-          title: Granularity
-      type: object
-      required:
-      - trends
-      - granularity
-      title: QueryTrendsResponse
-      description: Response for query trends.
-    app__schemas__databricks__query__QuerySqlLineageResponse:
-      properties:
-        tableEdges:
-          items:
-            items: {}
-            type: array
-          type: array
-          title: Tableedges
-          description: List of [source, target] table edges
-        details:
-          additionalProperties: true
-          type: object
-          title: Details
-          description: Details about each node (tables/CTEs) in the lineage
-        nodePositions:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Nodepositions
-          description: Positions for each node in the visualization
-        is_lineage:
-          type: boolean
-          title: Is Lineage
-          description: Whether lineage data is available
-          default: false
-        is_error:
-          type: boolean
-          title: Is Error
-          description: Whether there was an error parsing the SQL
-          default: false
-      type: object
-      title: QuerySqlLineageResponse
-      description: Response for SQL lineage visualization.
   securitySchemes:
     HTTPBearer:
       type: http

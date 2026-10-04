@@ -608,148 +608,34 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UserTrendsResponse:
+    DatabricksServicePrincipalConfig:
       properties:
-        user_name:
-          type: string
-          title: User Name
-        trends:
-          items:
-            $ref: '#/components/schemas/UserTrendPoint'
-          type: array
-          title: Trends
-        granularity:
-          type: string
-          title: Granularity
-      type: object
-      required:
-      - user_name
-      - trends
-      - granularity
-      title: UserTrendsResponse
-      description: Response for user query trends.
-    app__schemas__databricks__user__UsersResponse:
-      properties:
-        users:
-          items:
-            $ref: '#/components/schemas/DatabricksUser'
-          type: array
-          title: Users
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of users
-        page:
-          type: integer
-          title: Page
-          description: Current page number
-          default: 1
-        page_size:
-          type: integer
-          title: Page Size
-          description: Items per page
-          default: 20
-        total_pages:
-          type: integer
-          title: Total Pages
-          description: Total number of pages
-          default: 1
-      type: object
-      required:
-      - users
-      - total_count
-      title: UsersResponse
-      description: Response for listing users.
-    DatabricksUserType:
-      type: string
-      enum:
-      - USER
-      - SERVICE_PRINCIPAL
-      title: DatabricksUserType
-      description: Type of Databricks user identity.
-    DatabricksUser:
-      properties:
-        user_name:
-          type: string
-          title: User Name
-        user_type:
-          $ref: '#/components/schemas/DatabricksUserType'
-          default: USER
-        total_queries:
-          type: integer
-          title: Total Queries
-          default: 0
-        successful_queries:
-          type: integer
-          title: Successful Queries
-          default: 0
-        failed_queries:
-          type: integer
-          title: Failed Queries
-          default: 0
-        avg_duration_ms:
-          type: number
-          title: Avg Duration Ms
-          default: 0
-        max_duration_ms:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Duration Ms
-        total_duration_ms:
-          type: integer
-          title: Total Duration Ms
-          default: 0
-        total_read_bytes:
-          type: integer
-          title: Total Read Bytes
-          default: 0
-        total_spilled_bytes:
-          type: integer
-          title: Total Spilled Bytes
-          default: 0
-        last_query_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Query Time
-        unique_statement_types:
-          type: integer
-          title: Unique Statement Types
-          default: 0
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        total_cost:
-          type: number
-          title: Total Cost
-          default: 0
-      type: object
-      required:
-      - user_name
-      title: DatabricksUser
-      description: User statistics from query history with actual billing data.
-    UserFilterOptions:
-      properties:
-        user_names:
+        prefixes:
           items:
             type: string
           type: array
-          title: User Names
+          maxItems: 20
+          title: Prefixes
+          description: Identifier prefixes (e.g. 'svc', 'sa_') that mark a service principal.
+        regexes:
+          items:
+            type: string
+          type: array
+          maxItems: 20
+          title: Regexes
+          description: Regexes (RE2-compatible) that mark a service principal. The same pattern runs in Python `re` and ClickHouse `match()`, so RE2-only-incompatible syntax (lookaround, backreferences, possessive quantifiers) is rejected. Should be self-anchored if exact match is desired.
       type: object
-      title: UserFilterOptions
-      description: Filter options for users.
-    UserDetailResponse:
-      properties:
-        user:
-          $ref: '#/components/schemas/UserDetail'
-      type: object
-      required:
-      - user
-      title: UserDetailResponse
-      description: Response for user detail.
+      title: DatabricksServicePrincipalConfig
+      description: 'Tenant-configured patterns for classifying service-principal identities.
+
+
+        The built-in application-id UUID rule is always applied in addition to
+
+        these. An identity is treated as SERVICE_PRINCIPAL if it matches the UUID
+
+        pattern, starts with any of ``prefixes``, or fully matches any of
+
+        ``regexes``.'
     UserTrendPoint:
       properties:
         period:
@@ -780,28 +666,6 @@ components:
       - period
       title: UserTrendPoint
       description: A single point in user query trends.
-    app__schemas__databricks__user__TopUser:
-      properties:
-        user_name:
-          type: string
-          title: User Name
-        total_queries:
-          type: integer
-          title: Total Queries
-          default: 0
-        successful_queries:
-          type: integer
-          title: Successful Queries
-          default: 0
-        failed_queries:
-          type: integer
-          title: Failed Queries
-          default: 0
-      type: object
-      required:
-      - user_name
-      title: TopUser
-      description: Top user summary.
     ValidationError:
       properties:
         loc:
@@ -823,84 +687,16 @@ components:
       - msg
       - type
       title: ValidationError
-    TopUsersByQueriesResponse:
+    UserFilterOptions:
       properties:
-        users:
-          items:
-            $ref: '#/components/schemas/app__schemas__databricks__user__TopUser'
-          type: array
-          title: Users
-      type: object
-      required:
-      - users
-      title: TopUsersByQueriesResponse
-      description: Response for top users by queries.
-    UserStatementBreakdownResponse:
-      properties:
-        user_name:
-          type: string
-          title: User Name
-        breakdown:
-          items:
-            $ref: '#/components/schemas/UserStatementBreakdown'
-          type: array
-          title: Breakdown
-      type: object
-      required:
-      - user_name
-      - breakdown
-      title: UserStatementBreakdownResponse
-      description: Response for user statement breakdown.
-    UserStatementBreakdown:
-      properties:
-        statement_type:
-          type: string
-          title: Statement Type
-        query_count:
-          type: integer
-          title: Query Count
-          default: 0
-        avg_duration_ms:
-          type: number
-          title: Avg Duration Ms
-          default: 0
-        total_read_bytes:
-          type: integer
-          title: Total Read Bytes
-          default: 0
-      type: object
-      required:
-      - statement_type
-      title: UserStatementBreakdown
-      description: Statement type breakdown for a user.
-    DatabricksServicePrincipalConfig:
-      properties:
-        prefixes:
+        user_names:
           items:
             type: string
           type: array
-          maxItems: 20
-          title: Prefixes
-          description: Identifier prefixes (e.g. 'svc', 'sa_') that mark a service principal.
-        regexes:
-          items:
-            type: string
-          type: array
-          maxItems: 20
-          title: Regexes
-          description: Regexes (RE2-compatible) that mark a service principal. The same pattern runs in Python `re` and ClickHouse `match()`, so RE2-only-incompatible syntax (lookaround, backreferences, possessive quantifiers) is rejected. Should be self-anchored if exact match is desired.
+          title: User Names
       type: object
-      title: DatabricksServicePrincipalConfig
-      description: 'Tenant-configured patterns for classifying service-principal identities.
-
-
-        The built-in application-id UUID rule is always applied in addition to
-
-        these. An identity is treated as SERVICE_PRINCIPAL if it matches the UUID
-
-        pattern, starts with any of ``prefixes``, or fully matches any of
-
-        ``regexes``.'
+      title: UserFilterOptions
+      description: Filter options for users.
     UserDetail:
       properties:
         user_name:
@@ -965,6 +761,200 @@ components:
       - user_name
       title: UserDetail
       description: Detailed user information.
+    UserStatementBreakdownResponse:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        breakdown:
+          items:
+            $ref: '#/components/schemas/UserStatementBreakdown'
+          type: array
+          title: Breakdown
+      type: object
+      required:
+      - user_name
+      - breakdown
+      title: UserStatementBreakdownResponse
+      description: Response for user statement breakdown.
+    UserStatementBreakdown:
+      properties:
+        statement_type:
+          type: string
+          title: Statement Type
+        query_count:
+          type: integer
+          title: Query Count
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+      type: object
+      required:
+      - statement_type
+      title: UserStatementBreakdown
+      description: Statement type breakdown for a user.
+    DatabricksUserType:
+      type: string
+      enum:
+      - USER
+      - SERVICE_PRINCIPAL
+      title: DatabricksUserType
+      description: Type of Databricks user identity.
+    app__schemas__databricks__user__UsersResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/DatabricksUser'
+          type: array
+          title: Users
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of users
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Items per page
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - users
+      - total_count
+      title: UsersResponse
+      description: Response for listing users.
+    UserDetailResponse:
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDetail'
+      type: object
+      required:
+      - user
+      title: UserDetailResponse
+      description: Response for user detail.
+    TopUsersByQueriesResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/app__schemas__databricks__user__TopUser'
+          type: array
+          title: Users
+      type: object
+      required:
+      - users
+      title: TopUsersByQueriesResponse
+      description: Response for top users by queries.
+    TopUsersByDataReadResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/TopUserByDataRead'
+          type: array
+          title: Users
+      type: object
+      required:
+      - users
+      title: TopUsersByDataReadResponse
+      description: Response for top users by data read.
+    DatabricksUser:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        user_type:
+          $ref: '#/components/schemas/DatabricksUserType'
+          default: USER
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+        avg_duration_ms:
+          type: number
+          title: Avg Duration Ms
+          default: 0
+        max_duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Duration Ms
+        total_duration_ms:
+          type: integer
+          title: Total Duration Ms
+          default: 0
+        total_read_bytes:
+          type: integer
+          title: Total Read Bytes
+          default: 0
+        total_spilled_bytes:
+          type: integer
+          title: Total Spilled Bytes
+          default: 0
+        last_query_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Query Time
+        unique_statement_types:
+          type: integer
+          title: Unique Statement Types
+          default: 0
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          default: 0
+      type: object
+      required:
+      - user_name
+      title: DatabricksUser
+      description: User statistics from query history with actual billing data.
+    UserTrendsResponse:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        trends:
+          items:
+            $ref: '#/components/schemas/UserTrendPoint'
+          type: array
+          title: Trends
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - user_name
+      - trends
+      - granularity
+      title: UserTrendsResponse
+      description: Response for user query trends.
     TopUserByDataRead:
       properties:
         user_name:
@@ -987,6 +977,28 @@ components:
       - user_name
       title: TopUserByDataRead
       description: Top user by data read.
+    app__schemas__databricks__user__TopUser:
+      properties:
+        user_name:
+          type: string
+          title: User Name
+        total_queries:
+          type: integer
+          title: Total Queries
+          default: 0
+        successful_queries:
+          type: integer
+          title: Successful Queries
+          default: 0
+        failed_queries:
+          type: integer
+          title: Failed Queries
+          default: 0
+      type: object
+      required:
+      - user_name
+      title: TopUser
+      description: Top user summary.
     HTTPValidationError:
       properties:
         detail:
@@ -996,18 +1008,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    TopUsersByDataReadResponse:
-      properties:
-        users:
-          items:
-            $ref: '#/components/schemas/TopUserByDataRead'
-          type: array
-          title: Users
-      type: object
-      required:
-      - users
-      title: TopUsersByDataReadResponse
-      description: Response for top users by data read.
   securitySchemes:
     HTTPBearer:
       type: http

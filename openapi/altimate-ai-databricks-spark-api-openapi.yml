@@ -294,26 +294,29 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SparkConfigItem:
+    SparkPlanAnalysisResponse:
       properties:
-        config_category:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Config Category
-        config_key:
-          type: string
-          title: Config Key
-        config_value:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Config Value
+        flags:
+          items:
+            $ref: '#/components/schemas/SparkPlanFlag'
+          type: array
+          title: Flags
+        summary:
+          items:
+            $ref: '#/components/schemas/SparkPlanAnalysisSummary'
+          type: array
+          title: Summary
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of flags
       type: object
       required:
-      - config_key
-      title: SparkConfigItem
-      description: A single Spark configuration key-value pair.
+      - flags
+      - summary
+      - total_count
+      title: SparkPlanAnalysisResponse
+      description: Response for Spark plan analysis flags.
     SparkTaskStats:
       properties:
         stage_id:
@@ -381,83 +384,6 @@ components:
       - stage_id
       title: SparkTaskStats
       description: Per-stage task statistics with percentiles.
-    SparkPlanFlag:
-      properties:
-        sql_execution_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Sql Execution Id
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        flag_name:
-          type: string
-          title: Flag Name
-      type: object
-      required:
-      - flag_name
-      title: SparkPlanFlag
-      description: A single plan analysis flag.
-    SparkPlanAnalysisResponse:
-      properties:
-        flags:
-          items:
-            $ref: '#/components/schemas/SparkPlanFlag'
-          type: array
-          title: Flags
-        summary:
-          items:
-            $ref: '#/components/schemas/SparkPlanAnalysisSummary'
-          type: array
-          title: Summary
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of flags
-      type: object
-      required:
-      - flags
-      - summary
-      - total_count
-      title: SparkPlanAnalysisResponse
-      description: Response for Spark plan analysis flags.
-    SparkTaskStatsResponse:
-      properties:
-        stages:
-          items:
-            $ref: '#/components/schemas/SparkTaskStats'
-          type: array
-          title: Stages
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of stages
-      type: object
-      required:
-      - stages
-      - total_count
-      title: SparkTaskStatsResponse
-      description: Response for per-stage task statistics.
-    SparkApplicationsResponse:
-      properties:
-        applications:
-          items:
-            $ref: '#/components/schemas/SparkApplicationSummary'
-          type: array
-          title: Applications
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of applications
-      type: object
-      required:
-      - applications
-      - total_count
-      title: SparkApplicationsResponse
-      description: Response for listing Spark applications.
     ValidationError:
       properties:
         loc:
@@ -479,6 +405,108 @@ components:
       - msg
       - type
       title: ValidationError
+    SparkApplicationsResponse:
+      properties:
+        applications:
+          items:
+            $ref: '#/components/schemas/SparkApplicationSummary'
+          type: array
+          title: Applications
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of applications
+      type: object
+      required:
+      - applications
+      - total_count
+      title: SparkApplicationsResponse
+      description: Response for listing Spark applications.
+    SparkTaskStatsResponse:
+      properties:
+        stages:
+          items:
+            $ref: '#/components/schemas/SparkTaskStats'
+          type: array
+          title: Stages
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of stages
+      type: object
+      required:
+      - stages
+      - total_count
+      title: SparkTaskStatsResponse
+      description: Response for per-stage task statistics.
+    SparkPlanAnalysisSummary:
+      properties:
+        flag_name:
+          type: string
+          title: Flag Name
+        count:
+          type: integer
+          title: Count
+          default: 0
+      type: object
+      required:
+      - flag_name
+      title: SparkPlanAnalysisSummary
+      description: Summary counts for plan analysis flags.
+    SparkPlanFlag:
+      properties:
+        sql_execution_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sql Execution Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        flag_name:
+          type: string
+          title: Flag Name
+      type: object
+      required:
+      - flag_name
+      title: SparkPlanFlag
+      description: A single plan analysis flag.
+    SparkStagesResponse:
+      properties:
+        stages:
+          items:
+            $ref: '#/components/schemas/SparkStage'
+          type: array
+          title: Stages
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of stages
+      type: object
+      required:
+      - stages
+      - total_count
+      title: SparkStagesResponse
+      description: Response for listing Spark stages.
+    SparkConfigResponse:
+      properties:
+        configs:
+          items:
+            $ref: '#/components/schemas/SparkConfigItem'
+          type: array
+          title: Configs
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of config items
+      type: object
+      required:
+      - configs
+      - total_count
+      title: SparkConfigResponse
+      description: Response for Spark application configuration.
     SparkStage:
       properties:
         stage_id:
@@ -544,37 +572,6 @@ components:
       - stage_id
       title: SparkStage
       description: Stage information with aggregated task metrics.
-    SparkStagesResponse:
-      properties:
-        stages:
-          items:
-            $ref: '#/components/schemas/SparkStage'
-          type: array
-          title: Stages
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of stages
-      type: object
-      required:
-      - stages
-      - total_count
-      title: SparkStagesResponse
-      description: Response for listing Spark stages.
-    SparkPlanAnalysisSummary:
-      properties:
-        flag_name:
-          type: string
-          title: Flag Name
-        count:
-          type: integer
-          title: Count
-          default: 0
-      type: object
-      required:
-      - flag_name
-      title: SparkPlanAnalysisSummary
-      description: Summary counts for plan analysis flags.
     SparkApplicationSummary:
       properties:
         application_id:
@@ -626,6 +623,26 @@ components:
       - application_id
       title: SparkApplicationSummary
       description: Summary information for a Spark application.
+    SparkConfigItem:
+      properties:
+        config_category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Category
+        config_key:
+          type: string
+          title: Config Key
+        config_value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Value
+      type: object
+      required:
+      - config_key
+      title: SparkConfigItem
+      description: A single Spark configuration key-value pair.
     HTTPValidationError:
       properties:
         detail:
@@ -635,23 +652,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    SparkConfigResponse:
-      properties:
-        configs:
-          items:
-            $ref: '#/components/schemas/SparkConfigItem'
-          type: array
-          title: Configs
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of config items
-      type: object
-      required:
-      - configs
-      - total_count
-      title: SparkConfigResponse
-      description: Response for Spark application configuration.
   securitySchemes:
     HTTPBearer:
       type: http

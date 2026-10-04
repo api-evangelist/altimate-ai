@@ -291,39 +291,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SnippetsListResponse:
-      properties:
-        snippets:
-          items:
-            $ref: '#/components/schemas/SnippetItem'
-          type: array
-          title: Snippets
-          description: List of snippets
-        page:
-          type: integer
-          title: Page
-          description: Current page number
-        page_size:
-          type: integer
-          title: Page Size
-          description: Number of items per page
-        has_more:
-          type: boolean
-          title: Has More
-          description: Whether there are more pages
-        total:
-          type: integer
-          title: Total
-          description: Total number of snippets matching filters
-      type: object
-      required:
-      - snippets
-      - page
-      - page_size
-      - has_more
-      - total
-      title: SnippetsListResponse
-      description: Paginated list of snippets
     SnippetItem:
       properties:
         id:
@@ -366,6 +333,81 @@ components:
       - type
       title: SnippetItem
       description: Individual code snippet from Weaviate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SnippetsListResponse:
+      properties:
+        snippets:
+          items:
+            $ref: '#/components/schemas/SnippetItem'
+          type: array
+          title: Snippets
+          description: List of snippets
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items per page
+        has_more:
+          type: boolean
+          title: Has More
+          description: Whether there are more pages
+        total:
+          type: integer
+          title: Total
+          description: Total number of snippets matching filters
+      type: object
+      required:
+      - snippets
+      - page
+      - page_size
+      - has_more
+      - total
+      title: SnippetsListResponse
+      description: Paginated list of snippets
+    ExecuteSnippetRequest:
+      properties:
+        tenant:
+          type: string
+          title: Tenant
+          description: Tenant name to execute against
+        database_type:
+          type: string
+          title: Database Type
+          description: Database type to execute against (clickhouse or postgres)
+        sql:
+          type: string
+          title: Sql
+          description: SQL query to execute
+      type: object
+      required:
+      - tenant
+      - database_type
+      - sql
+      title: ExecuteSnippetRequest
+      description: Request to execute a SQL snippet against a tenant's datastore
     SnippetsFilterOptions:
       properties:
         database_types:
@@ -421,27 +463,6 @@ components:
       type: object
       title: UpdateSnippetRequest
       description: Request to update an existing snippet
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     ExecuteSnippetResponse:
       properties:
         success:
@@ -482,15 +503,6 @@ components:
       - success
       title: ExecuteSnippetResponse
       description: Response from executing a SQL snippet
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     DeleteSnippetResponse:
       properties:
         success:
@@ -507,27 +519,6 @@ components:
       - message
       title: DeleteSnippetResponse
       description: Response from deleting a snippet
-    ExecuteSnippetRequest:
-      properties:
-        tenant:
-          type: string
-          title: Tenant
-          description: Tenant name to execute against
-        database_type:
-          type: string
-          title: Database Type
-          description: Database type to execute against (clickhouse or postgres)
-        sql:
-          type: string
-          title: Sql
-          description: SQL query to execute
-      type: object
-      required:
-      - tenant
-      - database_type
-      - sql
-      title: ExecuteSnippetRequest
-      description: Request to execute a SQL snippet against a tenant's datastore
     CreateSnippetRequest:
       properties:
         title:
@@ -566,6 +557,15 @@ components:
       - full_content
       title: CreateSnippetRequest
       description: Request to create a new snippet
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

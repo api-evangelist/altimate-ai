@@ -99,400 +99,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    StreamOptions:
-      properties:
-        include_usage:
-          type: boolean
-          title: Include Usage
-          default: true
-      type: object
-      title: StreamOptions
-    Model:
-      properties:
-        id:
-          type: string
-          title: Id
-        created:
-          type: integer
-          title: Created
-        object:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Object
-          default: model
-        owned_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Owned By
-          default: bedrock
-      type: object
-      required:
-      - id
-      title: Model
-    ResponseFunction:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        arguments:
-          type: string
-          title: Arguments
-      type: object
-      required:
-      - arguments
-      title: ResponseFunction
-    TextContent:
-      properties:
-        type:
-          type: string
-          const: text
-          title: Type
-          default: text
-        text:
-          type: string
-          title: Text
-        cache_control:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Cache Control
-      type: object
-      required:
-      - text
-      title: TextContent
-    SystemMessage:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        role:
-          type: string
-          const: system
-          title: Role
-          default: system
-        content:
-          anyOf:
-          - type: string
-          - items:
-              $ref: '#/components/schemas/TextContent'
-            type: array
-          title: Content
-      type: object
-      required:
-      - content
-      title: SystemMessage
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    Models:
-      properties:
-        object:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Object
-          default: list
-        data:
-          items:
-            $ref: '#/components/schemas/Model'
-          type: array
-          title: Data
-          default: []
-      type: object
-      title: Models
-    ToolContent:
-      properties:
-        type:
-          type: string
-          const: text
-          title: Type
-          default: text
-        text:
-          type: string
-          title: Text
-      type: object
-      required:
-      - text
-      title: ToolContent
-    ImageContent:
-      properties:
-        type:
-          type: string
-          const: image_url
-          title: Type
-          default: image
-        image_url:
-          $ref: '#/components/schemas/ImageUrl'
-        cache_control:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Cache Control
-      type: object
-      required:
-      - image_url
-      title: ImageContent
-    ToolCall:
-      properties:
-        index:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Index
-        id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Id
-        type:
-          type: string
-          const: function
-          title: Type
-          default: function
-        function:
-          $ref: '#/components/schemas/ResponseFunction'
-      type: object
-      required:
-      - function
-      title: ToolCall
-    EmbeddingsRequest:
-      properties:
-        input:
-          anyOf:
-          - type: string
-          - items:
-              type: string
-            type: array
-          - items:
-              anyOf:
-              - type: integer
-              - items:
-                  type: integer
-                type: array
-            type: array
-          title: Input
-        model:
-          type: string
-          title: Model
-        encoding_format:
-          type: string
-          enum:
-          - float
-          - base64
-          title: Encoding Format
-          default: float
-        dimensions:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Dimensions
-        user:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User
-      type: object
-      required:
-      - input
-      - model
-      title: EmbeddingsRequest
-    Function:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        parameters:
-          title: Parameters
-      type: object
-      required:
-      - name
-      - parameters
-      title: Function
-    UserMessage:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        role:
-          type: string
-          const: user
-          title: Role
-          default: user
-        content:
-          anyOf:
-          - type: string
-          - items:
-              anyOf:
-              - $ref: '#/components/schemas/TextContent'
-              - $ref: '#/components/schemas/ImageContent'
-            type: array
-          title: Content
-      type: object
-      required:
-      - content
-      title: UserMessage
-    EmbeddingsResponse:
-      properties:
-        object:
-          type: string
-          const: list
-          title: Object
-          default: list
-        data:
-          items:
-            $ref: '#/components/schemas/Embedding'
-          type: array
-          title: Data
-        model:
-          type: string
-          title: Model
-        usage:
-          $ref: '#/components/schemas/EmbeddingsUsage'
-      type: object
-      required:
-      - data
-      - model
-      - usage
-      title: EmbeddingsResponse
-    ToolMessage:
-      properties:
-        role:
-          type: string
-          const: tool
-          title: Role
-          default: tool
-        content:
-          anyOf:
-          - type: string
-          - items:
-              $ref: '#/components/schemas/ToolContent'
-            type: array
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          title: Content
-        tool_call_id:
-          type: string
-          title: Tool Call Id
-      type: object
-      required:
-      - content
-      - tool_call_id
-      title: ToolMessage
-    EmbeddingsUsage:
-      properties:
-        prompt_tokens:
-          type: integer
-          title: Prompt Tokens
-        total_tokens:
-          type: integer
-          title: Total Tokens
-      type: object
-      required:
-      - prompt_tokens
-      - total_tokens
-      title: EmbeddingsUsage
-    Embedding:
-      properties:
-        object:
-          type: string
-          const: embedding
-          title: Object
-          default: embedding
-        embedding:
-          anyOf:
-          - items:
-              type: number
-            type: array
-          - type: string
-            format: binary
-          title: Embedding
-        index:
-          type: integer
-          title: Index
-      type: object
-      required:
-      - embedding
-      - index
-      title: Embedding
-    AssistantMessage:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        role:
-          type: string
-          const: assistant
-          title: Role
-          default: assistant
-        content:
-          anyOf:
-          - type: string
-          - items:
-              anyOf:
-              - $ref: '#/components/schemas/TextContent'
-              - $ref: '#/components/schemas/ImageContent'
-            type: array
-          - type: 'null'
-          title: Content
-        tool_calls:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ToolCall'
-            type: array
-          - type: 'null'
-          title: Tool Calls
-      type: object
-      title: AssistantMessage
-    Tool:
-      properties:
-        type:
-          type: string
-          const: function
-          title: Type
-          default: function
-        function:
-          $ref: '#/components/schemas/Function'
-      type: object
-      required:
-      - function
-      title: Tool
     ChatRequest:
       properties:
         messages:
@@ -612,15 +218,387 @@ components:
       required:
       - messages
       title: ChatRequest
-    HTTPValidationError:
+    ImageContent:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        type:
+          type: string
+          const: image_url
+          title: Type
+          default: image
+        image_url:
+          $ref: '#/components/schemas/ImageUrl'
+        cache_control:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Cache Control
       type: object
-      title: HTTPValidationError
+      required:
+      - image_url
+      title: ImageContent
+    UserMessage:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        role:
+          type: string
+          const: user
+          title: Role
+          default: user
+        content:
+          anyOf:
+          - type: string
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/TextContent'
+              - $ref: '#/components/schemas/ImageContent'
+            type: array
+          title: Content
+      type: object
+      required:
+      - content
+      title: UserMessage
+    ToolMessage:
+      properties:
+        role:
+          type: string
+          const: tool
+          title: Role
+          default: tool
+        content:
+          anyOf:
+          - type: string
+          - items:
+              $ref: '#/components/schemas/ToolContent'
+            type: array
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          title: Content
+        tool_call_id:
+          type: string
+          title: Tool Call Id
+      type: object
+      required:
+      - content
+      - tool_call_id
+      title: ToolMessage
+    ToolContent:
+      properties:
+        type:
+          type: string
+          const: text
+          title: Type
+          default: text
+        text:
+          type: string
+          title: Text
+      type: object
+      required:
+      - text
+      title: ToolContent
+    StreamOptions:
+      properties:
+        include_usage:
+          type: boolean
+          title: Include Usage
+          default: true
+      type: object
+      title: StreamOptions
+    EmbeddingsRequest:
+      properties:
+        input:
+          anyOf:
+          - type: string
+          - items:
+              type: string
+            type: array
+          - items:
+              anyOf:
+              - type: integer
+              - items:
+                  type: integer
+                type: array
+            type: array
+          title: Input
+        model:
+          type: string
+          title: Model
+        encoding_format:
+          type: string
+          enum:
+          - float
+          - base64
+          title: Encoding Format
+          default: float
+        dimensions:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Dimensions
+        user:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User
+      type: object
+      required:
+      - input
+      - model
+      title: EmbeddingsRequest
+    EmbeddingsResponse:
+      properties:
+        object:
+          type: string
+          const: list
+          title: Object
+          default: list
+        data:
+          items:
+            $ref: '#/components/schemas/Embedding'
+          type: array
+          title: Data
+        model:
+          type: string
+          title: Model
+        usage:
+          $ref: '#/components/schemas/EmbeddingsUsage'
+      type: object
+      required:
+      - data
+      - model
+      - usage
+      title: EmbeddingsResponse
+    SystemMessage:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        role:
+          type: string
+          const: system
+          title: Role
+          default: system
+        content:
+          anyOf:
+          - type: string
+          - items:
+              $ref: '#/components/schemas/TextContent'
+            type: array
+          title: Content
+      type: object
+      required:
+      - content
+      title: SystemMessage
+    Tool:
+      properties:
+        type:
+          type: string
+          const: function
+          title: Type
+          default: function
+        function:
+          $ref: '#/components/schemas/Function'
+      type: object
+      required:
+      - function
+      title: Tool
+    AssistantMessage:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        role:
+          type: string
+          const: assistant
+          title: Role
+          default: assistant
+        content:
+          anyOf:
+          - type: string
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/TextContent'
+              - $ref: '#/components/schemas/ImageContent'
+            type: array
+          - type: 'null'
+          title: Content
+        tool_calls:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ToolCall'
+            type: array
+          - type: 'null'
+          title: Tool Calls
+      type: object
+      title: AssistantMessage
+    Embedding:
+      properties:
+        object:
+          type: string
+          const: embedding
+          title: Object
+          default: embedding
+        embedding:
+          anyOf:
+          - items:
+              type: number
+            type: array
+          - type: string
+            format: binary
+          title: Embedding
+        index:
+          type: integer
+          title: Index
+      type: object
+      required:
+      - embedding
+      - index
+      title: Embedding
+    TextContent:
+      properties:
+        type:
+          type: string
+          const: text
+          title: Type
+          default: text
+        text:
+          type: string
+          title: Text
+        cache_control:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Cache Control
+      type: object
+      required:
+      - text
+      title: TextContent
+    Models:
+      properties:
+        object:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Object
+          default: list
+        data:
+          items:
+            $ref: '#/components/schemas/Model'
+          type: array
+          title: Data
+          default: []
+      type: object
+      title: Models
+    Model:
+      properties:
+        id:
+          type: string
+          title: Id
+        created:
+          type: integer
+          title: Created
+        object:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Object
+          default: model
+        owned_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owned By
+          default: bedrock
+      type: object
+      required:
+      - id
+      title: Model
+    ToolCall:
+      properties:
+        index:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Index
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        type:
+          type: string
+          const: function
+          title: Type
+          default: function
+        function:
+          $ref: '#/components/schemas/ResponseFunction'
+      type: object
+      required:
+      - function
+      title: ToolCall
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Function:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        parameters:
+          title: Parameters
+      type: object
+      required:
+      - name
+      - parameters
+      title: Function
+    ResponseFunction:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        arguments:
+          type: string
+          title: Arguments
+      type: object
+      required:
+      - arguments
+      title: ResponseFunction
     ImageUrl:
       properties:
         url:
@@ -636,6 +614,28 @@ components:
       required:
       - url
       title: ImageUrl
+    EmbeddingsUsage:
+      properties:
+        prompt_tokens:
+          type: integer
+          title: Prompt Tokens
+        total_tokens:
+          type: integer
+          title: Total Tokens
+      type: object
+      required:
+      - prompt_tokens
+      - total_tokens
+      title: EmbeddingsUsage
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

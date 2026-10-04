@@ -383,134 +383,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SummaryType:
-      type: string
-      enum:
-      - header
-      - insight
-      - side_panel
-      title: SummaryType
-    ComparisonRequest:
-      properties:
-        period:
-          $ref: '#/components/schemas/Period'
-      type: object
-      required:
-      - period
-      title: ComparisonRequest
-    InsightData:
-      properties:
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        value:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Value
-        attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Attributes
-      type: object
-      title: InsightData
-    TimeSidePanelModel:
-      properties:
-        title:
-          type: string
-          title: Title
-        value:
-          type: string
-          title: Value
-        attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Attributes
-      type: object
-      required:
-      - title
-      - value
-      title: TimeSidePanelModel
-    Period:
-      type: integer
-      enum:
-      - 365
-      - 29
-      - 30
-      - 7
-      - 1
-      - 28
-      title: Period
-    ComparisonResponse:
-      properties:
-        data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Data
-      type: object
-      required:
-      - data
-      title: ComparisonResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    SummaryInsightsResponse:
-      properties:
-        insight_type:
-          $ref: '#/components/schemas/InsightType'
-        summary_type:
-          $ref: '#/components/schemas/SummaryType'
-        summary_data:
-          items:
-            $ref: '#/components/schemas/InsightData'
-          type: array
-          title: Summary Data
-      type: object
-      required:
-      - insight_type
-      - summary_type
-      - summary_data
-      title: SummaryInsightsResponse
-    InsightType:
-      type: string
-      enum:
-      - cost
-      - storage
-      - governance
-      - cost_overall
-      - auto
-      title: InsightType
     SummaryTotalSavingsResponse:
       properties:
         total_cost_savings_ui:
@@ -547,15 +419,135 @@ components:
       - title
       - value
       title: SidePanelModel
-    HTTPValidationError:
+    SummaryConfigRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        dormant_period:
+          type: integer
+          title: Dormant Period
       type: object
-      title: HTTPValidationError
+      required:
+      - dormant_period
+      title: SummaryConfigRequest
+    Period:
+      type: integer
+      enum:
+      - 365
+      - 29
+      - 30
+      - 7
+      - 1
+      - 28
+      title: Period
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    InsightData:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
+      type: object
+      title: InsightData
+    SummarySidePanelResponse:
+      properties:
+        total_annual_spend:
+          anyOf:
+          - $ref: '#/components/schemas/SidePanelModel'
+          - type: 'null'
+        total_annual_savings:
+          anyOf:
+          - $ref: '#/components/schemas/SidePanelModel'
+          - type: 'null'
+        total_time_savings:
+          anyOf:
+          - $ref: '#/components/schemas/TimeSidePanelModel'
+          - type: 'null'
+      type: object
+      title: SummarySidePanelResponse
+    ComparisonRequest:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+      type: object
+      required:
+      - period
+      title: ComparisonRequest
+    SummaryGraphResponse:
+      properties:
+        graph_data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Graph Data
+        top_info:
+          anyOf:
+          - additionalProperties:
+              $ref: '#/components/schemas/TopInfoItem'
+            type: object
+          - type: 'null'
+          title: Top Info
+      type: object
+      required:
+      - graph_data
+      title: SummaryGraphResponse
+    ComparisonResponse:
+      properties:
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+      type: object
+      required:
+      - data
+      title: ComparisonResponse
+    SummaryConfigResponse:
+      properties:
+        dormant_period:
+          type: integer
+          title: Dormant Period
+      type: object
+      required:
+      - dormant_period
+      title: SummaryConfigResponse
     SummaryGraphRequest:
       properties:
         period:
@@ -567,6 +559,23 @@ components:
       - period
       - insight_type
       title: SummaryGraphRequest
+    SummaryInsightsResponse:
+      properties:
+        insight_type:
+          $ref: '#/components/schemas/InsightType'
+        summary_type:
+          $ref: '#/components/schemas/SummaryType'
+        summary_data:
+          items:
+            $ref: '#/components/schemas/InsightData'
+          type: array
+          title: Summary Data
+      type: object
+      required:
+      - insight_type
+      - summary_type
+      - summary_data
+      title: SummaryInsightsResponse
     TopInfoItem:
       properties:
         value:
@@ -596,59 +605,50 @@ components:
       - value
       - display
       title: TopInfoItem
-    SummaryConfigRequest:
+    TimeSidePanelModel:
       properties:
-        dormant_period:
-          type: integer
-          title: Dormant Period
+        title:
+          type: string
+          title: Title
+        value:
+          type: string
+          title: Value
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
       type: object
       required:
-      - dormant_period
-      title: SummaryConfigRequest
-    SummaryGraphResponse:
+      - title
+      - value
+      title: TimeSidePanelModel
+    SummaryType:
+      type: string
+      enum:
+      - header
+      - insight
+      - side_panel
+      title: SummaryType
+    InsightType:
+      type: string
+      enum:
+      - cost
+      - storage
+      - governance
+      - cost_overall
+      - auto
+      title: InsightType
+    HTTPValidationError:
       properties:
-        graph_data:
+        detail:
           items:
-            additionalProperties: true
-            type: object
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Graph Data
-        top_info:
-          anyOf:
-          - additionalProperties:
-              $ref: '#/components/schemas/TopInfoItem'
-            type: object
-          - type: 'null'
-          title: Top Info
+          title: Detail
       type: object
-      required:
-      - graph_data
-      title: SummaryGraphResponse
-    SummaryConfigResponse:
-      properties:
-        dormant_period:
-          type: integer
-          title: Dormant Period
-      type: object
-      required:
-      - dormant_period
-      title: SummaryConfigResponse
-    SummarySidePanelResponse:
-      properties:
-        total_annual_spend:
-          anyOf:
-          - $ref: '#/components/schemas/SidePanelModel'
-          - type: 'null'
-        total_annual_savings:
-          anyOf:
-          - $ref: '#/components/schemas/SidePanelModel'
-          - type: 'null'
-        total_time_savings:
-          anyOf:
-          - $ref: '#/components/schemas/TimeSidePanelModel'
-          - type: 'null'
-      type: object
-      title: SummarySidePanelResponse
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

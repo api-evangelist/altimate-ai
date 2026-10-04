@@ -43,33 +43,37 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    PermissionsFull:
+    ValidationError:
       properties:
-        uuid:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          format: uuid
-          title: Uuid
-        name:
+          title: Message
+        type:
           type: string
-          title: Name
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        group:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Group
+          title: Error Type
       type: object
       required:
-      - uuid
-      - name
-      - title
-      - description
-      title: PermissionsFull
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UserImpersonateInfo:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+      - email
+      title: UserImpersonateInfo
     RolePermissionFull:
       properties:
         role_name:
@@ -97,46 +101,33 @@ components:
       - is_custom
       - permission
       title: RolePermissionFull
-    UserImpersonateInfo:
+    PermissionsFull:
       properties:
-        email:
+        uuid:
           type: string
-          format: email
-          title: Email
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
       type: object
       required:
-      - email
-      title: UserImpersonateInfo
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
     UserLoginOut:
       properties:
         id:
@@ -197,6 +188,15 @@ components:
       - is_onboarded
       - uuid
       title: UserLoginOut
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

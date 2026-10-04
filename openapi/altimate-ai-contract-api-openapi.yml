@@ -874,6 +874,219 @@ components:
       - last_modified_by
       - version
       title: ContractFetchResponse
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        code:
+          type: integer
+          title: Code
+      type: object
+      required:
+      - message
+      - code
+      title: ErrorResponse
+    TermConfigResponse:
+      properties:
+        term_index:
+          type: integer
+          title: Term Index
+        alias:
+          type: string
+          title: Alias
+        metric:
+          type: string
+          title: Metric
+        params:
+          additionalProperties: true
+          type: object
+          title: Params
+      type: object
+      required:
+      - term_index
+      - alias
+      - metric
+      - params
+      title: TermConfigResponse
+    ResourceConfigResponse:
+      properties:
+        identifier:
+          type: string
+          title: Identifier
+        filters:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filters
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - identifier
+      title: ResourceConfigResponse
+    ContractDryRunResponse:
+      properties:
+        level:
+          type: string
+          title: Level
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - level
+      - message
+      title: ContractDryRunResponse
+    DeletionResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: DeletionResponse
+    PolicyConfigResponse:
+      properties:
+        policy_index:
+          type: integer
+          title: Policy Index
+        policy_type:
+          type: string
+          title: Policy Type
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceConfigResponse'
+          type: array
+          title: Resources
+        filters:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filters
+        terms:
+          items:
+            $ref: '#/components/schemas/TermConfigResponse'
+          type: array
+          title: Terms
+      type: object
+      required:
+      - policy_index
+      - policy_type
+      - resources
+      - terms
+      title: PolicyConfigResponse
+    Violation:
+      properties:
+        policy_name:
+          type: string
+          title: Policy Name
+        term_violation_id:
+          type: string
+          title: Term Violation Id
+        level:
+          type: string
+          title: Level
+        metric:
+          type: string
+          title: Metric
+        condition:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Condition
+        actual:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actual
+        message:
+          type: string
+          title: Message
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - policy_name
+      - term_violation_id
+      - level
+      - metric
+      - message
+      - status
+      title: Violation
+    ContractCreationResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        contract_location:
+          type: string
+          title: Contract Location
+        registry_name:
+          type: string
+          title: Registry Name
+        message:
+          type: string
+          title: Message
+        version:
+          type: string
+          title: Version
+      type: object
+      required:
+      - id
+      - name
+      - contract_location
+      - registry_name
+      - message
+      - version
+      title: ContractCreationResponse
+    Page_ContractListResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ContractListResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[ContractListResponse]
     ContractValidationResponse:
       properties:
         is_valid:
@@ -906,6 +1119,32 @@ components:
       - num_violations
       - event_url
       title: ContractValidationResponse
+    ContractCreationRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        data_store_id:
+          type: integer
+          title: Data Store Id
+        fqn:
+          additionalProperties: true
+          type: object
+          title: Fqn
+        contract_value:
+          type: string
+          title: Contract Value
+        raise_on_warnings:
+          type: boolean
+          title: Raise On Warnings
+          default: false
+      type: object
+      required:
+      - name
+      - data_store_id
+      - fqn
+      - contract_value
+      title: ContractCreationRequest
     ContractListResponse:
       properties:
         name:
@@ -972,169 +1211,6 @@ components:
       - slack_channel
       - no_of_violations
       title: ContractListResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ContractValidationRequest:
-      properties:
-        data:
-          additionalProperties: true
-          type: object
-          title: Data
-      type: object
-      required:
-      - data
-      title: ContractValidationRequest
-    TermConfigResponse:
-      properties:
-        term_index:
-          type: integer
-          title: Term Index
-        alias:
-          type: string
-          title: Alias
-        metric:
-          type: string
-          title: Metric
-        params:
-          additionalProperties: true
-          type: object
-          title: Params
-      type: object
-      required:
-      - term_index
-      - alias
-      - metric
-      - params
-      title: TermConfigResponse
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    PolicyConfigResponse:
-      properties:
-        policy_index:
-          type: integer
-          title: Policy Index
-        policy_type:
-          type: string
-          title: Policy Type
-        resources:
-          items:
-            $ref: '#/components/schemas/ResourceConfigResponse'
-          type: array
-          title: Resources
-        filters:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Filters
-        terms:
-          items:
-            $ref: '#/components/schemas/TermConfigResponse'
-          type: array
-          title: Terms
-      type: object
-      required:
-      - policy_index
-      - policy_type
-      - resources
-      - terms
-      title: PolicyConfigResponse
-    ContractWeekDetail:
-      properties:
-        error:
-          type: integer
-          title: Error
-        warning:
-          type: integer
-          title: Warning
-        policies:
-          type: integer
-          title: Policies
-        validations:
-          type: integer
-          title: Validations
-      type: object
-      required:
-      - error
-      - warning
-      - policies
-      - validations
-      title: ContractWeekDetail
-    ContractFetchMultipleResponse:
-      properties:
-        contracts:
-          items:
-            $ref: '#/components/schemas/app__schemas__contracts__ContractFetchResponse'
-          type: array
-          title: Contracts
-      type: object
-      required:
-      - contracts
-      title: ContractFetchMultipleResponse
-    Violation:
-      properties:
-        policy_name:
-          type: string
-          title: Policy Name
-        term_violation_id:
-          type: string
-          title: Term Violation Id
-        level:
-          type: string
-          title: Level
-        metric:
-          type: string
-          title: Metric
-        condition:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Condition
-        actual:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Actual
-        message:
-          type: string
-          title: Message
-        status:
-          type: string
-          title: Status
-      type: object
-      required:
-      - policy_name
-      - term_violation_id
-      - level
-      - metric
-      - message
-      - status
-      title: Violation
     ContractDetailResponse:
       properties:
         name:
@@ -1242,15 +1318,58 @@ components:
       - can_validate
       - is_scheduled
       title: ContractDetailResponse
-    DeletionResponse:
+    StandardResponse:
       properties:
-        message:
-          type: string
-          title: Message
+        ok:
+          type: boolean
+          title: Ok
       type: object
       required:
-      - message
-      title: DeletionResponse
+      - ok
+      title: StandardResponse
+    ProfileConfigResponse:
+      properties:
+        policies:
+          items:
+            $ref: '#/components/schemas/PolicyConfigResponse'
+          type: array
+          title: Policies
+      type: object
+      required:
+      - policies
+      title: ProfileConfigResponse
+    ContractFetchMultipleResponse:
+      properties:
+        contracts:
+          items:
+            $ref: '#/components/schemas/app__schemas__contracts__ContractFetchResponse'
+          type: array
+          title: Contracts
+      type: object
+      required:
+      - contracts
+      title: ContractFetchMultipleResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     PolicyDetail:
       properties:
         policy_id:
@@ -1291,143 +1410,37 @@ components:
       - level
       - tables
       title: PolicyDetail
-    ContractCreationRequest:
+    ContractWeekDetail:
       properties:
-        name:
-          type: string
-          title: Name
-        data_store_id:
+        error:
           type: integer
-          title: Data Store Id
-        fqn:
+          title: Error
+        warning:
+          type: integer
+          title: Warning
+        policies:
+          type: integer
+          title: Policies
+        validations:
+          type: integer
+          title: Validations
+      type: object
+      required:
+      - error
+      - warning
+      - policies
+      - validations
+      title: ContractWeekDetail
+    ContractValidationRequest:
+      properties:
+        data:
           additionalProperties: true
           type: object
-          title: Fqn
-        contract_value:
-          type: string
-          title: Contract Value
-        raise_on_warnings:
-          type: boolean
-          title: Raise On Warnings
-          default: false
+          title: Data
       type: object
       required:
-      - name
-      - data_store_id
-      - fqn
-      - contract_value
-      title: ContractCreationRequest
-    ContractCreationResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        contract_location:
-          type: string
-          title: Contract Location
-        registry_name:
-          type: string
-          title: Registry Name
-        message:
-          type: string
-          title: Message
-        version:
-          type: string
-          title: Version
-      type: object
-      required:
-      - id
-      - name
-      - contract_location
-      - registry_name
-      - message
-      - version
-      title: ContractCreationResponse
-    Page_ContractListResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/ContractListResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[ContractListResponse]
-    ProfileConfigResponse:
-      properties:
-        policies:
-          items:
-            $ref: '#/components/schemas/PolicyConfigResponse'
-          type: array
-          title: Policies
-      type: object
-      required:
-      - policies
-      title: ProfileConfigResponse
-    ResourceConfigResponse:
-      properties:
-        identifier:
-          type: string
-          title: Identifier
-        filters:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Filters
-        options:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Options
-      type: object
-      required:
-      - identifier
-      title: ResourceConfigResponse
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        code:
-          type: integer
-          title: Code
-      type: object
-      required:
-      - message
-      - code
-      title: ErrorResponse
+      - data
+      title: ContractValidationRequest
     HTTPValidationError:
       properties:
         detail:
@@ -1437,19 +1450,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    ContractDryRunResponse:
-      properties:
-        level:
-          type: string
-          title: Level
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - level
-      - message
-      title: ContractDryRunResponse
   securitySchemes:
     HTTPBearer:
       type: http

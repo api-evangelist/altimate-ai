@@ -135,61 +135,23 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    LangfusePrompt:
+    LangfusePromptsResponse:
       properties:
-        name:
-          type: string
-          title: Name
-          description: Prompt name
-        version:
+        prompts:
+          items:
+            $ref: '#/components/schemas/LangfusePrompt'
+          type: array
+          title: Prompts
+          description: List of prompts
+        total:
           type: integer
-          title: Version
-          description: Version number
-        prompt:
-          type: string
-          title: Prompt
-          description: Prompt text or template
-        type:
-          type: string
-          title: Type
-          description: Prompt type (text, chat)
-        labels:
-          items:
-            type: string
-          type: array
-          title: Labels
-          description: Labels
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-          description: Tags
-        config:
-          anyOf:
-          - $ref: '#/components/schemas/LangfusePromptConfig'
-          - type: 'null'
-          description: Configuration
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-          description: Creation timestamp
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-          description: Last update timestamp
+          title: Total
+          description: Total number of prompts
       type: object
       required:
-      - name
-      - version
-      - prompt
-      - type
-      - created_at
-      - updated_at
-      title: LangfusePrompt
-      description: Details of a Langfuse prompt.
+      - total
+      title: LangfusePromptsResponse
+      description: Response containing list of Langfuse prompts.
     ValidationError:
       properties:
         loc:
@@ -211,39 +173,6 @@ components:
       - msg
       - type
       title: ValidationError
-    LangfuseQueriesResponse:
-      properties:
-        queries:
-          items:
-            $ref: '#/components/schemas/ClickHouseQueryDetail'
-          type: array
-          title: Queries
-          description: List of queries
-        total_pages:
-          type: integer
-          title: Total Pages
-          description: Total number of pages
-        current_page:
-          type: integer
-          title: Current Page
-          description: Current page number
-        has_more:
-          type: boolean
-          title: Has More
-          description: Whether there are more pages
-          default: false
-        langfuse_project_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Langfuse Project Id
-          description: Langfuse project ID for constructing trace links
-      type: object
-      required:
-      - total_pages
-      - current_page
-      title: LangfuseQueriesResponse
-      description: Response containing ClickHouse queries.
     ClickHouseQueryDetail:
       properties:
         id:
@@ -320,23 +249,6 @@ components:
       - status
       title: ClickHouseQueryDetail
       description: Details of a single ClickHouse query from Langfuse.
-    LangfusePromptsResponse:
-      properties:
-        prompts:
-          items:
-            $ref: '#/components/schemas/LangfusePrompt'
-          type: array
-          title: Prompts
-          description: List of prompts
-        total:
-          type: integer
-          title: Total
-          description: Total number of prompts
-      type: object
-      required:
-      - total
-      title: LangfusePromptsResponse
-      description: Response containing list of Langfuse prompts.
     LangfusePromptConfig:
       properties:
         model:
@@ -378,6 +290,94 @@ components:
       type: object
       title: LangfusePromptConfig
       description: Configuration for a Langfuse prompt.
+    LangfuseQueriesResponse:
+      properties:
+        queries:
+          items:
+            $ref: '#/components/schemas/ClickHouseQueryDetail'
+          type: array
+          title: Queries
+          description: List of queries
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+        current_page:
+          type: integer
+          title: Current Page
+          description: Current page number
+        has_more:
+          type: boolean
+          title: Has More
+          description: Whether there are more pages
+          default: false
+        langfuse_project_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Langfuse Project Id
+          description: Langfuse project ID for constructing trace links
+      type: object
+      required:
+      - total_pages
+      - current_page
+      title: LangfuseQueriesResponse
+      description: Response containing ClickHouse queries.
+    LangfusePrompt:
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Prompt name
+        version:
+          type: integer
+          title: Version
+          description: Version number
+        prompt:
+          type: string
+          title: Prompt
+          description: Prompt text or template
+        type:
+          type: string
+          title: Type
+          description: Prompt type (text, chat)
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+          description: Labels
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+          description: Tags
+        config:
+          anyOf:
+          - $ref: '#/components/schemas/LangfusePromptConfig'
+          - type: 'null'
+          description: Configuration
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Last update timestamp
+      type: object
+      required:
+      - name
+      - version
+      - prompt
+      - type
+      - created_at
+      - updated_at
+      title: LangfusePrompt
+      description: Details of a Langfuse prompt.
     HTTPValidationError:
       properties:
         detail:

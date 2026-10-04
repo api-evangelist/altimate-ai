@@ -2084,6 +2084,83 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ResizingConfiguration-Input:
+      properties:
+        resizing_enabled:
+          type: boolean
+          title: Resizing Enabled
+        resizing_configuration:
+          $ref: '#/components/schemas/ResizingModeConfiguration-Input'
+      type: object
+      required:
+      - resizing_enabled
+      - resizing_configuration
+      title: ResizingConfiguration
+    WarehousesInsightsReq:
+      properties:
+        rks:
+          items:
+            type: string
+          type: array
+          title: Rks
+      type: object
+      required:
+      - rks
+      title: WarehousesInsightsReq
+    app__schemas__warehouses__WarehouseCostResponse:
+      properties:
+        date:
+          type: string
+          title: Date
+        cost:
+          type: number
+          title: Cost
+        query_acceleration_cost:
+          type: number
+          title: Query Acceleration Cost
+        compute_cost:
+          type: number
+          title: Compute Cost
+        cloud_services_cost:
+          type: number
+          title: Cloud Services Cost
+      type: object
+      required:
+      - date
+      - cost
+      - query_acceleration_cost
+      - compute_cost
+      - cloud_services_cost
+      title: WarehouseCostResponse
+    app__schemas__warehouses__TagObject:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - name
+      - description
+      title: TagObject
+    app__schemas__warehouses__AutoResizingMode:
+      type: string
+      enum:
+      - auto_resize
+      - manual_resize
+      - disabled
+      title: AutoResizingMode
+    WarehouseDecisionsCountResponse:
+      properties:
+        decisions:
+          type: string
+          title: Decisions
+      type: object
+      required:
+      - decisions
+      title: WarehouseDecisionsCountResponse
     WarehousePeriodCostResponse:
       properties:
         warehouse_cost:
@@ -2117,44 +2194,280 @@ components:
           title: End Time
       type: object
       title: WarehousePeriodCostResponse
-    UtilizationEfficiencyResponse:
+    ResizingModeConfiguration-Output:
+      properties:
+        mode:
+          anyOf:
+          - $ref: '#/components/schemas/app__schemas__warehouses__AutoResizingMode'
+          - type: 'null'
+        backoff_configuration:
+          anyOf:
+          - $ref: '#/components/schemas/BackoffConfiguration'
+          - type: 'null'
+      type: object
+      title: ResizingModeConfiguration
+    WarehouseAutoSavingsAuditEventsResponse:
+      properties:
+        rk:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rk
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        changed_by:
+          type: integer
+          title: Changed By
+        event_type:
+          type: string
+          title: Event Type
+        change_timestamp:
+          type: string
+          format: date-time
+          title: Change Timestamp
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
+        user:
+          $ref: '#/components/schemas/UserIndexResponse'
+        event_message:
+          type: string
+          title: Event Message
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+      type: object
+      required:
+      - warehouse_name
+      - changed_by
+      - event_type
+      - change_timestamp
+      - user
+      - event_message
+      title: WarehouseAutoSavingsAuditEventsResponse
+    WarehouseFiltersFetchAllResponse:
+      properties:
+        warehouse_sizes:
+          items:
+            type: string
+          type: array
+          title: Warehouse Sizes
+        warehouse_names:
+          items:
+            type: string
+          type: array
+          title: Warehouse Names
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        opportunities:
+          items:
+            type: string
+          type: array
+          title: Opportunities
+        snowflake_tags:
+          items:
+            type: string
+          type: array
+          title: Snowflake Tags
+      type: object
+      required:
+      - warehouse_sizes
+      - warehouse_names
+      - tags
+      - opportunities
+      - snowflake_tags
+      title: WarehouseFiltersFetchAllResponse
+    WarehouseFetchAllPageResponse:
+      properties:
+        warehouse_rk:
+          type: string
+          title: Warehouse Rk
+        instance_id:
+          type: string
+          title: Instance Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        warehouse_size:
+          type: string
+          title: Warehouse Size
+        total_cost:
+          type: string
+          title: Total Cost
+        execution_time_p90:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Time P90
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        auto_suspend:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Auto Suspend
+        median_total_elapsed_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Median Total Elapsed Time
+        median_queuing_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Median Queuing Time
+        median_queuing_time_percentage:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Median Queuing Time Percentage
+        total_active_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Total Active Time
+        idle_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idle Time
+        idle_percentage:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idle Percentage
+        realized_savings:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Realized Savings
+        estimated_annualized_savings:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Estimated Annualized Savings
+        is_auto_tune_enabled:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Is Auto Tune Enabled
+        auto_resize_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Resize Mode
+        auto_resize_eligible:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Auto Resize Eligible
+        opportunities:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Opportunities
+        snowflake_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Snowflake Tags
+      type: object
+      required:
+      - warehouse_rk
+      - instance_id
+      - warehouse_name
+      - warehouse_size
+      - total_cost
+      - tags
+      title: WarehouseFetchAllPageResponse
+    Period:
+      type: integer
+      enum:
+      - 365
+      - 29
+      - 30
+      - 7
+      - 1
+      - 28
+      title: Period
+    AutoTuneConfiguration:
+      properties:
+        auto_tune_enabled:
+          type: boolean
+          title: Auto Tune Enabled
+      type: object
+      required:
+      - auto_tune_enabled
+      title: AutoTuneConfiguration
+    WarehousePeriodCostResponseV2:
+      properties:
+        warehouse_cost:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/app__schemas__warehouses__WarehouseCostResponse'
+            type: array
+          - type: 'null'
+          title: Warehouse Cost
+        threshold:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Threshold
+        start_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: End Time
+      type: object
+      title: WarehousePeriodCostResponseV2
+    WarehouseDecisionChartResponse:
       properties:
         date:
           type: string
           title: Date
-        utilization:
-          type: number
-          title: Utilization
+        decisions:
+          type: integer
+          title: Decisions
       type: object
       required:
       - date
-      - utilization
-      title: UtilizationEfficiencyResponse
-    app__schemas__warehouses__WarehouseCostResponse:
+      - decisions
+      title: WarehouseDecisionChartResponse
+    WarehouseMetadataItem:
       properties:
-        date:
+        rk:
           type: string
-          title: Date
-        cost:
-          type: number
-          title: Cost
-        query_acceleration_cost:
-          type: number
-          title: Query Acceleration Cost
-        compute_cost:
-          type: number
-          title: Compute Cost
-        cloud_services_cost:
-          type: number
-          title: Cloud Services Cost
+          title: Rk
+        warehouse_name:
+          type: string
+          title: Warehouse Name
       type: object
       required:
-      - date
-      - cost
-      - query_acceleration_cost
-      - compute_cost
-      - cloud_services_cost
-      title: WarehouseCostResponse
+      - rk
+      - warehouse_name
+      title: WarehouseMetadataItem
+      description: Response item for warehouse metadata endpoint.
     WarehouseResponse:
       properties:
         warehouse_rk:
@@ -2271,19 +2584,341 @@ components:
       - instance_id
       - tags
       title: WarehouseResponse
-    app__schemas__warehouses__TagObject:
+    WarehouseDetailsAggregationType:
+      type: string
+      enum:
+      - day
+      - week
+      - month
+      title: WarehouseDetailsAggregationType
+    WarehouseDecisionDataChartResponse:
       properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
+        decision_chart:
+          items:
+            $ref: '#/components/schemas/WarehouseDecisionChartResponse'
+          type: array
+          title: Decision Chart
       type: object
       required:
-      - name
-      - description
-      title: TagObject
+      - decision_chart
+      title: WarehouseDecisionDataChartResponse
+    WarehouseInsightsItem:
+      properties:
+        warehouse_rk:
+          type: string
+          title: Warehouse Rk
+        tag_rk:
+          type: string
+          title: Tag Rk
+      type: object
+      required:
+      - warehouse_rk
+      - tag_rk
+      title: WarehouseInsightsItem
+      description: Response item for warehouse insights endpoint.
+    BackoffConfiguration:
+      properties:
+        max_latency_percentage:
+          type: number
+          title: Max Latency Percentage
+        max_queue_time_percentage:
+          type: number
+          title: Max Queue Time Percentage
+      type: object
+      required:
+      - max_latency_percentage
+      - max_queue_time_percentage
+      title: BackoffConfiguration
+    WarehouseQueryExecutionTimeDataChartResponse:
+      properties:
+        query_execution_time:
+          items:
+            $ref: '#/components/schemas/WarehouseQueryExecutionTimesResponse'
+          type: array
+          title: Query Execution Time
+      type: object
+      required:
+      - query_execution_time
+      title: WarehouseQueryExecutionTimeDataChartResponse
+    RunningStatsTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        active_seconds:
+          type: number
+          title: Active Seconds
+          default: 0
+        idle_seconds:
+          type: number
+          title: Idle Seconds
+          default: 0
+      type: object
+      required:
+      - period
+      title: RunningStatsTrendPoint
+    UtilizationEfficiencyResponse:
+      properties:
+        date:
+          type: string
+          title: Date
+        utilization:
+          type: number
+          title: Utilization
+      type: object
+      required:
+      - date
+      - utilization
+      title: UtilizationEfficiencyResponse
+    WarehouseAutoSavingConfigResponse:
+      properties:
+        is_auto_tune_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Auto Tune Enabled
+        savings_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Savings Level
+      type: object
+      title: WarehouseAutoSavingConfigResponse
+    AutoResizingMode-Input:
+      type: string
+      enum:
+      - auto_resize
+      - manual_resize
+      - disabled
+      title: AutoResizingMode
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ResizingConfiguration-Output:
+      properties:
+        resizing_enabled:
+          type: boolean
+          title: Resizing Enabled
+        resizing_configuration:
+          $ref: '#/components/schemas/ResizingModeConfiguration-Output'
+      type: object
+      required:
+      - resizing_enabled
+      - resizing_configuration
+      title: ResizingConfiguration
+    AutoTuneConfigurationResponse:
+      properties:
+        auto_tune_configuration:
+          $ref: '#/components/schemas/AutoTuneConfiguration'
+        resizing_configuration:
+          $ref: '#/components/schemas/ResizingConfiguration-Output'
+        dynamic_resizing_eligible:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Dynamic Resizing Eligible
+        dynamic_resizing_eligible_reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dynamic Resizing Eligible Reason
+      type: object
+      required:
+      - auto_tune_configuration
+      - resizing_configuration
+      title: AutoTuneConfigurationResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Page_WarehouseAutoSavingsAuditEventsResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/WarehouseAutoSavingsAuditEventsResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[WarehouseAutoSavingsAuditEventsResponse]
+    Page_WarehouseFetchAllPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/WarehouseFetchAllPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[WarehouseFetchAllPageResponse]
+    ResizingModeConfiguration-Input:
+      properties:
+        mode:
+          anyOf:
+          - $ref: '#/components/schemas/AutoResizingMode-Input'
+          - type: 'null'
+        backoff_configuration:
+          anyOf:
+          - $ref: '#/components/schemas/BackoffConfiguration'
+          - type: 'null'
+      type: object
+      title: ResizingModeConfiguration
+    WarehouseAutoSavingsResponse:
+      properties:
+        graph_data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Graph Data
+        top_info:
+          additionalProperties:
+            additionalProperties:
+              anyOf:
+              - type: string
+              - type: number
+              - type: boolean
+              - type: 'null'
+            type: object
+          type: object
+          title: Top Info
+      type: object
+      required:
+      - graph_data
+      - top_info
+      title: WarehouseAutoSavingsResponse
+    WarehouseQueryExecutionTimesResponse:
+      properties:
+        date:
+          type: string
+          title: Date
+        execution_time:
+          type: number
+          title: Execution Time
+        p90_execution_time:
+          type: number
+          title: P90 Execution Time
+        bytes_scanned:
+          type: number
+          title: Bytes Scanned
+        avg_queued_overload_time:
+          type: number
+          title: Avg Queued Overload Time
+        p90_queued_overload_time:
+          type: number
+          title: P90 Queued Overload Time
+        query_count:
+          type: integer
+          title: Query Count
+        execution_time_ui:
+          type: string
+          title: Execution Time Ui
+        p90_execution_time_ui:
+          type: string
+          title: P90 Execution Time Ui
+        bytes_scanned_ui:
+          type: string
+          title: Bytes Scanned Ui
+        avg_queued_overload_time_ui:
+          type: string
+          title: Avg Queued Overload Time Ui
+        p90_queued_overload_time_ui:
+          type: string
+          title: P90 Queued Overload Time Ui
+      type: object
+      required:
+      - date
+      - execution_time
+      - p90_execution_time
+      - bytes_scanned
+      - avg_queued_overload_time
+      - p90_queued_overload_time
+      - query_count
+      - execution_time_ui
+      - p90_execution_time_ui
+      - bytes_scanned_ui
+      - avg_queued_overload_time_ui
+      - p90_queued_overload_time_ui
+      title: WarehouseQueryExecutionTimesResponse
     app__schemas__warehouses__WarehouseRunningStatsTrendsResponse:
       properties:
         warehouse_rk:
@@ -2311,248 +2946,6 @@ components:
       - trends
       - granularity
       title: WarehouseRunningStatsTrendsResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    WarehouseAutoSavingsAuditEventsResponse:
-      properties:
-        rk:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rk
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        changed_by:
-          type: integer
-          title: Changed By
-        event_type:
-          type: string
-          title: Event Type
-        change_timestamp:
-          type: string
-          format: date-time
-          title: Change Timestamp
-        attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Attributes
-        user:
-          $ref: '#/components/schemas/UserIndexResponse'
-        event_message:
-          type: string
-          title: Event Message
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-      type: object
-      required:
-      - warehouse_name
-      - changed_by
-      - event_type
-      - change_timestamp
-      - user
-      - event_message
-      title: WarehouseAutoSavingsAuditEventsResponse
-    RunningStatsTrendPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        active_seconds:
-          type: number
-          title: Active Seconds
-          default: 0
-        idle_seconds:
-          type: number
-          title: Idle Seconds
-          default: 0
-      type: object
-      required:
-      - period
-      title: RunningStatsTrendPoint
-    WarehouseFetchAllPageResponse:
-      properties:
-        warehouse_rk:
-          type: string
-          title: Warehouse Rk
-        instance_id:
-          type: string
-          title: Instance Id
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        warehouse_size:
-          type: string
-          title: Warehouse Size
-        total_cost:
-          type: string
-          title: Total Cost
-        execution_time_p90:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Execution Time P90
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-        auto_suspend:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Auto Suspend
-        median_total_elapsed_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Median Total Elapsed Time
-        median_queuing_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Median Queuing Time
-        median_queuing_time_percentage:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Median Queuing Time Percentage
-        total_active_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Total Active Time
-        idle_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Idle Time
-        idle_percentage:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Idle Percentage
-        realized_savings:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Realized Savings
-        estimated_annualized_savings:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Estimated Annualized Savings
-        is_auto_tune_enabled:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Is Auto Tune Enabled
-        auto_resize_mode:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Auto Resize Mode
-        auto_resize_eligible:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Auto Resize Eligible
-        opportunities:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Opportunities
-        snowflake_tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Snowflake Tags
-      type: object
-      required:
-      - warehouse_rk
-      - instance_id
-      - warehouse_name
-      - warehouse_size
-      - total_cost
-      - tags
-      title: WarehouseFetchAllPageResponse
-    WarehousePeriodCostResponseV2:
-      properties:
-        warehouse_cost:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/app__schemas__warehouses__WarehouseCostResponse'
-            type: array
-          - type: 'null'
-          title: Warehouse Cost
-        threshold:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Threshold
-        start_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Start Time
-        end_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: End Time
-      type: object
-      title: WarehousePeriodCostResponseV2
-    WarehouseMetadataItem:
-      properties:
-        rk:
-          type: string
-          title: Rk
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-      type: object
-      required:
-      - rk
-      - warehouse_name
-      title: WarehouseMetadataItem
-      description: Response item for warehouse metadata endpoint.
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     UserIndexResponse:
       properties:
         id:
@@ -2654,31 +3047,6 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
-    WarehouseDecisionChartResponse:
-      properties:
-        date:
-          type: string
-          title: Date
-        decisions:
-          type: integer
-          title: Decisions
-      type: object
-      required:
-      - date
-      - decisions
-      title: WarehouseDecisionChartResponse
-    ResizingModeConfiguration-Input:
-      properties:
-        mode:
-          anyOf:
-          - $ref: '#/components/schemas/AutoResizingMode-Input'
-          - type: 'null'
-        backoff_configuration:
-          anyOf:
-          - $ref: '#/components/schemas/BackoffConfiguration'
-          - type: 'null'
-      type: object
-      title: ResizingModeConfiguration
     AutoTuneConfigurationRequest:
       properties:
         auto_tune_configuration:
@@ -2690,56 +3058,6 @@ components:
       - auto_tune_configuration
       - resizing_configuration
       title: AutoTuneConfigurationRequest
-    WarehouseDecisionsCountResponse:
-      properties:
-        decisions:
-          type: string
-          title: Decisions
-      type: object
-      required:
-      - decisions
-      title: WarehouseDecisionsCountResponse
-    Period:
-      type: integer
-      enum:
-      - 365
-      - 29
-      - 30
-      - 7
-      - 1
-      - 28
-      title: Period
-    AutoTuneConfiguration:
-      properties:
-        auto_tune_enabled:
-          type: boolean
-          title: Auto Tune Enabled
-      type: object
-      required:
-      - auto_tune_enabled
-      title: AutoTuneConfiguration
-    WarehouseDecisionDataChartResponse:
-      properties:
-        decision_chart:
-          items:
-            $ref: '#/components/schemas/WarehouseDecisionChartResponse'
-          type: array
-          title: Decision Chart
-      type: object
-      required:
-      - decision_chart
-      title: WarehouseDecisionDataChartResponse
-    WarehousesInsightsReq:
-      properties:
-        rks:
-          items:
-            type: string
-          type: array
-          title: Rks
-      type: object
-      required:
-      - rks
-      title: WarehousesInsightsReq
     WarehouseClusterUtilizationResponse:
       properties:
         overall_utilization_efficiency:
@@ -2770,288 +3088,6 @@ components:
           title: End Time
       type: object
       title: WarehouseClusterUtilizationResponse
-    AutoResizingMode-Input:
-      type: string
-      enum:
-      - auto_resize
-      - manual_resize
-      - disabled
-      title: AutoResizingMode
-    WarehouseInsightsItem:
-      properties:
-        warehouse_rk:
-          type: string
-          title: Warehouse Rk
-        tag_rk:
-          type: string
-          title: Tag Rk
-      type: object
-      required:
-      - warehouse_rk
-      - tag_rk
-      title: WarehouseInsightsItem
-      description: Response item for warehouse insights endpoint.
-    BackoffConfiguration:
-      properties:
-        max_latency_percentage:
-          type: number
-          title: Max Latency Percentage
-        max_queue_time_percentage:
-          type: number
-          title: Max Queue Time Percentage
-      type: object
-      required:
-      - max_latency_percentage
-      - max_queue_time_percentage
-      title: BackoffConfiguration
-    WarehouseAutoSavingConfigResponse:
-      properties:
-        is_auto_tune_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Auto Tune Enabled
-        savings_level:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Savings Level
-      type: object
-      title: WarehouseAutoSavingConfigResponse
-    WarehouseFiltersFetchAllResponse:
-      properties:
-        warehouse_sizes:
-          items:
-            type: string
-          type: array
-          title: Warehouse Sizes
-        warehouse_names:
-          items:
-            type: string
-          type: array
-          title: Warehouse Names
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-        opportunities:
-          items:
-            type: string
-          type: array
-          title: Opportunities
-        snowflake_tags:
-          items:
-            type: string
-          type: array
-          title: Snowflake Tags
-      type: object
-      required:
-      - warehouse_sizes
-      - warehouse_names
-      - tags
-      - opportunities
-      - snowflake_tags
-      title: WarehouseFiltersFetchAllResponse
-    ResizingModeConfiguration-Output:
-      properties:
-        mode:
-          anyOf:
-          - $ref: '#/components/schemas/app__schemas__warehouses__AutoResizingMode'
-          - type: 'null'
-        backoff_configuration:
-          anyOf:
-          - $ref: '#/components/schemas/BackoffConfiguration'
-          - type: 'null'
-      type: object
-      title: ResizingModeConfiguration
-    app__schemas__warehouses__AutoResizingMode:
-      type: string
-      enum:
-      - auto_resize
-      - manual_resize
-      - disabled
-      title: AutoResizingMode
-    Page_WarehouseFetchAllPageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/WarehouseFetchAllPageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[WarehouseFetchAllPageResponse]
-    WarehouseQueryExecutionTimesResponse:
-      properties:
-        date:
-          type: string
-          title: Date
-        execution_time:
-          type: number
-          title: Execution Time
-        p90_execution_time:
-          type: number
-          title: P90 Execution Time
-        bytes_scanned:
-          type: number
-          title: Bytes Scanned
-        avg_queued_overload_time:
-          type: number
-          title: Avg Queued Overload Time
-        p90_queued_overload_time:
-          type: number
-          title: P90 Queued Overload Time
-        query_count:
-          type: integer
-          title: Query Count
-        execution_time_ui:
-          type: string
-          title: Execution Time Ui
-        p90_execution_time_ui:
-          type: string
-          title: P90 Execution Time Ui
-        bytes_scanned_ui:
-          type: string
-          title: Bytes Scanned Ui
-        avg_queued_overload_time_ui:
-          type: string
-          title: Avg Queued Overload Time Ui
-        p90_queued_overload_time_ui:
-          type: string
-          title: P90 Queued Overload Time Ui
-      type: object
-      required:
-      - date
-      - execution_time
-      - p90_execution_time
-      - bytes_scanned
-      - avg_queued_overload_time
-      - p90_queued_overload_time
-      - query_count
-      - execution_time_ui
-      - p90_execution_time_ui
-      - bytes_scanned_ui
-      - avg_queued_overload_time_ui
-      - p90_queued_overload_time_ui
-      title: WarehouseQueryExecutionTimesResponse
-    ResizingConfiguration-Output:
-      properties:
-        resizing_enabled:
-          type: boolean
-          title: Resizing Enabled
-        resizing_configuration:
-          $ref: '#/components/schemas/ResizingModeConfiguration-Output'
-      type: object
-      required:
-      - resizing_enabled
-      - resizing_configuration
-      title: ResizingConfiguration
-    AutoTuneConfigurationResponse:
-      properties:
-        auto_tune_configuration:
-          $ref: '#/components/schemas/AutoTuneConfiguration'
-        resizing_configuration:
-          $ref: '#/components/schemas/ResizingConfiguration-Output'
-        dynamic_resizing_eligible:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Dynamic Resizing Eligible
-        dynamic_resizing_eligible_reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Dynamic Resizing Eligible Reason
-      type: object
-      required:
-      - auto_tune_configuration
-      - resizing_configuration
-      title: AutoTuneConfigurationResponse
-    Page_WarehouseAutoSavingsAuditEventsResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/WarehouseAutoSavingsAuditEventsResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[WarehouseAutoSavingsAuditEventsResponse]
-    WarehouseQueryExecutionTimeDataChartResponse:
-      properties:
-        query_execution_time:
-          items:
-            $ref: '#/components/schemas/WarehouseQueryExecutionTimesResponse'
-          type: array
-          title: Query Execution Time
-      type: object
-      required:
-      - query_execution_time
-      title: WarehouseQueryExecutionTimeDataChartResponse
-    WarehouseDetailsAggregationType:
-      type: string
-      enum:
-      - day
-      - week
-      - month
-      title: WarehouseDetailsAggregationType
     HTTPValidationError:
       properties:
         detail:
@@ -3061,42 +3097,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    WarehouseAutoSavingsResponse:
-      properties:
-        graph_data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Graph Data
-        top_info:
-          additionalProperties:
-            additionalProperties:
-              anyOf:
-              - type: string
-              - type: number
-              - type: boolean
-              - type: 'null'
-            type: object
-          type: object
-          title: Top Info
-      type: object
-      required:
-      - graph_data
-      - top_info
-      title: WarehouseAutoSavingsResponse
-    ResizingConfiguration-Input:
-      properties:
-        resizing_enabled:
-          type: boolean
-          title: Resizing Enabled
-        resizing_configuration:
-          $ref: '#/components/schemas/ResizingModeConfiguration-Input'
-      type: object
-      required:
-      - resizing_enabled
-      - resizing_configuration
-      title: ResizingConfiguration
   securitySchemes:
     HTTPBearer:
       type: http

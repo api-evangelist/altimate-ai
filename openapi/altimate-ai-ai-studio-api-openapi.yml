@@ -1070,19 +1070,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ScheduleFrequency:
-      type: string
-      enum:
-      - daily
-      - weekly
-      - monthly
-      - custom
-      title: ScheduleFrequency
-      description: Predefined schedule frequencies.
-    BaseResponse:
-      properties: {}
-      type: object
-      title: BaseResponse
     DeleteAgentRequest:
       properties:
         name:
@@ -1092,6 +1079,122 @@ components:
       required:
       - name
       title: DeleteAgentRequest
+    ShareToSlackRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Studio session ID to share
+        webhook_id:
+          type: integer
+          title: Webhook Id
+          description: Notification ID (from notifications table) for webhook delivery
+      type: object
+      required:
+      - session_id
+      - webhook_id
+      title: ShareToSlackRequest
+      description: Request to share a Studio session to Slack via webhook.
+    PromptEnhancementResponse:
+      properties:
+        enhanced_prompt:
+          type: string
+          title: Enhanced Prompt
+      type: object
+      required:
+      - enhanced_prompt
+      title: PromptEnhancementResponse
+    ShareLinkResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        session_id:
+          type: string
+          title: Session Id
+        access_type:
+          $ref: '#/components/schemas/ShareAccessType'
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        share_url:
+          type: string
+          title: Share Url
+        allowed_users:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Allowed Users
+        allowed_teams:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Allowed Teams
+      type: object
+      required:
+      - id
+      - session_id
+      - access_type
+      - expires_at
+      - created_by
+      - created_at
+      - updated_at
+      - title
+      - share_url
+      title: ShareLinkResponse
+      description: Response containing share link details.
+    GetAgentResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+      type: object
+      required:
+      - name
+      - version
+      - prompt
+      - config
+      - labels
+      title: GetAgentResponse
     app__schemas__ai_playground__schedules__ScheduleResponse:
       properties:
         id:
@@ -1180,27 +1283,167 @@ components:
       - updated_at
       title: ScheduleResponse
       description: Response containing schedule details.
-    ValidationError:
+    AgentListItem:
       properties:
-        loc:
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+        labels:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            type: string
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Labels
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - name
+      - version
+      - prompt
+      - config
+      - labels
+      title: AgentListItem
+    ScheduleRunResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        schedule_id:
+          type: string
+          format: uuid
+          title: Schedule Id
+        run_at:
+          type: string
+          format: date-time
+          title: Run At
+        status:
+          type: string
+          title: Status
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        recipients_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Recipients Count
+        sent_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sent Count
+        failed_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Failed Count
+      type: object
+      required:
+      - id
+      - schedule_id
+      - run_at
+      - status
+      - error_message
+      - recipients_count
+      - sent_count
+      - failed_count
+      title: ScheduleRunResponse
+      description: Response for a single schedule run.
+    Attachment:
+      properties:
+        id:
+          type: string
+          title: Id
+        attachment_name:
+          type: string
+          title: Attachment Name
+        file_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: File Type
+        s3_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: S3 Url
+        extracted_content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extracted Content
+        order:
+          type: integer
+          title: Order
+        attachment_type:
+          type: string
+          title: Attachment Type
+        attachment_reference_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Attachment Reference Id
+        file_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: File Size
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+      type: object
+      required:
+      - id
+      - attachment_name
+      - order
+      - attachment_type
+      - created_on
+      title: Attachment
+    Context:
+      properties:
+        connections:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Connections
+        knowledge:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Knowledge
+        uploaded_files:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UploadedFile'
+            type: array
+          - type: 'null'
+          title: Uploaded Files
+        notifications:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Notifications
+      additionalProperties: true
+      type: object
+      title: Context
     Session:
       properties:
         session_id:
@@ -1247,6 +1490,414 @@ components:
       - created_at
       - updated_at
       title: Session
+    PromptEnhancementRequest:
+      properties:
+        user_prompt:
+          type: string
+          title: User Prompt
+        agent_name:
+          type: string
+          title: Agent Name
+      type: object
+      required:
+      - user_prompt
+      - agent_name
+      title: PromptEnhancementRequest
+    SessionStatusEnum:
+      type: string
+      enum:
+      - failed
+      - completed
+      - pending
+      - cancelled
+      title: SessionStatusEnum
+    BaseResponse:
+      properties: {}
+      type: object
+      title: BaseResponse
+    CreateAgentResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: integer
+          title: Version
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - name
+      - version
+      - status
+      title: CreateAgentResponse
+    CreateAgentRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          $ref: '#/components/schemas/app__schemas__ai_playground__ai_playground__AgentConfig'
+      type: object
+      required:
+      - name
+      - prompt
+      - config
+      title: CreateAgentRequest
+    app__schemas__ai_playground__schedules__ScheduleUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+        content_scope:
+          anyOf:
+          - $ref: '#/components/schemas/ContentScope'
+          - type: 'null'
+        frequency:
+          anyOf:
+          - $ref: '#/components/schemas/ScheduleFrequency'
+          - type: 'null'
+        custom_cron:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Custom Cron
+        hour:
+          anyOf:
+          - type: integer
+            maximum: 23.0
+            minimum: 0.0
+          - type: 'null'
+          title: Hour
+        day_of_week:
+          anyOf:
+          - type: integer
+            maximum: 6.0
+            minimum: 0.0
+          - type: 'null'
+          title: Day Of Week
+          description: Day of week for weekly frequency (0=Sunday … 6=Saturday). Only meaningful when the patched frequency is 'weekly'. When the patched frequency stays/becomes 'weekly' and this field is omitted, the existing weekday is preserved.
+        day_of_month:
+          anyOf:
+          - type: integer
+            maximum: 31.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Of Month
+          description: Day of month for monthly frequency (1-31). Only meaningful when the patched frequency is 'monthly'.
+        emails:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Emails
+        slack_webhook_id:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Slack Webhook Id
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+      type: object
+      title: ScheduleUpdateRequest
+      description: "Request to update an existing schedule.\n\n``slack_webhook_id``:\n  - ``None`` (omitted) → leave webhook unchanged\n  - ``0`` → clear the current webhook\n  - any positive integer → set the webhook to that notification id"
+    ScheduleFrequency:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      - custom
+      title: ScheduleFrequency
+      description: Predefined schedule frequencies.
+    ShareAccessType:
+      type: string
+      enum:
+      - anyone
+      - specific_people
+      - all_altimate_users
+      - team
+      title: ShareAccessType
+      description: Access type for share links.
+    AllSessionResponse:
+      properties:
+        sessions:
+          items:
+            $ref: '#/components/schemas/Session'
+          type: array
+          title: Sessions
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - sessions
+      - total
+      - page
+      - page_size
+      - has_more
+      title: AllSessionResponse
+    RemoveAgentFromProductionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: RemoveAgentFromProductionRequest
+    AddAgentToProductionRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: AddAgentToProductionRequest
+    ContentScope:
+      type: string
+      enum:
+      - first_query
+      - last_answer
+      - full_chat
+      title: ContentScope
+      description: What content to include in the scheduled report.
+    SessionAskRequest:
+      properties:
+        message:
+          type: string
+          title: Message
+        context:
+          $ref: '#/components/schemas/Context'
+        session_id:
+          type: string
+          title: Session Id
+        mode:
+          type: string
+          title: Mode
+        datamates:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Datamates
+      type: object
+      required:
+      - message
+      - context
+      - session_id
+      - mode
+      title: SessionAskRequest
+    SessionResponse:
+      properties:
+        session:
+          $ref: '#/components/schemas/Session'
+        turns:
+          items:
+            $ref: '#/components/schemas/ChatBlock'
+          type: array
+          title: Turns
+      type: object
+      required:
+      - session
+      - turns
+      title: SessionResponse
+    ScheduleRunsListResponse:
+      properties:
+        runs:
+          items:
+            $ref: '#/components/schemas/ScheduleRunResponse'
+          type: array
+          title: Runs
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - runs
+      - total
+      title: ScheduleRunsListResponse
+      description: Response containing a list of schedule runs.
+    SessionStatusUpdateResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        status:
+          $ref: '#/components/schemas/SessionLifecycleStatus'
+      type: object
+      required:
+      - session_id
+      - status
+      title: SessionStatusUpdateResponse
+    ShareLinkCreateRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Session ID to share
+        access_type:
+          $ref: '#/components/schemas/ShareAccessType'
+          description: Who can access this link
+          default: anyone
+        expires_in_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Expires In Days
+          description: Number of days until expiration. None = never expires
+        user_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: User Ids
+          description: User IDs allowed to access (only for 'specific_people' access type)
+        team_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Team Ids
+          description: Team (UserGroup) IDs allowed to access (only for 'team' access type)
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+          description: Optional title for the share link
+      type: object
+      required:
+      - session_id
+      title: ShareLinkCreateRequest
+      description: Request to create a new share link.
+    ListAgentsResponse:
+      properties:
+        agents:
+          items:
+            $ref: '#/components/schemas/AgentListItem'
+          type: array
+          title: Agents
+      type: object
+      required:
+      - agents
+      title: ListAgentsResponse
+    SessionStatusUpdateRequest:
+      properties:
+        status:
+          $ref: '#/components/schemas/SessionLifecycleStatus'
+      type: object
+      required:
+      - status
+      title: SessionStatusUpdateRequest
+    Content:
+      properties:
+        id:
+          type: integer
+          title: Id
+        type:
+          $ref: '#/components/schemas/ContentType'
+        content:
+          anyOf:
+          - type: string
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Content
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        error_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Type
+      type: object
+      required:
+      - id
+      - type
+      - timestamp
+      title: Content
+    ShareLinkListResponse:
+      properties:
+        share_links:
+          items:
+            $ref: '#/components/schemas/ShareLinkResponse'
+          type: array
+          title: Share Links
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - share_links
+      - total
+      title: ShareLinkListResponse
+      description: Response containing a list of share links.
+    DestinationType:
+      type: string
+      enum:
+      - email
+      - slack
+      - multi
+      title: DestinationType
+      description: 'How to deliver the scheduled report.
+
+
+        Derived from `destination_config` at save time — `MULTI` means both
+
+        emails and a Slack webhook are configured on the same schedule.'
+    UploadedFile:
+      properties:
+        filename:
+          type: string
+          title: Filename
+        content:
+          type: string
+          title: Content
+        content_type:
+          type: string
+          title: Content Type
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - filename
+      - content
+      - content_type
+      - size
+      title: UploadedFile
     app__schemas__ai_playground__schedules__ScheduleListResponse:
       properties:
         schedules:
@@ -1263,6 +1914,49 @@ components:
       - total
       title: ScheduleListResponse
       description: Response containing a list of schedules.
+    SharedSessionResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        session_name:
+          type: string
+          title: Session Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        share_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Title
+        turns:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Turns
+        is_read_only:
+          type: boolean
+          title: Is Read Only
+          default: true
+      type: object
+      required:
+      - session_id
+      - session_name
+      - created_at
+      - share_title
+      - turns
+      title: SharedSessionResponse
+      description: Response when viewing a shared session.
+    SessionLifecycleListFilter:
+      type: string
+      enum:
+      - active
+      - archived
+      - all
+      title: SessionLifecycleListFilter
     ContentType:
       type: string
       enum:
@@ -1277,51 +1971,34 @@ components:
       - text
       - error
       title: ContentType
-    AgentListItem:
+    SessionLifecycleStatus:
+      type: string
+      enum:
+      - active
+      - archived
+      - deleted
+      title: SessionLifecycleStatus
+    ValidationError:
       properties:
-        name:
-          type: string
-          title: Name
-        version:
-          type: integer
-          title: Version
-        prompt:
-          type: string
-          title: Prompt
-        config:
-          additionalProperties: true
-          type: object
-          title: Config
-        labels:
+        loc:
           items:
-            type: string
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Labels
-      type: object
-      required:
-      - name
-      - version
-      - prompt
-      - config
-      - labels
-      title: AgentListItem
-    AddAgentToProductionRequest:
-      properties:
-        name:
+          title: Location
+        msg:
           type: string
-          title: Name
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - name
-      title: AddAgentToProductionRequest
-    SessionStatusUpdateRequest:
-      properties:
-        status:
-          $ref: '#/components/schemas/SessionLifecycleStatus'
-      type: object
-      required:
-      - status
-      title: SessionStatusUpdateRequest
+      - loc
+      - msg
+      - type
+      title: ValidationError
     app__schemas__ai_playground__schedules__ScheduleCreateRequest:
       properties:
         name:
@@ -1392,55 +2069,29 @@ components:
       - session_id
       title: ScheduleCreateRequest
       description: Request to create a new scheduled report.
-    ScheduleRunResponse:
+    EmailRecipientType:
+      type: string
+      enum:
+      - specific_emails
+      - all_altimate_users
+      - team
+      title: EmailRecipientType
+    SessionToPdfRequest:
       properties:
-        id:
+        session_id:
           type: string
-          format: uuid
-          title: Id
-        schedule_id:
-          type: string
-          format: uuid
-          title: Schedule Id
-        run_at:
-          type: string
-          format: date-time
-          title: Run At
-        status:
-          type: string
-          title: Status
-        error_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Message
-        recipients_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Recipients Count
-        sent_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Sent Count
-        failed_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Failed Count
+          title: Session Id
       type: object
       required:
-      - id
-      - schedule_id
-      - run_at
-      - status
-      - error_message
-      - recipients_count
-      - sent_count
-      - failed_count
-      title: ScheduleRunResponse
-      description: Response for a single schedule run.
+      - session_id
+      title: SessionToPdfRequest
+    RoleEnum:
+      type: string
+      enum:
+      - user
+      - assistant
+      - system
+      title: RoleEnum
     app__schemas__ai_playground__ai_playground__AgentConfig:
       properties:
         description:
@@ -1469,22 +2120,6 @@ components:
       required:
       - description
       title: AgentConfig
-    EmailRecipientType:
-      type: string
-      enum:
-      - specific_emails
-      - all_altimate_users
-      - team
-      title: EmailRecipientType
-    RemoveAgentFromProductionRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-      type: object
-      required:
-      - name
-      title: RemoveAgentFromProductionRequest
     ChatBlock:
       properties:
         id:
@@ -1514,588 +2149,6 @@ components:
       - timestamp
       - content
       title: ChatBlock
-    CreateAgentRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        prompt:
-          type: string
-          title: Prompt
-        config:
-          $ref: '#/components/schemas/app__schemas__ai_playground__ai_playground__AgentConfig'
-      type: object
-      required:
-      - name
-      - prompt
-      - config
-      title: CreateAgentRequest
-    ListAgentsResponse:
-      properties:
-        agents:
-          items:
-            $ref: '#/components/schemas/AgentListItem'
-          type: array
-          title: Agents
-      type: object
-      required:
-      - agents
-      title: ListAgentsResponse
-    SessionToPdfRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-      type: object
-      required:
-      - session_id
-      title: SessionToPdfRequest
-    SessionLifecycleListFilter:
-      type: string
-      enum:
-      - active
-      - archived
-      - all
-      title: SessionLifecycleListFilter
-    ScheduleRunsListResponse:
-      properties:
-        runs:
-          items:
-            $ref: '#/components/schemas/ScheduleRunResponse'
-          type: array
-          title: Runs
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - runs
-      - total
-      title: ScheduleRunsListResponse
-      description: Response containing a list of schedule runs.
-    SharedSessionResponse:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-        session_name:
-          type: string
-          title: Session Name
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        share_title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Share Title
-        turns:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Turns
-        is_read_only:
-          type: boolean
-          title: Is Read Only
-          default: true
-      type: object
-      required:
-      - session_id
-      - session_name
-      - created_at
-      - share_title
-      - turns
-      title: SharedSessionResponse
-      description: Response when viewing a shared session.
-    SessionStatusUpdateResponse:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-        status:
-          $ref: '#/components/schemas/SessionLifecycleStatus'
-      type: object
-      required:
-      - session_id
-      - status
-      title: SessionStatusUpdateResponse
-    RoleEnum:
-      type: string
-      enum:
-      - user
-      - assistant
-      - system
-      title: RoleEnum
-    PromptEnhancementResponse:
-      properties:
-        enhanced_prompt:
-          type: string
-          title: Enhanced Prompt
-      type: object
-      required:
-      - enhanced_prompt
-      title: PromptEnhancementResponse
-    Content:
-      properties:
-        id:
-          type: integer
-          title: Id
-        type:
-          $ref: '#/components/schemas/ContentType'
-        content:
-          anyOf:
-          - type: string
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Content
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        error_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Type
-      type: object
-      required:
-      - id
-      - type
-      - timestamp
-      title: Content
-    ShareLinkListResponse:
-      properties:
-        share_links:
-          items:
-            $ref: '#/components/schemas/ShareLinkResponse'
-          type: array
-          title: Share Links
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - share_links
-      - total
-      title: ShareLinkListResponse
-      description: Response containing a list of share links.
-    GetAgentResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        version:
-          type: integer
-          title: Version
-        prompt:
-          type: string
-          title: Prompt
-        config:
-          additionalProperties: true
-          type: object
-          title: Config
-        labels:
-          items:
-            type: string
-          type: array
-          title: Labels
-      type: object
-      required:
-      - name
-      - version
-      - prompt
-      - config
-      - labels
-      title: GetAgentResponse
-    SessionAskRequest:
-      properties:
-        message:
-          type: string
-          title: Message
-        context:
-          $ref: '#/components/schemas/Context'
-        session_id:
-          type: string
-          title: Session Id
-        mode:
-          type: string
-          title: Mode
-        datamates:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Datamates
-      type: object
-      required:
-      - message
-      - context
-      - session_id
-      - mode
-      title: SessionAskRequest
-    PromptEnhancementRequest:
-      properties:
-        user_prompt:
-          type: string
-          title: User Prompt
-        agent_name:
-          type: string
-          title: Agent Name
-      type: object
-      required:
-      - user_prompt
-      - agent_name
-      title: PromptEnhancementRequest
-    ContentScope:
-      type: string
-      enum:
-      - first_query
-      - last_answer
-      - full_chat
-      title: ContentScope
-      description: What content to include in the scheduled report.
-    AllSessionResponse:
-      properties:
-        sessions:
-          items:
-            $ref: '#/components/schemas/Session'
-          type: array
-          title: Sessions
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        page_size:
-          type: integer
-          title: Page Size
-        has_more:
-          type: boolean
-          title: Has More
-      type: object
-      required:
-      - sessions
-      - total
-      - page
-      - page_size
-      - has_more
-      title: AllSessionResponse
-    SessionLifecycleStatus:
-      type: string
-      enum:
-      - active
-      - archived
-      - deleted
-      title: SessionLifecycleStatus
-    Context:
-      properties:
-        connections:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Connections
-        knowledge:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Knowledge
-        uploaded_files:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/UploadedFile'
-            type: array
-          - type: 'null'
-          title: Uploaded Files
-        notifications:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Notifications
-      additionalProperties: true
-      type: object
-      title: Context
-    DestinationType:
-      type: string
-      enum:
-      - email
-      - slack
-      - multi
-      title: DestinationType
-      description: 'How to deliver the scheduled report.
-
-
-        Derived from `destination_config` at save time — `MULTI` means both
-
-        emails and a Slack webhook are configured on the same schedule.'
-    ShareToSlackRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-          description: Studio session ID to share
-        webhook_id:
-          type: integer
-          title: Webhook Id
-          description: Notification ID (from notifications table) for webhook delivery
-      type: object
-      required:
-      - session_id
-      - webhook_id
-      title: ShareToSlackRequest
-      description: Request to share a Studio session to Slack via webhook.
-    app__schemas__ai_playground__schedules__ScheduleUpdateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Name
-        content_scope:
-          anyOf:
-          - $ref: '#/components/schemas/ContentScope'
-          - type: 'null'
-        frequency:
-          anyOf:
-          - $ref: '#/components/schemas/ScheduleFrequency'
-          - type: 'null'
-        custom_cron:
-          anyOf:
-          - type: string
-            maxLength: 100
-          - type: 'null'
-          title: Custom Cron
-        hour:
-          anyOf:
-          - type: integer
-            maximum: 23.0
-            minimum: 0.0
-          - type: 'null'
-          title: Hour
-        day_of_week:
-          anyOf:
-          - type: integer
-            maximum: 6.0
-            minimum: 0.0
-          - type: 'null'
-          title: Day Of Week
-          description: Day of week for weekly frequency (0=Sunday … 6=Saturday). Only meaningful when the patched frequency is 'weekly'. When the patched frequency stays/becomes 'weekly' and this field is omitted, the existing weekday is preserved.
-        day_of_month:
-          anyOf:
-          - type: integer
-            maximum: 31.0
-            minimum: 1.0
-          - type: 'null'
-          title: Day Of Month
-          description: Day of month for monthly frequency (1-31). Only meaningful when the patched frequency is 'monthly'.
-        emails:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Emails
-        slack_webhook_id:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Slack Webhook Id
-        enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enabled
-      type: object
-      title: ScheduleUpdateRequest
-      description: "Request to update an existing schedule.\n\n``slack_webhook_id``:\n  - ``None`` (omitted) → leave webhook unchanged\n  - ``0`` → clear the current webhook\n  - any positive integer → set the webhook to that notification id"
-    ShareLinkResponse:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        session_id:
-          type: string
-          title: Session Id
-        access_type:
-          $ref: '#/components/schemas/ShareAccessType'
-        expires_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Expires At
-        created_by:
-          type: integer
-          title: Created By
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        share_url:
-          type: string
-          title: Share Url
-        allowed_users:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Allowed Users
-        allowed_teams:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Allowed Teams
-      type: object
-      required:
-      - id
-      - session_id
-      - access_type
-      - expires_at
-      - created_by
-      - created_at
-      - updated_at
-      - title
-      - share_url
-      title: ShareLinkResponse
-      description: Response containing share link details.
-    ShareLinkCreateRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-          description: Session ID to share
-        access_type:
-          $ref: '#/components/schemas/ShareAccessType'
-          description: Who can access this link
-          default: anyone
-        expires_in_days:
-          anyOf:
-          - type: integer
-            maximum: 365.0
-            minimum: 1.0
-          - type: 'null'
-          title: Expires In Days
-          description: Number of days until expiration. None = never expires
-        user_ids:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: User Ids
-          description: User IDs allowed to access (only for 'specific_people' access type)
-        team_ids:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Team Ids
-          description: Team (UserGroup) IDs allowed to access (only for 'team' access type)
-        title:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Title
-          description: Optional title for the share link
-      type: object
-      required:
-      - session_id
-      title: ShareLinkCreateRequest
-      description: Request to create a new share link.
-    UploadedFile:
-      properties:
-        filename:
-          type: string
-          title: Filename
-        content:
-          type: string
-          title: Content
-        content_type:
-          type: string
-          title: Content Type
-        size:
-          type: integer
-          title: Size
-      type: object
-      required:
-      - filename
-      - content
-      - content_type
-      - size
-      title: UploadedFile
-    CreateAgentResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        version:
-          type: integer
-          title: Version
-        status:
-          type: string
-          title: Status
-      type: object
-      required:
-      - name
-      - version
-      - status
-      title: CreateAgentResponse
-    SessionResponse:
-      properties:
-        session:
-          $ref: '#/components/schemas/Session'
-        turns:
-          items:
-            $ref: '#/components/schemas/ChatBlock'
-          type: array
-          title: Turns
-      type: object
-      required:
-      - session
-      - turns
-      title: SessionResponse
-    ShareToSlackResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      title: ShareToSlackResponse
-      description: Response after sharing to Slack.
     SessionToEmailRequest:
       properties:
         session_id:
@@ -2122,6 +2175,21 @@ components:
       required:
       - session_id
       title: SessionToEmailRequest
+    ShareToSlackResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ShareToSlackResponse
+      description: Response after sharing to Slack.
     HTTPValidationError:
       properties:
         detail:
@@ -2131,74 +2199,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    SessionStatusEnum:
-      type: string
-      enum:
-      - failed
-      - completed
-      - pending
-      - cancelled
-      title: SessionStatusEnum
-    ShareAccessType:
-      type: string
-      enum:
-      - anyone
-      - specific_people
-      - all_altimate_users
-      - team
-      title: ShareAccessType
-      description: Access type for share links.
-    Attachment:
-      properties:
-        id:
-          type: string
-          title: Id
-        attachment_name:
-          type: string
-          title: Attachment Name
-        file_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: File Type
-        s3_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: S3 Url
-        extracted_content:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Extracted Content
-        order:
-          type: integer
-          title: Order
-        attachment_type:
-          type: string
-          title: Attachment Type
-        attachment_reference_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Attachment Reference Id
-        file_size:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: File Size
-        created_on:
-          type: string
-          format: date-time
-          title: Created On
-      type: object
-      required:
-      - id
-      - attachment_name
-      - order
-      - attachment_type
-      - created_on
-      title: Attachment
   securitySchemes:
     HTTPBearer:
       type: http

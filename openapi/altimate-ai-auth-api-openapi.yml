@@ -543,23 +543,49 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UserRegisterIn:
+    ValidationError:
       properties:
-        name:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Name
-        password:
+          title: Message
+        type:
           type: string
-          title: Password
-        token:
-          type: string
-          title: Token
+          title: Error Type
       type: object
       required:
-      - name
-      - password
-      - token
-      title: UserRegisterIn
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SupertokensUserInfo:
+      properties:
+        email:
+          type: string
+          title: Email
+      type: object
+      required:
+      - email
+      title: SupertokensUserInfo
+    SSOUserRegisterIn:
+      properties:
+        firstName:
+          type: string
+          title: Firstname
+        lastName:
+          type: string
+          title: Lastname
+      type: object
+      required:
+      - firstName
+      - lastName
+      title: SSOUserRegisterIn
     UserLoginIn:
       properties:
         email:
@@ -574,56 +600,6 @@ components:
       - email
       - password
       title: UserLoginIn
-    ForgotPasswordIn:
-      properties:
-        email:
-          type: string
-          format: email
-          title: Email
-      type: object
-      required:
-      - email
-      title: ForgotPasswordIn
-    SSOUserRegisterIn:
-      properties:
-        firstName:
-          type: string
-          title: Firstname
-        lastName:
-          type: string
-          title: Lastname
-      type: object
-      required:
-      - firstName
-      - lastName
-      title: SSOUserRegisterIn
-    PermissionsFull:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        name:
-          type: string
-          title: Name
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        group:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Group
-      type: object
-      required:
-      - uuid
-      - name
-      - title
-      - description
-      title: PermissionsFull
     RolePermissionFull:
       properties:
         role_name:
@@ -651,51 +627,6 @@ components:
       - is_custom
       - permission
       title: RolePermissionFull
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ResetPasswordIn:
-      properties:
-        token:
-          type: string
-          title: Token
-        password:
-          type: string
-          title: Password
-      type: object
-      required:
-      - token
-      - password
-      title: ResetPasswordIn
-    GroupTenantsRequest:
-      properties:
-        tenants:
-          items:
-            type: string
-          type: array
-          title: Tenants
-      type: object
-      required:
-      - tenants
-      title: GroupTenantsRequest
     PatchTenantInfoRequest:
       properties:
         currency:
@@ -990,24 +921,84 @@ components:
           title: Enabletransparencyannotations
       type: object
       title: PatchTenantInfoRequest
-    SupertokensUserInfo:
+    ForgotPasswordIn:
       properties:
         email:
           type: string
+          format: email
           title: Email
       type: object
       required:
       - email
-      title: SupertokensUserInfo
-    HTTPValidationError:
+      title: ForgotPasswordIn
+    UserRegisterIn:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        name:
+          type: string
+          title: Name
+        password:
+          type: string
+          title: Password
+        token:
+          type: string
+          title: Token
       type: object
-      title: HTTPValidationError
+      required:
+      - name
+      - password
+      - token
+      title: UserRegisterIn
+    PermissionsFull:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
+      type: object
+      required:
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
+    ResetPasswordIn:
+      properties:
+        token:
+          type: string
+          title: Token
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - token
+      - password
+      title: ResetPasswordIn
+    GroupTenantsRequest:
+      properties:
+        tenants:
+          items:
+            type: string
+          type: array
+          title: Tenants
+      type: object
+      required:
+      - tenants
+      title: GroupTenantsRequest
     StandardResponse:
       properties:
         ok:
@@ -1077,6 +1068,15 @@ components:
       - is_onboarded
       - uuid
       title: UserLoginOut
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

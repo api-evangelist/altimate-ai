@@ -428,6 +428,74 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    MetabaseJWTRequest:
+      properties:
+        groups:
+          anyOf:
+          - items: {}
+            type: array
+          - type: 'null'
+          title: Groups
+          default: []
+        exp:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Exp
+      type: object
+      title: MetabaseJWTRequest
+    MetabaseDashboardDetail:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_at:
+          type: string
+          title: Created At
+        updated_at:
+          type: string
+          title: Updated At
+        tenant_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant Id
+      type: object
+      required:
+      - id
+      - name
+      - created_at
+      - updated_at
+      title: MetabaseDashboardDetail
     MetabaseDashboardSync:
       properties:
         id:
@@ -576,59 +644,15 @@ components:
           title: Common Name
       type: object
       title: Creator
-    DashboardsResponse:
+    MetabaseJWTResponse:
       properties:
-        dashboards:
-          items:
-            $ref: '#/components/schemas/MetabaseDashboard'
-          type: array
-          title: Dashboards
-        count:
-          type: integer
-          title: Count
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        page_size:
-          type: integer
-          title: Page Size
-        total_pages:
-          type: integer
-          title: Total Pages
-        has_next:
-          type: boolean
-          title: Has Next
-        has_previous:
-          type: boolean
-          title: Has Previous
-        available_tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Available Tags
-        available_collections:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/CollectionOption'
-            type: array
-          - type: 'null'
-          title: Available Collections
+        jwt:
+          type: string
+          title: Jwt
       type: object
       required:
-      - dashboards
-      - count
-      - total
-      - page
-      - page_size
-      - total_pages
-      - has_next
-      - has_previous
-      title: DashboardsResponse
+      - jwt
+      title: MetabaseJWTResponse
     MetabaseDashboard:
       properties:
         id:
@@ -716,6 +740,40 @@ components:
       - id
       - name
       title: MetabaseDashboard
+    CollectionOption:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - id
+      - name
+      - count
+      title: CollectionOption
+    SyncDashboardMetadataErrorResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        error:
+          type: string
+          title: Error
+        tenant:
+          type: string
+          title: Tenant
+      type: object
+      required:
+      - success
+      - error
+      - tenant
+      title: SyncDashboardMetadataErrorResponse
     SyncDashboardMetadataRequest:
       properties:
         tenant_name:
@@ -741,27 +799,43 @@ components:
       - dashboards
       - fetch_timestamp
       title: SyncDashboardMetadataRequest
-    ValidationError:
+    SyncDashboardMetadataResponse:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        success:
+          type: boolean
+          title: Success
+        message:
           type: string
           title: Message
-        type:
+        dashboards_synced:
+          type: integer
+          title: Dashboards Synced
+        dashboards_updated:
+          type: integer
+          title: Dashboards Updated
+        dashboards_deleted:
+          type: integer
+          title: Dashboards Deleted
+        total_dashboards:
+          type: integer
+          title: Total Dashboards
+        tenant:
           type: string
-          title: Error Type
+          title: Tenant
+        processing_time_seconds:
+          type: number
+          title: Processing Time Seconds
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - success
+      - message
+      - dashboards_synced
+      - dashboards_updated
+      - dashboards_deleted
+      - total_dashboards
+      - tenant
+      - processing_time_seconds
+      title: SyncDashboardMetadataResponse
     MetabaseCollectionSync:
       properties:
         id:
@@ -835,63 +909,59 @@ components:
       - id
       - name
       title: MetabaseCollectionSync
-    MetabaseJWTResponse:
+    DashboardsResponse:
       properties:
-        jwt:
-          type: string
-          title: Jwt
-      type: object
-      required:
-      - jwt
-      title: MetabaseJWTResponse
-    CollectionOption:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
+        dashboards:
+          items:
+            $ref: '#/components/schemas/MetabaseDashboard'
+          type: array
+          title: Dashboards
         count:
           type: integer
           title: Count
-      type: object
-      required:
-      - id
-      - name
-      - count
-      title: CollectionOption
-    MetabaseDashboardDetail:
-      properties:
-        id:
+        total:
           type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        description:
+          title: Total
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+        total_pages:
+          type: integer
+          title: Total Pages
+        has_next:
+          type: boolean
+          title: Has Next
+        has_previous:
+          type: boolean
+          title: Has Previous
+        available_tags:
           anyOf:
-          - type: string
+          - items:
+              type: string
+            type: array
           - type: 'null'
-          title: Description
-        created_at:
-          type: string
-          title: Created At
-        updated_at:
-          type: string
-          title: Updated At
-        tenant_id:
+          title: Available Tags
+        available_collections:
           anyOf:
-          - type: string
+          - items:
+              $ref: '#/components/schemas/CollectionOption'
+            type: array
           - type: 'null'
-          title: Tenant Id
+          title: Available Collections
       type: object
       required:
-      - id
-      - name
-      - created_at
-      - updated_at
-      title: MetabaseDashboardDetail
+      - dashboards
+      - count
+      - total
+      - page
+      - page_size
+      - total_pages
+      - has_next
+      - has_previous
+      title: DashboardsResponse
     HTTPValidationError:
       properties:
         detail:
@@ -901,76 +971,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    SyncDashboardMetadataErrorResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        error:
-          type: string
-          title: Error
-        tenant:
-          type: string
-          title: Tenant
-      type: object
-      required:
-      - success
-      - error
-      - tenant
-      title: SyncDashboardMetadataErrorResponse
-    SyncDashboardMetadataResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        message:
-          type: string
-          title: Message
-        dashboards_synced:
-          type: integer
-          title: Dashboards Synced
-        dashboards_updated:
-          type: integer
-          title: Dashboards Updated
-        dashboards_deleted:
-          type: integer
-          title: Dashboards Deleted
-        total_dashboards:
-          type: integer
-          title: Total Dashboards
-        tenant:
-          type: string
-          title: Tenant
-        processing_time_seconds:
-          type: number
-          title: Processing Time Seconds
-      type: object
-      required:
-      - success
-      - message
-      - dashboards_synced
-      - dashboards_updated
-      - dashboards_deleted
-      - total_dashboards
-      - tenant
-      - processing_time_seconds
-      title: SyncDashboardMetadataResponse
-    MetabaseJWTRequest:
-      properties:
-        groups:
-          anyOf:
-          - items: {}
-            type: array
-          - type: 'null'
-          title: Groups
-          default: []
-        exp:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Exp
-      type: object
-      title: MetabaseJWTRequest
   securitySchemes:
     HTTPBearer:
       type: http

@@ -98,6 +98,41 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    MaskDataResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: MaskDataResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     MaskData:
       properties:
         label:
@@ -121,20 +156,6 @@ components:
       - label
       - masking_type
       title: MaskData
-    MaskDataResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: MaskDataResponse
     GetMaskDataResponse:
       properties:
         mask_data:
@@ -147,27 +168,6 @@ components:
       required:
       - mask_data
       title: GetMaskDataResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     MaskDataRequest:
       properties:
         mask_data:
@@ -179,6 +179,13 @@ components:
       required:
       - mask_data
       title: MaskDataRequest
+    MaskingType:
+      type: string
+      enum:
+      - allow
+      - mask
+      - block
+      title: MaskingType
     HTTPValidationError:
       properties:
         detail:
@@ -188,13 +195,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    MaskingType:
-      type: string
-      enum:
-      - allow
-      - mask
-      - block
-      title: MaskingType
   securitySchemes:
     HTTPBearer:
       type: http

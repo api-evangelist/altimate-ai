@@ -652,79 +652,40 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    app__schemas__lineage__Tag:
+    TableSchemaResponse:
       properties:
-        name:
+        table:
           type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        rk:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rk
-      type: object
-      required:
-      - name
-      - description
-      title: Tag
-    DbtInfo:
-      properties:
-        project_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Project Name
-        model_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Model Name
-        full_refresh:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Full Refresh
-        last_refreshed:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Refreshed
-        last_run_cost:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Run Cost
-        last_run_duration:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Run Duration
-      type: object
-      title: DbtInfo
-    ValidationError:
-      properties:
-        loc:
+          title: Table
+        columns:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/SchemaMetadata'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Columns
+        purpose:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Purpose
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - table
+      - columns
+      title: TableSchemaResponse
+    FQNRequest:
+      properties:
+        fqn:
+          type: string
+          title: Fqn
+      type: object
+      required:
+      - fqn
+      title: FQNRequest
     ColumnLineageEdge:
       properties:
         source:
@@ -744,6 +705,95 @@ components:
       - source
       - target
       title: ColumnLineageEdge
+    SchemaMetadata:
+      properties:
+        table_schema_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Table Schema Id
+        rk:
+          type: string
+          title: Rk
+        name:
+          type: string
+          title: Name
+        datatype:
+          type: string
+          title: Datatype
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tags:
+          items:
+            $ref: '#/components/schemas/app__schemas__lineage__Tag'
+          type: array
+          title: Tags
+        can_lineage_expand:
+          type: boolean
+          title: Can Lineage Expand
+        is_transformation:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Transformation
+          default: false
+      type: object
+      required:
+      - rk
+      - name
+      - datatype
+      - tags
+      - can_lineage_expand
+      title: SchemaMetadata
+    Edge:
+      properties:
+        src:
+          type: string
+          title: Src
+        dst:
+          type: string
+          title: Dst
+      type: object
+      required:
+      - src
+      - dst
+      title: Edge
+    SnowflakeStageResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        name:
+          type: string
+          title: Name
+        stage_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Url
+        stage_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Region
+        stage_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Type
+        stage_owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Owner
+      type: object
+      required:
+      - rk
+      - name
+      title: SnowflakeStageResponse
     TableNodeResponse:
       properties:
         table:
@@ -809,132 +859,72 @@ components:
       - downstream_count
       - label
       title: TableNodeResponse
-    FQNRequest:
+    TestMetadata:
       properties:
-        fqn:
-          type: string
-          title: Fqn
-      type: object
-      required:
-      - fqn
-      title: FQNRequest
-    SchemaMetadata:
-      properties:
-        table_schema_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Table Schema Id
-        rk:
-          type: string
-          title: Rk
         name:
           type: string
           title: Name
-        datatype:
-          type: string
-          title: Datatype
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        tags:
+      type: object
+      required:
+      - name
+      title: TestMetadata
+    ConnectedColumnsRequest:
+      properties:
+        column_fqns:
           items:
-            $ref: '#/components/schemas/app__schemas__lineage__Tag'
+            type: string
           type: array
-          title: Tags
-        can_lineage_expand:
-          type: boolean
-          title: Can Lineage Expand
-        is_transformation:
+          title: Column Fqns
+        edges:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Edge'
+            type: array
+          - type: 'null'
+          title: Edges
+          default: []
+        nodes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Nodes
+          default: []
+        upstreamExpansion:
           anyOf:
           - type: boolean
           - type: 'null'
-          title: Is Transformation
+          title: Upstreamexpansion
+          default: false
+        showIndirectEdges:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Showindirectedges
           default: false
       type: object
       required:
-      - rk
-      - name
-      - datatype
-      - tags
-      - can_lineage_expand
-      title: SchemaMetadata
-    Edge:
+      - column_fqns
+      title: ConnectedColumnsRequest
+    app__schemas__lineage__Tag:
       properties:
-        src:
-          type: string
-          title: Src
-        dst:
-          type: string
-          title: Dst
-      type: object
-      required:
-      - src
-      - dst
-      title: Edge
-    DbtInfoResponse:
-      properties:
-        dbt_info:
-          anyOf:
-          - $ref: '#/components/schemas/DbtInfo'
-          - type: 'null'
-      type: object
-      title: DbtInfoResponse
-    ColumnLineageResponse:
-      properties:
-        highlight_edges:
-          items:
-            $ref: '#/components/schemas/ColumnLineageEdge'
-          type: array
-          title: Highlight Edges
-      type: object
-      required:
-      - highlight_edges
-      title: ColumnLineageResponse
-    SnowflakeStageResponse:
-      properties:
-        rk:
-          type: string
-          title: Rk
         name:
           type: string
           title: Name
-        stage_url:
+        description:
+          type: string
+          title: Description
+        rk:
           anyOf:
           - type: string
           - type: 'null'
-          title: Stage Url
-        stage_region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Stage Region
-        stage_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Stage Type
-        stage_owner:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Stage Owner
+          title: Rk
       type: object
       required:
-      - rk
       - name
-      title: SnowflakeStageResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - description
+      title: Tag
     ConnectedAssets:
       properties:
         assets:
@@ -949,15 +939,27 @@ components:
       - assets
       title: ConnectedAssets
       description: Response containing list of connected assets
-    TestMetadata:
+    ValidationError:
       properties:
-        name:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Name
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - name
-      title: TestMetadata
+      - loc
+      - msg
+      - type
+      title: ValidationError
     TableAsset:
       properties:
         asset_rk:
@@ -1015,45 +1017,6 @@ components:
       - label
       title: TableAsset
       description: Table asset with table-specific fields
-    ConnectedColumnsRequest:
-      properties:
-        column_fqns:
-          items:
-            type: string
-          type: array
-          title: Column Fqns
-        edges:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Edge'
-            type: array
-          - type: 'null'
-          title: Edges
-          default: []
-        nodes:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Nodes
-          default: []
-        upstreamExpansion:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Upstreamexpansion
-          default: false
-        showIndirectEdges:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Showindirectedges
-          default: false
-      type: object
-      required:
-      - column_fqns
-      title: ConnectedColumnsRequest
     ConnectedTables:
       properties:
         tables:
@@ -1065,31 +1028,59 @@ components:
       required:
       - tables
       title: ConnectedTables
-    TableSchemaResponse:
+    ColumnLineageResponse:
       properties:
-        table:
-          type: string
-          title: Table
-        columns:
+        highlight_edges:
           items:
-            $ref: '#/components/schemas/SchemaMetadata'
+            $ref: '#/components/schemas/ColumnLineageEdge'
           type: array
-          title: Columns
-        purpose:
+          title: Highlight Edges
+      type: object
+      required:
+      - highlight_edges
+      title: ColumnLineageResponse
+    DbtInfoResponse:
+      properties:
+        dbt_info:
+          anyOf:
+          - $ref: '#/components/schemas/DbtInfo'
+          - type: 'null'
+      type: object
+      title: DbtInfoResponse
+    DbtInfo:
+      properties:
+        project_name:
           anyOf:
           - type: string
           - type: 'null'
-          title: Purpose
-        last_modified_by:
+          title: Project Name
+        model_name:
           anyOf:
-          - type: integer
+          - type: string
           - type: 'null'
-          title: Last Modified By
+          title: Model Name
+        full_refresh:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Full Refresh
+        last_refreshed:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Refreshed
+        last_run_cost:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Run Cost
+        last_run_duration:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Run Duration
       type: object
-      required:
-      - table
-      - columns
-      title: TableSchemaResponse
+      title: DbtInfo
     DashboardAsset:
       properties:
         asset_rk:
@@ -1146,6 +1137,15 @@ components:
       - dashboard_name
       title: DashboardAsset
       description: Dashboard asset with dashboard-specific fields
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

@@ -314,6 +314,158 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    RoleAddIn:
+      properties:
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        permissions:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Permissions
+      type: object
+      required:
+      - title
+      - description
+      - permissions
+      title: RoleAddIn
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PermissionResponse:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        group:
+          type: string
+          title: Group
+        title:
+          type: string
+          title: Title
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - uuid
+      - group
+      - title
+      - name
+      - description
+      title: PermissionResponse
+    RolePermissionFull:
+      properties:
+        role_name:
+          type: string
+          title: Role Name
+        role_description:
+          type: string
+          title: Role Description
+        role_title:
+          type: string
+          title: Role Title
+        is_custom:
+          type: boolean
+          title: Is Custom
+        permission:
+          items:
+            $ref: '#/components/schemas/PermissionsFull'
+          type: array
+          title: Permission
+      type: object
+      required:
+      - role_name
+      - role_description
+      - role_title
+      - is_custom
+      - permission
+      title: RolePermissionFull
+    RoleEditIn:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        permissions:
+          anyOf:
+          - items:
+              type: string
+              format: uuid
+            type: array
+          - type: 'null'
+          title: Permissions
+      type: object
+      title: RoleEditIn
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    PermissionsFull:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
+      type: object
+      required:
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
     Page_RoleSummaryResponse_:
       properties:
         items:
@@ -352,80 +504,6 @@ components:
       - page
       - size
       title: Page[RoleSummaryResponse]
-    PermissionsFull:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        name:
-          type: string
-          title: Name
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        group:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Group
-      type: object
-      required:
-      - uuid
-      - name
-      - title
-      - description
-      title: PermissionsFull
-    RoleAddIn:
-      properties:
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        permissions:
-          items:
-            type: string
-            format: uuid
-          type: array
-          title: Permissions
-      type: object
-      required:
-      - title
-      - description
-      - permissions
-      title: RoleAddIn
-    RolePermissionFull:
-      properties:
-        role_name:
-          type: string
-          title: Role Name
-        role_description:
-          type: string
-          title: Role Description
-        role_title:
-          type: string
-          title: Role Title
-        is_custom:
-          type: boolean
-          title: Is Custom
-        permission:
-          items:
-            $ref: '#/components/schemas/PermissionsFull'
-          type: array
-          title: Permission
-      type: object
-      required:
-      - role_name
-      - role_description
-      - role_title
-      - is_custom
-      - permission
-      title: RolePermissionFull
     RoleSummaryResponse:
       properties:
         uuid:
@@ -452,75 +530,6 @@ components:
       - is_custom
       - count
       title: RoleSummaryResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    RoleEditIn:
-      properties:
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        permissions:
-          anyOf:
-          - items:
-              type: string
-              format: uuid
-            type: array
-          - type: 'null'
-          title: Permissions
-      type: object
-      title: RoleEditIn
-    PermissionResponse:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        group:
-          type: string
-          title: Group
-        title:
-          type: string
-          title: Title
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - uuid
-      - group
-      - title
-      - name
-      - description
-      title: PermissionResponse
     HTTPValidationError:
       properties:
         detail:
@@ -530,15 +539,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
   securitySchemes:
     HTTPBearer:
       type: http

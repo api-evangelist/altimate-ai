@@ -845,219 +845,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    RecurrencePattern:
-      properties:
-        days:
-          items:
-            type: string
-          type: array
-          title: Days
-        end_date:
-          type: string
-          format: date-time
-          title: End Date
-      type: object
-      required:
-      - days
-      - end_date
-      title: RecurrencePattern
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    app__schemas__warehouse_schedules__ScheduleUpdateRequest:
-      properties:
-        warehouse_configuration:
-          anyOf:
-          - $ref: '#/components/schemas/WarehouseConfig'
-          - type: 'null'
-        start_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Start Time
-        end_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: End Time
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-        recurrence_pattern:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Recurrence Pattern
-        schedule_type:
-          type: string
-          title: Schedule Type
-          description: 'One of: manual, recommendation, block'
-      type: object
-      required:
-      - schedule_type
-      title: ScheduleUpdateRequest
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    ScheduleMetadataResponse:
-      properties:
-        schedule:
-          $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
-        recommendations:
-          items:
-            $ref: '#/components/schemas/RecommendationResponse'
-          type: array
-          title: Recommendations
-        warehouse_defaults:
-          anyOf:
-          - $ref: '#/components/schemas/WarehouseDefaultsResponse'
-          - type: 'null'
-      type: object
-      required:
-      - schedule
-      - recommendations
-      title: ScheduleMetadataResponse
-    ScheduleEventHistoryResponse:
-      properties:
-        event_id:
-          type: integer
-          title: Event Id
-        event_type:
-          type: string
-          title: Event Type
-        comment:
-          type: string
-          title: Comment
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        created_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Created By
-      type: object
-      required:
-      - event_id
-      - event_type
-      - comment
-      - created_at
-      title: ScheduleEventHistoryResponse
-    ScheduleConflictInfo:
-      properties:
-        conflict_type:
-          type: string
-          title: Conflict Type
-        conflicting_schedule_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Conflicting Schedule Id
-        conflicting_schedule_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Conflicting Schedule Type
-        conflicting_start_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Conflicting Start Time
-        conflicting_end_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Conflicting End Time
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - conflict_type
-      - message
-      title: ScheduleConflictInfo
-      description: 'A single conflict blocking a schedule write or approval.
-
-
-        `message` is user-presentable (UI type label + UTC time range); the
-
-        structured fields let clients render the conflicting schedule in the
-
-        user''s own timezone/format.'
-    ScheduleType:
-      type: string
-      enum:
-      - recommendation
-      - manual
-      - block
-      - auto_resize
-      - backoff
-      title: ScheduleType
-    app__schemas__warehouse_schedules__AutoResizingMode:
-      type: string
-      enum:
-      - dynamic
-      - scheduled
-      title: AutoResizingMode
-    ActionType:
-      type: string
-      enum:
-      - upsize
-      - downsize
-      - no_change
-      title: ActionType
-    WarehouseDefaultsResponse:
-      properties:
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        configuration:
-          additionalProperties: true
-          type: object
-          title: Configuration
-        default_schedule:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Default Schedule
-      type: object
-      required:
-      - warehouse_name
-      - configuration
-      title: WarehouseDefaultsResponse
     app__schemas__warehouse_schedules__ScheduleResponse:
       properties:
         schedule_id:
@@ -1123,28 +910,14 @@ components:
       - created_by
       - created_at
       title: ScheduleResponse
-    WarehouseSize:
-      type: string
-      enum:
-      - X-Small
-      - Small
-      - Medium
-      - Large
-      - X-Large
-      - 2X-Large
-      - 3X-Large
-      - 4X-Large
-      - 5X-Large
-      - 6X-Large
-      title: WarehouseSize
-    CombinedScheduleResponse:
+    ApplyRecommendedEventsRequest:
       properties:
-        schedule_id:
-          type: integer
-          title: Schedule Id
         warehouse_name:
           type: string
           title: Warehouse Name
+        instance_id:
+          type: string
+          title: Instance Id
         start_time:
           type: string
           format: date-time
@@ -1153,73 +926,20 @@ components:
           type: string
           format: date-time
           title: End Time
-        configuration:
-          $ref: '#/components/schemas/WarehouseConfig'
-        reasons:
-          items:
-            $ref: '#/components/schemas/ReasonEntry'
-          type: array
-          title: Reasons
-        created_by:
-          type: integer
-          title: Created By
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_by:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Updated By
-        updated_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Updated At
-        schedule_type:
-          $ref: '#/components/schemas/ScheduleType'
-        status:
-          $ref: '#/components/schemas/ScheduleStatus'
-        action:
-          anyOf:
-          - $ref: '#/components/schemas/ActionType'
-          - type: 'null'
       type: object
       required:
-      - schedule_id
       - warehouse_name
+      - instance_id
       - start_time
       - end_time
-      - configuration
-      - reasons
-      - created_by
-      - created_at
-      - schedule_type
-      - status
-      title: CombinedScheduleResponse
-      description: 'Response model for combined warehouse schedules.
-
-        Includes detailed start/end times, warehouse size, and reasons with timestamps.'
-    ScheduleApprovalRequest:
-      properties:
-        reason:
-          type: string
-          title: Reason
-          description: Reason for approval/rejection
-      type: object
-      required:
-      - reason
-      title: ScheduleApprovalRequest
-    WarehouseConfig:
-      properties:
-        warehouse_size:
-          anyOf:
-          - $ref: '#/components/schemas/WarehouseSize'
-          - type: 'null'
-      type: object
-      title: WarehouseConfig
+      title: ApplyRecommendedEventsRequest
+    ActionType:
+      type: string
+      enum:
+      - upsize
+      - downsize
+      - no_change
+      title: ActionType
     RecommendationResponse:
       properties:
         recommendation_id:
@@ -1249,6 +969,128 @@ components:
       - recommendation_data
       - created_at
       title: RecommendationResponse
+    ScheduleMetadataResponse:
+      properties:
+        schedule:
+          $ref: '#/components/schemas/app__schemas__warehouse_schedules__ScheduleResponse'
+        recommendations:
+          items:
+            $ref: '#/components/schemas/RecommendationResponse'
+          type: array
+          title: Recommendations
+        warehouse_defaults:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseDefaultsResponse'
+          - type: 'null'
+      type: object
+      required:
+      - schedule
+      - recommendations
+      title: ScheduleMetadataResponse
+    app__schemas__warehouse_schedules__ScheduleCreateRequest:
+      properties:
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        instance_id:
+          type: string
+          title: Instance Id
+        warehouse_configuration:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseConfig'
+          - type: 'null'
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        schedule_type:
+          type: string
+          title: Schedule Type
+          description: 'One of: manual, recommendation, block'
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        recurrence_pattern:
+          anyOf:
+          - $ref: '#/components/schemas/RecurrencePattern'
+          - type: 'null'
+      type: object
+      required:
+      - warehouse_name
+      - instance_id
+      - start_time
+      - end_time
+      - schedule_type
+      title: ScheduleCreateRequest
+    WarehouseDefaultsResponse:
+      properties:
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        configuration:
+          additionalProperties: true
+          type: object
+          title: Configuration
+        default_schedule:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Default Schedule
+      type: object
+      required:
+      - warehouse_name
+      - configuration
+      title: WarehouseDefaultsResponse
+    ScheduleConflictInfo:
+      properties:
+        conflict_type:
+          type: string
+          title: Conflict Type
+        conflicting_schedule_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Conflicting Schedule Id
+        conflicting_schedule_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conflicting Schedule Type
+        conflicting_start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Conflicting Start Time
+        conflicting_end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Conflicting End Time
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - conflict_type
+      - message
+      title: ScheduleConflictInfo
+      description: 'A single conflict blocking a schedule write or approval.
+
+
+        `message` is user-presentable (UI type label + UTC time range); the
+
+        structured fields let clients render the conflicting schedule in the
+
+        user''s own timezone/format.'
     app__schemas__warehouse_schedules__ScheduleListResponse:
       properties:
         schedule_id:
@@ -1322,6 +1164,43 @@ components:
       - created_by
       - created_at
       title: ScheduleListResponse
+    app__schemas__warehouse_schedules__ScheduleUpdateRequest:
+      properties:
+        warehouse_configuration:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseConfig'
+          - type: 'null'
+        start_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Time
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        recurrence_pattern:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Recurrence Pattern
+        schedule_type:
+          type: string
+          title: Schedule Type
+          description: 'One of: manual, recommendation, block'
+      type: object
+      required:
+      - schedule_type
+      title: ScheduleUpdateRequest
     ReasonEntry:
       properties:
         timestamp:
@@ -1337,25 +1216,30 @@ components:
       - reason
       title: ReasonEntry
       description: A single reason entry with timestamp information.
-    ScheduleStatus:
+    ScheduleApprovalRequest:
+      properties:
+        reason:
+          type: string
+          title: Reason
+          description: Reason for approval/rejection
+      type: object
+      required:
+      - reason
+      title: ScheduleApprovalRequest
+    app__schemas__warehouse_schedules__AutoResizingMode:
       type: string
       enum:
-      - pending
-      - approved
-      - rejected
-      title: ScheduleStatus
-    app__schemas__warehouse_schedules__ScheduleCreateRequest:
+      - dynamic
+      - scheduled
+      title: AutoResizingMode
+    CombinedScheduleResponse:
       properties:
+        schedule_id:
+          type: integer
+          title: Schedule Id
         warehouse_name:
           type: string
           title: Warehouse Name
-        instance_id:
-          type: string
-          title: Instance Id
-        warehouse_configuration:
-          anyOf:
-          - $ref: '#/components/schemas/WarehouseConfig'
-          - type: 'null'
         start_time:
           type: string
           format: date-time
@@ -1364,27 +1248,64 @@ components:
           type: string
           format: date-time
           title: End Time
-        schedule_type:
+        configuration:
+          $ref: '#/components/schemas/WarehouseConfig'
+        reasons:
+          items:
+            $ref: '#/components/schemas/ReasonEntry'
+          type: array
+          title: Reasons
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
           type: string
-          title: Schedule Type
-          description: 'One of: manual, recommendation, block'
-        reason:
+          format: date-time
+          title: Created At
+        updated_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Updated By
+        updated_at:
           anyOf:
           - type: string
+            format: date-time
           - type: 'null'
-          title: Reason
-        recurrence_pattern:
+          title: Updated At
+        schedule_type:
+          $ref: '#/components/schemas/ScheduleType'
+        status:
+          $ref: '#/components/schemas/ScheduleStatus'
+        action:
           anyOf:
-          - $ref: '#/components/schemas/RecurrencePattern'
+          - $ref: '#/components/schemas/ActionType'
           - type: 'null'
       type: object
       required:
+      - schedule_id
       - warehouse_name
-      - instance_id
       - start_time
       - end_time
+      - configuration
+      - reasons
+      - created_by
+      - created_at
       - schedule_type
-      title: ScheduleCreateRequest
+      - status
+      title: CombinedScheduleResponse
+      description: 'Response model for combined warehouse schedules.
+
+        Includes detailed start/end times, warehouse size, and reasons with timestamps.'
+    ScheduleType:
+      type: string
+      enum:
+      - recommendation
+      - manual
+      - block
+      - auto_resize
+      - backoff
+      title: ScheduleType
     BulkApprovalResponse:
       properties:
         approved:
@@ -1402,15 +1323,101 @@ components:
       - approved
       - skipped
       title: BulkApprovalResponse
-    HTTPValidationError:
+    StandardResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        ok:
+          type: boolean
+          title: Ok
       type: object
-      title: HTTPValidationError
+      required:
+      - ok
+      title: StandardResponse
+    WarehouseSize:
+      type: string
+      enum:
+      - X-Small
+      - Small
+      - Medium
+      - Large
+      - X-Large
+      - 2X-Large
+      - 3X-Large
+      - 4X-Large
+      - 5X-Large
+      - 6X-Large
+      title: WarehouseSize
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WarehouseConfig:
+      properties:
+        warehouse_size:
+          anyOf:
+          - $ref: '#/components/schemas/WarehouseSize'
+          - type: 'null'
+      type: object
+      title: WarehouseConfig
+    RecurrencePattern:
+      properties:
+        days:
+          items:
+            type: string
+          type: array
+          title: Days
+        end_date:
+          type: string
+          format: date-time
+          title: End Date
+      type: object
+      required:
+      - days
+      - end_date
+      title: RecurrencePattern
+    ScheduleEventHistoryResponse:
+      properties:
+        event_id:
+          type: integer
+          title: Event Id
+        event_type:
+          type: string
+          title: Event Type
+        comment:
+          type: string
+          title: Comment
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+      type: object
+      required:
+      - event_id
+      - event_type
+      - comment
+      - created_at
+      title: ScheduleEventHistoryResponse
     SkippedScheduleResponse:
       properties:
         schedule_id:
@@ -1440,29 +1447,22 @@ components:
       - conflicts
       title: SkippedScheduleResponse
       description: A pending schedule left unapproved by bulk approval, with why.
-    ApplyRecommendedEventsRequest:
+    ScheduleStatus:
+      type: string
+      enum:
+      - pending
+      - approved
+      - rejected
+      title: ScheduleStatus
+    HTTPValidationError:
       properties:
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        instance_id:
-          type: string
-          title: Instance Id
-        start_time:
-          type: string
-          format: date-time
-          title: Start Time
-        end_time:
-          type: string
-          format: date-time
-          title: End Time
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - warehouse_name
-      - instance_id
-      - start_time
-      - end_time
-      title: ApplyRecommendedEventsRequest
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

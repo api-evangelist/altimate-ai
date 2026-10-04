@@ -1247,6 +1247,110 @@ components:
       - label
       - value
       title: BIUserSummaryItem
+    Page_BIDashboardItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BIDashboardItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[BIDashboardItem]
+    BIInsightStreamRequest:
+      properties:
+        dashboard_id:
+          type: string
+          title: Dashboard Id
+        view:
+          type: string
+          title: View
+      type: object
+      required:
+      - dashboard_id
+      - view
+      title: BIInsightStreamRequest
+    AuditTrailEventType:
+      type: string
+      enum:
+      - assist
+      - guard_rail
+      - memory_created
+      - memory_retrieved
+      title: AuditTrailEventType
+    AuditTrailBatchPayload:
+      properties:
+        events:
+          items:
+            $ref: '#/components/schemas/AuditTrailPayload'
+          type: array
+          title: Events
+      type: object
+      required:
+      - events
+      title: AuditTrailBatchPayload
+    TableauProject:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        parent_project_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Project Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        content_permissions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Permissions
+      type: object
+      required:
+      - id
+      - name
+      title: TableauProject
+      description: Response model for Tableau project information.
     BIDashboardItem:
       properties:
         rk:
@@ -1379,208 +1483,37 @@ components:
       - refreshes_30d
       - tableauTags
       title: BIDashboardItem
-    ValidationError:
+    AuditTrailPayload:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
         type:
+          $ref: '#/components/schemas/AuditTrailEventType'
+        tool_name:
           type: string
-          title: Error Type
+          title: Tool Name
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+        teammate_id:
+          type: string
+          title: Teammate Id
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
       type: object
       required:
-      - loc
-      - msg
       - type
-      title: ValidationError
-    DashboardInsightItem:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-      type: object
-      required:
-      - name
-      title: DashboardInsightItem
-      description: Dashboard insight with name and description
-    TableauProject:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        parent_project_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Parent Project Id
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Path
-        content_permissions:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content Permissions
-      type: object
-      required:
-      - id
-      - name
-      title: TableauProject
-      description: Response model for Tableau project information.
-    AuditTrailEventType:
-      type: string
-      enum:
-      - assist
-      - guard_rail
-      - memory_created
-      - memory_retrieved
-      title: AuditTrailEventType
-    AuditTrailBatchPayload:
-      properties:
-        events:
-          items:
-            $ref: '#/components/schemas/AuditTrailPayload'
-          type: array
-          title: Events
-      type: object
-      required:
-      - events
-      title: AuditTrailBatchPayload
-    DashboardAccessActivity:
-      properties:
-        date:
-          type: string
-          title: Date
-        count:
-          type: integer
-          title: Count
-      type: object
-      required:
-      - date
-      - count
-      title: DashboardAccessActivity
-    BISummaryItem:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: integer
-          title: Value
-        info:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Info
-      type: object
-      required:
-      - label
-      - value
-      title: BISummaryItem
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    TableauProjectsRequest:
-      properties:
-        url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Url
-        site_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Site Name
-        pat_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Pat Name
-        pat_secret:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Pat Secret
-        datastore_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Datastore Id
-        source_site_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Source Site Name
-      type: object
-      title: TableauProjectsRequest
-      description: Request model for fetching Tableau projects before datastore creation.
-    Page_DashboardRefreshActivity_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DashboardRefreshActivity'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[DashboardRefreshActivity]
+      - tool_name
+      - payload
+      - teammate_id
+      - timestamp
+      title: AuditTrailPayload
     Page_BIUserReportItem_:
       properties:
         items:
@@ -1619,6 +1552,147 @@ components:
       - page
       - size
       title: Page[BIUserReportItem]
+    DashboardRefreshActivity:
+      properties:
+        date:
+          type: string
+          title: Date
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - date
+      - count
+      title: DashboardRefreshActivity
+    UserInsightItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        reasons:
+          items:
+            type: string
+          type: array
+          title: Reasons
+      type: object
+      required:
+      - name
+      - reasons
+      title: UserInsightItem
+      description: Structured insight with name and reasons
+    Page_DashboardAccessActivity_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DashboardAccessActivity'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DashboardAccessActivity]
+    BISummaryItem:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: integer
+          title: Value
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+      type: object
+      required:
+      - label
+      - value
+      title: BISummaryItem
+    TableauProjectsRequest:
+      properties:
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Site Name
+        pat_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Name
+        pat_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pat Secret
+        datastore_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Datastore Id
+        source_site_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Site Name
+      type: object
+      title: TableauProjectsRequest
+      description: Request model for fetching Tableau projects before datastore creation.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     BIUserReportItem:
       properties:
         email:
@@ -1686,74 +1760,7 @@ components:
       - insights
       title: BIUserReportItem
       description: User report item representing user activity and creation patterns
-    Page_BIDashboardItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/BIDashboardItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[BIDashboardItem]
-    BIInsightStreamRequest:
-      properties:
-        dashboard_id:
-          type: string
-          title: Dashboard Id
-        view:
-          type: string
-          title: View
-      type: object
-      required:
-      - dashboard_id
-      - view
-      title: BIInsightStreamRequest
-    UserInsightItem:
-      properties:
-        name:
-          type: string
-          title: Name
-        reasons:
-          items:
-            type: string
-          type: array
-          title: Reasons
-      type: object
-      required:
-      - name
-      - reasons
-      title: UserInsightItem
-      description: Structured insight with name and reasons
-    DashboardRefreshActivity:
+    DashboardAccessActivity:
       properties:
         date:
           type: string
@@ -1765,12 +1772,27 @@ components:
       required:
       - date
       - count
-      title: DashboardRefreshActivity
-    Page_DashboardAccessActivity_:
+      title: DashboardAccessActivity
+    DashboardInsightItem:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - name
+      title: DashboardInsightItem
+      description: Dashboard insight with name and description
+    Page_DashboardRefreshActivity_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/DashboardAccessActivity'
+            $ref: '#/components/schemas/DashboardRefreshActivity'
           type: array
           title: Items
         total:
@@ -1803,38 +1825,16 @@ components:
       - total
       - page
       - size
-      title: Page[DashboardAccessActivity]
-    AuditTrailPayload:
+      title: Page[DashboardRefreshActivity]
+    HTTPValidationError:
       properties:
-        type:
-          $ref: '#/components/schemas/AuditTrailEventType'
-        tool_name:
-          type: string
-          title: Tool Name
-        integration_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Id
-        payload:
-          additionalProperties: true
-          type: object
-          title: Payload
-        teammate_id:
-          type: string
-          title: Teammate Id
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - type
-      - tool_name
-      - payload
-      - teammate_id
-      - timestamp
-      title: AuditTrailPayload
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

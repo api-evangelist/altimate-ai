@@ -750,90 +750,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SubscriptionPreviewResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/PreviewItem'
-          type: array
-          title: Items
-          description: List of preview items to render
-        generated_at:
-          type: string
-          title: Generated At
-          description: ISO 8601 timestamp when preview was generated
-      type: object
-      required:
-      - items
-      - generated_at
-      title: SubscriptionPreviewResponse
-      description: Response schema for subscription preview.
-    SubscriptionUpdateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 1000
-          - type: 'null'
-          title: Description
-        subscription_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Subscription Type
-          description: 'Type of subscription: ''alert'' or ''report'''
-        entity_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Entity Type
-          description: Entity type (e.g., 'warehouse', 'query', 'accounts')
-        entity_config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Entity Config
-        metric_config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metric Config
-        schedule_config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Schedule Config
-        notifier_config:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Notifier Config
-        alert_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Alert Message
-        status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Status
-      type: object
-      title: SubscriptionUpdateRequest
-      description: Request schema for updating an existing subscription.
     SubscriptionTemplatesResponse:
       properties:
         items:
@@ -852,6 +768,47 @@ components:
       - total
       title: SubscriptionTemplatesResponse
       description: Response schema for subscription templates list.
+    SubscriptionPreviewRequest:
+      properties:
+        subscription_type:
+          type: string
+          title: Subscription Type
+          description: 'Subscription type: ''alert'' or ''report'''
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+          description: Subscription name for preview display
+          default: Preview
+        metric_config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metric Config
+          description: Metric configuration for alert preview. Required for alerts, ignored for reports.
+      type: object
+      required:
+      - subscription_type
+      title: SubscriptionPreviewRequest
+      description: Request schema for subscription preview.
+      example:
+        metric_config:
+          category: warehouse
+          filters:
+          - key: warehouse
+            value:
+            - COMPUTE_WH
+          metric_name: warehouse_daily_cost
+          params:
+            aggregation: sum
+            comparison_type: relative_value
+            date_range: previous_day
+            threshold_type: exceeds
+            threshold_value: 1000
+        name: My Cost Alert
+        subscription_type: alert
     MetricDefinitionResponse:
       properties:
         name:
@@ -1008,91 +965,111 @@ components:
         - absolute
         - percentage
         unit: USD
-    SubscriptionExecutionEvent:
+    MetricFilterOptionsResponse:
       properties:
-        id:
-          type: integer
-          title: Id
-        created_at:
+        filter_name:
           type: string
-          format: date-time
-          title: Created At
+          title: Filter Name
+          description: The filter dimension name
+        options:
+          items:
+            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
+          type: array
+          title: Options
+          description: Available options for this filter
+        total:
+          type: integer
+          title: Total
+          description: Total number of options
+      type: object
+      required:
+      - filter_name
+      - options
+      - total
+      title: MetricFilterOptionsResponse
+      description: Response schema for metric filter options (values for a specific filter dimension).
+    app__schemas__subscriptions__FilterOption:
+      properties:
+        label:
+          type: string
+          title: Label
+          description: Display label for the option
         value:
-          anyOf:
-          - type: number
-          - type: 'null'
+          type: string
           title: Value
-        message:
+          description: Value to use when filtering
+      type: object
+      required:
+      - label
+      - value
+      title: FilterOption
+      description: Schema for a single filter option.
+    SubscriptionUpdateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 1000
+          - type: 'null'
+          title: Description
+        subscription_type:
           anyOf:
           - type: string
           - type: 'null'
-          title: Message
+          title: Subscription Type
+          description: 'Type of subscription: ''alert'' or ''report'''
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+          description: Entity type (e.g., 'warehouse', 'query', 'accounts')
+        entity_config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Entity Config
+        metric_config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metric Config
+        schedule_config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Schedule Config
+        notifier_config:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Notifier Config
+        alert_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alert Message
         status:
           anyOf:
           - type: string
           - type: 'null'
           title: Status
-        attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Attributes
       type: object
-      required:
-      - id
-      - created_at
-      title: SubscriptionExecutionEvent
-      description: Schema for a single subscription execution event.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    SubscriptionHistoryResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SubscriptionHistoryItem'
-          type: array
-          title: Items
-          description: List of execution history items
-        total:
-          type: integer
-          title: Total
-          description: Total number of history items
-        page:
-          type: integer
-          title: Page
-          description: Current page number
-          default: 1
-        size:
-          type: integer
-          title: Size
-          description: Number of items per page
-          default: 10
-      type: object
-      required:
-      - items
-      - total
-      title: SubscriptionHistoryResponse
-      description: Response schema for subscription execution history.
+      title: SubscriptionUpdateRequest
+      description: Request schema for updating an existing subscription.
     SubscriptionCreateRequest:
       properties:
         name:
@@ -1192,51 +1169,6 @@ components:
           timezone: UTC
         status: active
         subscription_type: alert
-    PreviewItem:
-      properties:
-        type:
-          type: string
-          title: Type
-          description: 'Item type: markdown or chart'
-        content:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content
-          description: Markdown content if type is markdown
-        chart:
-          anyOf:
-          - $ref: '#/components/schemas/PreviewChartData'
-          - type: 'null'
-          description: Chart data if type is chart
-      type: object
-      required:
-      - type
-      title: PreviewItem
-      description: Schema for a single preview item (markdown or chart).
-    MetricFilterOptionsResponse:
-      properties:
-        filter_name:
-          type: string
-          title: Filter Name
-          description: The filter dimension name
-        options:
-          items:
-            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
-          type: array
-          title: Options
-          description: Available options for this filter
-        total:
-          type: integer
-          title: Total
-          description: Total number of options
-      type: object
-      required:
-      - filter_name
-      - options
-      - total
-      title: MetricFilterOptionsResponse
-      description: Response schema for metric filter options (values for a specific filter dimension).
     SubscriptionSummaryResponse:
       properties:
         totalSubscriptions:
@@ -1258,135 +1190,101 @@ components:
       - reportsSent
       title: SubscriptionSummaryResponse
       description: Response schema for subscription summary statistics.
-    HTTPValidationError:
+    SubscriptionHistoryResponse:
       properties:
-        detail:
+        items:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/SubscriptionHistoryItem'
           type: array
-          title: Detail
+          title: Items
+          description: List of execution history items
+        total:
+          type: integer
+          title: Total
+          description: Total number of history items
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        size:
+          type: integer
+          title: Size
+          description: Number of items per page
+          default: 10
       type: object
-      title: HTTPValidationError
-    SubscriptionHistoryItem:
+      required:
+      - items
+      - total
+      title: SubscriptionHistoryResponse
+      description: Response schema for subscription execution history.
+    Page_SubscriptionResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SubscriptionResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[SubscriptionResponse]
+    SubscriptionExecutionRun:
       properties:
         id:
           type: string
           title: Id
-          description: Unique identifier for this history entry
         status:
           type: string
           title: Status
-          description: 'Execution status: triggered, pending, failed, skipped'
-        triggered_at:
+        timestamp:
           type: string
-          title: Triggered At
-          description: ISO 8601 timestamp when the subscription was triggered
-        message:
-          type: string
-          title: Message
-          description: Message describing the execution result
-        destinations:
-          items:
-            type: string
-          type: array
-          title: Destinations
-          description: Destinations where the notification was sent
-        execution_time:
+          format: date-time
+          title: Timestamp
+        alert_triggered:
           anyOf:
-          - type: number
+          - type: boolean
           - type: 'null'
-          title: Execution Time
-          description: Execution time in seconds
-        error_message:
+          title: Alert Triggered
+        message:
           anyOf:
           - type: string
           - type: 'null'
-          title: Error Message
-          description: Error message if execution failed
+          title: Message
       type: object
       required:
       - id
       - status
-      - triggered_at
-      - message
-      - destinations
-      title: SubscriptionHistoryItem
-      description: Schema for a single subscription execution history item.
-    SubscriptionFiltersResponse:
-      properties:
-        subscription_types:
-          items:
-            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
-          type: array
-          title: Subscription Types
-          description: Available subscription types (alert, report)
-        categories:
-          items:
-            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
-          type: array
-          title: Categories
-          description: Available metric categories
-        created_by:
-          items:
-            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
-          type: array
-          title: Created By
-          description: Users who have created subscriptions
-        destinations:
-          items:
-            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
-          type: array
-          title: Destinations
-          description: Available notification destinations
-      type: object
-      required:
-      - subscription_types
-      - categories
-      - created_by
-      - destinations
-      title: SubscriptionFiltersResponse
-      description: Response schema for subscription filter options.
-    SubscriptionPreviewRequest:
-      properties:
-        subscription_type:
-          type: string
-          title: Subscription Type
-          description: 'Subscription type: ''alert'' or ''report'''
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-          description: Subscription name for preview display
-          default: Preview
-        metric_config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metric Config
-          description: Metric configuration for alert preview. Required for alerts, ignored for reports.
-      type: object
-      required:
-      - subscription_type
-      title: SubscriptionPreviewRequest
-      description: Request schema for subscription preview.
-      example:
-        metric_config:
-          category: warehouse
-          filters:
-          - key: warehouse
-            value:
-            - COMPUTE_WH
-          metric_name: warehouse_daily_cost
-          params:
-            aggregation: sum
-            comparison_type: relative_value
-            date_range: previous_day
-            threshold_type: exceeds
-            threshold_value: 1000
-        name: My Cost Alert
-        subscription_type: alert
+      - timestamp
+      title: SubscriptionExecutionRun
+      description: Schema for a subscription execution run (for UI display).
     SubscriptionResponse:
       properties:
         id:
@@ -1519,51 +1417,182 @@ components:
       - updated_by
       title: SubscriptionResponse
       description: Response schema for subscription details.
-    SubscriptionExecutionRun:
+    SubscriptionPreviewResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PreviewItem'
+          type: array
+          title: Items
+          description: List of preview items to render
+        generated_at:
+          type: string
+          title: Generated At
+          description: ISO 8601 timestamp when preview was generated
+      type: object
+      required:
+      - items
+      - generated_at
+      title: SubscriptionPreviewResponse
+      description: Response schema for subscription preview.
+    PreviewItem:
+      properties:
+        type:
+          type: string
+          title: Type
+          description: 'Item type: markdown or chart'
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+          description: Markdown content if type is markdown
+        chart:
+          anyOf:
+          - $ref: '#/components/schemas/PreviewChartData'
+          - type: 'null'
+          description: Chart data if type is chart
+      type: object
+      required:
+      - type
+      title: PreviewItem
+      description: Schema for a single preview item (markdown or chart).
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SubscriptionFiltersResponse:
+      properties:
+        subscription_types:
+          items:
+            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
+          type: array
+          title: Subscription Types
+          description: Available subscription types (alert, report)
+        categories:
+          items:
+            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
+          type: array
+          title: Categories
+          description: Available metric categories
+        created_by:
+          items:
+            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
+          type: array
+          title: Created By
+          description: Users who have created subscriptions
+        destinations:
+          items:
+            $ref: '#/components/schemas/app__schemas__subscriptions__FilterOption'
+          type: array
+          title: Destinations
+          description: Available notification destinations
+      type: object
+      required:
+      - subscription_types
+      - categories
+      - created_by
+      - destinations
+      title: SubscriptionFiltersResponse
+      description: Response schema for subscription filter options.
+    SubscriptionHistoryItem:
       properties:
         id:
           type: string
           title: Id
+          description: Unique identifier for this history entry
         status:
           type: string
           title: Status
-        timestamp:
+          description: 'Execution status: triggered, pending, failed, skipped'
+        triggered_at:
+          type: string
+          title: Triggered At
+          description: ISO 8601 timestamp when the subscription was triggered
+        message:
+          type: string
+          title: Message
+          description: Message describing the execution result
+        destinations:
+          items:
+            type: string
+          type: array
+          title: Destinations
+          description: Destinations where the notification was sent
+        execution_time:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Execution Time
+          description: Execution time in seconds
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+          description: Error message if execution failed
+      type: object
+      required:
+      - id
+      - status
+      - triggered_at
+      - message
+      - destinations
+      title: SubscriptionHistoryItem
+      description: Schema for a single subscription execution history item.
+    SubscriptionExecutionEvent:
+      properties:
+        id:
+          type: integer
+          title: Id
+        created_at:
           type: string
           format: date-time
-          title: Timestamp
-        alert_triggered:
+          title: Created At
+        value:
           anyOf:
-          - type: boolean
+          - type: number
           - type: 'null'
-          title: Alert Triggered
+          title: Value
         message:
           anyOf:
           - type: string
           - type: 'null'
           title: Message
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
       type: object
       required:
       - id
-      - status
-      - timestamp
-      title: SubscriptionExecutionRun
-      description: Schema for a subscription execution run (for UI display).
-    app__schemas__subscriptions__FilterOption:
-      properties:
-        label:
-          type: string
-          title: Label
-          description: Display label for the option
-        value:
-          type: string
-          title: Value
-          description: Value to use when filtering
-      type: object
-      required:
-      - label
-      - value
-      title: FilterOption
-      description: Schema for a single filter option.
+      - created_at
+      title: SubscriptionExecutionEvent
+      description: Schema for a single subscription execution event.
     SubscriptionTemplate:
       properties:
         id:
@@ -1672,44 +1701,15 @@ components:
       - y_key
       title: PreviewChartData
       description: Schema for chart data in preview.
-    Page_SubscriptionResponse_:
+    HTTPValidationError:
       properties:
-        items:
+        detail:
           items:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
+          title: Detail
       type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[SubscriptionResponse]
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

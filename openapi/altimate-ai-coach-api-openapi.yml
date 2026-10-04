@@ -273,18 +273,54 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SubmitTrainingDocRequest:
+    ConfirmTrainingDocRequest:
       properties:
         content:
           type: string
           title: Content
+        category:
+          $ref: '#/components/schemas/ContentCategory'
         taskLabel:
           $ref: '#/components/schemas/TaskLabel'
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        isModelDoc:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ismodeldoc
+          default: false
       type: object
       required:
       - content
+      - category
       - taskLabel
-      title: SubmitTrainingDocRequest
+      title: ConfirmTrainingDocRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     UpdateTrainingDocRequest:
       properties:
         content:
@@ -317,54 +353,39 @@ components:
           title: Metadata
       type: object
       title: UpdateTrainingDocRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ConfirmTrainingDocRequest:
+    TaskLabel:
+      type: string
+      enum:
+      - DocGen
+      - LineageExplorer
+      - ChartBot
+      - SqlExpert
+      title: TaskLabel
+    PersonalizationScope:
+      type: string
+      enum:
+      - UserSpecific
+      - AllUsers
+      title: PersonalizationScope
+    ContentCategory:
+      type: string
+      enum:
+      - TermClarification
+      - GeneralGuidelines
+      - BusinessExplanation
+      title: ContentCategory
+    SubmitTrainingDocRequest:
       properties:
         content:
           type: string
           title: Content
-        category:
-          $ref: '#/components/schemas/ContentCategory'
         taskLabel:
           $ref: '#/components/schemas/TaskLabel'
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-        isModelDoc:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Ismodeldoc
-          default: false
       type: object
       required:
       - content
-      - category
       - taskLabel
-      title: ConfirmTrainingDocRequest
+      title: SubmitTrainingDocRequest
     HTTPValidationError:
       properties:
         detail:
@@ -374,27 +395,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    ContentCategory:
-      type: string
-      enum:
-      - TermClarification
-      - GeneralGuidelines
-      - BusinessExplanation
-      title: ContentCategory
-    PersonalizationScope:
-      type: string
-      enum:
-      - UserSpecific
-      - AllUsers
-      title: PersonalizationScope
-    TaskLabel:
-      type: string
-      enum:
-      - DocGen
-      - LineageExplorer
-      - ChartBot
-      - SqlExpert
-      title: TaskLabel
   securitySchemes:
     HTTPBearer:
       type: http

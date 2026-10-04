@@ -555,17 +555,27 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    DBTConfigChecks:
+    ValidationError:
       properties:
-        checks:
+        loc:
           items:
-            $ref: '#/components/schemas/DBTConfigCheck'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Checks
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - checks
-      title: DBTConfigChecks
+      - loc
+      - msg
+      - type
+      title: ValidationError
     Page_DBTConfigResponse_:
       properties:
         items:
@@ -621,6 +631,17 @@ components:
       - config_names
       - users
       title: DBTConfigFilterResponse
+    DBTConfigChecks:
+      properties:
+        checks:
+          items:
+            $ref: '#/components/schemas/DBTConfigCheck'
+          type: array
+          title: Checks
+      type: object
+      required:
+      - checks
+      title: DBTConfigChecks
     DBTConfigCheck:
       properties:
         name:
@@ -654,50 +675,15 @@ components:
       - description
       - files_required
       title: DBTConfigCheck
-    DBTConfigCheckResponse:
+    StandardResponse:
       properties:
-        names:
-          items:
-            type: string
-          type: array
-          title: Names
-        check_types:
-          items:
-            type: string
-          type: array
-          title: Check Types
-        files_required:
-          items:
-            type: string
-          type: array
-          title: Files Required
+        ok:
+          type: boolean
+          title: Ok
       type: object
       required:
-      - names
-      - check_types
-      - files_required
-      title: DBTConfigCheckResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - ok
+      title: StandardResponse
     DBTConfigRequest:
       properties:
         name:
@@ -723,60 +709,29 @@ components:
       - config
       - config_schema
       title: DBTConfigRequest
-    DBTConfigResponse:
+    DBTConfigCheckResponse:
       properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        config:
-          additionalProperties: true
-          type: object
-          title: Config
-        config_schema:
+        names:
           items:
-            additionalProperties: true
-            type: object
+            type: string
           type: array
-          title: Config Schema
-        created_on:
-          type: string
-          title: Created On
-        user:
-          $ref: '#/components/schemas/UserIndexResponse'
+          title: Names
+        check_types:
+          items:
+            type: string
+          type: array
+          title: Check Types
+        files_required:
+          items:
+            type: string
+          type: array
+          title: Files Required
       type: object
       required:
-      - id
-      - name
-      - description
-      - config
-      - config_schema
-      - created_on
-      - user
-      title: DBTConfigResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
+      - names
+      - check_types
+      - files_required
+      title: DBTConfigCheckResponse
     UserIndexResponse:
       properties:
         id:
@@ -878,6 +833,51 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
+    DBTConfigResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+        config_schema:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Config Schema
+        created_on:
+          type: string
+          title: Created On
+        user:
+          $ref: '#/components/schemas/UserIndexResponse'
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - config
+      - config_schema
+      - created_on
+      - user
+      title: DBTConfigResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

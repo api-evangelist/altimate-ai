@@ -377,6 +377,48 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SavingsGraphItem:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: Period date (ISO format)
+        autonomous_savings:
+          type: number
+          title: Autonomous Savings
+          description: Autonomous savings (always 0 for Databricks)
+          default: 0
+        assisted_savings:
+          type: number
+          title: Assisted Savings
+          description: Assisted savings from opportunities
+          default: 0
+      type: object
+      required:
+      - date
+      title: SavingsGraphItem
+      description: Single data point in savings graph.
     TrackedAssistedSavingsResponse:
       properties:
         total_assisted_savings:
@@ -427,6 +469,23 @@ components:
       type: object
       title: AssistedSavingsResponse
       description: Response model for assisted savings endpoint.
+    AutonomousSavingsResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/SavingsGraphItem'
+          type: array
+          title: Graph
+          description: Graph data (always empty for Databricks)
+          default: []
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: AutonomousSavingsResponse
+      description: Response model for autonomous savings endpoint.
     SavingsOverallResponse:
       properties:
         total_savings:
@@ -468,36 +527,6 @@ components:
       - total_savings
       title: SavingsOverallResponse
       description: Response model for overall savings endpoint.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     SavingsOverallEstimateResponse:
       properties:
         total_savings:
@@ -559,44 +588,15 @@ components:
       - total_savings
       title: SavingsOverallEstimateResponse
       description: Response model for overall savings estimate endpoint (future projections).
-    SavingsGraphItem:
+    HTTPValidationError:
       properties:
-        date:
-          type: string
-          title: Date
-          description: Period date (ISO format)
-        autonomous_savings:
-          type: number
-          title: Autonomous Savings
-          description: Autonomous savings (always 0 for Databricks)
-          default: 0
-        assisted_savings:
-          type: number
-          title: Assisted Savings
-          description: Assisted savings from opportunities
-          default: 0
-      type: object
-      required:
-      - date
-      title: SavingsGraphItem
-      description: Single data point in savings graph.
-    AutonomousSavingsResponse:
-      properties:
-        graph:
+        detail:
           items:
-            $ref: '#/components/schemas/SavingsGraphItem'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Graph
-          description: Graph data (always empty for Databricks)
-          default: []
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
+          title: Detail
       type: object
-      title: AutonomousSavingsResponse
-      description: Response model for autonomous savings endpoint.
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http
