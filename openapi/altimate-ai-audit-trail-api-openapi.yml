@@ -93,17 +93,44 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AuditTrailBatchPayload:
+    ValidationError:
       properties:
-        events:
+        loc:
           items:
-            $ref: '#/components/schemas/AuditTrailPayload'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Events
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - events
-      title: AuditTrailBatchPayload
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AuditTrailEventType:
+      type: string
+      enum:
+      - assist
+      - guard_rail
+      - memory_created
+      - memory_retrieved
+      title: AuditTrailEventType
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     AuditTrailPayload:
       properties:
         type:
@@ -135,44 +162,17 @@ components:
       - teammate_id
       - timestamp
       title: AuditTrailPayload
-    ValidationError:
+    AuditTrailBatchPayload:
       properties:
-        loc:
+        events:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/AuditTrailPayload'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Events
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AuditTrailEventType:
-      type: string
-      enum:
-      - assist
-      - guard_rail
-      - memory_created
-      - memory_retrieved
-      title: AuditTrailEventType
+      - events
+      title: AuditTrailBatchPayload
   securitySchemes:
     HTTPBearer:
       type: http

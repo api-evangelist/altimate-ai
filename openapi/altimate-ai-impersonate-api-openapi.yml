@@ -64,43 +64,6 @@ components:
       - msg
       - type
       title: ValidationError
-    UserImpersonateInfo:
-      properties:
-        email:
-          type: string
-          format: email
-          title: Email
-      type: object
-      required:
-      - email
-      title: UserImpersonateInfo
-    RolePermissionFull:
-      properties:
-        role_name:
-          type: string
-          title: Role Name
-        role_description:
-          type: string
-          title: Role Description
-        role_title:
-          type: string
-          title: Role Title
-        is_custom:
-          type: boolean
-          title: Is Custom
-        permission:
-          items:
-            $ref: '#/components/schemas/PermissionsFull'
-          type: array
-          title: Permission
-      type: object
-      required:
-      - role_name
-      - role_description
-      - role_title
-      - is_custom
-      - permission
-      title: RolePermissionFull
     PermissionsFull:
       properties:
         uuid:
@@ -128,6 +91,15 @@ components:
       - title
       - description
       title: PermissionsFull
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     UserLoginOut:
       properties:
         id:
@@ -188,15 +160,43 @@ components:
       - is_onboarded
       - uuid
       title: UserLoginOut
-    HTTPValidationError:
+    RolePermissionFull:
       properties:
-        detail:
+        role_name:
+          type: string
+          title: Role Name
+        role_description:
+          type: string
+          title: Role Description
+        role_title:
+          type: string
+          title: Role Title
+        is_custom:
+          type: boolean
+          title: Is Custom
+        permission:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/PermissionsFull'
           type: array
-          title: Detail
+          title: Permission
       type: object
-      title: HTTPValidationError
+      required:
+      - role_name
+      - role_description
+      - role_title
+      - is_custom
+      - permission
+      title: RolePermissionFull
+    UserImpersonateInfo:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+      - email
+      title: UserImpersonateInfo
   securitySchemes:
     HTTPBearer:
       type: http

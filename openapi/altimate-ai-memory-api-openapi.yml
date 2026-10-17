@@ -227,22 +227,31 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    Message:
+    MemoryOptions:
       properties:
-        content:
-          type: string
-          title: Content
-        role:
-          type: string
-          enum:
-          - user
-          - assistant
-          title: Role
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        org_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Org Name
+        org_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Org Id
+        project_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Id
       type: object
-      required:
-      - content
-      - role
-      title: Message
+      title: MemoryOptions
     ValidationError:
       properties:
         loc:
@@ -273,6 +282,15 @@ components:
       required:
       - message
       title: MemoryResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     AddMemoryRequest:
       properties:
         messages:
@@ -288,40 +306,22 @@ components:
       required:
       - messages
       title: AddMemoryRequest
-    MemoryOptions:
+    Message:
       properties:
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-        org_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Org Name
-        org_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Org Id
-        project_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Project Id
+        content:
+          type: string
+          title: Content
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+          title: Role
       type: object
-      title: MemoryOptions
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      required:
+      - content
+      - role
+      title: Message
   securitySchemes:
     HTTPBearer:
       type: http

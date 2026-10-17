@@ -417,68 +417,32 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SSOAuditEventListResponse:
+    PreviewRoleMatch:
       properties:
-        events:
-          items:
-            $ref: '#/components/schemas/SSOAuditEventResponse'
-          type: array
-          title: Events
-          default: []
-        total:
-          type: integer
-          title: Total
-          default: 0
-      type: object
-      title: SSOAuditEventListResponse
-    BulkUploadFailure:
-      properties:
-        row:
-          type: integer
-          title: Row
-        reason:
+        role:
           type: string
-          title: Reason
+          title: Role
+        source_group:
+          type: string
+          title: Source Group
       type: object
       required:
-      - row
-      - reason
-      title: BulkUploadFailure
-    SSOPreviewResponse:
+      - role
+      - source_group
+      title: PreviewRoleMatch
+    PreviewTeamMatch:
       properties:
-        team_results:
-          items:
-            $ref: '#/components/schemas/PreviewTeamMatch'
-          type: array
-          title: Team Results
-          default: []
-        role_result:
-          anyOf:
-          - $ref: '#/components/schemas/PreviewRoleMatch'
-          - type: 'null'
-        matched_teams:
+        user_group_id:
           type: integer
-          title: Matched Teams
-          default: 0
-        unmatched_count:
-          type: integer
-          title: Unmatched Count
-          default: 0
-      type: object
-      title: SSOPreviewResponse
-    SSOPreviewRequest:
-      properties:
-        external_groups:
-          items:
-            type: string
-          type: array
-          maxItems: 200
-          minItems: 1
-          title: External Groups
+          title: User Group Id
+        source_group:
+          type: string
+          title: Source Group
       type: object
       required:
-      - external_groups
-      title: SSOPreviewRequest
+      - user_group_id
+      - source_group
+      title: PreviewTeamMatch
     SSOAuditEventResponse:
       properties:
         id:
@@ -586,51 +550,6 @@ components:
       - mapping_type
       - target_id
       title: SSOGroupMappingCreate
-    SSOBulkMappingUploadResponse:
-      properties:
-        total_processed:
-          type: integer
-          title: Total Processed
-          default: 0
-        created:
-          type: integer
-          title: Created
-          default: 0
-        failures:
-          items:
-            $ref: '#/components/schemas/BulkUploadFailure'
-          type: array
-          title: Failures
-          default: []
-      type: object
-      title: SSOBulkMappingUploadResponse
-    PreviewRoleMatch:
-      properties:
-        role:
-          type: string
-          title: Role
-        source_group:
-          type: string
-          title: Source Group
-      type: object
-      required:
-      - role
-      - source_group
-      title: PreviewRoleMatch
-    SSOExternalGroupListResponse:
-      properties:
-        groups:
-          items:
-            $ref: '#/components/schemas/SSOExternalGroupResponse'
-          type: array
-          title: Groups
-          default: []
-        total:
-          type: integer
-          title: Total
-          default: 0
-      type: object
-      title: SSOExternalGroupListResponse
     Body_upload_mappings_sso_group_mappings_mappings_upload_post:
       properties:
         file:
@@ -641,19 +560,6 @@ components:
       required:
       - file
       title: Body_upload_mappings_sso_group_mappings_mappings_upload_post
-    PreviewTeamMatch:
-      properties:
-        user_group_id:
-          type: integer
-          title: User Group Id
-        source_group:
-          type: string
-          title: Source Group
-      type: object
-      required:
-      - user_group_id
-      - source_group
-      title: PreviewTeamMatch
     SSOBulkUploadResponse:
       properties:
         total_processed:
@@ -680,6 +586,234 @@ components:
           default: []
       type: object
       title: SSOBulkUploadResponse
+    SSOExternalGroupResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        group_name:
+          type: string
+          title: Group Name
+        source:
+          type: string
+          title: Source
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - group_name
+      - source
+      - created_at
+      title: SSOExternalGroupResponse
+    SSOAuditEventListResponse:
+      properties:
+        events:
+          items:
+            $ref: '#/components/schemas/SSOAuditEventResponse'
+          type: array
+          title: Events
+          default: []
+        total:
+          type: integer
+          title: Total
+          default: 0
+      type: object
+      title: SSOAuditEventListResponse
+    SSOPreviewRequest:
+      properties:
+        external_groups:
+          items:
+            type: string
+          type: array
+          maxItems: 200
+          minItems: 1
+          title: External Groups
+      type: object
+      required:
+      - external_groups
+      title: SSOPreviewRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SSOBulkMappingUploadResponse:
+      properties:
+        total_processed:
+          type: integer
+          title: Total Processed
+          default: 0
+        created:
+          type: integer
+          title: Created
+          default: 0
+        failures:
+          items:
+            $ref: '#/components/schemas/BulkUploadFailure'
+          type: array
+          title: Failures
+          default: []
+      type: object
+      title: SSOBulkMappingUploadResponse
+    SSOGroupMappingUpdate:
+      properties:
+        external_group_identifier:
+          anyOf:
+          - type: string
+            maxLength: 500
+            minLength: 1
+          - type: 'null'
+          title: External Group Identifier
+        match_type:
+          anyOf:
+          - type: string
+            enum:
+            - exact
+            - prefix
+            - contains
+            - suffix
+          - type: 'null'
+          title: Match Type
+        target_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Target Id
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+      type: object
+      title: SSOGroupMappingUpdate
+    SSOTeamSyncConfigResponse:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Provider
+          default: other
+        group_claim_name:
+          type: string
+          title: Group Claim Name
+          default: groups
+        group_prefix_filter:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group Prefix Filter
+        enable_graph_api_fallback:
+          type: boolean
+          title: Enable Graph Api Fallback
+          default: false
+        graph_api_tenant_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Graph Api Tenant Id
+        enable_okta_api_fallback:
+          type: boolean
+          title: Enable Okta Api Fallback
+          default: false
+        okta_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Okta Domain
+      type: object
+      title: SSOTeamSyncConfigResponse
+    Body_upload_external_groups_sso_group_mappings_external_groups_upload_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_external_groups_sso_group_mappings_external_groups_upload_post
+    BulkUploadFailure:
+      properties:
+        row:
+          type: integer
+          title: Row
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - row
+      - reason
+      title: BulkUploadFailure
+    SSOPreviewResponse:
+      properties:
+        team_results:
+          items:
+            $ref: '#/components/schemas/PreviewTeamMatch'
+          type: array
+          title: Team Results
+          default: []
+        role_result:
+          anyOf:
+          - $ref: '#/components/schemas/PreviewRoleMatch'
+          - type: 'null'
+        matched_teams:
+          type: integer
+          title: Matched Teams
+          default: 0
+        unmatched_count:
+          type: integer
+          title: Unmatched Count
+          default: 0
+      type: object
+      title: SSOPreviewResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SSOExternalGroupListResponse:
+      properties:
+        groups:
+          items:
+            $ref: '#/components/schemas/SSOExternalGroupResponse'
+          type: array
+          title: Groups
+          default: []
+        total:
+          type: integer
+          title: Total
+          default: 0
+      type: object
+      title: SSOExternalGroupListResponse
     SSOGroupMappingResponse:
       properties:
         id:
@@ -782,140 +916,6 @@ components:
           title: Okta Domain
       type: object
       title: SSOTeamSyncConfigUpdate
-    SSOGroupMappingUpdate:
-      properties:
-        external_group_identifier:
-          anyOf:
-          - type: string
-            maxLength: 500
-            minLength: 1
-          - type: 'null'
-          title: External Group Identifier
-        match_type:
-          anyOf:
-          - type: string
-            enum:
-            - exact
-            - prefix
-            - contains
-            - suffix
-          - type: 'null'
-          title: Match Type
-        target_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Target Id
-        is_active:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Active
-      type: object
-      title: SSOGroupMappingUpdate
-    Body_upload_external_groups_sso_group_mappings_external_groups_upload_post:
-      properties:
-        file:
-          type: string
-          format: binary
-          title: File
-      type: object
-      required:
-      - file
-      title: Body_upload_external_groups_sso_group_mappings_external_groups_upload_post
-    SSOExternalGroupResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        group_name:
-          type: string
-          title: Group Name
-        source:
-          type: string
-          title: Source
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - group_name
-      - source
-      - created_at
-      title: SSOExternalGroupResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    SSOTeamSyncConfigResponse:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        provider:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Provider
-          default: other
-        group_claim_name:
-          type: string
-          title: Group Claim Name
-          default: groups
-        group_prefix_filter:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Group Prefix Filter
-        enable_graph_api_fallback:
-          type: boolean
-          title: Enable Graph Api Fallback
-          default: false
-        graph_api_tenant_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Graph Api Tenant Id
-        enable_okta_api_fallback:
-          type: boolean
-          title: Enable Okta Api Fallback
-          default: false
-        okta_domain:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Okta Domain
-      type: object
-      title: SSOTeamSyncConfigResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

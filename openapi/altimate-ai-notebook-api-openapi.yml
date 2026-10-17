@@ -637,6 +637,12 @@ components:
       - msg
       - type
       title: ValidationError
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
     AddPreconfiguredNotebookRequest:
       properties:
         name:
@@ -739,50 +745,6 @@ components:
       - updated_on
       - tags
       title: AllPreconfiguredNotebookResponse
-    AllNotebookResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        data:
-          additionalProperties: true
-          type: object
-          title: Data
-        description:
-          type: string
-          title: Description
-        created_on:
-          type: string
-          format: date-time
-          title: Created On
-        updated_on:
-          type: string
-          format: date-time
-          title: Updated On
-        tags:
-          items:
-            $ref: '#/components/schemas/NotebookTagResponse'
-          type: array
-          title: Tags
-        privacy:
-          $ref: '#/components/schemas/PrivacySetting'
-        created_by_user:
-          $ref: '#/components/schemas/UserIndexResponse'
-      type: object
-      required:
-      - id
-      - name
-      - data
-      - description
-      - created_on
-      - updated_on
-      - tags
-      - privacy
-      - created_by_user
-      title: AllNotebookResponse
     NotebookTagResponse:
       properties:
         id:
@@ -796,6 +758,15 @@ components:
       - id
       - tag
       title: NotebookTagResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     StandardResponse:
       properties:
         ok:
@@ -906,21 +877,50 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
-    HTTPValidationError:
+    AllNotebookResponse:
       properties:
-        detail:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        data:
+          additionalProperties: true
+          type: object
+          title: Data
+        description:
+          type: string
+          title: Description
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+        updated_on:
+          type: string
+          format: date-time
+          title: Updated On
+        tags:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/NotebookTagResponse'
           type: array
-          title: Detail
+          title: Tags
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+        created_by_user:
+          $ref: '#/components/schemas/UserIndexResponse'
       type: object
-      title: HTTPValidationError
+      required:
+      - id
+      - name
+      - data
+      - description
+      - created_on
+      - updated_on
+      - tags
+      - privacy
+      - created_by_user
+      title: AllNotebookResponse
   securitySchemes:
     HTTPBearer:
       type: http

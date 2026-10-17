@@ -739,33 +739,37 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AllPlansResponse:
+    DowngradeFeedback:
       properties:
-        plans:
-          items:
-            $ref: '#/components/schemas/app__schemas__payments__PlansResponse'
-          type: array
-          title: Plans
-        current_tenure:
+        feedback:
           type: string
-          title: Current Tenure
-        current_execuiton_count:
-          type: integer
-          title: Current Execuiton Count
-        current_price:
-          type: integer
-          title: Current Price
-        subscription_management_allowed:
-          type: boolean
-          title: Subscription Management Allowed
+          title: Feedback
       type: object
       required:
-      - plans
-      - current_tenure
-      - current_execuiton_count
-      - current_price
-      - subscription_management_allowed
-      title: AllPlansResponse
+      - feedback
+      title: DowngradeFeedback
+    UpdateEnterprisePlanRequest:
+      properties:
+        num_executions:
+          type: integer
+          title: Num Executions
+        total_cost:
+          type: number
+          title: Total Cost
+        tenant:
+          type: string
+          title: Tenant
+        end_date:
+          type: string
+          format: date-time
+          title: End Date
+      type: object
+      required:
+      - num_executions
+      - total_cost
+      - tenant
+      - end_date
+      title: UpdateEnterprisePlanRequest
     CreateEnterprisePlanRequest:
       properties:
         num_executions:
@@ -793,69 +797,34 @@ components:
       - start_date
       - end_date
       title: CreateEnterprisePlanRequest
-    UpdateEnterprisePlanRequest:
+    WalletResponse:
       properties:
-        num_executions:
-          type: integer
-          title: Num Executions
-        total_cost:
+        balance_cents:
           type: number
-          title: Total Cost
-        tenant:
-          type: string
-          title: Tenant
-        end_date:
-          type: string
-          format: date-time
-          title: End Date
-      type: object
-      required:
-      - num_executions
-      - total_cost
-      - tenant
-      - end_date
-      title: UpdateEnterprisePlanRequest
-    WalletSettingsRequest:
-      properties: {}
-      type: object
-      title: WalletSettingsRequest
-      description: Placeholder for future wallet settings.
-    WalletDepositRequest:
-      properties:
-        amount_cents:
+          title: Balance Cents
+        balance_tokens:
           type: integer
-          title: Amount Cents
-      type: object
-      required:
-      - amount_cents
-      title: WalletDepositRequest
-      description: Request to add funds via Stripe Checkout.
-    PaymentCheckoutResponse:
-      properties:
-        checkout_url:
-          type: string
-          title: Checkout Url
-      type: object
-      required:
-      - checkout_url
-      title: PaymentCheckoutResponse
-    PaymentCheckoutRequest:
-      properties:
-        plan_type:
-          type: string
-          title: Plan Type
-        tenure:
-          type: string
-          title: Tenure
-          default: month
-        discount:
+          title: Balance Tokens
+          default: 0
+        spend_this_period_cents:
+          type: number
+          title: Spend This Period Cents
+          default: 0
+        overage_rate_cents_per_million:
           type: integer
-          title: Discount
-          default: 20
+          title: Overage Rate Cents Per Million
+          default: 0
+        transactions:
+          items:
+            $ref: '#/components/schemas/WalletTransactionResponse'
+          type: array
+          title: Transactions
+          default: []
       type: object
       required:
-      - plan_type
-      title: PaymentCheckoutRequest
+      - balance_cents
+      title: WalletResponse
+      description: Full wallet state for the UI.
     UserCreditsResponse:
       properties:
         ok:
@@ -966,72 +935,23 @@ components:
       - free_grant_remaining
       - plan_to_edition_map
       title: UserCreditsResponse
-    app__schemas__payments__PlansResponse:
+    PaymentCheckoutRequest:
       properties:
-        plan_name:
+        plan_type:
           type: string
-          title: Plan Name
-        price:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Price
-        num_executions:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Num Executions
-        token_allowance:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Token Allowance
-          default: 0
-      type: object
-      required:
-      - plan_name
-      - price
-      - num_executions
-      title: PlansResponse
-    DowngradeFeedback:
-      properties:
-        feedback:
-          type: string
-          title: Feedback
-      type: object
-      required:
-      - feedback
-      title: DowngradeFeedback
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    DowngradeInfo:
-      properties:
-        plan_name:
-          type: string
-          title: Plan Name
-        plan_display_name:
-          type: string
-          title: Plan Display Name
-        current_subscription_end_date:
-          type: string
-          title: Current Subscription End Date
+          title: Plan Type
         tenure:
           type: string
           title: Tenure
+          default: month
+        discount:
+          type: integer
+          title: Discount
+          default: 20
       type: object
       required:
-      - plan_name
-      - plan_display_name
-      - current_subscription_end_date
-      - tenure
-      title: DowngradeInfo
+      - plan_type
+      title: PaymentCheckoutRequest
     PostPaymentCheckoutRequest:
       properties:
         checkout_session_id:
@@ -1045,27 +965,62 @@ components:
       required:
       - checkout_session_id
       title: PostPaymentCheckoutRequest
-    ValidationError:
+    WalletDepositConfirmRequest:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        checkout_session_id:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Checkout Session Id
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - checkout_session_id
+      title: WalletDepositConfirmRequest
+      description: Frontend sends this after Stripe Checkout redirect.
+    AllPlansResponse:
+      properties:
+        plans:
+          items:
+            $ref: '#/components/schemas/app__schemas__payments__PlansResponse'
+          type: array
+          title: Plans
+        current_tenure:
+          type: string
+          title: Current Tenure
+        current_execuiton_count:
+          type: integer
+          title: Current Execuiton Count
+        current_price:
+          type: integer
+          title: Current Price
+        subscription_management_allowed:
+          type: boolean
+          title: Subscription Management Allowed
+      type: object
+      required:
+      - plans
+      - current_tenure
+      - current_execuiton_count
+      - current_price
+      - subscription_management_allowed
+      title: AllPlansResponse
+    WalletDepositRequest:
+      properties:
+        amount_cents:
+          type: integer
+          title: Amount Cents
+      type: object
+      required:
+      - amount_cents
+      title: WalletDepositRequest
+      description: Request to add funds via Stripe Checkout.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     TokenUsageResponse:
       properties:
         credit_type:
@@ -1142,44 +1097,15 @@ components:
       - credit_type
       title: TokenUsageResponse
       description: Token usage data for UI progress bar + wallet state.
-    WalletDepositConfirmRequest:
+    StandardResponse:
       properties:
-        checkout_session_id:
-          type: string
-          title: Checkout Session Id
+        ok:
+          type: boolean
+          title: Ok
       type: object
       required:
-      - checkout_session_id
-      title: WalletDepositConfirmRequest
-      description: Frontend sends this after Stripe Checkout redirect.
-    WalletResponse:
-      properties:
-        balance_cents:
-          type: number
-          title: Balance Cents
-        balance_tokens:
-          type: integer
-          title: Balance Tokens
-          default: 0
-        spend_this_period_cents:
-          type: number
-          title: Spend This Period Cents
-          default: 0
-        overage_rate_cents_per_million:
-          type: integer
-          title: Overage Rate Cents Per Million
-          default: 0
-        transactions:
-          items:
-            $ref: '#/components/schemas/WalletTransactionResponse'
-          type: array
-          title: Transactions
-          default: []
-      type: object
-      required:
-      - balance_cents
-      title: WalletResponse
-      description: Full wallet state for the UI.
+      - ok
+      title: StandardResponse
     WalletTransactionResponse:
       properties:
         id:
@@ -1216,15 +1142,89 @@ components:
       - created_on
       title: WalletTransactionResponse
       description: Single wallet transaction for the ledger view.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+    WalletSettingsRequest:
+      properties: {}
       type: object
-      title: HTTPValidationError
+      title: WalletSettingsRequest
+      description: Placeholder for future wallet settings.
+    app__schemas__payments__PlansResponse:
+      properties:
+        plan_name:
+          type: string
+          title: Plan Name
+        price:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Price
+        num_executions:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Num Executions
+        token_allowance:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Token Allowance
+          default: 0
+      type: object
+      required:
+      - plan_name
+      - price
+      - num_executions
+      title: PlansResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DowngradeInfo:
+      properties:
+        plan_name:
+          type: string
+          title: Plan Name
+        plan_display_name:
+          type: string
+          title: Plan Display Name
+        current_subscription_end_date:
+          type: string
+          title: Current Subscription End Date
+        tenure:
+          type: string
+          title: Tenure
+      type: object
+      required:
+      - plan_name
+      - plan_display_name
+      - current_subscription_end_date
+      - tenure
+      title: DowngradeInfo
+    PaymentCheckoutResponse:
+      properties:
+        checkout_url:
+          type: string
+          title: Checkout Url
+      type: object
+      required:
+      - checkout_url
+      title: PaymentCheckoutResponse
   securitySchemes:
     HTTPBearer:
       type: http

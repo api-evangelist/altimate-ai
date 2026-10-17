@@ -254,20 +254,17 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ForkTemplateRequest:
+    ContentModel:
       properties:
-        template_name:
-          type: string
-          title: Template Name
-        new_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: New Name
+        pages:
+          items:
+            $ref: '#/components/schemas/PageModel'
+          type: array
+          title: Pages
       type: object
       required:
-      - template_name
-      title: ForkTemplateRequest
+      - pages
+      title: ContentModel
     ValidationError:
       properties:
         loc:
@@ -289,6 +286,21 @@ components:
       - msg
       - type
       title: ValidationError
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    PageModel:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - content
+      title: PageModel
     HTTPValidationError:
       properties:
         detail:
@@ -298,56 +310,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    KnowledgeBaseUpdateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        icon:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Icon
-        content:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Content
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-          default: private
-      type: object
-      title: KnowledgeBaseUpdateRequest
-    TemplateResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        icon:
-          type: string
-          title: Icon
-        content:
-          $ref: '#/components/schemas/ContentModel'
-      type: object
-      required:
-      - name
-      - description
-      - icon
-      - content
-      title: TemplateResponse
     KnowledgeBaseResponse:
       properties:
         name:
@@ -408,15 +370,36 @@ components:
       - forked
       - is_deleted
       title: KnowledgeBaseResponse
-    PageModel:
+    KnowledgeBaseUpdateRequest:
       properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
         content:
-          type: string
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
           title: Content
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
       type: object
-      required:
-      - content
-      title: PageModel
+      title: KnowledgeBaseUpdateRequest
     StandardResponse:
       properties:
         ok:
@@ -426,6 +409,20 @@ components:
       required:
       - ok
       title: StandardResponse
+    ForkTemplateRequest:
+      properties:
+        template_name:
+          type: string
+          title: Template Name
+        new_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: New Name
+      type: object
+      required:
+      - template_name
+      title: ForkTemplateRequest
     KnowledgeBaseCreateRequest:
       properties:
         name:
@@ -453,23 +450,26 @@ components:
       - name
       - content
       title: KnowledgeBaseCreateRequest
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
-    ContentModel:
+    TemplateResponse:
       properties:
-        pages:
-          items:
-            $ref: '#/components/schemas/PageModel'
-          type: array
-          title: Pages
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        icon:
+          type: string
+          title: Icon
+        content:
+          $ref: '#/components/schemas/ContentModel'
       type: object
       required:
-      - pages
-      title: ContentModel
+      - name
+      - description
+      - icon
+      - content
+      title: TemplateResponse
   securitySchemes:
     HTTPBearer:
       type: http

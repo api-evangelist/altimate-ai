@@ -234,6 +234,34 @@ components:
       required:
       - jobs
       title: CronSyncRequest
+    MessageReportRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        role:
+          type: string
+          title: Role
+        content:
+          type: string
+          title: Content
+        tool_calls:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Tool Calls
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      required:
+      - session_id
+      - role
+      - content
+      title: MessageReportRequest
     ValidationError:
       properties:
         loc:
@@ -255,6 +283,34 @@ components:
       - msg
       - type
       title: ValidationError
+    CommandAckRequest:
+      properties:
+        status:
+          type: string
+          title: Status
+          default: executed
+        result:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Result
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      title: CommandAckRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     HeartbeatRequest:
       properties:
         instance_id:
@@ -321,62 +377,6 @@ components:
       required:
       - openclaw_session_id
       title: SessionReportRequest
-    MessageReportRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-        role:
-          type: string
-          title: Role
-        content:
-          type: string
-          title: Content
-        tool_calls:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Tool Calls
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-      type: object
-      required:
-      - session_id
-      - role
-      - content
-      title: MessageReportRequest
-    CommandAckRequest:
-      properties:
-        status:
-          type: string
-          title: Status
-          default: executed
-        result:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Result
-        error:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error
-      type: object
-      title: CommandAckRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

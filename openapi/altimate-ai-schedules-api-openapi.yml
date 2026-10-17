@@ -621,27 +621,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+    ContentScope:
+      type: string
+      enum:
+      - first_query
+      - last_answer
+      - full_chat
+      title: ContentScope
+      description: What content to include in the scheduled report.
     app__schemas__ai_playground__schedules__ScheduleCreateRequest:
       properties:
         name:
@@ -712,19 +699,27 @@ components:
       - session_id
       title: ScheduleCreateRequest
       description: Request to create a new scheduled report.
-    DestinationType:
-      type: string
-      enum:
-      - email
-      - slack
-      - multi
-      title: DestinationType
-      description: 'How to deliver the scheduled report.
-
-
-        Derived from `destination_config` at save time — `MULTI` means both
-
-        emails and a Slack webhook are configured on the same schedule.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     app__schemas__ai_playground__schedules__ScheduleResponse:
       properties:
         id:
@@ -813,6 +808,31 @@ components:
       - updated_at
       title: ScheduleResponse
       description: Response containing schedule details.
+    ScheduleFrequency:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      - custom
+      title: ScheduleFrequency
+      description: Predefined schedule frequencies.
+    ScheduleRunsListResponse:
+      properties:
+        runs:
+          items:
+            $ref: '#/components/schemas/ScheduleRunResponse'
+          type: array
+          title: Runs
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - runs
+      - total
+      title: ScheduleRunsListResponse
+      description: Response containing a list of schedule runs.
     app__schemas__ai_playground__schedules__ScheduleUpdateRequest:
       properties:
         name:
@@ -879,15 +899,19 @@ components:
       type: object
       title: ScheduleUpdateRequest
       description: "Request to update an existing schedule.\n\n``slack_webhook_id``:\n  - ``None`` (omitted) → leave webhook unchanged\n  - ``0`` → clear the current webhook\n  - any positive integer → set the webhook to that notification id"
-    ScheduleFrequency:
+    DestinationType:
       type: string
       enum:
-      - daily
-      - weekly
-      - monthly
-      - custom
-      title: ScheduleFrequency
-      description: Predefined schedule frequencies.
+      - email
+      - slack
+      - multi
+      title: DestinationType
+      description: 'How to deliver the scheduled report.
+
+
+        Derived from `destination_config` at save time — `MULTI` means both
+
+        emails and a Slack webhook are configured on the same schedule.'
     ScheduleRunResponse:
       properties:
         id:
@@ -953,30 +977,6 @@ components:
       - total
       title: ScheduleListResponse
       description: Response containing a list of schedules.
-    ContentScope:
-      type: string
-      enum:
-      - first_query
-      - last_answer
-      - full_chat
-      title: ContentScope
-      description: What content to include in the scheduled report.
-    ScheduleRunsListResponse:
-      properties:
-        runs:
-          items:
-            $ref: '#/components/schemas/ScheduleRunResponse'
-          type: array
-          title: Runs
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - runs
-      - total
-      title: ScheduleRunsListResponse
-      description: Response containing a list of schedule runs.
     HTTPValidationError:
       properties:
         detail:

@@ -543,6 +543,36 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ResetPasswordIn:
+      properties:
+        token:
+          type: string
+          title: Token
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - token
+      - password
+      title: ResetPasswordIn
+    UserRegisterIn:
+      properties:
+        name:
+          type: string
+          title: Name
+        password:
+          type: string
+          title: Password
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - name
+      - password
+      - token
+      title: UserRegisterIn
     ValidationError:
       properties:
         loc:
@@ -564,6 +594,15 @@ components:
       - msg
       - type
       title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     SupertokensUserInfo:
       properties:
         email:
@@ -573,60 +612,43 @@ components:
       required:
       - email
       title: SupertokensUserInfo
-    SSOUserRegisterIn:
-      properties:
-        firstName:
-          type: string
-          title: Firstname
-        lastName:
-          type: string
-          title: Lastname
-      type: object
-      required:
-      - firstName
-      - lastName
-      title: SSOUserRegisterIn
-    UserLoginIn:
+    ForgotPasswordIn:
       properties:
         email:
           type: string
           format: email
           title: Email
-        password:
-          type: string
-          title: Password
       type: object
       required:
       - email
-      - password
-      title: UserLoginIn
-    RolePermissionFull:
+      title: ForgotPasswordIn
+    PermissionsFull:
       properties:
-        role_name:
+        uuid:
           type: string
-          title: Role Name
-        role_description:
+          format: uuid
+          title: Uuid
+        name:
           type: string
-          title: Role Description
-        role_title:
+          title: Name
+        title:
           type: string
-          title: Role Title
-        is_custom:
-          type: boolean
-          title: Is Custom
-        permission:
-          items:
-            $ref: '#/components/schemas/PermissionsFull'
-          type: array
-          title: Permission
+          title: Title
+        description:
+          type: string
+          title: Description
+        group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group
       type: object
       required:
-      - role_name
-      - role_description
-      - role_title
-      - is_custom
-      - permission
-      title: RolePermissionFull
+      - uuid
+      - name
+      - title
+      - description
+      title: PermissionsFull
     PatchTenantInfoRequest:
       properties:
         currency:
@@ -921,93 +943,33 @@ components:
           title: Enabletransparencyannotations
       type: object
       title: PatchTenantInfoRequest
-    ForgotPasswordIn:
+    SSOUserRegisterIn:
+      properties:
+        firstName:
+          type: string
+          title: Firstname
+        lastName:
+          type: string
+          title: Lastname
+      type: object
+      required:
+      - firstName
+      - lastName
+      title: SSOUserRegisterIn
+    UserLoginIn:
       properties:
         email:
           type: string
           format: email
           title: Email
+        password:
+          type: string
+          title: Password
       type: object
       required:
       - email
-      title: ForgotPasswordIn
-    UserRegisterIn:
-      properties:
-        name:
-          type: string
-          title: Name
-        password:
-          type: string
-          title: Password
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - name
       - password
-      - token
-      title: UserRegisterIn
-    PermissionsFull:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        name:
-          type: string
-          title: Name
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        group:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Group
-      type: object
-      required:
-      - uuid
-      - name
-      - title
-      - description
-      title: PermissionsFull
-    ResetPasswordIn:
-      properties:
-        token:
-          type: string
-          title: Token
-        password:
-          type: string
-          title: Password
-      type: object
-      required:
-      - token
-      - password
-      title: ResetPasswordIn
-    GroupTenantsRequest:
-      properties:
-        tenants:
-          items:
-            type: string
-          type: array
-          title: Tenants
-      type: object
-      required:
-      - tenants
-      title: GroupTenantsRequest
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
+      title: UserLoginIn
     UserLoginOut:
       properties:
         id:
@@ -1068,6 +1030,17 @@ components:
       - is_onboarded
       - uuid
       title: UserLoginOut
+    GroupTenantsRequest:
+      properties:
+        tenants:
+          items:
+            type: string
+          type: array
+          title: Tenants
+      type: object
+      required:
+      - tenants
+      title: GroupTenantsRequest
     HTTPValidationError:
       properties:
         detail:
@@ -1077,6 +1050,33 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    RolePermissionFull:
+      properties:
+        role_name:
+          type: string
+          title: Role Name
+        role_description:
+          type: string
+          title: Role Description
+        role_title:
+          type: string
+          title: Role Title
+        is_custom:
+          type: boolean
+          title: Is Custom
+        permission:
+          items:
+            $ref: '#/components/schemas/PermissionsFull'
+          type: array
+          title: Permission
+      type: object
+      required:
+      - role_name
+      - role_description
+      - role_title
+      - is_custom
+      - permission
+      title: RolePermissionFull
   securitySchemes:
     HTTPBearer:
       type: http

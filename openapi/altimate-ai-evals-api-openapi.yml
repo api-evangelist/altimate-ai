@@ -805,87 +805,66 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    TestCaseResponse:
+    TurnResult:
       properties:
-        id:
+        turn_number:
+          type: integer
+          title: Turn Number
+        user_message:
           type: string
-          title: Id
-        name:
+          title: User Message
+        expected_ai_response:
           type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        turns:
-          items:
-            additionalProperties:
-              type: string
-            type: object
-          type: array
-          title: Turns
-        criteria:
-          additionalProperties:
-            type: string
+          title: Expected Ai Response
+        actual_ai_response:
+          type: string
+          title: Actual Ai Response
+        evaluation:
+          additionalProperties: true
           type: object
-          title: Criteria
-        created_at:
-          type: string
-          title: Created At
-        updated_at:
-          type: string
-          title: Updated At
-        updated_by:
+          title: Evaluation
+        intermediate_messages:
           anyOf:
           - type: string
           - type: 'null'
-          title: Updated By
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
-        tenant:
-          type: string
-          title: Tenant
-          default: All
-        team_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Team Id
-        custom_agents:
-          anyOf:
-          - items:
-              additionalProperties:
-                type: string
-              type: object
-            type: array
-          - type: 'null'
-          title: Custom Agents
-        user_view:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: User View
+          title: Intermediate Messages
       type: object
       required:
-      - id
-      - name
-      - turns
-      - criteria
-      - created_at
-      - updated_at
-      title: TestCaseResponse
-    RunEvalRequest:
+      - turn_number
+      - user_message
+      - expected_ai_response
+      - actual_ai_response
+      - evaluation
+      title: TurnResult
+    BatchEvaluationRequest:
       properties:
-        test_case_id:
-          type: string
-          title: Test Case Id
+        agents:
+          items:
+            $ref: '#/components/schemas/app__schemas__evals__AgentConfig'
+          type: array
+          title: Agents
+        test_case_ids:
+          items:
+            type: string
+          type: array
+          title: Test Case Ids
+        criteria:
+          items:
+            $ref: '#/components/schemas/CriterionResponse'
+          type: array
+          title: Criteria
+        global_context:
+          $ref: '#/components/schemas/GlobalContext'
+        agent_context_overrides:
+          items:
+            $ref: '#/components/schemas/AgentContextOverride'
+          type: array
+          title: Agent Context Overrides
+        run_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Name
         session_id:
           anyOf:
           - type: string
@@ -893,8 +872,59 @@ components:
           title: Session Id
       type: object
       required:
-      - test_case_id
-      title: RunEvalRequest
+      - agents
+      - test_case_ids
+      - criteria
+      title: BatchEvaluationRequest
+      description: 'Request for running evaluations across agents, test cases, and criteria
+
+
+        This request contains agent and criteria data, with test case IDs for reference.
+
+        - Agents: Full configuration (both local and backend agents)
+
+        - Test Cases: IDs only (stored in pool, prevents duplication)
+
+        - Criteria: Full data (varies per run, stored in results for audit trail)
+
+        - Context: DataMate and Knowledge Base IDs (global and per-agent overrides)'
+    UpdateAgentConfigRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        prompt:
+          type: string
+          title: Prompt
+        config:
+          additionalProperties: true
+          type: object
+          title: Config
+      type: object
+      required:
+      - name
+      - prompt
+      - config
+      title: UpdateAgentConfigRequest
+      description: Request for POST /evals/agents/{agent_name}/update endpoint
+    PlaygroundAgentsResponse:
+      properties:
+        agents:
+          additionalProperties:
+            $ref: '#/components/schemas/PlaygroundAgentDetails'
+          type: object
+          title: Agents
+        available_models:
+          items:
+            type: string
+          type: array
+          title: Available Models
+      type: object
+      required:
+      - agents
+      - available_models
+      title: PlaygroundAgentsResponse
+      description: Response for GET /evals/agents endpoint
     TestTurn:
       properties:
         user_message:
@@ -994,37 +1024,23 @@ components:
       - turn_results
       - created_at
       title: EvalResultResponse
-    TurnResult:
+    CriterionCreate:
       properties:
-        turn_number:
-          type: integer
-          title: Turn Number
-        user_message:
+        name:
           type: string
-          title: User Message
-        expected_ai_response:
+          title: Name
+        description:
           type: string
-          title: Expected Ai Response
-        actual_ai_response:
+          title: Description
+        tenant:
           type: string
-          title: Actual Ai Response
-        evaluation:
-          additionalProperties: true
-          type: object
-          title: Evaluation
-        intermediate_messages:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Intermediate Messages
+          title: Tenant
+          default: All
       type: object
       required:
-      - turn_number
-      - user_message
-      - expected_ai_response
-      - actual_ai_response
-      - evaluation
-      title: TurnResult
+      - name
+      - description
+      title: CriterionCreate
     app__schemas__evals__AgentConfig:
       properties:
         id:
@@ -1055,6 +1071,306 @@ components:
       - model
       title: AgentConfig
       description: Agent configuration for evaluation - can be local or backend agent
+    TestCaseResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        turns:
+          items:
+            additionalProperties:
+              type: string
+            type: object
+          type: array
+          title: Turns
+        criteria:
+          additionalProperties:
+            type: string
+          type: object
+          title: Criteria
+        created_at:
+          type: string
+          title: Created At
+        updated_at:
+          type: string
+          title: Updated At
+        updated_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated By
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+        team_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Id
+        custom_agents:
+          anyOf:
+          - items:
+              additionalProperties:
+                type: string
+              type: object
+            type: array
+          - type: 'null'
+          title: Custom Agents
+        user_view:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: User View
+      type: object
+      required:
+      - id
+      - name
+      - turns
+      - criteria
+      - created_at
+      - updated_at
+      title: TestCaseResponse
+    GlobalContext:
+      properties:
+        datamate_ids:
+          items:
+            type: string
+          type: array
+          title: Datamate Ids
+        knowledge_base_ids:
+          items:
+            type: integer
+          type: array
+          title: Knowledge Base Ids
+      type: object
+      title: GlobalContext
+      description: Global context applied to all agents in evaluation
+    RunEvalRequest:
+      properties:
+        test_case_id:
+          type: string
+          title: Test Case Id
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      type: object
+      required:
+      - test_case_id
+      title: RunEvalRequest
+    CriterionResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        created_at:
+          type: string
+          title: Created At
+        updated_at:
+          type: string
+          title: Updated At
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+        updated_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated By
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - created_at
+      - updated_at
+      title: CriterionResponse
+    CustomAgent:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        prompt:
+          type: string
+          title: Prompt
+      type: object
+      required:
+      - name
+      - description
+      - prompt
+      title: CustomAgent
+    AgentVersionsResponse:
+      properties:
+        agent_name:
+          type: string
+          title: Agent Name
+        versions:
+          items:
+            $ref: '#/components/schemas/AgentVersionInfo'
+          type: array
+          title: Versions
+        total_versions:
+          type: integer
+          title: Total Versions
+      type: object
+      required:
+      - agent_name
+      - versions
+      - total_versions
+      title: AgentVersionsResponse
+      description: Response for GET /evals/agents/{agent_name}/versions endpoint
+    AgentContextOverride:
+      properties:
+        agent_id:
+          type: string
+          title: Agent Id
+        datamate_ids:
+          items:
+            type: string
+          type: array
+          title: Datamate Ids
+        knowledge_base_ids:
+          items:
+            type: integer
+          type: array
+          title: Knowledge Base Ids
+      type: object
+      required:
+      - agent_id
+      title: AgentContextOverride
+      description: Per-agent context override for specific agents
+    TestCaseCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        turns:
+          items:
+            $ref: '#/components/schemas/TestTurn'
+          type: array
+          title: Turns
+        criteria:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Criteria
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        tenant:
+          type: string
+          title: Tenant
+          default: All
+        team_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Id
+        custom_agents:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CustomAgent'
+            type: array
+          - type: 'null'
+          title: Custom Agents
+        user_view:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: User View
+      type: object
+      required:
+      - name
+      - turns
+      title: TestCaseCreate
+    AgentVersionInfo:
+      properties:
+        version:
+          type: integer
+          title: Version
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        model:
+          type: string
+          title: Model
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+      type: object
+      required:
+      - version
+      - name
+      - description
+      - model
+      - labels
+      - tags
+      title: AgentVersionInfo
+      description: Version information for an agent
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     EvaluationJobStatus:
       properties:
         job_id:
@@ -1149,40 +1465,6 @@ components:
       - tags
       title: PlaygroundAgentInfo
       description: Response for GET /evals/agents/{agent_name} endpoint
-    EvaluationJobResponse:
-      properties:
-        job_id:
-          type: string
-          title: Job Id
-        message:
-          type: string
-          title: Message
-        total_evaluations:
-          type: integer
-          title: Total Evaluations
-        agents_count:
-          type: integer
-          title: Agents Count
-        test_cases_count:
-          type: integer
-          title: Test Cases Count
-        criteria_count:
-          type: integer
-          title: Criteria Count
-        status:
-          type: string
-          title: Status
-          default: submitted
-      type: object
-      required:
-      - job_id
-      - message
-      - total_evaluations
-      - agents_count
-      - test_cases_count
-      - criteria_count
-      title: EvaluationJobResponse
-      description: Response for batch evaluation submission
     BatchRunEvalRequest:
       properties:
         test_case_ids:
@@ -1204,21 +1486,6 @@ components:
       required:
       - test_case_ids
       title: BatchRunEvalRequest
-    GlobalContext:
-      properties:
-        datamate_ids:
-          items:
-            type: string
-          type: array
-          title: Datamate Ids
-        knowledge_base_ids:
-          items:
-            type: integer
-          type: array
-          title: Knowledge Base Ids
-      type: object
-      title: GlobalContext
-      description: Global context applied to all agents in evaluation
     PlaygroundAgentDetails:
       properties:
         name:
@@ -1295,6 +1562,27 @@ components:
       - has_prev
       title: PaginatedEvalResultsResponse
       description: Paginated response for eval results.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     BatchRunResponse:
       properties:
         run_name:
@@ -1323,192 +1611,40 @@ components:
       - failed
       - results
       title: BatchRunResponse
-    UpdateAgentConfigRequest:
+    EvaluationJobResponse:
       properties:
-        name:
+        job_id:
           type: string
-          title: Name
-        prompt:
+          title: Job Id
+        message:
           type: string
-          title: Prompt
-        config:
-          additionalProperties: true
-          type: object
-          title: Config
-      type: object
-      required:
-      - name
-      - prompt
-      - config
-      title: UpdateAgentConfigRequest
-      description: Request for POST /evals/agents/{agent_name}/update endpoint
-    TestCaseCreate:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        turns:
-          items:
-            $ref: '#/components/schemas/TestTurn'
-          type: array
-          title: Turns
-        criteria:
-          anyOf:
-          - additionalProperties:
-              type: string
-            type: object
-          - type: 'null'
-          title: Criteria
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
-        tenant:
-          type: string
-          title: Tenant
-          default: All
-        team_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Team Id
-        custom_agents:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/CustomAgent'
-            type: array
-          - type: 'null'
-          title: Custom Agents
-        user_view:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: User View
-      type: object
-      required:
-      - name
-      - turns
-      title: TestCaseCreate
-    AgentContextOverride:
-      properties:
-        agent_id:
-          type: string
-          title: Agent Id
-        datamate_ids:
-          items:
-            type: string
-          type: array
-          title: Datamate Ids
-        knowledge_base_ids:
-          items:
-            type: integer
-          type: array
-          title: Knowledge Base Ids
-      type: object
-      required:
-      - agent_id
-      title: AgentContextOverride
-      description: Per-agent context override for specific agents
-    PlaygroundAgentsResponse:
-      properties:
-        agents:
-          additionalProperties:
-            $ref: '#/components/schemas/PlaygroundAgentDetails'
-          type: object
-          title: Agents
-        available_models:
-          items:
-            type: string
-          type: array
-          title: Available Models
-      type: object
-      required:
-      - agents
-      - available_models
-      title: PlaygroundAgentsResponse
-      description: Response for GET /evals/agents endpoint
-    AgentVersionInfo:
-      properties:
-        version:
+          title: Message
+        total_evaluations:
           type: integer
-          title: Version
-        name:
+          title: Total Evaluations
+        agents_count:
+          type: integer
+          title: Agents Count
+        test_cases_count:
+          type: integer
+          title: Test Cases Count
+        criteria_count:
+          type: integer
+          title: Criteria Count
+        status:
           type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        model:
-          type: string
-          title: Model
-        labels:
-          items:
-            type: string
-          type: array
-          title: Labels
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
+          title: Status
+          default: submitted
       type: object
       required:
-      - version
-      - name
-      - description
-      - model
-      - labels
-      - tags
-      title: AgentVersionInfo
-      description: Version information for an agent
-    CriterionResponse:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        created_at:
-          type: string
-          title: Created At
-        updated_at:
-          type: string
-          title: Updated At
-        created_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Created By
-        updated_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Updated By
-        tenant:
-          type: string
-          title: Tenant
-          default: All
-      type: object
-      required:
-      - id
-      - name
-      - description
-      - created_at
-      - updated_at
-      title: CriterionResponse
+      - job_id
+      - message
+      - total_evaluations
+      - agents_count
+      - test_cases_count
+      - criteria_count
+      title: EvaluationJobResponse
+      description: Response for batch evaluation submission
     TestCaseStatus:
       properties:
         test_case_id:
@@ -1537,142 +1673,6 @@ components:
       - status
       title: TestCaseStatus
       description: Status of a single test case in an evaluation job
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    CriterionCreate:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        tenant:
-          type: string
-          title: Tenant
-          default: All
-      type: object
-      required:
-      - name
-      - description
-      title: CriterionCreate
-    BatchEvaluationRequest:
-      properties:
-        agents:
-          items:
-            $ref: '#/components/schemas/app__schemas__evals__AgentConfig'
-          type: array
-          title: Agents
-        test_case_ids:
-          items:
-            type: string
-          type: array
-          title: Test Case Ids
-        criteria:
-          items:
-            $ref: '#/components/schemas/CriterionResponse'
-          type: array
-          title: Criteria
-        global_context:
-          $ref: '#/components/schemas/GlobalContext'
-        agent_context_overrides:
-          items:
-            $ref: '#/components/schemas/AgentContextOverride'
-          type: array
-          title: Agent Context Overrides
-        run_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Run Name
-        session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Session Id
-      type: object
-      required:
-      - agents
-      - test_case_ids
-      - criteria
-      title: BatchEvaluationRequest
-      description: 'Request for running evaluations across agents, test cases, and criteria
-
-
-        This request contains agent and criteria data, with test case IDs for reference.
-
-        - Agents: Full configuration (both local and backend agents)
-
-        - Test Cases: IDs only (stored in pool, prevents duplication)
-
-        - Criteria: Full data (varies per run, stored in results for audit trail)
-
-        - Context: DataMate and Knowledge Base IDs (global and per-agent overrides)'
-    AgentVersionsResponse:
-      properties:
-        agent_name:
-          type: string
-          title: Agent Name
-        versions:
-          items:
-            $ref: '#/components/schemas/AgentVersionInfo'
-          type: array
-          title: Versions
-        total_versions:
-          type: integer
-          title: Total Versions
-      type: object
-      required:
-      - agent_name
-      - versions
-      - total_versions
-      title: AgentVersionsResponse
-      description: Response for GET /evals/agents/{agent_name}/versions endpoint
-    CustomAgent:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        prompt:
-          type: string
-          title: Prompt
-      type: object
-      required:
-      - name
-      - description
-      - prompt
-      title: CustomAgent
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

@@ -383,6 +383,23 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    ExperimentStatus:
+      type: string
+      enum:
+      - Planned
+      - In Progress
+      - Completed
+      - Aborted
+      title: ExperimentStatus
+    ExperimentStatusUpdateReq:
+      type: string
+      enum:
+      - Planned
+      - In Progress
+      - Aborted
+      - success
+      - failure
+      title: ExperimentStatusUpdateReq
     ValidationError:
       properties:
         loc:
@@ -404,20 +421,88 @@ components:
       - msg
       - type
       title: ValidationError
-    SchemaMetadataItem:
+    Page_ExperimentItem_:
       properties:
-        rk:
-          type: string
-          title: Rk
-        name:
-          type: string
-          title: Name
+        items:
+          items:
+            $ref: '#/components/schemas/ExperimentItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
       required:
-      - rk
-      - name
-      title: SchemaMetadataItem
-      description: Response item for schema metadata endpoint.
+      - items
+      - total
+      - page
+      - size
+      title: Page[ExperimentItem]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ExperimentEntity:
+      properties:
+        entity_rk:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Entity Rk
+        entity_type:
+          type: string
+          title: Entity Type
+        entity_name:
+          type: string
+          title: Entity Name
+        insights:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Insights
+      type: object
+      required:
+      - entity_rk
+      - entity_type
+      - entity_name
+      title: ExperimentEntity
+    ExperimentUpdateRequest:
+      properties:
+        experiment_status:
+          $ref: '#/components/schemas/ExperimentStatusUpdateReq'
+      type: object
+      required:
+      - experiment_status
+      title: ExperimentUpdateRequest
     ExperimentCreateRequest:
       properties:
         name:
@@ -461,6 +546,20 @@ components:
       - entities
       - metrics
       title: ExperimentCreateRequest
+    SchemaMetadataItem:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - rk
+      - name
+      title: SchemaMetadataItem
+      description: Response item for schema metadata endpoint.
     ExperimentItem:
       properties:
         id:
@@ -515,44 +614,6 @@ components:
       - created_by
       - created_on
       title: ExperimentItem
-    Page_ExperimentItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/ExperimentItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[ExperimentItem]
     ExperimentMetric:
       properties:
         metric_type:
@@ -562,67 +623,6 @@ components:
       required:
       - metric_type
       title: ExperimentMetric
-    ExperimentUpdateRequest:
-      properties:
-        experiment_status:
-          $ref: '#/components/schemas/ExperimentStatusUpdateReq'
-      type: object
-      required:
-      - experiment_status
-      title: ExperimentUpdateRequest
-    ExperimentStatusUpdateReq:
-      type: string
-      enum:
-      - Planned
-      - In Progress
-      - Aborted
-      - success
-      - failure
-      title: ExperimentStatusUpdateReq
-    ExperimentStatus:
-      type: string
-      enum:
-      - Planned
-      - In Progress
-      - Completed
-      - Aborted
-      title: ExperimentStatus
-    ExperimentEntity:
-      properties:
-        entity_rk:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Entity Rk
-        entity_type:
-          type: string
-          title: Entity Type
-        entity_name:
-          type: string
-          title: Entity Name
-        insights:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Insights
-      type: object
-      required:
-      - entity_rk
-      - entity_type
-      - entity_name
-      title: ExperimentEntity
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

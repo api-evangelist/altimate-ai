@@ -611,20 +611,21 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    TopAITeammate:
+    TopUsers:
       properties:
-        teammate:
-          type: string
-          title: Teammate
-        credits_consumed:
+        users:
+          items:
+            $ref: '#/components/schemas/app__schemas__credits__TopUser'
+          type: array
+          title: Users
+        total_credits_consumed:
           type: number
-          title: Credits Consumed
+          title: Total Credits Consumed
       type: object
       required:
-      - teammate
-      - credits_consumed
-      title: TopAITeammate
-      description: Top AI teammate by credit consumption
+      - users
+      - total_credits_consumed
+      title: TopUsers
     ValidationError:
       properties:
         loc:
@@ -646,256 +647,6 @@ components:
       - msg
       - type
       title: ValidationError
-    TopAITeammates:
-      properties:
-        teammates:
-          items:
-            $ref: '#/components/schemas/TopAITeammate'
-          type: array
-          title: Teammates
-        total_credits_consumed:
-          type: number
-          title: Total Credits Consumed
-      type: object
-      required:
-      - teammates
-      - total_credits_consumed
-      title: TopAITeammates
-    Page_CreditTransaction_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CreditTransaction'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[CreditTransaction]
-    app__schemas__credits__PlansResponse:
-      properties:
-        used_credits:
-          type: number
-          title: Used Credits
-        remaining_credits:
-          type: number
-          title: Remaining Credits
-        extra_credits:
-          type: number
-          title: Extra Credits
-        total_credits:
-          type: number
-          title: Total Credits
-        grant_remaining:
-          type: number
-          title: Grant Remaining
-        subscription_details:
-          additionalProperties: true
-          type: object
-          title: Subscription Details
-        expiry_projection:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Expiry Projection
-      type: object
-      required:
-      - used_credits
-      - remaining_credits
-      - extra_credits
-      - total_credits
-      - grant_remaining
-      - subscription_details
-      title: PlansResponse
-      description: Response for Plans API
-    Page_CreditTransactionAggregatedByTask_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CreditTransactionAggregatedByTask'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[CreditTransactionAggregatedByTask]
-    Page_CreditTransactionGroupedByUser_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CreditTransactionGroupedByUser'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[CreditTransactionGroupedByUser]
-    CreditTransactionWithUser:
-      properties:
-        task_name:
-          type: string
-          title: Task Name
-        user_email:
-          type: string
-          title: User Email
-        ai_teammates:
-          items:
-            type: string
-          type: array
-          title: Ai Teammates
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        credits_consumed:
-          type: number
-          title: Credits Consumed
-      type: object
-      required:
-      - task_name
-      - user_email
-      - ai_teammates
-      - timestamp
-      - credits_consumed
-      title: CreditTransactionWithUser
-      description: Credit transaction with user details for org usage
-    CreditTransaction:
-      properties:
-        task_name:
-          type: string
-          title: Task Name
-        user_email:
-          type: string
-          title: User Email
-        ai_teammates:
-          items:
-            type: string
-          type: array
-          title: Ai Teammates
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        credits_consumed:
-          type: number
-          title: Credits Consumed
-      type: object
-      required:
-      - task_name
-      - user_email
-      - ai_teammates
-      - timestamp
-      - credits_consumed
-      title: CreditTransaction
-      description: Individual credit transaction entry
-    app__schemas__credits__TopUser:
-      properties:
-        user_email:
-          type: string
-          title: User Email
-        display_name:
-          type: string
-          title: Display Name
-        credits_consumed:
-          type: number
-          title: Credits Consumed
-      type: object
-      required:
-      - user_email
-      - display_name
-      - credits_consumed
-      title: TopUser
-      description: Top user by credit consumption
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     OrgUsageResponse:
       properties:
         graph_data:
@@ -914,41 +665,24 @@ components:
       - top_ai_teammates
       title: OrgUsageResponse
       description: Response for Org Usage API
-    UsageTrend:
+    app__schemas__credits__TopUser:
       properties:
-        date:
+        user_email:
           type: string
-          title: Date
-        total_credits_consumed:
+          title: User Email
+        display_name:
+          type: string
+          title: Display Name
+        credits_consumed:
           type: number
-          title: Total Credits Consumed
-        breakdown:
-          additionalProperties:
-            type: number
-          type: object
-          title: Breakdown
+          title: Credits Consumed
       type: object
       required:
-      - date
-      - total_credits_consumed
-      - breakdown
-      title: UsageTrend
-      description: Usage trend data point
-    TopUsers:
-      properties:
-        users:
-          items:
-            $ref: '#/components/schemas/app__schemas__credits__TopUser'
-          type: array
-          title: Users
-        total_credits_consumed:
-          type: number
-          title: Total Credits Consumed
-      type: object
-      required:
-      - users
-      - total_credits_consumed
-      title: TopUsers
+      - user_email
+      - display_name
+      - credits_consumed
+      title: TopUser
+      description: Top user by credit consumption
     CreditTransactionGroupedByUser:
       properties:
         user_email:
@@ -978,6 +712,21 @@ components:
       - credits_consumed
       title: CreditTransactionGroupedByUser
       description: Credit transaction with user details for org usage
+    TopAITeammates:
+      properties:
+        teammates:
+          items:
+            $ref: '#/components/schemas/TopAITeammate'
+          type: array
+          title: Teammates
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+      type: object
+      required:
+      - teammates
+      - total_credits_consumed
+      title: TopAITeammates
     Page_CreditTransactionWithUser_:
       properties:
         items:
@@ -1016,6 +765,143 @@ components:
       - page
       - size
       title: Page[CreditTransactionWithUser]
+    TopAITeammate:
+      properties:
+        teammate:
+          type: string
+          title: Teammate
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - teammate
+      - credits_consumed
+      title: TopAITeammate
+      description: Top AI teammate by credit consumption
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Page_CreditTransactionGroupedByUser_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransactionGroupedByUser'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransactionGroupedByUser]
+    Page_CreditTransaction_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransaction'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransaction]
+    CreditTransaction:
+      properties:
+        task_name:
+          type: string
+          title: Task Name
+        user_email:
+          type: string
+          title: User Email
+        ai_teammates:
+          items:
+            type: string
+          type: array
+          title: Ai Teammates
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - task_name
+      - user_email
+      - ai_teammates
+      - timestamp
+      - credits_consumed
+      title: CreditTransaction
+      description: Individual credit transaction entry
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     CreditTransactionAggregatedByTask:
       properties:
         task_name:
@@ -1041,15 +927,129 @@ components:
       - last_used_on
       title: CreditTransactionAggregatedByTask
       description: Credit transaction aggregated by task with users as dictionary
-    HTTPValidationError:
+    app__schemas__credits__PlansResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        used_credits:
+          type: number
+          title: Used Credits
+        remaining_credits:
+          type: number
+          title: Remaining Credits
+        extra_credits:
+          type: number
+          title: Extra Credits
+        total_credits:
+          type: number
+          title: Total Credits
+        grant_remaining:
+          type: number
+          title: Grant Remaining
+        subscription_details:
+          additionalProperties: true
+          type: object
+          title: Subscription Details
+        expiry_projection:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Expiry Projection
       type: object
-      title: HTTPValidationError
+      required:
+      - used_credits
+      - remaining_credits
+      - extra_credits
+      - total_credits
+      - grant_remaining
+      - subscription_details
+      title: PlansResponse
+      description: Response for Plans API
+    CreditTransactionWithUser:
+      properties:
+        task_name:
+          type: string
+          title: Task Name
+        user_email:
+          type: string
+          title: User Email
+        ai_teammates:
+          items:
+            type: string
+          type: array
+          title: Ai Teammates
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        credits_consumed:
+          type: number
+          title: Credits Consumed
+      type: object
+      required:
+      - task_name
+      - user_email
+      - ai_teammates
+      - timestamp
+      - credits_consumed
+      title: CreditTransactionWithUser
+      description: Credit transaction with user details for org usage
+    UsageTrend:
+      properties:
+        date:
+          type: string
+          title: Date
+        total_credits_consumed:
+          type: number
+          title: Total Credits Consumed
+        breakdown:
+          additionalProperties:
+            type: number
+          type: object
+          title: Breakdown
+      type: object
+      required:
+      - date
+      - total_credits_consumed
+      - breakdown
+      title: UsageTrend
+      description: Usage trend data point
+    Page_CreditTransactionAggregatedByTask_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CreditTransactionAggregatedByTask'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CreditTransactionAggregatedByTask]
   securitySchemes:
     HTTPBearer:
       type: http

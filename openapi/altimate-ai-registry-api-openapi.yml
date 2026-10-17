@@ -319,6 +319,61 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    RegistryUpdateResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_by:
+          type: string
+          title: Created By
+        last_modified_by:
+          type: string
+          title: Last Modified By
+        status:
+          type: string
+          title: Status
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - id
+      - name
+      - created_by
+      - last_modified_by
+      - status
+      - message
+      title: RegistryUpdateResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     RegistryCreationResponse:
       properties:
         id:
@@ -364,57 +419,6 @@ components:
           title: Status
       type: object
       title: RegistryUpdateRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    RegistryFetchMultipleResponse:
-      properties:
-        registries:
-          items:
-            $ref: '#/components/schemas/RegistryFetchResponse'
-          type: array
-          title: Registries
-      type: object
-      required:
-      - registries
-      title: RegistryFetchMultipleResponse
-    RegistryCreationRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Status
-      type: object
-      required:
-      - name
-      title: RegistryCreationRequest
     RegistryFetchResponse:
       properties:
         id:
@@ -449,20 +453,8 @@ components:
           title: Status
       type: object
       title: RegistryFetchResponse
-    RegistryDeletionResponse:
+    RegistryCreationRequest:
       properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: RegistryDeletionResponse
-    RegistryUpdateResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
         name:
           type: string
           title: Name
@@ -471,27 +463,15 @@ components:
           - type: string
           - type: 'null'
           title: Description
-        created_by:
-          type: string
-          title: Created By
-        last_modified_by:
-          type: string
-          title: Last Modified By
         status:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Status
-        message:
-          type: string
-          title: Message
       type: object
       required:
-      - id
       - name
-      - created_by
-      - last_modified_by
-      - status
-      - message
-      title: RegistryUpdateResponse
+      title: RegistryCreationRequest
     HTTPValidationError:
       properties:
         detail:
@@ -501,6 +481,26 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    RegistryFetchMultipleResponse:
+      properties:
+        registries:
+          items:
+            $ref: '#/components/schemas/RegistryFetchResponse'
+          type: array
+          title: Registries
+      type: object
+      required:
+      - registries
+      title: RegistryFetchMultipleResponse
+    RegistryDeletionResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: RegistryDeletionResponse
   securitySchemes:
     HTTPBearer:
       type: http

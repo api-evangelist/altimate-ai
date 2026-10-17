@@ -298,27 +298,6 @@ components:
       - msg
       - type
       title: ValidationError
-    ComputePoolOverview:
-      properties:
-        compute_pool_name:
-          type: string
-          title: Compute Pool Name
-        total_cost:
-          type: number
-          title: Total Cost
-        total_runs:
-          type: integer
-          title: Total Runs
-        metadata:
-          anyOf:
-          - $ref: '#/components/schemas/ComputePoolMetadata'
-          - type: 'null'
-      type: object
-      required:
-      - compute_pool_name
-      - total_cost
-      - total_runs
-      title: ComputePoolOverview
     ComputePoolCostEntry:
       properties:
         start_time:
@@ -364,21 +343,62 @@ components:
       - compute_pool_name
       - credits_used
       title: ComputePoolCostEntry
-    ComputePoolsDailyGraphPoint:
+    ComputePoolsSummary:
+      properties:
+        total_spend:
+          type: number
+          title: Total Spend
+        average_daily_spend:
+          type: number
+          title: Average Daily Spend
+        active_pools:
+          type: integer
+          title: Active Pools
+        exclusive_pools:
+          type: integer
+          title: Exclusive Pools
+      type: object
+      required:
+      - total_spend
+      - average_daily_spend
+      - active_pools
+      - exclusive_pools
+      title: ComputePoolsSummary
+    DailyCostPoint:
       properties:
         date:
           type: string
+          format: date
           title: Date
-        pool_spends:
-          additionalProperties:
-            type: number
-          type: object
-          title: Pool Spends
+        cost:
+          type: number
+          title: Cost
       type: object
       required:
       - date
-      - pool_spends
-      title: ComputePoolsDailyGraphPoint
+      - cost
+      title: DailyCostPoint
+    ComputePoolOverview:
+      properties:
+        compute_pool_name:
+          type: string
+          title: Compute Pool Name
+        total_cost:
+          type: number
+          title: Total Cost
+        total_runs:
+          type: integer
+          title: Total Runs
+        metadata:
+          anyOf:
+          - $ref: '#/components/schemas/ComputePoolMetadata'
+          - type: 'null'
+      type: object
+      required:
+      - compute_pool_name
+      - total_cost
+      - total_runs
+      title: ComputePoolOverview
     ComputePoolMetadata:
       properties:
         name:
@@ -515,6 +535,30 @@ components:
       - page
       - size
       title: Page[ComputePoolCostEntry]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ComputePoolsDailyGraphPoint:
+      properties:
+        date:
+          type: string
+          title: Date
+        pool_spends:
+          additionalProperties:
+            type: number
+          type: object
+          title: Pool Spends
+      type: object
+      required:
+      - date
+      - pool_spends
+      title: ComputePoolsDailyGraphPoint
     ComputePoolMetadataWithCost:
       properties:
         name:
@@ -621,50 +665,6 @@ components:
       required:
       - name
       title: ComputePoolMetadataWithCost
-    ComputePoolsSummary:
-      properties:
-        total_spend:
-          type: number
-          title: Total Spend
-        average_daily_spend:
-          type: number
-          title: Average Daily Spend
-        active_pools:
-          type: integer
-          title: Active Pools
-        exclusive_pools:
-          type: integer
-          title: Exclusive Pools
-      type: object
-      required:
-      - total_spend
-      - average_daily_spend
-      - active_pools
-      - exclusive_pools
-      title: ComputePoolsSummary
-    DailyCostPoint:
-      properties:
-        date:
-          type: string
-          format: date
-          title: Date
-        cost:
-          type: number
-          title: Cost
-      type: object
-      required:
-      - date
-      - cost
-      title: DailyCostPoint
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

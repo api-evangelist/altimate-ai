@@ -1153,84 +1153,200 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    WarehouseAutoTuneSavingsTrendPoint:
+    WarehouseEventsResponse:
       properties:
-        period:
+        warehouse_id:
           type: string
-          title: Period
-        cost_saved:
-          type: number
-          title: Cost Saved
-          default: 0.0
-        dbus_saved:
-          type: number
-          title: Dbus Saved
-          default: 0.0
-        min_cost_saved:
-          type: number
-          title: Min Cost Saved
-          default: 0.0
-        max_cost_saved:
-          type: number
-          title: Max Cost Saved
-          default: 0.0
+          title: Warehouse Id
+        events:
+          items:
+            $ref: '#/components/schemas/WarehouseEvent'
+          type: array
+          title: Events
+        total_count:
+          type: integer
+          title: Total Count
       type: object
       required:
-      - period
-      title: WarehouseAutoTuneSavingsTrendPoint
-      description: 'One period''s auto-tune savings for a SQL warehouse.
-
-
-        ``min_cost_saved``/``max_cost_saved`` are the range underlying
-
-        ``cost_saved`` for this period+savings_type — used to render a min-max
-
-        range in the Auto Tune chart tooltip (e.g. "$128.91 - $154.2"). They
-
-        default to 0.0 so existing callers that don''t need the range are
-
-        unaffected.'
-    WarehouseRealizedSavings:
+      - warehouse_id
+      - events
+      - total_count
+      title: WarehouseEventsResponse
+      description: Response for warehouse events.
+    WarehouseUtilizationEfficiencyResponse:
       properties:
-        total:
-          type: number
-          title: Total
-          default: 0.0
-        min:
-          type: number
-          title: Min
-          default: 0.0
-        max:
-          type: number
-          title: Max
-          default: 0.0
-      type: object
-      title: WarehouseRealizedSavings
-      description: 'Realised (``actual``) auto-tune savings for a SQL warehouse over a
-
-        date range: a total plus the min/max range across the underlying
-
-        per-period estimates.'
-    WarehouseFilterOptions:
-      properties:
-        warehouse_names:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        trends:
           items:
-            type: string
+            $ref: '#/components/schemas/UtilizationEfficiencyPoint'
           type: array
-          title: Warehouse Names
+          title: Trends
+          description: Daily utilization efficiency data points
+        average_utilization:
+          type: number
+          title: Average Utilization
+          description: Average utilization efficiency over the period
+          default: 0
+      type: object
+      required:
+      - warehouse_id
+      - trends
+      title: WarehouseUtilizationEfficiencyResponse
+      description: Response for warehouse utilization efficiency over time.
+    WarehouseCostTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/WarehouseCostTrendItem'
+          type: array
+          title: Trends
+          description: Cost trends broken down by warehouse type
         warehouse_types:
           items:
             type: string
           type: array
           title: Warehouse Types
-        warehouse_sizes:
-          items:
-            type: string
-          type: array
-          title: Warehouse Sizes
+          description: List of warehouse types present in the data
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day, week, month)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs in period
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total estimated cost
+          default: 0
       type: object
-      title: WarehouseFilterOptions
-      description: Filter options for SQL warehouses.
+      required:
+      - trends
+      - warehouse_types
+      - granularity
+      title: WarehouseCostTrendsResponse
+      description: Response for warehouse cost trends (aggregated across all warehouses).
+    WarehouseCostPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      title: WarehouseCostPoint
+      description: Single data point for warehouse cost timeseries.
+    WarehouseCostTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+        warehouse_type:
+          type: string
+          title: Warehouse Type
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      - warehouse_type
+      title: WarehouseCostTrendItem
+      description: Single data point for warehouse cost trends by warehouse type.
+    app__schemas__databricks__warehouse__ServerlessCandidatesResponse:
+      properties:
+        candidates:
+          items:
+            $ref: '#/components/schemas/ServerlessCandidate'
+          type: array
+          title: Candidates
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - candidates
+      - total_count
+      title: ServerlessCandidatesResponse
+      description: Response for serverless candidates.
+    WarehouseAutoTuneSavingsTrendsResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        actual:
+          items:
+            $ref: '#/components/schemas/WarehouseAutoTuneSavingsTrendPoint'
+          type: array
+          title: Actual
+          default: []
+        potential:
+          items:
+            $ref: '#/components/schemas/WarehouseAutoTuneSavingsTrendPoint'
+          type: array
+          title: Potential
+          default: []
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - warehouse_id
+      - granularity
+      title: WarehouseAutoTuneSavingsTrendsResponse
+      description: 'Per-period auto-tune savings for a SQL warehouse, split into realized
+
+        and potential.
+
+
+        ``actual`` holds savings while an applied auto-tune recommendation (e.g.
+
+        a lowered auto-stop) was in effect; ``potential`` holds the savings an
+
+        active, not-yet-applied recommendation would have earned over the same
+
+        window. Sourced from ClickHouse ``dbx_auto_tune_cost_savings``.'
+    SavingsStatValue:
+      properties:
+        value:
+          type: number
+          title: Value
+          default: 0.0
+        display:
+          type: boolean
+          title: Display
+          default: true
+      type: object
+      title: SavingsStatValue
+      description: 'A single stat-card value with a display-gate flag.
+
+
+        Mirrors the Snowflake infra page''s ``top_info`` item shape
+
+        (``TopInfoItem`` in ``app/schemas/summary_page.py``) so the FE''s
+
+        existing stat-card component logic ports over unchanged: ``display``
+
+        lets a backend that can''t cleanly compute a figure hide the card
+
+        instead of showing a misleading 0.'
     WarehouseQueryMetricsTimelineResponse:
       properties:
         warehouse_id:
@@ -1275,248 +1391,6 @@ components:
         response. Additive fields — the frontend schema tolerates extra
 
         optional keys.'
-    WarehouseAutoTuneSavingsSummaryResponse:
-      properties:
-        warehouse_id:
-          type: string
-          title: Warehouse Id
-        realized_savings:
-          $ref: '#/components/schemas/WarehouseRealizedSavings'
-        estimated_annual_savings:
-          type: number
-          title: Estimated Annual Savings
-          default: 0.0
-        currency:
-          type: string
-          title: Currency
-          default: USD
-      type: object
-      required:
-      - warehouse_id
-      - realized_savings
-      title: WarehouseAutoTuneSavingsSummaryResponse
-      description: 'Realised savings range + a derived annualized estimate for the two
-
-        stat blocks shown above the SQL warehouse detail tabs.
-
-
-        ``realized_savings`` sums ``actual`` savings over the caller''s
-
-        ``start_date``/``end_date`` window. ``estimated_annual_savings`` is
-
-        independent of that window: it annualizes a trailing 29-day
-
-        actual+potential run-rate (capped at today), mirroring
-
-        ``DatabricksSavingsService.get_overall_savings_estimate``''s
-
-        methodology, scoped to this one warehouse. Sourced entirely from
-
-        ClickHouse ``dbx_auto_tune_cost_savings`` — no Postgres insights table.'
-    WarehouseCostTrendItem:
-      properties:
-        period:
-          type: string
-          title: Period
-        warehouse_type:
-          type: string
-          title: Warehouse Type
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          default: 0
-      type: object
-      required:
-      - period
-      - warehouse_type
-      title: WarehouseCostTrendItem
-      description: Single data point for warehouse cost trends by warehouse type.
-    app__schemas__databricks__warehouse__WarehouseCostResponse:
-      properties:
-        warehouse_id:
-          type: string
-          title: Warehouse Id
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          default: 0
-        daily_average_dbus:
-          type: number
-          title: Daily Average Dbus
-          default: 0
-        daily_average_cost:
-          type: number
-          title: Daily Average Cost
-          default: 0
-        timeseries:
-          items:
-            $ref: '#/components/schemas/WarehouseCostPoint'
-          type: array
-          title: Timeseries
-          default: []
-      type: object
-      required:
-      - warehouse_id
-      title: WarehouseCostResponse
-      description: Response for warehouse cost data.
-    UtilizationEfficiencyPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        utilization:
-          type: number
-          title: Utilization
-          description: Utilization efficiency (0-1 scale)
-          default: 0
-      type: object
-      required:
-      - period
-      title: UtilizationEfficiencyPoint
-      description: Single data point for utilization efficiency timeseries.
-    WarehousesResponse:
-      properties:
-        warehouses:
-          items:
-            $ref: '#/components/schemas/WarehouseSummary'
-          type: array
-          title: Warehouses
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of warehouses
-        page:
-          type: integer
-          title: Page
-          description: Current page number
-          default: 1
-        page_size:
-          type: integer
-          title: Page Size
-          description: Items per page
-          default: 20
-        total_pages:
-          type: integer
-          title: Total Pages
-          description: Total number of pages
-          default: 1
-      type: object
-      required:
-      - warehouses
-      - total_count
-      title: WarehousesResponse
-      description: Response for listing warehouses.
-    app__schemas__databricks__warehouse__WarehouseRunningStatsTrendsResponse:
-      properties:
-        warehouse_id:
-          type: string
-          title: Warehouse Id
-        trends:
-          items:
-            $ref: '#/components/schemas/WarehouseRunningStatsPoint'
-          type: array
-          title: Trends
-          description: Daily active/idle time data points
-        granularity:
-          type: string
-          title: Granularity
-          description: Time granularity (day)
-        total_active_seconds:
-          type: integer
-          title: Total Active Seconds
-          description: Total active time
-          default: 0
-        total_idle_seconds:
-          type: integer
-          title: Total Idle Seconds
-          description: Total idle time
-          default: 0
-      type: object
-      required:
-      - warehouse_id
-      - trends
-      - granularity
-      title: WarehouseRunningStatsTrendsResponse
-      description: Response for warehouse running stats trends over time.
-    ServerlessCandidate:
-      properties:
-        warehouse_id:
-          type: string
-          title: Warehouse Id
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        warehouse_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Type
-        warehouse_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Size
-        auto_stop_mins:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Auto Stop Mins
-        enable_serverless_compute:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enable Serverless Compute
-      type: object
-      required:
-      - warehouse_id
-      - warehouse_name
-      - workspace_id
-      title: ServerlessCandidate
-      description: A warehouse that is a candidate for serverless migration.
-    WarehouseStateChange:
-      properties:
-        warehouse_id:
-          type: string
-          title: Warehouse Id
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        state:
-          type: string
-          title: State
-        change_time:
-          type: string
-          format: date-time
-          title: Change Time
-        num_clusters:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Num Clusters
-      type: object
-      required:
-      - warehouse_id
-      - warehouse_name
-      - state
-      - change_time
-      title: WarehouseStateChange
-      description: A single state change record.
     WarehouseDetail:
       properties:
         warehouse_id:
@@ -1695,6 +1569,58 @@ components:
         removed) so every bucket here comes from exactly one source; there''s
 
         no more "billing-only bucket" concept to null-fill.'
+    UtilizationEfficiencyPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        utilization:
+          type: number
+          title: Utilization
+          description: Utilization efficiency (0-1 scale)
+          default: 0
+      type: object
+      required:
+      - period
+      title: UtilizationEfficiencyPoint
+      description: Single data point for utilization efficiency timeseries.
+    WarehouseAutoTuneSavingsTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        cost_saved:
+          type: number
+          title: Cost Saved
+          default: 0.0
+        dbus_saved:
+          type: number
+          title: Dbus Saved
+          default: 0.0
+        min_cost_saved:
+          type: number
+          title: Min Cost Saved
+          default: 0.0
+        max_cost_saved:
+          type: number
+          title: Max Cost Saved
+          default: 0.0
+      type: object
+      required:
+      - period
+      title: WarehouseAutoTuneSavingsTrendPoint
+      description: 'One period''s auto-tune savings for a SQL warehouse.
+
+
+        ``min_cost_saved``/``max_cost_saved`` are the range underlying
+
+        ``cost_saved`` for this period+savings_type — used to render a min-max
+
+        range in the Auto Tune chart tooltip (e.g. "$128.91 - $154.2"). They
+
+        default to 0.0 so existing callers that don''t need the range are
+
+        unaffected.'
     WarehousesTotalSavingsResponse:
       properties:
         realised_savings:
@@ -1716,6 +1642,26 @@ components:
         cards (Realised Savings / Estimated Annual Savings / Total
 
         Opportunities).'
+    WarehouseFilterOptions:
+      properties:
+        warehouse_names:
+          items:
+            type: string
+          type: array
+          title: Warehouse Names
+        warehouse_types:
+          items:
+            type: string
+          type: array
+          title: Warehouse Types
+        warehouse_sizes:
+          items:
+            type: string
+          type: array
+          title: Warehouse Sizes
+      type: object
+      title: WarehouseFilterOptions
+      description: Filter options for SQL warehouses.
     WarehouseStateHistoryResponse:
       properties:
         warehouse_id:
@@ -1732,67 +1678,15 @@ components:
       - history
       title: WarehouseStateHistoryResponse
       description: Response for warehouse state history.
-    WarehouseUtilizationEfficiencyResponse:
+    HTTPValidationError:
       properties:
-        warehouse_id:
-          type: string
-          title: Warehouse Id
-        trends:
+        detail:
           items:
-            $ref: '#/components/schemas/UtilizationEfficiencyPoint'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Trends
-          description: Daily utilization efficiency data points
-        average_utilization:
-          type: number
-          title: Average Utilization
-          description: Average utilization efficiency over the period
-          default: 0
+          title: Detail
       type: object
-      required:
-      - warehouse_id
-      - trends
-      title: WarehouseUtilizationEfficiencyResponse
-      description: Response for warehouse utilization efficiency over time.
-    WarehouseRunningStatsPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        active_seconds:
-          type: integer
-          title: Active Seconds
-          default: 0
-        idle_seconds:
-          type: integer
-          title: Idle Seconds
-          default: 0
-      type: object
-      required:
-      - period
-      title: WarehouseRunningStatsPoint
-      description: Single data point for warehouse running stats timeseries.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      title: HTTPValidationError
     WarehouseSummary:
       properties:
         warehouse_id:
@@ -1928,26 +1822,201 @@ components:
       - workspace_id
       title: WarehouseSummary
       description: Summary information for a warehouse.
-    WarehouseEventsResponse:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WarehouseStateChange:
       properties:
         warehouse_id:
           type: string
           title: Warehouse Id
-        events:
-          items:
-            $ref: '#/components/schemas/WarehouseEvent'
-          type: array
-          title: Events
-        total_count:
-          type: integer
-          title: Total Count
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        state:
+          type: string
+          title: State
+        change_time:
+          type: string
+          format: date-time
+          title: Change Time
+        num_clusters:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Clusters
       type: object
       required:
       - warehouse_id
-      - events
+      - warehouse_name
+      - state
+      - change_time
+      title: WarehouseStateChange
+      description: A single state change record.
+    WarehouseRunningStatsPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        active_seconds:
+          type: integer
+          title: Active Seconds
+          default: 0
+        idle_seconds:
+          type: integer
+          title: Idle Seconds
+          default: 0
+      type: object
+      required:
+      - period
+      title: WarehouseRunningStatsPoint
+      description: Single data point for warehouse running stats timeseries.
+    WarehouseRealizedSavings:
+      properties:
+        total:
+          type: number
+          title: Total
+          default: 0.0
+        min:
+          type: number
+          title: Min
+          default: 0.0
+        max:
+          type: number
+          title: Max
+          default: 0.0
+      type: object
+      title: WarehouseRealizedSavings
+      description: 'Realised (``actual``) auto-tune savings for a SQL warehouse over a
+
+        date range: a total plus the min/max range across the underlying
+
+        per-period estimates.'
+    WarehousesResponse:
+      properties:
+        warehouses:
+          items:
+            $ref: '#/components/schemas/WarehouseSummary'
+          type: array
+          title: Warehouses
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of warehouses
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Items per page
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - warehouses
       - total_count
-      title: WarehouseEventsResponse
-      description: Response for warehouse events.
+      title: WarehousesResponse
+      description: Response for listing warehouses.
+    app__schemas__databricks__warehouse__WarehouseCostResponse:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+        daily_average_dbus:
+          type: number
+          title: Daily Average Dbus
+          default: 0
+        daily_average_cost:
+          type: number
+          title: Daily Average Cost
+          default: 0
+        timeseries:
+          items:
+            $ref: '#/components/schemas/WarehouseCostPoint'
+          type: array
+          title: Timeseries
+          default: []
+      type: object
+      required:
+      - warehouse_id
+      title: WarehouseCostResponse
+      description: Response for warehouse cost data.
+    ServerlessCandidate:
+      properties:
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        warehouse_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Type
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        auto_stop_mins:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Auto Stop Mins
+        enable_serverless_compute:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Serverless Compute
+      type: object
+      required:
+      - warehouse_id
+      - warehouse_name
+      - workspace_id
+      title: ServerlessCandidate
+      description: A warehouse that is a candidate for serverless migration.
     WarehouseEvent:
       properties:
         warehouse_id:
@@ -1972,145 +2041,76 @@ components:
       - event_time
       title: WarehouseEvent
       description: A single warehouse event.
-    app__schemas__databricks__warehouse__ServerlessCandidatesResponse:
-      properties:
-        candidates:
-          items:
-            $ref: '#/components/schemas/ServerlessCandidate'
-          type: array
-          title: Candidates
-        total_count:
-          type: integer
-          title: Total Count
-      type: object
-      required:
-      - candidates
-      - total_count
-      title: ServerlessCandidatesResponse
-      description: Response for serverless candidates.
-    SavingsStatValue:
-      properties:
-        value:
-          type: number
-          title: Value
-          default: 0.0
-        display:
-          type: boolean
-          title: Display
-          default: true
-      type: object
-      title: SavingsStatValue
-      description: 'A single stat-card value with a display-gate flag.
-
-
-        Mirrors the Snowflake infra page''s ``top_info`` item shape
-
-        (``TopInfoItem`` in ``app/schemas/summary_page.py``) so the FE''s
-
-        existing stat-card component logic ports over unchanged: ``display``
-
-        lets a backend that can''t cleanly compute a figure hide the card
-
-        instead of showing a misleading 0.'
-    WarehouseCostPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          default: 0
-      type: object
-      required:
-      - period
-      title: WarehouseCostPoint
-      description: Single data point for warehouse cost timeseries.
-    WarehouseCostTrendsResponse:
-      properties:
-        trends:
-          items:
-            $ref: '#/components/schemas/WarehouseCostTrendItem'
-          type: array
-          title: Trends
-          description: Cost trends broken down by warehouse type
-        warehouse_types:
-          items:
-            type: string
-          type: array
-          title: Warehouse Types
-          description: List of warehouse types present in the data
-        granularity:
-          type: string
-          title: Granularity
-          description: Time granularity (day, week, month)
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs in period
-          default: 0
-        total_cost:
-          type: number
-          title: Total Cost
-          description: Total estimated cost
-          default: 0
-      type: object
-      required:
-      - trends
-      - warehouse_types
-      - granularity
-      title: WarehouseCostTrendsResponse
-      description: Response for warehouse cost trends (aggregated across all warehouses).
-    WarehouseAutoTuneSavingsTrendsResponse:
+    app__schemas__databricks__warehouse__WarehouseRunningStatsTrendsResponse:
       properties:
         warehouse_id:
           type: string
           title: Warehouse Id
-        actual:
+        trends:
           items:
-            $ref: '#/components/schemas/WarehouseAutoTuneSavingsTrendPoint'
+            $ref: '#/components/schemas/WarehouseRunningStatsPoint'
           type: array
-          title: Actual
-          default: []
-        potential:
-          items:
-            $ref: '#/components/schemas/WarehouseAutoTuneSavingsTrendPoint'
-          type: array
-          title: Potential
-          default: []
+          title: Trends
+          description: Daily active/idle time data points
         granularity:
           type: string
           title: Granularity
+          description: Time granularity (day)
+        total_active_seconds:
+          type: integer
+          title: Total Active Seconds
+          description: Total active time
+          default: 0
+        total_idle_seconds:
+          type: integer
+          title: Total Idle Seconds
+          description: Total idle time
+          default: 0
       type: object
       required:
       - warehouse_id
+      - trends
       - granularity
-      title: WarehouseAutoTuneSavingsTrendsResponse
-      description: 'Per-period auto-tune savings for a SQL warehouse, split into realized
-
-        and potential.
-
-
-        ``actual`` holds savings while an applied auto-tune recommendation (e.g.
-
-        a lowered auto-stop) was in effect; ``potential`` holds the savings an
-
-        active, not-yet-applied recommendation would have earned over the same
-
-        window. Sourced from ClickHouse ``dbx_auto_tune_cost_savings``.'
-    HTTPValidationError:
+      title: WarehouseRunningStatsTrendsResponse
+      description: Response for warehouse running stats trends over time.
+    WarehouseAutoTuneSavingsSummaryResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        warehouse_id:
+          type: string
+          title: Warehouse Id
+        realized_savings:
+          $ref: '#/components/schemas/WarehouseRealizedSavings'
+        estimated_annual_savings:
+          type: number
+          title: Estimated Annual Savings
+          default: 0.0
+        currency:
+          type: string
+          title: Currency
+          default: USD
       type: object
-      title: HTTPValidationError
+      required:
+      - warehouse_id
+      - realized_savings
+      title: WarehouseAutoTuneSavingsSummaryResponse
+      description: 'Realised savings range + a derived annualized estimate for the two
+
+        stat blocks shown above the SQL warehouse detail tabs.
+
+
+        ``realized_savings`` sums ``actual`` savings over the caller''s
+
+        ``start_date``/``end_date`` window. ``estimated_annual_savings`` is
+
+        independent of that window: it annualizes a trailing 29-day
+
+        actual+potential run-rate (capped at today), mirroring
+
+        ``DatabricksSavingsService.get_overall_savings_estimate``''s
+
+        methodology, scoped to this one warehouse. Sourced entirely from
+
+        ClickHouse ``dbx_auto_tune_cost_savings`` — no Postgres insights table.'
   securitySchemes:
     HTTPBearer:
       type: http

@@ -188,195 +188,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    CustomDatamateIntegrationModel:
-      properties:
-        id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Id
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        type:
-          $ref: '#/components/schemas/app__constants__IntegrationType'
-        config:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/InputParameter'
-            type: array
-          - type: 'null'
-          title: Config
-        tools:
-          items:
-            $ref: '#/components/schemas/DatamateToolInfo'
-          type: array
-          title: Tools
-          default: []
-        toolConfig:
-          items:
-            $ref: '#/components/schemas/IntegrationConfigItem'
-          type: array
-          title: Toolconfig
-        inputs:
-          items:
-            $ref: '#/components/schemas/IntegrationInput'
-          type: array
-          title: Inputs
-      type: object
-      required:
-      - name
-      - type
-      - toolConfig
-      - inputs
-      title: CustomDatamateIntegrationModel
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    SupportedTechStacks:
-      type: string
-      enum:
-      - dbt
-      - snowflake
-      - bigquery
-      - postgresql
-      - github
-      - jira
-      - altimate
-      - airflow
-      - databricks
-      - dagster
-      title: SupportedTechStacks
-    ConfigVariant:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        config:
-          items:
-            $ref: '#/components/schemas/InputParameter'
-          type: array
-          title: Config
-      type: object
-      required:
-      - id
-      - name
-      - config
-      title: ConfigVariant
-    MCPIntegrationType:
-      type: string
-      enum:
-      - api
-      - code
-      - extension
-      - tool
-      - mcp
-      title: MCPIntegrationType
-    app__constants__IntegrationType:
-      type: string
-      enum:
-      - code
-      - api
-      - mcp
-      title: IntegrationType
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    DatamateToolInfo:
-      properties:
-        key:
-          type: string
-          title: Key
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        enable_all:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Enable All
-      type: object
-      required:
-      - key
-      - name
-      title: DatamateToolInfo
-    Page_CustomDatamateIntegrationModel_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CustomDatamateIntegrationModel'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[CustomDatamateIntegrationModel]
     InputParameter:
       properties:
         name:
@@ -418,37 +229,34 @@ components:
       - key
       - description
       title: InputParameter
-    IntegrationInput:
+    ValidationError:
       properties:
-        name:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Name
+          title: Message
         type:
           type: string
-          title: Type
-        required:
-          type: boolean
-          title: Required
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
+          title: Error Type
       type: object
       required:
-      - name
+      - loc
+      - msg
       - type
-      - required
-      title: IntegrationInput
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
+      title: ValidationError
+    app__constants__IntegrationType:
+      type: string
+      enum:
+      - code
+      - api
+      - mcp
+      title: IntegrationType
     DatamateIntegrationResponse:
       properties:
         name:
@@ -528,6 +336,123 @@ components:
       - description
       - url
       title: DatamateIntegrationResponse
+    IntegrationInput:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        required:
+          type: boolean
+          title: Required
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - name
+      - type
+      - required
+      title: IntegrationInput
+    Page_CustomDatamateIntegrationModel_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CustomDatamateIntegrationModel'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CustomDatamateIntegrationModel]
+    MCPIntegrationType:
+      type: string
+      enum:
+      - api
+      - code
+      - extension
+      - tool
+      - mcp
+      title: MCPIntegrationType
+    SupportedTechStacks:
+      type: string
+      enum:
+      - dbt
+      - snowflake
+      - bigquery
+      - postgresql
+      - github
+      - jira
+      - altimate
+      - airflow
+      - databricks
+      - dagster
+      title: SupportedTechStacks
+    DatamateToolInfo:
+      properties:
+        key:
+          type: string
+          title: Key
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        enable_all:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Enable All
+      type: object
+      required:
+      - key
+      - name
+      title: DatamateToolInfo
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     IntegrationConfigItem:
       properties:
         key:
@@ -542,6 +467,81 @@ components:
       required:
       - key
       title: IntegrationConfigItem
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    CustomDatamateIntegrationModel:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        type:
+          $ref: '#/components/schemas/app__constants__IntegrationType'
+        config:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/InputParameter'
+            type: array
+          - type: 'null'
+          title: Config
+        tools:
+          items:
+            $ref: '#/components/schemas/DatamateToolInfo'
+          type: array
+          title: Tools
+          default: []
+        toolConfig:
+          items:
+            $ref: '#/components/schemas/IntegrationConfigItem'
+          type: array
+          title: Toolconfig
+        inputs:
+          items:
+            $ref: '#/components/schemas/IntegrationInput'
+          type: array
+          title: Inputs
+      type: object
+      required:
+      - name
+      - type
+      - toolConfig
+      - inputs
+      title: CustomDatamateIntegrationModel
+    ConfigVariant:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        config:
+          items:
+            $ref: '#/components/schemas/InputParameter'
+          type: array
+          title: Config
+      type: object
+      required:
+      - id
+      - name
+      - config
+      title: ConfigVariant
   securitySchemes:
     HTTPBearer:
       type: http

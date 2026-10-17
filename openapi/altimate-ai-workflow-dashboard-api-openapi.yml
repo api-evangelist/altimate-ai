@@ -619,6 +619,15 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    SessionTransitionRequest:
+      properties:
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - status
+      title: SessionTransitionRequest
     AgentUpdateRequest:
       properties:
         name:
@@ -687,28 +696,21 @@ components:
       - msg
       - type
       title: ValidationError
-    DashboardMessageRequest:
+    CommandCreateRequest:
       properties:
-        content:
+        command:
           type: string
-          title: Content
-        role:
-          type: string
-          title: Role
-          default: user
+          title: Command
+        payload:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Payload
       type: object
       required:
-      - content
-      title: DashboardMessageRequest
-    SessionTransitionRequest:
-      properties:
-        status:
-          type: string
-          title: Status
-      type: object
-      required:
-      - status
-      title: SessionTransitionRequest
+      - command
+      title: CommandCreateRequest
     AgentCreateRequest:
       properties:
         name:
@@ -774,21 +776,28 @@ components:
       - key
       - value
       title: ConfigUpsertRequest
-    CommandCreateRequest:
+    HTTPValidationError:
       properties:
-        command:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DashboardMessageRequest:
+      properties:
+        content:
           type: string
-          title: Command
-        payload:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Payload
+          title: Content
+        role:
+          type: string
+          title: Role
+          default: user
       type: object
       required:
-      - command
-      title: CommandCreateRequest
+      - content
+      title: DashboardMessageRequest
     SessionUpdateRequest:
       properties:
         title:
@@ -853,15 +862,6 @@ components:
       required:
       - title
       title: SessionCreateRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

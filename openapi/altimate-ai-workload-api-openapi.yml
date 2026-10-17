@@ -160,6 +160,34 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    WorkloadAttributeValues:
+      properties:
+        attribute_key:
+          type: string
+          title: Attribute Key
+        values:
+          items:
+            type: string
+          type: array
+          title: Values
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - attribute_key
+      - values
+      - total
+      - page
+      - size
+      title: WorkloadAttributeValues
+      description: Response schema for distinct values of a workload attribute (for filter dropdowns).
     ValidationError:
       properties:
         loc:
@@ -193,6 +221,15 @@ components:
       - options
       title: WorkloadAttributes
       description: Response schema for available workload attributes.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     WorkloadAttribute:
       properties:
         key:
@@ -211,43 +248,6 @@ components:
       - label
       title: WorkloadAttribute
       description: Represents a single workload attribute for grouping and filtering.
-    WorkloadAttributeValues:
-      properties:
-        attribute_key:
-          type: string
-          title: Attribute Key
-        values:
-          items:
-            type: string
-          type: array
-          title: Values
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-      type: object
-      required:
-      - attribute_key
-      - values
-      - total
-      - page
-      - size
-      title: WorkloadAttributeValues
-      description: Response schema for distinct values of a workload attribute (for filter dropdowns).
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

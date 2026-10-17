@@ -374,6 +374,90 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    CostAttributionResponse:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        mode:
+          type: string
+          title: Mode
+      type: object
+      required:
+      - enabled
+      - mode
+      title: CostAttributionResponse
+    UpdateEmailDomainStatusRequest:
+      properties:
+        domain:
+          type: string
+          title: Domain
+        status:
+          $ref: '#/components/schemas/DomainStatus'
+      type: object
+      required:
+      - domain
+      - status
+      title: UpdateEmailDomainStatusRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AddEmailDomainRequest:
+      properties:
+        domain:
+          type: string
+          title: Domain
+      type: object
+      required:
+      - domain
+      title: AddEmailDomainRequest
+    UpsertCostAttributionRequest:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        mode:
+          type: string
+          title: Mode
+          default: warehouse
+      type: object
+      title: UpsertCostAttributionRequest
+    DomainStatus:
+      type: string
+      enum:
+      - active
+      - paused
+      title: DomainStatus
+    EmailDomainAllowlistResponse:
+      properties:
+        domains:
+          items:
+            $ref: '#/components/schemas/EmailDomainEntry'
+          type: array
+          title: Domains
+      type: object
+      required:
+      - domains
+      title: EmailDomainAllowlistResponse
     EmailDomainEntry:
       properties:
         domain:
@@ -396,68 +480,15 @@ components:
       - domain
       - status
       title: EmailDomainEntry
-    ValidationError:
+    HTTPValidationError:
       properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Detail
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    EmailDomainAllowlistResponse:
-      properties:
-        domains:
-          items:
-            $ref: '#/components/schemas/EmailDomainEntry'
-          type: array
-          title: Domains
-      type: object
-      required:
-      - domains
-      title: EmailDomainAllowlistResponse
-    DomainStatus:
-      type: string
-      enum:
-      - active
-      - paused
-      title: DomainStatus
-    UpsertCostAttributionRequest:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        mode:
-          type: string
-          title: Mode
-          default: warehouse
-      type: object
-      title: UpsertCostAttributionRequest
-    UpdateEmailDomainStatusRequest:
-      properties:
-        domain:
-          type: string
-          title: Domain
-        status:
-          $ref: '#/components/schemas/DomainStatus'
-      type: object
-      required:
-      - domain
-      - status
-      title: UpdateEmailDomainStatusRequest
+      title: HTTPValidationError
     AddQueryTagRequest:
       properties:
         tag:
@@ -496,37 +527,6 @@ components:
       - databricks_service_principal_config
       - infra_savings_multiplier
       title: GlobalConfigType
-    CostAttributionResponse:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-        mode:
-          type: string
-          title: Mode
-      type: object
-      required:
-      - enabled
-      - mode
-      title: CostAttributionResponse
-    AddEmailDomainRequest:
-      properties:
-        domain:
-          type: string
-          title: Domain
-      type: object
-      required:
-      - domain
-      title: AddEmailDomainRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

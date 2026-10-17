@@ -291,6 +291,27 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     SnippetItem:
       properties:
         id:
@@ -333,27 +354,69 @@ components:
       - type
       title: SnippetItem
       description: Individual code snippet from Weaviate
-    ValidationError:
+    HTTPValidationError:
       properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CreateSnippetRequest:
+      properties:
+        title:
           type: string
-          title: Message
+          title: Title
+          description: Title or name of the snippet
+        description:
+          type: string
+          title: Description
+          description: Description of what the snippet does
+        database_type:
+          type: string
+          title: Database Type
+          description: Database type (e.g., clickhouse, postgres)
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+          description: Capability tags
         type:
           type: string
-          title: Error Type
+          title: Type
+          description: 'Snippet type: data_definition or sql_example'
+        full_content:
+          additionalProperties: true
+          type: object
+          title: Full Content
+          description: Full snippet content
       type: object
       required:
-      - loc
-      - msg
+      - title
+      - description
+      - database_type
       - type
-      title: ValidationError
+      - full_content
+      title: CreateSnippetRequest
+      description: Request to create a new snippet
+    DeleteSnippetResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion succeeded
+        message:
+          type: string
+          title: Message
+          description: Status message
+      type: object
+      required:
+      - success
+      - message
+      title: DeleteSnippetResponse
+      description: Response from deleting a snippet
     SnippetsListResponse:
       properties:
         snippets:
@@ -387,27 +450,6 @@ components:
       - total
       title: SnippetsListResponse
       description: Paginated list of snippets
-    ExecuteSnippetRequest:
-      properties:
-        tenant:
-          type: string
-          title: Tenant
-          description: Tenant name to execute against
-        database_type:
-          type: string
-          title: Database Type
-          description: Database type to execute against (clickhouse or postgres)
-        sql:
-          type: string
-          title: Sql
-          description: SQL query to execute
-      type: object
-      required:
-      - tenant
-      - database_type
-      - sql
-      title: ExecuteSnippetRequest
-      description: Request to execute a SQL snippet against a tenant's datastore
     SnippetsFilterOptions:
       properties:
         database_types:
@@ -425,44 +467,6 @@ components:
       type: object
       title: SnippetsFilterOptions
       description: Available filter options for snippets
-    UpdateSnippetRequest:
-      properties:
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-          description: Title or name of the snippet
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          description: Description of what the snippet does
-        database_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database Type
-          description: Database type
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
-          description: Capability tags
-        full_content:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Full Content
-          description: Full snippet content
-      type: object
-      title: UpdateSnippetRequest
-      description: Request to update an existing snippet
     ExecuteSnippetResponse:
       properties:
         success:
@@ -503,69 +507,65 @@ components:
       - success
       title: ExecuteSnippetResponse
       description: Response from executing a SQL snippet
-    DeleteSnippetResponse:
+    ExecuteSnippetRequest:
       properties:
-        success:
-          type: boolean
-          title: Success
-          description: Whether the deletion succeeded
-        message:
+        tenant:
           type: string
-          title: Message
-          description: Status message
-      type: object
-      required:
-      - success
-      - message
-      title: DeleteSnippetResponse
-      description: Response from deleting a snippet
-    CreateSnippetRequest:
-      properties:
-        title:
-          type: string
-          title: Title
-          description: Title or name of the snippet
-        description:
-          type: string
-          title: Description
-          description: Description of what the snippet does
+          title: Tenant
+          description: Tenant name to execute against
         database_type:
           type: string
           title: Database Type
-          description: Database type (e.g., clickhouse, postgres)
+          description: Database type to execute against (clickhouse or postgres)
+        sql:
+          type: string
+          title: Sql
+          description: SQL query to execute
+      type: object
+      required:
+      - tenant
+      - database_type
+      - sql
+      title: ExecuteSnippetRequest
+      description: Request to execute a SQL snippet against a tenant's datastore
+    UpdateSnippetRequest:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+          description: Title or name of the snippet
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Description of what the snippet does
+        database_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database Type
+          description: Database type
         tags:
-          items:
-            type: string
-          type: array
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
           title: Tags
           description: Capability tags
-        type:
-          type: string
-          title: Type
-          description: 'Snippet type: data_definition or sql_example'
         full_content:
-          additionalProperties: true
-          type: object
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
           title: Full Content
           description: Full snippet content
       type: object
-      required:
-      - title
-      - description
-      - database_type
-      - type
-      - full_content
-      title: CreateSnippetRequest
-      description: Request to create a new snippet
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      title: UpdateSnippetRequest
+      description: Request to update an existing snippet
   securitySchemes:
     HTTPBearer:
       type: http

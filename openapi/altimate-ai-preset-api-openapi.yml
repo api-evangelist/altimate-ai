@@ -302,6 +302,67 @@ components:
       - msg
       - type
       title: ValidationError
+    GetAllPresetResponse:
+      properties:
+        presets:
+          items:
+            $ref: '#/components/schemas/PresetModel'
+          type: array
+          title: Presets
+      type: object
+      required:
+      - presets
+      title: GetAllPresetResponse
+    PresetModel:
+      properties:
+        name:
+          type: string
+          title: Name
+        data:
+          additionalProperties: true
+          type: object
+          title: Data
+        applicable_for:
+          type: string
+          title: Applicable For
+        type:
+          $ref: '#/components/schemas/Preset'
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+      type: object
+      required:
+      - name
+      - data
+      - applicable_for
+      - type
+      title: PresetModel
+    UpdatePresetRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        applicable_for:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Applicable For
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/Preset'
+          - type: 'null'
+      type: object
+      title: UpdatePresetRequest
     Preset:
       type: string
       enum:
@@ -309,6 +370,15 @@ components:
       - column_picker
       - optin_features
       title: Preset
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     DeletePresetResponse:
       properties:
         preset_id:
@@ -347,17 +417,6 @@ components:
       - applicable_for
       - type
       title: CreatePresetRequest
-    GetAllPresetResponse:
-      properties:
-        presets:
-          items:
-            $ref: '#/components/schemas/PresetModel'
-          type: array
-          title: Presets
-      type: object
-      required:
-      - presets
-      title: GetAllPresetResponse
     UpdatePresetResponse:
       properties:
         preset_id:
@@ -367,65 +426,6 @@ components:
       required:
       - preset_id
       title: UpdatePresetResponse
-    UpdatePresetRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        data:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Data
-        applicable_for:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Applicable For
-        type:
-          anyOf:
-          - $ref: '#/components/schemas/Preset'
-          - type: 'null'
-      type: object
-      title: UpdatePresetRequest
-    PresetModel:
-      properties:
-        name:
-          type: string
-          title: Name
-        data:
-          additionalProperties: true
-          type: object
-          title: Data
-        applicable_for:
-          type: string
-          title: Applicable For
-        type:
-          $ref: '#/components/schemas/Preset'
-        id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Id
-      type: object
-      required:
-      - name
-      - data
-      - applicable_for
-      - type
-      title: PresetModel
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

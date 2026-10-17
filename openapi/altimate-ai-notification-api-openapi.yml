@@ -206,6 +206,17 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    NotificationResponse:
+      properties:
+        notifications:
+          items:
+            $ref: '#/components/schemas/Notification'
+          type: array
+          title: Notifications
+      type: object
+      required:
+      - notifications
+      title: NotificationResponse
     ValidationError:
       properties:
         loc:
@@ -227,6 +238,14 @@ components:
       - msg
       - type
       title: ValidationError
+    FeatureRequestNotificationRequest:
+      properties:
+        request_type:
+          type: string
+          title: Request Type
+          default: datamate
+      type: object
+      title: FeatureRequestNotificationRequest
     Notification:
       properties:
         id:
@@ -243,14 +262,33 @@ components:
       - type
       - config
       title: Notification
-    FeatureRequestNotificationRequest:
+    HTTPValidationError:
       properties:
-        request_type:
-          type: string
-          title: Request Type
-          default: datamate
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      title: FeatureRequestNotificationRequest
+      title: HTTPValidationError
+    SendSlackNotificationResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: SendSlackNotificationResponse
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     NotificationRequest:
       properties:
         name:
@@ -264,26 +302,6 @@ components:
       - name
       - webhook_url
       title: NotificationRequest
-    NotificationResponse:
-      properties:
-        notifications:
-          items:
-            $ref: '#/components/schemas/Notification'
-          type: array
-          title: Notifications
-      type: object
-      required:
-      - notifications
-      title: NotificationResponse
-    SendSlackNotificationResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: SendSlackNotificationResponse
     NotificationConfigPublic:
       properties:
         name:
@@ -303,15 +321,6 @@ components:
         the display name is surfaced over the API; the backend looks up the
 
         URL internally via `get_notification_by_id`.'
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
     SendSlackNotificationRequest:
       properties:
         webhook_url:
@@ -326,15 +335,6 @@ components:
       - webhook_url
       - payload
       title: SendSlackNotificationRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

@@ -383,23 +383,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SummaryTotalSavingsResponse:
-      properties:
-        total_cost_savings_ui:
-          type: string
-          title: Total Cost Savings Ui
-        overall_actual_cost_savings_ui:
-          type: string
-          title: Overall Actual Cost Savings Ui
-        experimentation_savings_ui:
-          type: string
-          title: Experimentation Savings Ui
-      type: object
-      required:
-      - total_cost_savings_ui
-      - overall_actual_cost_savings_ui
-      - experimentation_savings_ui
-      title: SummaryTotalSavingsResponse
     SidePanelModel:
       properties:
         title:
@@ -419,25 +402,6 @@ components:
       - title
       - value
       title: SidePanelModel
-    SummaryConfigRequest:
-      properties:
-        dormant_period:
-          type: integer
-          title: Dormant Period
-      type: object
-      required:
-      - dormant_period
-      title: SummaryConfigRequest
-    Period:
-      type: integer
-      enum:
-      - 365
-      - 29
-      - 30
-      - 7
-      - 1
-      - 28
-      title: Period
     ValidationError:
       properties:
         loc:
@@ -459,6 +423,26 @@ components:
       - msg
       - type
       title: ValidationError
+    InsightType:
+      type: string
+      enum:
+      - cost
+      - storage
+      - governance
+      - cost_overall
+      - auto
+      title: InsightType
+    SummaryGraphRequest:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        insight_type:
+          $ref: '#/components/schemas/InsightType'
+      type: object
+      required:
+      - period
+      - insight_type
+      title: SummaryGraphRequest
     InsightData:
       properties:
         title:
@@ -484,81 +468,6 @@ components:
           title: Attributes
       type: object
       title: InsightData
-    SummarySidePanelResponse:
-      properties:
-        total_annual_spend:
-          anyOf:
-          - $ref: '#/components/schemas/SidePanelModel'
-          - type: 'null'
-        total_annual_savings:
-          anyOf:
-          - $ref: '#/components/schemas/SidePanelModel'
-          - type: 'null'
-        total_time_savings:
-          anyOf:
-          - $ref: '#/components/schemas/TimeSidePanelModel'
-          - type: 'null'
-      type: object
-      title: SummarySidePanelResponse
-    ComparisonRequest:
-      properties:
-        period:
-          $ref: '#/components/schemas/Period'
-      type: object
-      required:
-      - period
-      title: ComparisonRequest
-    SummaryGraphResponse:
-      properties:
-        graph_data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Graph Data
-        top_info:
-          anyOf:
-          - additionalProperties:
-              $ref: '#/components/schemas/TopInfoItem'
-            type: object
-          - type: 'null'
-          title: Top Info
-      type: object
-      required:
-      - graph_data
-      title: SummaryGraphResponse
-    ComparisonResponse:
-      properties:
-        data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Data
-      type: object
-      required:
-      - data
-      title: ComparisonResponse
-    SummaryConfigResponse:
-      properties:
-        dormant_period:
-          type: integer
-          title: Dormant Period
-      type: object
-      required:
-      - dormant_period
-      title: SummaryConfigResponse
-    SummaryGraphRequest:
-      properties:
-        period:
-          $ref: '#/components/schemas/Period'
-        insight_type:
-          $ref: '#/components/schemas/InsightType'
-      type: object
-      required:
-      - period
-      - insight_type
-      title: SummaryGraphRequest
     SummaryInsightsResponse:
       properties:
         insight_type:
@@ -576,6 +485,34 @@ components:
       - summary_type
       - summary_data
       title: SummaryInsightsResponse
+    TimeSidePanelModel:
+      properties:
+        title:
+          type: string
+          title: Title
+        value:
+          type: string
+          title: Value
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
+      type: object
+      required:
+      - title
+      - value
+      title: TimeSidePanelModel
+    SummaryConfigResponse:
+      properties:
+        dormant_period:
+          type: integer
+          title: Dormant Period
+      type: object
+      required:
+      - dormant_period
+      title: SummaryConfigResponse
     TopInfoItem:
       properties:
         value:
@@ -605,41 +542,16 @@ components:
       - value
       - display
       title: TopInfoItem
-    TimeSidePanelModel:
-      properties:
-        title:
-          type: string
-          title: Title
-        value:
-          type: string
-          title: Value
-        attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Attributes
-      type: object
-      required:
-      - title
-      - value
-      title: TimeSidePanelModel
-    SummaryType:
-      type: string
+    Period:
+      type: integer
       enum:
-      - header
-      - insight
-      - side_panel
-      title: SummaryType
-    InsightType:
-      type: string
-      enum:
-      - cost
-      - storage
-      - governance
-      - cost_overall
-      - auto
-      title: InsightType
+      - 365
+      - 29
+      - 30
+      - 7
+      - 1
+      - 28
+      title: Period
     HTTPValidationError:
       properties:
         detail:
@@ -649,6 +561,94 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    SummaryType:
+      type: string
+      enum:
+      - header
+      - insight
+      - side_panel
+      title: SummaryType
+    ComparisonResponse:
+      properties:
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+      type: object
+      required:
+      - data
+      title: ComparisonResponse
+    SummaryConfigRequest:
+      properties:
+        dormant_period:
+          type: integer
+          title: Dormant Period
+      type: object
+      required:
+      - dormant_period
+      title: SummaryConfigRequest
+    SummaryGraphResponse:
+      properties:
+        graph_data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Graph Data
+        top_info:
+          anyOf:
+          - additionalProperties:
+              $ref: '#/components/schemas/TopInfoItem'
+            type: object
+          - type: 'null'
+          title: Top Info
+      type: object
+      required:
+      - graph_data
+      title: SummaryGraphResponse
+    SummarySidePanelResponse:
+      properties:
+        total_annual_spend:
+          anyOf:
+          - $ref: '#/components/schemas/SidePanelModel'
+          - type: 'null'
+        total_annual_savings:
+          anyOf:
+          - $ref: '#/components/schemas/SidePanelModel'
+          - type: 'null'
+        total_time_savings:
+          anyOf:
+          - $ref: '#/components/schemas/TimeSidePanelModel'
+          - type: 'null'
+      type: object
+      title: SummarySidePanelResponse
+    ComparisonRequest:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+      type: object
+      required:
+      - period
+      title: ComparisonRequest
+    SummaryTotalSavingsResponse:
+      properties:
+        total_cost_savings_ui:
+          type: string
+          title: Total Cost Savings Ui
+        overall_actual_cost_savings_ui:
+          type: string
+          title: Overall Actual Cost Savings Ui
+        experimentation_savings_ui:
+          type: string
+          title: Experimentation Savings Ui
+      type: object
+      required:
+      - total_cost_savings_ui
+      - overall_actual_cost_savings_ui
+      - experimentation_savings_ui
+      title: SummaryTotalSavingsResponse
   securitySchemes:
     HTTPBearer:
       type: http

@@ -98,20 +98,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    MaskDataResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: MaskDataResponse
     ValidationError:
       properties:
         loc:
@@ -156,6 +142,29 @@ components:
       - label
       - masking_type
       title: MaskData
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MaskDataResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: MaskDataResponse
     GetMaskDataResponse:
       properties:
         mask_data:
@@ -186,15 +195,6 @@ components:
       - mask
       - block
       title: MaskingType
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http
