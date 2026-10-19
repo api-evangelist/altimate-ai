@@ -1,0 +1,728 @@
+openapi: 3.2.0
+info:
+  title: Fast Datamate Project Bindings API
+  version: 0.1.0
+tags:
+- name: DatamateProjectBindings
+paths:
+  /datamate-project-bindings/:
+    post:
+      tags:
+      - DatamateProjectBindings
+      summary: Create And Bind
+      description: 'Atomically create a new workspace and bind this project to it.
+
+
+        Single handler-owned transaction: the Datamate row and the binding row
+
+        either both commit or both roll back. A partial-unique-index conflict on
+
+        the binding (the identifier is already bound to another workspace for
+
+        this tenant) 409s with the winning workspace''s ``{id, name}`` so the
+
+        CLI can prompt "re-link?" — no orphan Datamate is left behind.'
+      operationId: create_and_bind_datamate_project_bindings__post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAndBindRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAndBindResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: This project is already linked to another workspace
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - DatamateProjectBindings
+      summary: Unbind Project
+      description: 'Detach a project from its workspace.
+
+
+        The client half of this is ``altimate-code``''s unlink: without a server-side
+
+        delete, dropping the local cache row achieves nothing, because the CLI re-asks
+
+        the server for a binding whenever its cache misses and would silently re-link
+
+        the project on the next resolve.
+
+
+        Soft delete, matching ``_soft_delete_bindings_for_datamate``: the partial unique
+
+        index is on the identifier ``WHERE is_deleted IS FALSE``, so clearing the flag is
+
+        what frees the remote or path to be bound again. A hard delete would also work
+
+        for the index but would discard when the project was first linked, which is the
+
+        one thing an audit of a re-link wants.
+
+
+        Identifiers work as they do on the bind path — at least one of ``repo_remote`` or
+
+        ``project_path``, and the pair is resolved independently because a remote is
+
+        tenant-global while a path is per-user. If both are supplied and they name
+
+        *different* bindings, that is 409 rather than a guess: deleting the wrong one is
+
+        not recoverable from the client, which cannot see the row it did not mean to
+
+        touch.
+
+
+        Authorization is the binder, not the workspace owner — the same rule
+
+        ``rebind_by_remote`` applies, and for the same reason. Owning the workspace a
+
+        project happens to be bound to should not let you detach someone else''s
+
+        checkout. A binding the caller did not create answers 404 rather than 403, so
+
+        this endpoint cannot be used to probe which remotes are bound in the tenant.
+
+
+        Not idempotent by design: a second call answers 404. The alternative — 204 for
+
+        "already gone" — reads the same as success to a client that is retrying blind,
+
+        and unlink is a state change a user asked for and should be told the truth
+
+        about. Callers that genuinely do not care can treat 404 as terminal.'
+      operationId: unbind_project_datamate_project_bindings__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: repo_remote
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 2048
+          - type: 'null'
+          title: Repo Remote
+      - name: project_path
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 2048
+          - type: 'null'
+          title: Project Path
+      responses:
+        '204':
+          description: Successful Response
+        '400':
+          description: No identifier provided
+        '404':
+          description: No active binding for this project
+        '409':
+          description: The two identifiers name different bindings
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamate-project-bindings/bind:
+    post:
+      tags:
+      - DatamateProjectBindings
+      summary: Bind Existing
+      description: 'Attach this project to any existing workspace the caller can see.
+
+
+        That is the same rule as ``GET /datamates/``: owned, tenant-wide, or
+
+        ``restricted`` and granted to the caller or a team they belong to. It has
+
+        to be, because the CLI''s workspace picker is built from that list.
+
+
+        Non-visibility is a 404, not 403 — a caller walking the integer id-space
+
+        should get the same response for "no such workspace" and "someone else''s
+
+        workspace". Upgrade semantics: if the request supplies both a remote and
+
+        a path, either one resolving to this workspace is idempotent success,
+
+        either one resolving to a DIFFERENT workspace is 409, both unresolved
+
+        falls through to a fresh INSERT (and a row that carries both identifiers
+
+        so future lookups by either succeed).
+
+
+        The target Datamate is locked ``FOR UPDATE`` before the binding write
+
+        (M5) so a concurrent ``soft_delete_datamate`` can''t tombstone the parent
+
+        between visibility check and INSERT.'
+      operationId: bind_existing_datamate_project_bindings_bind_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BindExistingRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BindingResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description: Workspace not found
+        '409':
+          description: This project is already linked to another workspace
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /datamate-project-bindings/by-remote:
+    put:
+      tags:
+      - DatamateProjectBindings
+      summary: Rebind By Remote
+      description: 'Atomically move an active binding from its current workspace to a new one.
+
+
+        Holds a row-level ``FOR UPDATE`` lock on the existing binding for the
+
+        duration of the transaction so two concurrent PUTs against the same
+
+        remote serialize cleanly. When ``expected_current_datamate_id`` is
+
+        provided, it must equal the currently-bound workspace''s id or the swap
+
+        is rejected with 412 (optimistic concurrency); when absent, the swap is
+
+        unconditional — the caller is explicitly opting into last-writer-wins.
+
+
+        Authorization: the caller must be the binding''s own creator, and must be
+
+        able to see the target workspace (the same rule as ``GET /datamates/``).
+
+        Visibility collapse applies: an invisible source or target answers 404
+
+        rather than 403, so the endpoint does not double as an existence oracle.
+
+
+        Owning the source workspace is deliberately NOT sufficient — it would
+
+        allow re-pointing a binding someone else created. The binder is checked
+
+        before the source-visibility gate on purpose, so that losing access to the
+
+        source (a revoked share) cannot strand a project the caller bound
+
+        themselves. See ``_acquire_rebind_locks``.
+
+
+        The row is mutated in place rather than delete+insert; ``created_at`` keeps
+
+        reflecting the original binding, and ``user_id`` is left alone because
+
+        moving a binding does not transfer it.'
+      operationId: rebind_by_remote_datamate_project_bindings_by_remote_put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RebindByRemoteRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BindingResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Not the current or target owner
+        '404':
+          description: No existing binding for this remote
+        '412':
+          description: Current binding does not match expected_current_datamate_id
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - DatamateProjectBindings
+      summary: Get Binding For Remote
+      description: 'Look up whether this tenant already has a workspace linked to ``repo_remote``.
+
+
+        Server-authoritative pre-check for the CLI''s post-scan prompt: a 200
+
+        return says "there''s a binding, render the already-linked dialog"; a 404
+
+        says "unbound, render the create/link offer". The CLI never treats its
+
+        own local cache as authoritative when this endpoint is reachable.
+
+
+        Consensus review M1: a workspace that the caller can neither own nor see
+
+        (private + not their datamate) 404s as if the remote were unbound so the
+
+        endpoint does not double as a workspace-metadata oracle.'
+      operationId: get_binding_for_remote_datamate_project_bindings_by_remote_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: repo_remote
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          description: Project git remote URL
+          title: Repo Remote
+        description: Project git remote URL
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBindingResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description: No workspace linked to this remote
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamate-project-bindings/by-path:
+    put:
+      tags:
+      - DatamateProjectBindings
+      summary: Rebind By Path
+      description: 'Path-identified rebind — symmetric to ``PUT /by-remote`` for projects
+
+        without a git remote (materialized sample scaffolds, fresh scratch dirs).
+
+        Same ``FOR UPDATE`` + optimistic-concurrency semantics as its remote
+
+        sibling, the same authorization rule (binder-only, target must be visible
+
+        — see that endpoint''s docstring), and the same in-place mutation of the
+
+        binding row.
+
+
+        Path-only bindings are scoped by user, so the ``FOR UPDATE`` lookup passes
+
+        the caller''s ``user_id`` — a coincidentally-matching path belonging to
+
+        another user will simply 404.'
+      operationId: rebind_by_path_datamate_project_bindings_by_path_put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RebindByPathRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BindingResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: Not the current or target owner
+        '404':
+          description: No existing binding for this path
+        '412':
+          description: Current binding does not match expected_current_datamate_id
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - DatamateProjectBindings
+      summary: Get Binding For Path
+      description: 'Path-identified lookup — symmetric to ``GET /by-remote``.
+
+
+        Path-only bindings are per-user (m1), so this lookup is naturally scoped
+
+        to the caller''s own row: a coincidentally-identical absolute path belonging
+
+        to another user simply 404s. The M1 visibility check still applies (the
+
+        lookup could still hit a public workspace bound by someone else via
+
+        path-only) — kept for defense-in-depth even though the scoping already
+
+        excludes cross-user hits.'
+      operationId: get_binding_for_path_datamate_project_bindings_by_path_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: project_path
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          description: Absolute project directory path
+          title: Project Path
+        description: Absolute project directory path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBindingResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description: No workspace linked to this path
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    BindingResponse:
+      properties:
+        binding:
+          $ref: '#/components/schemas/BindingModel'
+      type: object
+      required:
+      - binding
+      title: BindingResponse
+      description: Response for the bind-existing and rebind endpoints.
+    BindingModel:
+      properties:
+        id:
+          type: integer
+          title: Id
+        datamate_id:
+          type: integer
+          title: Datamate Id
+        datamate_name:
+          type: string
+          title: Datamate Name
+        repo_remote:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Remote
+        project_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Project Path
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - id
+      - datamate_id
+      - datamate_name
+      title: BindingModel
+      description: 'Wire shape returned to the CLI for a single binding row.
+
+
+        Either ``repo_remote`` or ``project_path`` is present (at least one; the
+
+        row''s CHECK constraint enforces this). Projects with a git remote use
+
+        ``repo_remote``; projects without one (materialized sample scaffolds,
+
+        fresh scratch dirs) use ``project_path`` as the fallback identifier.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CreateAndBindResponse:
+      properties:
+        datamate:
+          $ref: '#/components/schemas/DatamateRef'
+        binding:
+          $ref: '#/components/schemas/BindingModel'
+        manage_url:
+          type: string
+          title: Manage Url
+      type: object
+      required:
+      - datamate
+      - binding
+      - manage_url
+      title: CreateAndBindResponse
+    RebindByPathRequest:
+      properties:
+        project_path:
+          type: string
+          maxLength: 2048
+          minLength: 1
+          title: Project Path
+        target_datamate_id:
+          type: integer
+          title: Target Datamate Id
+        expected_current_datamate_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expected Current Datamate Id
+      type: object
+      required:
+      - project_path
+      - target_datamate_id
+      title: RebindByPathRequest
+      description: 'Body for PUT /datamate-project-bindings/by-path (atomic re-link).
+
+
+        Symmetric to ``RebindByRemoteRequest`` but keyed on the project''s absolute
+
+        directory path — used when the project has no git remote (sample scaffolds,
+
+        fresh scratch dirs). Mutates the binding row in place; ``created_at``
+
+        reflects the original binding (consensus review m5).'
+    CreateAndBindRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 256
+          minLength: 1
+          title: Name
+        repo_remote:
+          anyOf:
+          - type: string
+            maxLength: 2048
+          - type: 'null'
+          title: Repo Remote
+        project_path:
+          anyOf:
+          - type: string
+            maxLength: 2048
+          - type: 'null'
+          title: Project Path
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - name
+      title: CreateAndBindRequest
+      description: 'Body for POST /datamate-project-bindings/ (atomic create-workspace + bind).
+
+
+        A new workspace is created with empty-slate defaults and the current
+
+        project is bound to it in a single handler-owned transaction. Provide
+
+        ``repo_remote`` when the project has a git remote, ``project_path`` as
+
+        the fallback identifier when it does not. At least one is required; both
+
+        is fine and permits path-then-remote upgrades.
+
+
+        Identifier normalization runs on the mixin — see
+
+        :class:`_BindingIdentifierMixin`.'
+    RebindByRemoteRequest:
+      properties:
+        repo_remote:
+          type: string
+          maxLength: 2048
+          minLength: 1
+          title: Repo Remote
+        target_datamate_id:
+          type: integer
+          title: Target Datamate Id
+        expected_current_datamate_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expected Current Datamate Id
+      type: object
+      required:
+      - repo_remote
+      - target_datamate_id
+      title: RebindByRemoteRequest
+      description: 'Body for PUT /datamate-project-bindings/by-remote (atomic re-link).
+
+
+        Mutates the existing active binding for ``repo_remote`` **in place**,
+
+        re-pointing its ``datamate_id`` at ``target_datamate_id``. Runs in a
+
+        single transaction under a ``SELECT ... FOR UPDATE`` row lock so two
+
+        concurrent PUTs against the same remote serialize cleanly. When
+
+        ``expected_current_datamate_id`` is provided, it must equal the currently
+
+        -bound workspace''s id or the swap is rejected with 412 (optimistic
+
+        concurrency). When absent, the swap is unconditional — the caller
+
+        explicitly opts into last-writer-wins.
+
+
+        Note: the binding row is mutated in place rather than delete-then-insert
+
+        (consensus review m5). ``created_at`` therefore reflects the original
+
+        binding''s creation, not the rebind moment.'
+    DatamateRef:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - id
+      - name
+      title: DatamateRef
+      description: Minimal datamate reference embedded in binding responses.
+    BindExistingRequest:
+      properties:
+        datamate_id:
+          type: integer
+          title: Datamate Id
+        repo_remote:
+          anyOf:
+          - type: string
+            maxLength: 2048
+          - type: 'null'
+          title: Repo Remote
+        project_path:
+          anyOf:
+          - type: string
+            maxLength: 2048
+          - type: 'null'
+          title: Project Path
+      type: object
+      required:
+      - datamate_id
+      title: BindExistingRequest
+      description: 'Body for POST /datamate-project-bindings/bind (attach to existing workspace).
+
+
+        Caller must own ``datamate_id``. Idempotent: re-binding the same project
+
+        to the same workspace returns the existing binding. 409 when the project
+
+        is already bound to a DIFFERENT workspace for this tenant.
+
+
+        Provide ``repo_remote`` OR ``project_path`` (or both). At least one is
+
+        required. Identifier normalization runs on the mixin.'
+    GetBindingResponse:
+      properties:
+        binding:
+          $ref: '#/components/schemas/BindingModel'
+        datamate:
+          $ref: '#/components/schemas/DatamateRef'
+      type: object
+      required:
+      - binding
+      - datamate
+      title: GetBindingResponse
+      description: Response for GET /datamate-project-bindings/by-remote.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

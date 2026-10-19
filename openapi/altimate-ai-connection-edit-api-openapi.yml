@@ -1,0 +1,110 @@
+openapi: 3.2.0
+info:
+  title: Fast CONNECTION EDIT API
+  version: 0.1.0
+tags:
+- name: CONNECTION_EDIT
+paths:
+  /connection_edit/capabilities:
+    get:
+      tags:
+      - CONNECTION_EDIT
+      summary: Get Connection Edit Capabilities
+      description: Connection types this tenant can edit, with the caller's ``can_edit``.
+      operationId: get_connection_edit_capabilities_connection_edit_capabilities_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Get Connection Edit Capabilities Connection Edit Capabilities Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /connection_edit/{connection_type}/{connection_id}:
+    get:
+      tags:
+      - CONNECTION_EDIT
+      summary: Get Connection Edit Form
+      description: 'Fields and current values of one connection''s edit dialog. A dbt Core
+
+        integration the caller''s team may not see is a 404.'
+      operationId: get_connection_edit_form_connection_edit__connection_type___connection_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_type
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Connection Type
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Connection Edit Form Connection Edit  Connection Type   Connection Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

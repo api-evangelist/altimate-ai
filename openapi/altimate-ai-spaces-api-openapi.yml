@@ -1,0 +1,712 @@
+openapi: 3.2.0
+info:
+  title: Fast SPACES API
+  version: 0.1.0
+tags:
+- name: SPACES
+paths:
+  /spaces/guest-token:
+    post:
+      tags:
+      - SPACES
+      summary: Generate Guest Token
+      description: 'Mint a Superset guest token for one dashboard the tenant owns.
+
+
+        The ownership check below is the embed trust boundary: the UUID comes
+
+        from the browser and must never be trusted as-is. A token is minted only
+
+        when the dashboard row exists in the caller''s tenant schema with
+
+        ``provider=''superset''``.'
+      operationId: generate_guest_token_spaces_guest_token_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpacesGuestTokenRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpacesGuestTokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /spaces/dashboards/sync:
+    post:
+      tags:
+      - SPACES
+      summary: Trigger Sync Tenant Dashboards
+      description: 'Sync the caller''s own tenant from Superset into ``spaces_dashboard``.
+
+
+        This backs the Spaces page''s sync control. The fleet-wide
+
+        ``/dashboards/sync-all`` stays available for ops.'
+      operationId: trigger_sync_tenant_dashboards_spaces_dashboards_sync_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Trigger Sync Tenant Dashboards Spaces Dashboards Sync Post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /spaces/dashboards:
+    get:
+      tags:
+      - SPACES
+      summary: Get Tenant Dashboards
+      description: 'Get paginated dashboards from local database with advanced filtering and sorting.
+
+
+        This endpoint fetches dashboard metadata from the local database
+
+        that was previously synced from Metabase by the sync worker.
+
+
+        Args:
+
+        page: Page number (starts from 1)
+
+        page_size: Number of dashboards per page (max 100)
+
+        search: Search term for dashboard name/description
+
+        tags: Filter by specific tags
+
+        collection_ids: Filter by collection IDs
+
+        collection_names: Filter by collection names
+
+        created_after: ISO date string - filter dashboards created after this date
+
+        created_before: ISO date string - filter dashboards created before this date
+
+        updated_after: ISO date string - filter dashboards updated after this date
+
+        updated_before: ISO date string - filter dashboards updated before this date
+
+        has_description: Filter dashboards with/without descriptions
+
+        archived: Include/exclude archived dashboards
+
+        sort_by: Sort by field: name, created_at, updated_at, collection_name
+
+        sort_order: Sort order: asc, desc
+
+        provider: Filter by engine (''metabase'' or ''superset''); omit for both
+
+
+        Returns:
+
+        dict: Contains the filtered, sorted, and paginated dashboards for the current tenant'
+      operationId: get_tenant_dashboards_spaces_dashboards_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number (starts from 1)
+          default: 1
+          title: Page
+        description: Page number (starts from 1)
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Number of dashboards per page (max 100)
+          default: 10
+          title: Page Size
+        description: Number of dashboards per page (max 100)
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search term for dashboard name/description
+          title: Search
+        description: Search term for dashboard name/description
+      - name: tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by specific tags
+          title: Tags
+        description: Filter by specific tags
+      - name: collection_ids
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: integer
+          - type: 'null'
+          description: Filter by collection IDs
+          title: Collection Ids
+        description: Filter by collection IDs
+      - name: collection_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter by collection names
+          title: Collection Names
+        description: Filter by collection names
+      - name: created_after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: ISO date string - filter dashboards created after this date
+          title: Created After
+        description: ISO date string - filter dashboards created after this date
+      - name: created_before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: ISO date string - filter dashboards created before this date
+          title: Created Before
+        description: ISO date string - filter dashboards created before this date
+      - name: updated_after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: ISO date string - filter dashboards updated after this date
+          title: Updated After
+        description: ISO date string - filter dashboards updated after this date
+      - name: updated_before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: ISO date string - filter dashboards updated before this date
+          title: Updated Before
+        description: ISO date string - filter dashboards updated before this date
+      - name: has_description
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter dashboards with/without descriptions
+          title: Has Description
+        description: Filter dashboards with/without descriptions
+      - name: archived
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Include/exclude archived dashboards
+          title: Archived
+        description: Include/exclude archived dashboards
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort by field: name, created_at, updated_at, collection_name'
+          default: updated_at
+          title: Sort By
+        description: 'Sort by field: name, created_at, updated_at, collection_name'
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Sort order: asc, desc'
+          default: desc
+          title: Sort Order
+        description: 'Sort order: asc, desc'
+      - name: provider
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - enum:
+            - metabase
+            - superset
+            type: string
+          - type: 'null'
+          description: 'Filter by engine: ''metabase'' or ''superset'''
+          title: Provider
+        description: 'Filter by engine: ''metabase'' or ''superset'''
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /spaces/dashboards/{dashboard_id}:
+    get:
+      tags:
+      - SPACES
+      summary: Get Dashboard By Id
+      description: 'Get a specific dashboard from the local database.
+
+
+        Accepts either a Metabase integer dashboard ID or a Superset embed UUID
+
+        (dual-run, AI-7926) — the frontend routes Superset spaces by UUID.
+
+
+        Identity contract per provider: for Metabase rows the returned ``id`` is
+
+        the Metabase dashboard id and can be used to refetch here; for Superset
+
+        rows ``embed_uuid`` is the identity (used for routing and refetching) and
+
+        ``id`` is only an opaque row identifier.
+
+
+        A Superset embed UUID that a row answered to earlier also resolves to that
+
+        row; the response carries the row''s current ``embed_uuid``. The current
+
+        UUID is looked up first, so it always wins.
+
+
+        Returns:
+
+        MetabaseDashboardDetail with dashboard information'
+      operationId: get_dashboard_by_id_spaces_dashboards__dashboard_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: dashboard_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dashboard Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetabaseDashboardDetail'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /spaces/dashboards/sync-all:
+    post:
+      tags:
+      - SPACES
+      summary: Trigger Sync All Dashboards
+      description: 'Sync Spaces dashboards for all tenants inline (AI-7924).
+
+
+        Tracked in ``GlobalTasks`` under ``SPACES_DASHBOARD_SYNC``.'
+      operationId: trigger_sync_all_dashboards_spaces_dashboards_sync_all_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Trigger Sync All Dashboards Spaces Dashboards Sync All Post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /spaces/has-tag:
+    get:
+      tags:
+      - SPACES
+      summary: Has Dashboard Tag
+      description: 'Check whether the provided tag exists in any `SpacesDashboard` for the current tenant (case-insensitive).
+
+
+        Args:
+
+        tag: The tag to check for
+
+
+        Returns:
+
+        True if present (case-insensitive), else False'
+      operationId: has_dashboard_tag_spaces_has_tag_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tag
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          description: Tag to check for in dashboards
+          title: Tag
+        description: Tag to check for in dashboards
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: Response Has Dashboard Tag Spaces Has Tag Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CollectionOption:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - id
+      - name
+      - count
+      title: CollectionOption
+    DashboardsResponse:
+      properties:
+        dashboards:
+          items:
+            $ref: '#/components/schemas/MetabaseDashboard'
+          type: array
+          title: Dashboards
+        count:
+          type: integer
+          title: Count
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+        total_pages:
+          type: integer
+          title: Total Pages
+        has_next:
+          type: boolean
+          title: Has Next
+        has_previous:
+          type: boolean
+          title: Has Previous
+        available_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Available Tags
+        available_collections:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CollectionOption'
+            type: array
+          - type: 'null'
+          title: Available Collections
+      type: object
+      required:
+      - dashboards
+      - count
+      - total
+      - page
+      - page_size
+      - total_pages
+      - has_next
+      - has_previous
+      title: DashboardsResponse
+    Creator:
+      properties:
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        common_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Common Name
+      type: object
+      title: Creator
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    MetabaseDashboard:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated At
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Attributes
+        dashboard_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Dashboard Id
+        embed_uuid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Embed Uuid
+        provider:
+          type: string
+          title: Provider
+          default: metabase
+        collection_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Collection Id
+        collection_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Collection Name
+        dashboard_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Dashboard Metadata
+        collection_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Collection Metadata
+        creator:
+          anyOf:
+          - $ref: '#/components/schemas/Creator'
+          - type: 'null'
+        view_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: View Count
+        last_viewed_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Viewed At
+        tenant_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant Name
+      type: object
+      required:
+      - id
+      - name
+      title: MetabaseDashboard
+    MetabaseDashboardDetail:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_at:
+          type: string
+          title: Created At
+        updated_at:
+          type: string
+          title: Updated At
+        tenant_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant Id
+        provider:
+          type: string
+          title: Provider
+          default: metabase
+        embed_uuid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Embed Uuid
+      type: object
+      required:
+      - id
+      - name
+      - created_at
+      - updated_at
+      title: MetabaseDashboardDetail
+    SpacesGuestTokenResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: SpacesGuestTokenResponse
+    SpacesGuestTokenRequest:
+      properties:
+        embed_uuid:
+          type: string
+          maxLength: 36
+          minLength: 36
+          title: Embed Uuid
+          description: Superset dashboard embed UUID (spaces_dashboard.embed_uuid)
+      type: object
+      required:
+      - embed_uuid
+      title: SpacesGuestTokenRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -59,15 +59,34 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    HTTPValidationError:
+    FetchTemplateRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        identifier:
+          type: string
+          title: Identifier
+        data_store_type:
+          type: string
+          title: Data Store Type
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
       type: object
-      title: HTTPValidationError
+      required:
+      - identifier
+      - data_store_type
+      title: FetchTemplateRequest
+    FetchTemplateResponse:
+      properties:
+        contract:
+          type: string
+          title: Contract
+      type: object
+      required:
+      - contract
+      title: FetchTemplateResponse
     ValidationError:
       properties:
         loc:
@@ -89,34 +108,15 @@ components:
       - msg
       - type
       title: ValidationError
-    FetchTemplateResponse:
+    HTTPValidationError:
       properties:
-        contract:
-          type: string
-          title: Contract
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - contract
-      title: FetchTemplateResponse
-    FetchTemplateRequest:
-      properties:
-        identifier:
-          type: string
-          title: Identifier
-        data_store_type:
-          type: string
-          title: Data Store Type
-        options:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Options
-      type: object
-      required:
-      - identifier
-      - data_store_type
-      title: FetchTemplateRequest
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

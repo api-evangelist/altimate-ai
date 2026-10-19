@@ -813,6 +813,71 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
   /dbt/v1/project_integration/{integration_id}:
+    patch:
+      tags:
+      - DBT
+      summary: Rename Project Integration
+      description: 'Rename a dbt Core integration. The body is read by ``raw_json_body``:
+
+        FastAPI''s own body validation attaches the body to its errors, and the
+
+        global handler sends them to an alert.'
+      operationId: rename_project_integration_dbt_v1_project_integration__integration_id__patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: integration_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Integration Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Rename Project Integration Dbt V1 Project Integration  Integration Id  Patch
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Rename Project Integration Dbt V1 Project Integration  Integration Id  Patch
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Rename Project Integration Dbt V1 Project Integration  Integration Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
       - DBT
@@ -859,6 +924,197 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    DBTDeferToProdRequest:
+      properties:
+        defer_type:
+          $ref: '#/components/schemas/DBTDeferType'
+      type: object
+      required:
+      - defer_type
+      title: DBTDeferToProdRequest
+    SourceMetaData:
+      properties:
+        uniqueId:
+          type: string
+          title: Uniqueid
+        database:
+          type: string
+          title: Database
+        name:
+          type: string
+          title: Name
+        schema_name:
+          type: string
+          title: Schema Name
+        tables:
+          items:
+            $ref: '#/components/schemas/SourceTable'
+          type: array
+          title: Tables
+      type: object
+      required:
+      - uniqueId
+      - database
+      - name
+      - schema_name
+      - tables
+      title: SourceMetaData
+    DBTColumnLineageRequest:
+      properties:
+        target_column:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Target Column
+        target_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Target Model
+        model_dialect:
+          type: string
+          title: Model Dialect
+        model_info:
+          items:
+            $ref: '#/components/schemas/ModelInfo'
+          type: array
+          title: Model Info
+        model_schemas:
+          anyOf:
+          - $ref: '#/components/schemas/Schemas'
+          - type: 'null'
+        downstream_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Downstream Models
+      type: object
+      required:
+      - model_dialect
+      - model_info
+      title: DBTColumnLineageRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DBTStartIngestionRequest:
+      properties:
+        dbt_core_integration_id:
+          type: integer
+          title: Dbt Core Integration Id
+        dbt_core_integration_environment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dbt Core Integration Environment Type
+      type: object
+      required:
+      - dbt_core_integration_id
+      title: DBTStartIngestionRequest
+    SQLToModelRequest:
+      properties:
+        sql:
+          type: string
+          title: Sql
+        adapter:
+          type: string
+          title: Adapter
+        models:
+          items:
+            $ref: '#/components/schemas/ModelNode'
+          type: array
+          title: Models
+        sources:
+          items:
+            $ref: '#/components/schemas/SourceMetaData'
+          type: array
+          title: Sources
+      type: object
+      required:
+      - sql
+      - adapter
+      - models
+      - sources
+      title: SQLToModelRequest
+    SecureSignedURLResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+        dbt_core_integration_file_id:
+          type: integer
+          title: Dbt Core Integration File Id
+      type: object
+      required:
+      - url
+      - dbt_core_integration_file_id
+      title: SecureSignedURLResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ColumnDescription:
+      properties:
+        column_name:
+          type: string
+          title: Column Name
+        column_description:
+          type: string
+          title: Column Description
+        column_citations:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Citation'
+            type: array
+          - type: 'null'
+          title: Column Citations
+      type: object
+      required:
+      - column_name
+      - column_description
+      title: ColumnDescription
+    ModelInfo:
+      properties:
+        model_node:
+          $ref: '#/components/schemas/ModelNode'
+        compiled_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compiled Sql
+        raw_sql:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Sql
+      type: object
+      required:
+      - model_node
+      title: ModelInfo
     ProjectIntegrationResponse:
       properties:
         id:
@@ -911,25 +1167,38 @@ components:
       - created_at
       - last_modified_at
       title: ProjectIntegrationResponse
-    SecureSignedURLResponse:
+    DBTDocsGenResponse:
       properties:
-        url:
-          type: string
-          title: Url
-        dbt_core_integration_file_id:
-          type: integer
-          title: Dbt Core Integration File Id
+        model_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Description
+        column_descriptions:
+          anyOf:
+          - items:
+              anyOf:
+              - additionalProperties:
+                  type: string
+                type: object
+              - $ref: '#/components/schemas/ColumnDescription'
+            type: array
+          - type: 'null'
+          title: Column Descriptions
+        model_citations:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Citation'
+            type: array
+          - type: 'null'
+          title: Model Citations
+        chain_of_thought:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chain Of Thought
       type: object
-      required:
-      - url
-      - dbt_core_integration_file_id
-      title: SecureSignedURLResponse
-    app__schemas__dbt__IntegrationType:
-      type: string
-      enum:
-      - dbt_core
-      - dbt_cloud
-      title: IntegrationType
+      title: DBTDocsGenResponse
     ModelColumn:
       properties:
         name:
@@ -949,283 +1218,7 @@ components:
       required:
       - name
       title: ModelColumn
-    ProjectIntegrationRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        environment:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Environment
-        integration_type:
-          anyOf:
-          - $ref: '#/components/schemas/app__schemas__dbt__IntegrationType'
-          - type: 'null'
-          default: dbt_core
-      type: object
-      required:
-      - name
-      title: ProjectIntegrationRequest
-    CreateProjectIntegrationResponse:
-      properties:
-        dbt_core_integration_id:
-          type: integer
-          title: Dbt Core Integration Id
-        integration_type:
-          anyOf:
-          - $ref: '#/components/schemas/app__schemas__dbt__IntegrationType'
-          - type: 'null'
-          default: dbt_core
-      type: object
-      required:
-      - dbt_core_integration_id
-      title: CreateProjectIntegrationResponse
-    SQLToModelRequest:
-      properties:
-        sql:
-          type: string
-          title: Sql
-        adapter:
-          type: string
-          title: Adapter
-        models:
-          items:
-            $ref: '#/components/schemas/ModelNode'
-          type: array
-          title: Models
-        sources:
-          items:
-            $ref: '#/components/schemas/SourceMetaData'
-          type: array
-          title: Sources
-      type: object
-      required:
-      - sql
-      - adapter
-      - models
-      - sources
-      title: SQLToModelRequest
-    DBTDocsGenRequest:
-      properties:
-        columns:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Columns
-        dbt_model:
-          $ref: '#/components/schemas/DBTModel-Input'
-        gen_model_description:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Gen Model Description
-        prompt_hint:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Prompt Hint
-        column_index_count:
-          type: integer
-          title: Column Index Count
-          default: 1
-        session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Session Id
-        is_bulk_gen:
-          type: boolean
-          title: Is Bulk Gen
-          default: false
-      type: object
-      required:
-      - dbt_model
-      title: DBTDocsGenRequest
-    ModelNode:
-      properties:
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        schema_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schema Name
-        package_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Package Name
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        alias:
-          type: string
-          title: Alias
-        uniqueId:
-          type: string
-          title: Uniqueid
-        columns:
-          additionalProperties:
-            $ref: '#/components/schemas/ModelColumn'
-          type: object
-          title: Columns
-      type: object
-      required:
-      - alias
-      - uniqueId
-      - columns
-      title: ModelNode
-    ColumnDescription:
-      properties:
-        column_name:
-          type: string
-          title: Column Name
-        column_description:
-          type: string
-          title: Column Description
-        column_citations:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Citation'
-            type: array
-          - type: 'null'
-          title: Column Citations
-      type: object
-      required:
-      - column_name
-      - column_description
-      title: ColumnDescription
-    SourceTable:
-      properties:
-        name:
-          type: string
-          title: Name
-      type: object
-      required:
-      - name
-      title: SourceTable
-    SourceMetaData:
-      properties:
-        uniqueId:
-          type: string
-          title: Uniqueid
-        database:
-          type: string
-          title: Database
-        name:
-          type: string
-          title: Name
-        schema_name:
-          type: string
-          title: Schema Name
-        tables:
-          items:
-            $ref: '#/components/schemas/SourceTable'
-          type: array
-          title: Tables
-      type: object
-      required:
-      - uniqueId
-      - database
-      - name
-      - schema_name
-      - tables
-      title: SourceMetaData
-    DownloadSignedUrlRequest:
-      properties:
-        s3_path:
-          type: string
-          title: S3 Path
-      type: object
-      required:
-      - s3_path
-      title: DownloadSignedUrlRequest
-    DBTStartIngestionRequest:
-      properties:
-        dbt_core_integration_id:
-          type: integer
-          title: Dbt Core Integration Id
-        dbt_core_integration_environment_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Dbt Core Integration Environment Type
-      type: object
-      required:
-      - dbt_core_integration_id
-      title: DBTStartIngestionRequest
-    Column:
-      properties:
-        column_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Column Name
-        data_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Data Type
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        tests:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tests
-      type: object
-      title: Column
-    DBTColumnLineageRequest:
-      properties:
-        target_column:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Target Column
-        target_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Target Model
-        model_dialect:
-          type: string
-          title: Model Dialect
-        model_info:
-          items:
-            $ref: '#/components/schemas/ModelInfo'
-          type: array
-          title: Model Info
-        model_schemas:
-          anyOf:
-          - $ref: '#/components/schemas/Schemas'
-          - type: 'null'
-        downstream_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Downstream Models
-      type: object
-      required:
-      - model_dialect
-      - model_info
-      title: DBTColumnLineageRequest
-    DBTModel-Input:
+    DBTModel:
       properties:
         model_name:
           type: string
@@ -1260,7 +1253,7 @@ components:
         dependencies:
           anyOf:
           - items:
-              $ref: '#/components/schemas/DBTModel-Input'
+              $ref: '#/components/schemas/DBTModel'
             type: array
           - type: 'null'
           title: Dependencies
@@ -1268,6 +1261,15 @@ components:
       required:
       - model_name
       title: DBTModel
+    DbtFileType:
+      type: string
+      enum:
+      - manifest
+      - catalog
+      - run_results
+      - sources
+      - semantic_manifest
+      title: DbtFileType
     Schemas:
       properties:
         model_name:
@@ -1278,148 +1280,6 @@ components:
       required:
       - model_name
       title: Schemas
-    DBTExplainQueryRequest:
-      properties:
-        compiled_sql:
-          type: string
-          title: Compiled Sql
-        adapter:
-          type: string
-          title: Adapter
-      type: object
-      required:
-      - compiled_sql
-      - adapter
-      title: DBTExplainQueryRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    DBTDeferType:
-      type: string
-      enum:
-      - local
-      - remote
-      title: DBTDeferType
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    DownloadSignedUrlResponse:
-      properties:
-        url:
-          type: string
-          title: Url
-      type: object
-      required:
-      - url
-      title: DownloadSignedUrlResponse
-    Citation:
-      properties:
-        id:
-          type: string
-          title: Id
-        content:
-          type: string
-          title: Content
-        taskLabel:
-          type: string
-          title: Tasklabel
-      type: object
-      required:
-      - id
-      - content
-      - taskLabel
-      title: Citation
-    DBTDeferToProdRequest:
-      properties:
-        defer_type:
-          $ref: '#/components/schemas/DBTDeferType'
-      type: object
-      required:
-      - defer_type
-      title: DBTDeferToProdRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ModelInfo:
-      properties:
-        model_node:
-          $ref: '#/components/schemas/ModelNode'
-        compiled_sql:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Compiled Sql
-        raw_sql:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Raw Sql
-      type: object
-      required:
-      - model_node
-      title: ModelInfo
-    DBTDocsGenResponse:
-      properties:
-        model_description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Model Description
-        column_descriptions:
-          anyOf:
-          - items:
-              anyOf:
-              - additionalProperties:
-                  type: string
-                type: object
-              - $ref: '#/components/schemas/ColumnDescription'
-            type: array
-          - type: 'null'
-          title: Column Descriptions
-        model_citations:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Citation'
-            type: array
-          - type: 'null'
-          title: Model Citations
-        chain_of_thought:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Chain Of Thought
-      type: object
-      title: DBTDocsGenResponse
     ProjectIntegrationDetailsResponse:
       properties:
         id:
@@ -1464,15 +1324,46 @@ components:
       - last_modified_at
       - sync_history
       title: ProjectIntegrationDetailsResponse
-    DbtFileType:
+    DBTDeferType:
       type: string
       enum:
-      - manifest
-      - catalog
-      - run_results
-      - sources
-      - semantic_manifest
-      title: DbtFileType
+      - local
+      - remote
+      title: DBTDeferType
+    ProjectIntegrationRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        environment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment
+        integration_type:
+          anyOf:
+          - $ref: '#/components/schemas/app__schemas__dbt__IntegrationType'
+          - type: 'null'
+          default: dbt_core
+      type: object
+      required:
+      - name
+      title: ProjectIntegrationRequest
+    SourceTable:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: SourceTable
+    app__schemas__dbt__IntegrationType:
+      type: string
+      enum:
+      - dbt_core
+      - dbt_cloud
+      title: IntegrationType
     VerifyFileUploadRequest:
       properties:
         dbt_core_integration_file_id:
@@ -1482,6 +1373,180 @@ components:
       required:
       - dbt_core_integration_file_id
       title: VerifyFileUploadRequest
+    Column:
+      properties:
+        column_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Column Name
+        data_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Data Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tests:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tests
+      type: object
+      title: Column
+    ModelNode:
+      properties:
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        schema_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema Name
+        package_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Package Name
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        alias:
+          type: string
+          title: Alias
+        uniqueId:
+          type: string
+          title: Uniqueid
+        columns:
+          additionalProperties:
+            $ref: '#/components/schemas/ModelColumn'
+          type: object
+          title: Columns
+      type: object
+      required:
+      - alias
+      - uniqueId
+      - columns
+      title: ModelNode
+    CreateProjectIntegrationResponse:
+      properties:
+        dbt_core_integration_id:
+          type: integer
+          title: Dbt Core Integration Id
+        integration_type:
+          anyOf:
+          - $ref: '#/components/schemas/app__schemas__dbt__IntegrationType'
+          - type: 'null'
+          default: dbt_core
+      type: object
+      required:
+      - dbt_core_integration_id
+      title: CreateProjectIntegrationResponse
+    DownloadSignedUrlRequest:
+      properties:
+        s3_path:
+          type: string
+          title: S3 Path
+      type: object
+      required:
+      - s3_path
+      title: DownloadSignedUrlRequest
+    DBTExplainQueryRequest:
+      properties:
+        compiled_sql:
+          type: string
+          title: Compiled Sql
+        adapter:
+          type: string
+          title: Adapter
+      type: object
+      required:
+      - compiled_sql
+      - adapter
+      title: DBTExplainQueryRequest
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    DBTDocsGenRequest:
+      properties:
+        columns:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Columns
+        dbt_model:
+          $ref: '#/components/schemas/DBTModel'
+        gen_model_description:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Gen Model Description
+        prompt_hint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prompt Hint
+        column_index_count:
+          type: integer
+          title: Column Index Count
+          default: 1
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+        is_bulk_gen:
+          type: boolean
+          title: Is Bulk Gen
+          default: false
+      type: object
+      required:
+      - dbt_model
+      title: DBTDocsGenRequest
+    Citation:
+      properties:
+        id:
+          type: string
+          title: Id
+        content:
+          type: string
+          title: Content
+        taskLabel:
+          type: string
+          title: Tasklabel
+      type: object
+      required:
+      - id
+      - content
+      - taskLabel
+      title: Citation
+    DownloadSignedUrlResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: DownloadSignedUrlResponse
   securitySchemes:
     HTTPBearer:
       type: http

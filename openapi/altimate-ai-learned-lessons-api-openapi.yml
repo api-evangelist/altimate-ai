@@ -1,0 +1,1553 @@
+openapi: 3.2.0
+info:
+  title: Fast LEARNED LESSONS API
+  version: 0.1.0
+tags:
+- name: LEARNED_LESSONS
+paths:
+  /datamates/{datamate_id}/lessons/sync:
+    post:
+      tags:
+      - LEARNED_LESSONS
+      summary: Sync Lessons
+      description: 'Session pull: the live lessons for this repo and store, plus tombstones
+
+        for the caller''s ``local_keys``.
+
+
+        One REPEATABLE READ transaction, so the revision, the lessons and the
+
+        tombstones are one snapshot. With ``known_revision`` equal to the current
+
+        revision the lessons are omitted (``unchanged``), but tombstones are still
+
+        computed: a key restored locally by a checkout or rollback after the last
+
+        pull must still be suppressed.'
+      operationId: sync_lessons_datamates__datamate_id__lessons_sync_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncLessonsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncLessonsResponse'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/settings:
+    get:
+      tags:
+      - LEARNED_LESSONS
+      summary: Get Lesson Settings
+      operationId: get_lesson_settings_datamates__datamate_id__lessons_settings_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonSettingsResponse'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - LEARNED_LESSONS
+      summary: Update Lesson Settings
+      description: 'Owner: serve this workspace''s lessons to every bound repo, or only to
+
+        each lesson''s own. Its own endpoint because the workspace update takes the
+
+        whole workspace object from the frontend.'
+      operationId: update_lesson_settings_datamates__datamate_id__lessons_settings_patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLessonSettingsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonSettingsResponse'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons:
+    get:
+      tags:
+      - LEARNED_LESSONS
+      summary: List Lessons
+      description: 'The review list, newest change first. The owner sees every row;
+
+        anyone else sees live lessons and their own proposals. ``page``/``size``
+
+        come from ``add_pagination``.'
+      operationId: list_lessons_datamates__datamate_id__lessons_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Comma list of candidate, approved, rejected, retired, removed.
+          default: candidate
+          title: Status
+        description: Comma list of candidate, approved, rejected, retired, removed.
+      - name: repo_identity
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 2048
+          - type: 'null'
+          title: Repo Identity
+      - name: store
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Store
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_LessonDetail_'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/submissions:
+    get:
+      tags:
+      - LEARNED_LESSONS
+      summary: List Own Submissions
+      description: 'The caller''s own proposals with their status, version and reason, so a
+
+        client sees owner edits and rejections. At most 1000, in
+
+        ``(updated_at, public_id)`` order: page by passing the last row''s
+
+        ``updated_at`` and ``public_id`` back as ``since`` and ``after_id``.'
+      operationId: list_own_submissions_datamates__datamate_id__lessons_submissions_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Only proposals changed at or after this time.
+          title: Since
+        description: Only proposals changed at or after this time.
+      - name: after_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          description: 'The last row''s public_id, with its updated_at as since: only rows strictly after that (updated_at, public_id).'
+          title: After Id
+        description: 'The last row''s public_id, with its updated_at as since: only rows strictly after that (updated_at, public_id).'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubmissionOut'
+                title: Response List Own Submissions Datamates  Datamate Id  Lessons Submissions Get
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/batch:
+    post:
+      tags:
+      - LEARNED_LESSONS
+      summary: Submit Lessons
+      description: 'Push proposals. Each item gets its own result; one failing item never
+
+        aborts the rest. A retried push is answered from the original row
+
+        (``duplicate``), whatever has happened to it since.'
+      operationId: submit_lessons_datamates__datamate_id__lessons_batch_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitLessonsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitLessonsResponse'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/usage:
+    post:
+      tags:
+      - LEARNED_LESSONS
+      summary: Record Lesson Usage
+      description: Add delivered-lesson counters, idempotent per ``batch_id``.
+      operationId: record_lesson_usage_datamates__datamate_id__lessons_usage_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordUsageRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordUsageResponse'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/{public_id}/events:
+    get:
+      tags:
+      - LEARNED_LESSONS
+      summary: List Lesson Events
+      operationId: list_lesson_events_datamates__datamate_id__lessons__public_id__events_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_LessonEventOut_'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/{public_id}:
+    patch:
+      tags:
+      - LEARNED_LESSONS
+      summary: Edit Lesson
+      description: 'Owner: edit a proposal''s text, tags or pin, or pin/unpin a live
+
+        lesson. Omitted fields are unchanged.'
+      operationId: edit_lesson_datamates__datamate_id__lessons__public_id__patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditLessonRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonDetail'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/{public_id}/approve:
+    post:
+      tags:
+      - LEARNED_LESSONS
+      summary: Approve Lesson
+      description: 'Owner: approve one proposal on its own. An edit retires its targets and
+
+        goes live; a remove retires them and ends ``removed``.'
+      operationId: approve_lesson_datamates__datamate_id__lessons__public_id__approve_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewLessonRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonDetail'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/{public_id}/reject:
+    post:
+      tags:
+      - LEARNED_LESSONS
+      summary: Reject Lesson
+      description: 'Owner: reject a proposal. The served set, and so the revision, is
+
+        unchanged.'
+      operationId: reject_lesson_datamates__datamate_id__lessons__public_id__reject_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewLessonRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonDetail'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/lessons/{public_id}/retire:
+    post:
+      tags:
+      - LEARNED_LESSONS
+      summary: Retire Lesson
+      description: 'Owner: take a live lesson out of service.'
+      operationId: retire_lesson_datamates__datamate_id__lessons__public_id__retire_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewLessonRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonDetail'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or lesson not found
+        '409':
+          description: Changed since read, or refused
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    BatchLessonItem:
+      properties:
+        lesson_key:
+          type: string
+          maxLength: 64
+          title: Lesson Key
+        change_type:
+          type: string
+          maxLength: 16
+          title: Change Type
+        text:
+          type: string
+          maxLength: 280
+          title: Text
+        tags:
+          items:
+            type: string
+            maxLength: 64
+            minLength: 1
+          type: array
+          maxItems: 32
+          title: Tags
+        trigger_paths:
+          items:
+            type: string
+            maxLength: 280
+          type: array
+          maxItems: 32
+          title: Trigger Paths
+        coexists:
+          items:
+            $ref: '#/components/schemas/CoexistsRef'
+          type: array
+          maxItems: 100
+          title: Coexists
+        pinned:
+          type: boolean
+          title: Pinned
+          default: false
+        provenance:
+          anyOf:
+          - type: string
+            maxLength: 4000
+          - type: 'null'
+          title: Provenance
+        origin:
+          type: string
+          maxLength: 32
+          title: Origin
+        replaces:
+          items:
+            $ref: '#/components/schemas/TargetRef'
+          type: array
+          maxItems: 50
+          title: Replaces
+        revises_public_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Revises Public Id
+        revises_version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Revises Version
+      type: object
+      required:
+      - lesson_key
+      - change_type
+      - text
+      - origin
+      title: BatchLessonItem
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    LessonDetail:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        lesson_key:
+          type: string
+          title: Lesson Key
+        repo_identity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Identity
+        store:
+          type: string
+          title: Store
+        text:
+          type: string
+          title: Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        trigger_paths:
+          items:
+            type: string
+          type: array
+          title: Trigger Paths
+        pinned:
+          type: boolean
+          title: Pinned
+        coexists:
+          items:
+            $ref: '#/components/schemas/CoexistsRef'
+          type: array
+          title: Coexists
+        helpful:
+          type: integer
+          title: Helpful
+        harmful:
+          type: integer
+          title: Harmful
+        applied:
+          type: integer
+          title: Applied
+        version:
+          type: integer
+          title: Version
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        status:
+          type: string
+          title: Status
+        change_type:
+          type: string
+          title: Change Type
+        origin:
+          type: string
+          title: Origin
+        provenance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Provenance
+        status_reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status Reason
+        created_by:
+          type: integer
+          title: Created By
+        created_by_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By Name
+        reviewed_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Reviewed By
+        reviewed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reviewed At
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        submission_hash:
+          type: string
+          title: Submission Hash
+        content_hash:
+          type: string
+          title: Content Hash
+        replaces:
+          items:
+            $ref: '#/components/schemas/ReplacedLesson'
+          type: array
+          title: Replaces
+      type: object
+      required:
+      - public_id
+      - lesson_key
+      - store
+      - text
+      - tags
+      - trigger_paths
+      - pinned
+      - coexists
+      - helpful
+      - harmful
+      - applied
+      - version
+      - updated_at
+      - status
+      - change_type
+      - origin
+      - created_by
+      - created_at
+      - submission_hash
+      - content_hash
+      - replaces
+      title: LessonDetail
+      description: 'A lesson row in full, for the review UI. ``coexists`` is the stored
+
+        annotation, not the projection a client receives.'
+    ExistingRef:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        version:
+          type: integer
+          title: Version
+      type: object
+      required:
+      - public_id
+      - version
+      title: ExistingRef
+    LessonOut:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        lesson_key:
+          type: string
+          title: Lesson Key
+        repo_identity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Identity
+        store:
+          type: string
+          title: Store
+        text:
+          type: string
+          title: Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        trigger_paths:
+          items:
+            type: string
+          type: array
+          title: Trigger Paths
+        pinned:
+          type: boolean
+          title: Pinned
+        coexists:
+          items:
+            type: string
+          type: array
+          title: Coexists
+        helpful:
+          type: integer
+          title: Helpful
+        harmful:
+          type: integer
+          title: Harmful
+        applied:
+          type: integer
+          title: Applied
+        version:
+          type: integer
+          title: Version
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - public_id
+      - lesson_key
+      - store
+      - text
+      - tags
+      - trigger_paths
+      - pinned
+      - coexists
+      - helpful
+      - harmful
+      - applied
+      - version
+      - updated_at
+      title: LessonOut
+      description: 'A live lesson as a client receives it. ``coexists`` is projected: the
+
+        keys whose compatibility still holds for both current texts.'
+    SubmissionOut:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        lesson_key:
+          type: string
+          title: Lesson Key
+        repo_identity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Identity
+        store:
+          type: string
+          title: Store
+        status:
+          type: string
+          title: Status
+        version:
+          type: integer
+          title: Version
+        submission_hash:
+          type: string
+          title: Submission Hash
+        content_hash:
+          type: string
+          title: Content Hash
+        status_reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status Reason
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - public_id
+      - lesson_key
+      - store
+      - status
+      - version
+      - submission_hash
+      - content_hash
+      - updated_at
+      title: SubmissionOut
+      description: One of the caller's own proposals, for the client's ledger.
+    TargetRef:
+      properties:
+        public_id:
+          type: string
+          maxLength: 64
+          title: Public Id
+        version:
+          type: integer
+          title: Version
+      type: object
+      required:
+      - public_id
+      - version
+      title: TargetRef
+      description: A live lesson an edit or remove proposal retires, at this version.
+    ReplacedLesson:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        version:
+          type: integer
+          title: Version
+        lesson_key:
+          type: string
+          title: Lesson Key
+        text:
+          type: string
+          title: Text
+        status:
+          type: string
+          title: Status
+        pinned:
+          type: boolean
+          title: Pinned
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        trigger_paths:
+          items:
+            type: string
+          type: array
+          title: Trigger Paths
+      type: object
+      required:
+      - public_id
+      - version
+      - lesson_key
+      - text
+      - status
+      - pinned
+      - tags
+      - trigger_paths
+      title: ReplacedLesson
+      description: 'A ``replaces`` target: the version the proposal named, then the
+
+        target''s current state for the diff (pin, tag and trigger changes
+
+        included).'
+    Tombstone:
+      properties:
+        repo_identity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Identity
+        store:
+          type: string
+          title: Store
+        lesson_key:
+          type: string
+          title: Lesson Key
+      type: object
+      required:
+      - store
+      - lesson_key
+      title: Tombstone
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SyncLessonsRequest:
+      properties:
+        repo_remote:
+          type: string
+          maxLength: 2048
+          minLength: 1
+          title: Repo Remote
+        store:
+          type: string
+          maxLength: 64
+          pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+          title: Store
+          default: team-playbook
+        known_revision:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Known Revision
+        local_keys:
+          items:
+            type: string
+            maxLength: 64
+          type: array
+          maxItems: 1000
+          title: Local Keys
+      type: object
+      required:
+      - repo_remote
+      title: SyncLessonsRequest
+    CoexistsRef:
+      properties:
+        lesson_key:
+          type: string
+          maxLength: 64
+          title: Lesson Key
+        source_text_hash:
+          type: string
+          maxLength: 64
+          title: Source Text Hash
+        target_text_hash:
+          type: string
+          maxLength: 64
+          title: Target Text Hash
+      type: object
+      required:
+      - lesson_key
+      - source_text_hash
+      - target_text_hash
+      title: CoexistsRef
+      description: '``lesson_key`` was checked against this lesson and does not contradict
+
+        it, with both texts'' sha256 at the time. Readers drop the reference once
+
+        either text changes or either lesson is not live.'
+    BatchItemResult:
+      properties:
+        lesson_key:
+          type: string
+          title: Lesson Key
+        submission_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Submission Hash
+        public_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Public Id
+        version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Version
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        duplicate:
+          type: boolean
+          title: Duplicate
+          default: false
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        error_detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Detail
+        existing:
+          anyOf:
+          - $ref: '#/components/schemas/ExistingRef'
+          - type: 'null'
+      type: object
+      required:
+      - lesson_key
+      title: BatchItemResult
+    UsageItem:
+      properties:
+        public_id:
+          type: string
+          maxLength: 64
+          title: Public Id
+        applied:
+          type: integer
+          maximum: 50.0
+          minimum: 0.0
+          title: Applied
+          default: 0
+        helpful:
+          type: integer
+          maximum: 50.0
+          minimum: 0.0
+          title: Helpful
+          default: 0
+        harmful:
+          type: integer
+          maximum: 50.0
+          minimum: 0.0
+          title: Harmful
+          default: 0
+      type: object
+      required:
+      - public_id
+      title: UsageItem
+    RecordUsageRequest:
+      properties:
+        batch_id:
+          type: string
+          format: uuid
+          title: Batch Id
+        items:
+          items:
+            $ref: '#/components/schemas/UsageItem'
+          type: array
+          maxItems: 500
+          title: Items
+      type: object
+      required:
+      - batch_id
+      - items
+      title: RecordUsageRequest
+    SyncLessonsResponse:
+      properties:
+        unchanged:
+          type: boolean
+          title: Unchanged
+        revision:
+          type: integer
+          title: Revision
+        repo_identity:
+          type: string
+          title: Repo Identity
+        share_lessons_across_repos:
+          type: boolean
+          title: Share Lessons Across Repos
+        pending_count:
+          type: integer
+          title: Pending Count
+        lessons:
+          items:
+            $ref: '#/components/schemas/LessonOut'
+          type: array
+          title: Lessons
+        tombstones:
+          items:
+            $ref: '#/components/schemas/Tombstone'
+          type: array
+          title: Tombstones
+      type: object
+      required:
+      - unchanged
+      - revision
+      - repo_identity
+      - share_lessons_across_repos
+      - pending_count
+      - lessons
+      - tombstones
+      title: SyncLessonsResponse
+    RecordUsageResponse:
+      properties:
+        duplicate:
+          type: boolean
+          title: Duplicate
+        applied_items:
+          type: integer
+          title: Applied Items
+        skipped_items:
+          type: integer
+          title: Skipped Items
+      type: object
+      required:
+      - duplicate
+      - applied_items
+      - skipped_items
+      title: RecordUsageResponse
+    LessonEventOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        action:
+          type: string
+          title: Action
+        from_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: From Status
+        to_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: To Status
+        from_version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: From Version
+        to_version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: To Version
+        actor_user_id:
+          type: integer
+          title: Actor User Id
+        actor_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actor Name
+        actor_source:
+          type: string
+          title: Actor Source
+        meta:
+          additionalProperties: true
+          type: object
+          title: Meta
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - action
+      - actor_user_id
+      - actor_source
+      - meta
+      - created_at
+      title: LessonEventOut
+    Page_LessonDetail_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/LessonDetail'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[LessonDetail]
+    LessonSettingsResponse:
+      properties:
+        share_lessons_across_repos:
+          type: boolean
+          title: Share Lessons Across Repos
+        revision:
+          type: integer
+          title: Revision
+        is_owner:
+          type: boolean
+          title: Is Owner
+        pending_count:
+          type: integer
+          title: Pending Count
+      type: object
+      required:
+      - share_lessons_across_repos
+      - revision
+      - is_owner
+      - pending_count
+      title: LessonSettingsResponse
+    ReviewLessonRequest:
+      properties:
+        expected_version:
+          type: integer
+          minimum: 1.0
+          title: Expected Version
+        reason:
+          anyOf:
+          - type: string
+            maxLength: 2000
+          - type: 'null'
+          title: Reason
+      type: object
+      required:
+      - expected_version
+      title: ReviewLessonRequest
+    SubmitLessonsResponse:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/BatchItemResult'
+          type: array
+          title: Results
+      type: object
+      required:
+      - results
+      title: SubmitLessonsResponse
+    SubmitLessonsRequest:
+      properties:
+        repo_remote:
+          type: string
+          maxLength: 2048
+          minLength: 1
+          title: Repo Remote
+        store:
+          type: string
+          maxLength: 64
+          pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+          title: Store
+          default: team-playbook
+        items:
+          items:
+            $ref: '#/components/schemas/BatchLessonItem'
+          type: array
+          maxItems: 100
+          title: Items
+      type: object
+      required:
+      - repo_remote
+      - items
+      title: SubmitLessonsRequest
+    EditLessonRequest:
+      properties:
+        expected_version:
+          type: integer
+          minimum: 1.0
+          title: Expected Version
+        text:
+          anyOf:
+          - type: string
+            maxLength: 280
+          - type: 'null'
+          title: Text
+        tags:
+          anyOf:
+          - items:
+              type: string
+              maxLength: 64
+              minLength: 1
+            type: array
+            maxItems: 32
+          - type: 'null'
+          title: Tags
+        pinned:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Pinned
+      type: object
+      required:
+      - expected_version
+      title: EditLessonRequest
+      description: 'Owner edit. A candidate takes ``text``, ``tags`` and ``pinned``; a live
+
+        lesson takes ``pinned`` only. Omitted fields are left unchanged.'
+    UpdateLessonSettingsRequest:
+      properties:
+        share_lessons_across_repos:
+          type: boolean
+          title: Share Lessons Across Repos
+        expected_revision:
+          type: integer
+          minimum: 0.0
+          title: Expected Revision
+      type: object
+      required:
+      - share_lessons_across_repos
+      - expected_revision
+      title: UpdateLessonSettingsRequest
+    Page_LessonEventOut_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/LessonEventOut'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[LessonEventOut]
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

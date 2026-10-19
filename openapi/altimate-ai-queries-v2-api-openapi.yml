@@ -70,6 +70,16 @@ paths:
           default: 50
           title: Size
         description: Page size
+      - name: execution_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Execution Status
       - name: tags
         in: query
         required: false
@@ -1197,7 +1207,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.352542'
+          default: '2026-09-16T06:12:38.193893'
           title: Start Date
       - name: end_date
         in: query
@@ -1205,7 +1215,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.352590'
+          default: '2026-10-16T06:12:38.193947'
           title: End Date
       - name: workflow_type
         in: query
@@ -1404,7 +1414,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:36.446353'
+          default: '2026-09-16T06:12:37.292555'
           title: Start Date
       - name: end_date
         in: query
@@ -1412,7 +1422,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:36.446402'
+          default: '2026-10-16T06:12:37.292600'
           title: End Date
       - name: aggregate_by
         in: query
@@ -1604,7 +1614,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:36.446353'
+          default: '2026-09-16T06:12:37.292555'
           title: Start Date
       - name: end_date
         in: query
@@ -1612,7 +1622,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:36.446402'
+          default: '2026-10-16T06:12:37.292600'
           title: End Date
       - name: aggregate_by
         in: query
@@ -1881,6 +1891,7 @@ paths:
         schema:
           anyOf:
           - type: integer
+            minimum: 1
           - type: 'null'
           default: 50
           title: Size
@@ -1976,6 +1987,7 @@ paths:
         schema:
           anyOf:
           - type: integer
+            minimum: 1
           - type: 'null'
           default: 50
           title: Size
@@ -2034,6 +2046,109 @@ paths:
                 type: object
                 additionalProperties: true
                 title: Response 400 Get Dbt Tags Filter Query V2 Snowflake Jobs Dbt Filters Tags  Workflow Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /query/v2/snowflake_jobs/dbt_filters/models/{workflow_id}:
+    get:
+      tags:
+      - QUERIES_V2
+      summary: Get Dbt Models Filter
+      operationId: get_dbt_models_filter_query_v2_snowflake_jobs_dbt_filters_models__workflow_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: workflow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workflow Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          default: 50
+          title: Size
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefix
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: command
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Command
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbtModelFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Dbt Models Filter Query V2 Snowflake Jobs Dbt Filters Models  Workflow Id  Get
         '422':
           description: Validation Error
           content:
@@ -2323,90 +2438,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /query/v2/snowflake_jobs/graph_data/{workflow_id}:
-    post:
-      tags:
-      - QUERIES_V2
-      summary: Get Snowflake Jobs Graph Data
-      operationId: get_snowflake_jobs_graph_data_query_v2_snowflake_jobs_graph_data__workflow_id__post
-      deprecated: true
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
-      parameters:
-      - name: workflow_id
-        in: path
-        required: true
-        schema:
-          type: string
-          title: Workflow Id
-      - name: start_date
-        in: query
-        required: false
-        schema:
-          type: string
-          format: date-time
-          default: '2026-06-17T12:35:37.459149'
-          title: Start Date
-      - name: end_date
-        in: query
-        required: false
-        schema:
-          type: string
-          format: date-time
-          default: '2026-07-17T12:35:37.459231'
-          title: End Date
-      - name: task_id
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Task Id
-      - name: x-tenant
-        in: header
-        required: true
-        schema:
-          type: string
-          title: X-Tenant
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SnowflakeJobGraphDataRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                items: {}
-                title: Response Get Snowflake Jobs Graph Data Query V2 Snowflake Jobs Graph Data  Workflow Id  Post
-        '400':
-          description: Not supported for public user
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response 400 Get Snowflake Jobs Graph Data Query V2 Snowflake Jobs Graph Data  Workflow Id  Post
-        '403':
-          description: Not supported for public user
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response 403 Get Snowflake Jobs Graph Data Query V2 Snowflake Jobs Graph Data  Workflow Id  Post
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /query/v2/snowflake_jobs/runs/{workflow_id}:
     get:
       tags:
@@ -2450,7 +2481,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:36.448063'
+          default: '2026-09-16T06:12:37.294272'
           title: Start Date
       - name: end_date
         in: query
@@ -2458,7 +2489,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:36.448113'
+          default: '2026-10-16T06:12:37.294316'
           title: End Date
       - name: task_id
         in: query
@@ -2583,7 +2614,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:36.448063'
+          default: '2026-09-16T06:12:37.294272'
           title: Start Date
       - name: end_date
         in: query
@@ -2591,7 +2622,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:36.448113'
+          default: '2026-10-16T06:12:37.294316'
           title: End Date
       - name: task_id
         in: query
@@ -2737,7 +2768,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:36.448373'
+          default: '2026-09-16T06:12:37.294552'
           title: Start Date
       - name: end_date
         in: query
@@ -2745,7 +2776,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:36.448413'
+          default: '2026-10-16T06:12:37.294588'
           title: End Date
       - name: page
         in: query
@@ -2806,6 +2837,16 @@ paths:
               type: string
           - type: 'null'
           title: Task Type
+      - name: model
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Model
       - name: sortAttribute
         in: query
         required: false
@@ -2887,7 +2928,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.528691'
+          default: '2026-09-16T06:12:38.386403'
           title: Start Date
       - name: end_date
         in: query
@@ -2895,7 +2936,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.528749'
+          default: '2026-10-16T06:12:38.386458'
           title: End Date
       - name: task_type
         in: query
@@ -2972,7 +3013,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.538868'
+          default: '2026-09-16T06:12:38.396435'
           title: Start Date
       - name: end_date
         in: query
@@ -2980,7 +3021,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.538934'
+          default: '2026-10-16T06:12:38.396498'
           title: End Date
       - name: page
         in: query
@@ -3050,59 +3091,6 @@ paths:
                 type: object
                 additionalProperties: true
                 title: Response 403 Get Snowflake Job Run Tasks Query V2 Snowflake Jobs Tasks By Run  Workflow Id  Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /query/v2/snowflake_jobs/latest_run/{workflow_id}:
-    get:
-      tags:
-      - QUERIES_V2
-      summary: Get Snowflake Job Run Tasks
-      operationId: get_snowflake_job_run_tasks_query_v2_snowflake_jobs_latest_run__workflow_id__get
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
-      parameters:
-      - name: workflow_id
-        in: path
-        required: true
-        schema:
-          type: string
-          title: Workflow Id
-      - name: x-tenant
-        in: header
-        required: true
-        schema:
-          type: string
-          title: X-Tenant
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                items: {}
-                title: Response Get Snowflake Job Run Tasks Query V2 Snowflake Jobs Latest Run  Workflow Id  Get
-        '400':
-          description: Not supported for public user
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response 400 Get Snowflake Job Run Tasks Query V2 Snowflake Jobs Latest Run  Workflow Id  Get
-        '403':
-          description: Not supported for public user
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response 403 Get Snowflake Job Run Tasks Query V2 Snowflake Jobs Latest Run  Workflow Id  Get
         '422':
           description: Validation Error
           content:
@@ -3257,7 +3245,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.558856'
+          default: '2026-09-16T06:12:38.410819'
           title: Start Date
       - name: end_date
         in: query
@@ -3265,7 +3253,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.558939'
+          default: '2026-10-16T06:12:38.410899'
           title: End Date
       - name: workflow_type
         in: query
@@ -3766,7 +3754,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.608272'
+          default: '2026-09-16T06:12:38.477579'
           title: Start Date
       - name: end_date
         in: query
@@ -3774,7 +3762,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.608356'
+          default: '2026-10-16T06:12:38.477668'
           title: End Date
       - name: x-tenant
         in: header
@@ -3842,7 +3830,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.614671'
+          default: '2026-09-16T06:12:38.482683'
           title: Start Date
       - name: end_date
         in: query
@@ -3850,7 +3838,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.614749'
+          default: '2026-10-16T06:12:38.482768'
           title: End Date
       - name: x-tenant
         in: header
@@ -3915,7 +3903,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.619250'
+          default: '2026-09-16T06:12:38.487796'
           title: Startdate
       - name: endDate
         in: query
@@ -3923,7 +3911,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.619310'
+          default: '2026-10-16T06:12:38.487856'
           title: Enddate
       - name: x-tenant
         in: header
@@ -4003,7 +3991,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:36.448562'
+          default: '2026-09-16T06:12:37.294722'
           title: Startdate
       - name: endDate
         in: query
@@ -4011,7 +3999,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:36.448610'
+          default: '2026-10-16T06:12:37.294762'
           title: Enddate
       - name: task_id
         in: query
@@ -4114,7 +4102,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:36.448838'
+          default: '2026-09-16T06:12:37.294972'
           title: Startdate
       - name: endDate
         in: query
@@ -4122,7 +4110,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:36.448884'
+          default: '2026-10-16T06:12:37.295010'
           title: Enddate
       - name: task_id
         in: query
@@ -4218,52 +4206,6 @@ paths:
                 type: object
                 additionalProperties: true
                 title: Response 403 Get Snowflake Job Runs Graph Query V2 Snowflake Jobs Run List Graph  Workflow Id  Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /query/v2/is_dbt_model/{query_id}:
-    get:
-      tags:
-      - QUERIES_V2
-      summary: Check Workflow Type
-      operationId: check_workflow_type_query_v2_is_dbt_model__query_id__get
-      deprecated: true
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
-      parameters:
-      - name: query_id
-        in: path
-        required: true
-        schema:
-          type: string
-          title: Query Id
-      - name: x-tenant
-        in: header
-        required: true
-        schema:
-          type: string
-          title: X-Tenant
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response Check Workflow Type Query V2 Is Dbt Model  Query Id  Get
-        '400':
-          description: Not supported for public user
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response 400 Check Workflow Type Query V2 Is Dbt Model  Query Id  Get
         '422':
           description: Validation Error
           content:
@@ -4384,7 +4326,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.663010'
+          default: '2026-09-18T06:12:38.529636'
           title: Start Date
       - name: end_date
         in: query
@@ -4392,7 +4334,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.663063'
+          default: '2026-10-16T06:12:38.529691'
           title: End Date
       - name: navigationSource
         in: query
@@ -4460,7 +4402,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.676478'
+          default: '2026-09-18T06:12:38.546243'
           title: Start Date
       - name: end_date
         in: query
@@ -4468,7 +4410,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.676569'
+          default: '2026-10-16T06:12:38.546331'
           title: End Date
       - name: navigationSource
         in: query
@@ -4578,7 +4520,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.687211'
+          default: '2026-09-18T06:12:39.379991'
           title: Start Date
       - name: end_date
         in: query
@@ -4586,7 +4528,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.687265'
+          default: '2026-10-16T06:12:39.380049'
           title: End Date
       - name: navigationSource
         in: query
@@ -4647,7 +4589,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.694455'
+          default: '2026-09-18T06:12:39.389460'
           title: Start Date
       - name: end_date
         in: query
@@ -4655,7 +4597,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.694537'
+          default: '2026-10-16T06:12:39.389542'
           title: End Date
       - name: workload_type
         in: query
@@ -4707,7 +4649,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.699941'
+          default: '2026-09-18T06:12:39.396565'
           title: Start Date
       - name: end_date
         in: query
@@ -4715,7 +4657,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.700039'
+          default: '2026-10-16T06:12:39.396652'
           title: End Date
       - name: workload_type
         in: query
@@ -4780,7 +4722,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.705320'
+          default: '2026-09-18T06:12:39.403523'
           title: Start Date
       - name: end_date
         in: query
@@ -4788,7 +4730,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.705375'
+          default: '2026-10-16T06:12:39.403579'
           title: End Date
       - name: navigationSource
         in: query
@@ -4849,7 +4791,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:37.712097'
+          default: '2026-09-16T06:12:39.412673'
           title: Start Date
       - name: end_date
         in: query
@@ -4857,7 +4799,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.712180'
+          default: '2026-10-16T06:12:39.412761'
           title: End Date
       - name: navigationSource
         in: query
@@ -4958,7 +4900,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.718613'
+          default: '2026-09-18T06:12:39.420834'
           title: Start Date
       - name: end_date
         in: query
@@ -4966,7 +4908,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.718666'
+          default: '2026-10-16T06:12:39.420885'
           title: End Date
       - name: warehouses
         in: query
@@ -5048,7 +4990,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.730613'
+          default: '2026-09-18T06:12:39.431627'
           title: Start Date
       - name: end_date
         in: query
@@ -5056,7 +4998,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.730705'
+          default: '2026-10-16T06:12:39.431715'
           title: End Date
       - name: navigationSource
         in: query
@@ -5118,7 +5060,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.737787'
+          default: '2026-09-18T06:12:39.439093'
           title: Start Date
       - name: end_date
         in: query
@@ -5126,7 +5068,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.737868'
+          default: '2026-10-16T06:12:39.439177'
           title: End Date
       - name: navigationSource
         in: query
@@ -5912,7 +5854,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.805545'
+          default: '2026-09-18T06:12:39.524352'
           title: Start Date
       - name: end_date
         in: query
@@ -5920,7 +5862,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.805632'
+          default: '2026-10-16T06:12:39.524461'
           title: End Date
       - name: navigationSource
         in: query
@@ -5988,7 +5930,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.812256'
+          default: '2026-09-18T06:12:39.532535'
           title: Start Date
       - name: end_date
         in: query
@@ -5996,7 +5938,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.812342'
+          default: '2026-10-16T06:12:39.532628'
           title: End Date
       - name: num_of_records
         in: query
@@ -6074,7 +6016,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.823250'
+          default: '2026-09-18T06:12:39.545290'
           title: Start Date
       - name: end_date
         in: query
@@ -6082,7 +6024,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.823336'
+          default: '2026-10-16T06:12:39.545378'
           title: End Date
       - name: page
         in: query
@@ -6192,7 +6134,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-19T12:35:37.834534'
+          default: '2026-09-18T06:12:39.558118'
           title: Start Date
       - name: end_date
         in: query
@@ -6200,7 +6142,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:37.834593'
+          default: '2026-10-16T06:12:39.558168'
           title: End Date
       - name: navigationSource
         in: query
@@ -6247,1166 +6189,80 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    QueryTag:
+    RunDiff:
       properties:
-        tag_rk:
+        type:
           type: string
-          title: Tag Rk
-        reason:
-          type: string
-          title: Reason
-        reports:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Report'
-            type: array
-          - type: 'null'
-          title: Reports
-        tag_icon_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Tag Icon Text
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-      type: object
-      required:
-      - tag_rk
-      - reason
-      title: QueryTag
-    DbtJobFilterItem:
-      properties:
-        command_display:
-          type: string
-          title: Command Display
-      type: object
-      required:
-      - command_display
-      title: DbtJobFilterItem
-    RunEvents:
-      properties:
-        warehouse_change:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Change
-        code_change:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Code Change
-        execution_status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Execution Status
-      type: object
-      title: RunEvents
-    QueryHashTextResponse:
-      properties:
-        query_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Text
-      type: object
-      title: QueryHashTextResponse
-    Report:
-      properties:
-        query_span:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Span
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        indices:
-          anyOf:
-          - items:
-              prefixItems:
-              - prefixItems:
-                - type: integer
-                - type: integer
-                type: array
-                maxItems: 2
-                minItems: 2
-              - prefixItems:
-                - type: integer
-                - type: integer
-                type: array
-                maxItems: 2
-                minItems: 2
-              type: array
-              maxItems: 2
-              minItems: 2
-            type: array
-          - type: 'null'
-          title: Indices
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-      type: object
-      title: Report
-    Page_QueryFetchAllPageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/QueryFetchAllPageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[QueryFetchAllPageResponse]
-    TaskWorkloadResponse:
-      properties:
-        database_name:
-          type: string
-          title: Database Name
-        schema_name:
-          type: string
-          title: Schema Name
-        name:
-          type: string
-          title: Name
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        run_count:
-          type: integer
-          title: Run Count
-        success_count:
-          type: integer
-          title: Success Count
-        failure_count:
-          type: integer
-          title: Failure Count
-        execution_time_ms:
-          type: number
-          title: Execution Time Ms
-        queued_time_ms:
-          type: number
-          title: Queued Time Ms
-        cost:
-          type: number
-          title: Cost
-        compute_cost:
-          type: number
-          title: Compute Cost
-        serverless_cost:
-          type: number
-          title: Serverless Cost
-        credits_used:
-          type: number
-          title: Credits Used
-        serverless_credits_used:
-          type: number
-          title: Serverless Credits Used
-      type: object
-      required:
-      - database_name
-      - schema_name
-      - name
-      - warehouse_name
-      - run_count
-      - success_count
-      - failure_count
-      - execution_time_ms
-      - queued_time_ms
-      - cost
-      - compute_cost
-      - serverless_cost
-      - credits_used
-      - serverless_credits_used
-      title: TaskWorkloadResponse
-      description: 'One aggregated Snowflake task row for /tasks/list.
-
-
-        Rows are grouped by the qualified task name plus warehouse
-
-        (``database_name``, ``schema_name``, ``name``, ``warehouse_name``) and
-
-        summed across the requested date range — mirroring the stored-procedures
-
-        listing shape. ``warehouse_name`` is empty for serverless tasks.'
-    WorkloadType:
-      type: string
-      enum:
-      - NOTEBOOK
-      - STREAMLIT
-      - STORED_PROCEDURE
-      - UNKNOWN
-      title: WorkloadType
-    SnowflakeJobRunCompareRequest:
-      properties:
-        workflow_id:
-          type: string
-          title: Workflow Id
-        run1_id:
-          type: string
-          title: Run1 Id
-        run2_id:
-          type: string
-          title: Run2 Id
-      type: object
-      required:
-      - workflow_id
-      - run1_id
-      - run2_id
-      title: SnowflakeJobRunCompareRequest
-    WorkloadStoredProcedureJobResponse:
-      properties:
-        query_id:
-          type: string
-          title: Query Id
-        query_summary:
-          type: string
-          title: Query Summary
-        query_cost:
-          type: number
-          title: Query Cost
-        execution_status:
-          type: string
-          title: Execution Status
-        bytes_scanned:
-          type: number
-          title: Bytes Scanned
-        execution_time:
-          type: number
-          title: Execution Time
-        start_time:
-          type: string
-          format: date-time
-          title: Start Time
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        database_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database Name
-      type: object
-      required:
-      - query_id
-      - query_summary
-      - query_cost
-      - execution_status
-      - bytes_scanned
-      - execution_time
-      - start_time
-      - timestamp
-      title: WorkloadStoredProcedureJobResponse
-    PaginatedStringValuesResponse:
-      properties:
-        values:
-          items:
-            type: string
-          type: array
-          title: Values
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-        total_pages:
-          type: integer
-          title: Total Pages
-      type: object
-      required:
-      - values
-      - total
-      - page
-      - size
-      - total_pages
-      title: PaginatedStringValuesResponse
-    Page_WorkloadChildQueryResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/WorkloadChildQueryResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[WorkloadChildQueryResponse]
-    app__schemas__queries__FilterResponse:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: string
-          title: Value
-      type: object
-      required:
-      - label
-      - value
-      title: FilterResponse
-    QueryGroupPageItem:
-      properties:
-        query_hash:
-          type: string
-          title: Query Hash
-        trimmed_query:
-          type: string
-          title: Trimmed Query
-        full_query:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Full Query
-        total_run:
-          type: integer
-          title: Total Run
-        avg_exec_time:
-          type: string
-          title: Avg Exec Time
-        avg_cost:
-          type: number
-          title: Avg Cost
-        total_cost:
-          type: number
-          title: Total Cost
-        annualized_cost:
-          type: number
-          title: Annualized Cost
-        distinct_warehouses:
-          type: integer
-          title: Distinct Warehouses
-        distinct_users:
-          type: integer
-          title: Distinct Users
-        distinct_roles:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Distinct Roles
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-        users:
-          items:
-            type: string
-          type: array
-          title: Users
-        warehouses:
-          items:
-            type: string
-          type: array
-          title: Warehouses
-        roles:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Roles
-        instance_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Instance Id
-      type: object
-      required:
-      - query_hash
-      - trimmed_query
-      - total_run
-      - avg_exec_time
-      - avg_cost
-      - total_cost
-      - annualized_cost
-      - distinct_warehouses
-      - distinct_users
-      - tags
-      - users
-      - warehouses
-      title: QueryGroupPageItem
-    WorkloadChildQueryResponse:
-      properties:
-        query_type:
-          type: string
-          title: Query Type
-        query_tag:
-          type: string
-          title: Query Tag
-        session_id:
-          type: integer
-          title: Session Id
-        rk:
-          type: string
-          title: Rk
-        query_summary:
-          type: string
-          title: Query Summary
-        start_time:
-          type: string
-          format: date-time
-          title: Start Time
-        end_time:
-          type: string
-          format: date-time
-          title: End Time
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        execution_status:
-          type: string
-          title: Execution Status
-        execution_time:
-          type: number
-          title: Execution Time
-        bytes_scanned:
-          type: number
-          title: Bytes Scanned
-        cost:
-          type: number
-          title: Cost
-        hash:
-          type: string
-          title: Hash
-      type: object
-      required:
-      - query_type
-      - query_tag
-      - session_id
-      - rk
-      - query_summary
-      - start_time
-      - end_time
-      - warehouse_name
-      - execution_status
-      - execution_time
-      - bytes_scanned
-      - cost
-      - hash
-      title: WorkloadChildQueryResponse
-    QueryObject:
-      properties:
-        id:
-          type: string
-          title: Id
-        query_id:
-          type: string
-          title: Query Id
-        query_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Text
-        query_type:
-          type: string
-          title: Query Type
-        tags:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/QueryTag'
-            type: array
-          - type: 'null'
-          title: Tags
-        timestamp:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Timestamp
-        warehouse_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Name
-        warehouse_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Size
-        user_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Name
-        execution_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Execution Time
-        currency:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Currency
-        cost:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cost
-        percent_partition_scanned:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Percent Partition Scanned
-        bytes_spilled:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Bytes Spilled
-        data_store_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Data Store Id
-        start_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Start Time
-        custom_tag:
-          anyOf:
-          - $ref: '#/components/schemas/QueryCustomTag'
-          - type: 'null'
-        percentage_scanned_from_cache:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Percentage Scanned From Cache
-        query_load_percent:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Load Percent
-        query_hash_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Query Hash Count
-      type: object
-      required:
-      - id
-      - query_id
-      - query_type
-      title: QueryObject
-    SnowflakeJobRunPageResponse:
-      properties:
-        run_id:
-          type: string
-          title: Run Id
-        query_cost:
-          type: number
-          title: Query Cost
-        bytes_scanned:
-          type: integer
-          title: Bytes Scanned
-        execution_time:
-          type: number
-          title: Execution Time
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        start_time:
-          type: string
-          format: date-time
-          title: Start Time
-        success_count:
-          type: integer
-          title: Success Count
-        total_count:
-          type: integer
-          title: Total Count
-        warehouses:
-          items:
-            type: string
-          type: array
-          title: Warehouses
-        annotation:
-          anyOf:
-          - $ref: '#/components/schemas/RunEvents'
-          - type: 'null'
-        query_parameterized_hashes:
-          items:
-            type: string
-          type: array
-          title: Query Parameterized Hashes
-        error_messages:
-          items:
-            type: string
-          type: array
-          title: Error Messages
-        execution_statuses:
-          items:
-            type: string
-          type: array
-          title: Execution Statuses
-        command_display:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Command Display
-      type: object
-      required:
-      - run_id
-      - query_cost
-      - bytes_scanned
-      - execution_time
-      - timestamp
-      - start_time
-      - success_count
-      - total_count
-      - warehouses
-      - query_parameterized_hashes
-      - error_messages
-      - execution_statuses
-      title: SnowflakeJobRunPageResponse
-    Page_Dict_:
-      properties:
-        items:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[Dict]
-    SnowflakeJobTaskAggregatePageResponse:
-      properties:
+          title: Type
         task_id:
           type: string
           title: Task Id
-        task_name:
+        run1:
+          $ref: '#/components/schemas/TaskInfo'
+        run2:
+          $ref: '#/components/schemas/TaskInfo'
+      type: object
+      required:
+      - type
+      - task_id
+      - run1
+      - run2
+      title: RunDiff
+    JobRunGraphResponse:
+      properties:
+        run_id:
           anyOf:
           - type: string
           - type: 'null'
-          title: Task Name
-        task_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Task Type
-        integration_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Name
-        integration_environment:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Environment
-        integration_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Integration Id
-        dbt_model_present:
-          type: boolean
-          title: Dbt Model Present
-          default: false
-        query_cost:
-          type: number
-          title: Query Cost
-        bytes_scanned:
-          type: integer
-          title: Bytes Scanned
-        execution_time:
-          type: number
-          title: Execution Time
+          title: Run Id
         timestamp:
           type: string
           format: date-time
           title: Timestamp
         start_time:
-          type: string
-          format: date-time
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
           title: Start Time
-        success_count:
-          type: integer
-          title: Success Count
-        total_count:
-          type: integer
-          title: Total Count
-        warehouses:
-          items:
-            type: string
-          type: array
-          title: Warehouses
+        query_cost:
+          type: number
+          title: Query Cost
+        execution_time:
+          type: number
+          title: Execution Time
         annotation:
           anyOf:
           - $ref: '#/components/schemas/RunEvents'
           - type: 'null'
-        query_parameterized_hashes:
-          items:
-            type: string
-          type: array
-          title: Query Parameterized Hashes
-        error_messages:
-          items:
-            type: string
-          type: array
-          title: Error Messages
-        execution_statuses:
-          items:
-            type: string
-          type: array
-          title: Execution Statuses
-        insights:
-          items:
-            type: string
-          type: array
-          title: Insights
-        commands:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Commands
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
       type: object
       required:
-      - task_id
-      - query_cost
-      - bytes_scanned
-      - execution_time
       - timestamp
-      - start_time
-      - success_count
-      - total_count
-      - warehouses
-      - query_parameterized_hashes
-      - error_messages
-      - execution_statuses
-      title: SnowflakeJobTaskAggregatePageResponse
-    Page_SnowflakeJobRunPageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SnowflakeJobRunPageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[SnowflakeJobRunPageResponse]
-    WorkloadJobResponse:
-      properties:
-        session_id:
-          type: integer
-          title: Session Id
-        query_summary:
-          type: string
-          title: Query Summary
-        query_cost:
-          type: number
-          title: Query Cost
-        execution_status:
-          type: string
-          title: Execution Status
-        bytes_scanned:
-          type: number
-          title: Bytes Scanned
-        execution_time:
-          type: number
-          title: Execution Time
-        start_time:
-          type: string
-          format: date-time
-          title: Start Time
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-      type: object
-      required:
-      - session_id
-      - query_summary
       - query_cost
-      - execution_status
-      - bytes_scanned
       - execution_time
-      - start_time
-      - timestamp
-      title: WorkloadJobResponse
-    QueryObjectV2:
+      title: JobRunGraphResponse
+      description: Lightweight response for runs graph — only fields needed for charting.
+    ValidationError:
       properties:
-        id:
-          type: string
-          title: Id
-        query_id:
-          type: string
-          title: Query Id
-        query_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Text
-        query_type:
-          type: string
-          title: Query Type
-        query_hash:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Hash
-        tags:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Tags
-        timestamp:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Timestamp
-        warehouse_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Name
-        warehouse_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Size
-        user_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Name
-        execution_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Execution Time
-        currency:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Currency
-        cost:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cost
-        percent_partition_scanned:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Percent Partition Scanned
-        bytes_spilled:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Bytes Spilled
-        data_store_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Data Store Id
-        start_time:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Start Time
-        custom_tag:
-          anyOf:
-          - $ref: '#/components/schemas/QueryCustomTag'
-          - type: 'null'
-        percentage_scanned_from_cache:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Percentage Scanned From Cache
-        query_load_percent:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Load Percent
-        query_hash_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Query Hash Count
-        opportunities:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Opportunities
-        instance_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Instance Id
-      type: object
-      required:
-      - id
-      - query_id
-      - query_type
-      title: QueryObjectV2
-    Page_TaskWorkloadResponse_:
-      properties:
-        items:
+        loc:
           items:
-            $ref: '#/components/schemas/TaskWorkloadResponse'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[TaskWorkloadResponse]
-    TaskRunsSummaryResponse:
-      properties:
-        database_name:
-          type: string
-          title: Database Name
-        schema_name:
-          type: string
-          title: Schema Name
-        name:
-          type: string
-          title: Name
-        total_cost:
-          type: number
-          title: Total Cost
-        avg_cost:
-          type: number
-          title: Avg Cost
-        run_count:
-          type: integer
-          title: Run Count
-        success_count:
-          type: integer
-          title: Success Count
-        failure_count:
-          type: integer
-          title: Failure Count
-        execution_time_ms:
-          type: number
-          title: Execution Time Ms
-        queued_time_ms:
-          type: number
-          title: Queued Time Ms
-        avg_execution_time_ms:
-          type: number
-          title: Avg Execution Time Ms
-        avg_queued_time_ms:
-          type: number
-          title: Avg Queued Time Ms
-        compute_cost:
-          type: number
-          title: Compute Cost
-        serverless_cost:
-          type: number
-          title: Serverless Cost
-        credits_used:
-          type: number
-          title: Credits Used
-        serverless_credits_used:
-          type: number
-          title: Serverless Credits Used
-        last_run_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Last Run Date
-      type: object
-      required:
-      - database_name
-      - schema_name
-      - name
-      - total_cost
-      - avg_cost
-      - run_count
-      - success_count
-      - failure_count
-      - execution_time_ms
-      - queued_time_ms
-      - avg_execution_time_ms
-      - avg_queued_time_ms
-      - compute_cost
-      - serverless_cost
-      - credits_used
-      - serverless_credits_used
-      title: TaskRunsSummaryResponse
-      description: 'Window aggregate (summary cards) for ONE task on the task-detail page.
-
-
-        Sourced from ``snowflake_tasks_aggregated`` and scoped to a single qualified
-
-        task (``database_name``, ``schema_name``, ``name``), summed across every
-
-        warehouse the task ran on. Mirrors the stored-procedures
-
-        ``WorkloadSummaryResponse`` summary-cards shape for the task side. Counts and
-
-        times default to zero (and ``last_run_date`` to ``None``) when no runs are
-
-        visible in the window.'
+      - loc
+      - msg
+      - type
+      title: ValidationError
     TaskRunResponse:
       properties:
         run_id:
@@ -7545,58 +6401,7 @@ components:
         started or never completed. ``query_id`` is the click-through target to the
 
         query-detail view.'
-    CustomTagValuesResponse:
-      properties:
-        values:
-          items:
-            type: string
-          type: array
-          title: Values
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-      type: object
-      required:
-      - values
-      - total
-      - page
-      - size
-      title: CustomTagValuesResponse
-      description: Response schema for distinct custom tag values from query_tag JSON column.
-    PaginatedLabeledValuesResponse:
-      properties:
-        values:
-          items:
-            $ref: '#/components/schemas/app__schemas__queries__FilterResponse'
-          type: array
-          title: Values
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-        total_pages:
-          type: integer
-          title: Total Pages
-      type: object
-      required:
-      - values
-      - total
-      - page
-      - size
-      - total_pages
-      title: PaginatedLabeledValuesResponse
-    WorkloadStoredProcedureChildQueryResponse:
+    WorkloadChildQueryResponse:
       properties:
         query_type:
           type: string
@@ -7604,9 +6409,9 @@ components:
         query_tag:
           type: string
           title: Query Tag
-        query_id:
-          type: string
-          title: Query Id
+        session_id:
+          type: integer
+          title: Session Id
         rk:
           type: string
           title: Rk
@@ -7639,14 +6444,11 @@ components:
         hash:
           type: string
           title: Hash
-        has_child_queries:
-          type: boolean
-          title: Has Child Queries
       type: object
       required:
       - query_type
       - query_tag
-      - query_id
+      - session_id
       - rk
       - query_summary
       - start_time
@@ -7657,8 +6459,251 @@ components:
       - bytes_scanned
       - cost
       - hash
-      - has_child_queries
-      title: WorkloadStoredProcedureChildQueryResponse
+      title: WorkloadChildQueryResponse
+    DbtTagFilterResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DbtTagFilterItem'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: DbtTagFilterResponse
+    WorkloadStoredProcedureJobResponse:
+      properties:
+        query_id:
+          type: string
+          title: Query Id
+        query_summary:
+          type: string
+          title: Query Summary
+        query_cost:
+          type: number
+          title: Query Cost
+        execution_status:
+          type: string
+          title: Execution Status
+        bytes_scanned:
+          type: number
+          title: Bytes Scanned
+        execution_time:
+          type: number
+          title: Execution Time
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        database_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database Name
+      type: object
+      required:
+      - query_id
+      - query_summary
+      - query_cost
+      - execution_status
+      - bytes_scanned
+      - execution_time
+      - start_time
+      - timestamp
+      title: WorkloadStoredProcedureJobResponse
+    SnowflakeJobDefinition:
+      properties:
+        task_id:
+          type: string
+          title: Task Id
+        query_cost:
+          type: number
+          title: Query Cost
+        execution_time:
+          type: number
+          title: Execution Time
+        run_count:
+          type: integer
+          title: Run Count
+        success_count:
+          type: integer
+          title: Success Count
+        insights:
+          items:
+            type: string
+          type: array
+          title: Insights
+          default: []
+        hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Hash
+      type: object
+      required:
+      - task_id
+      - query_cost
+      - execution_time
+      - run_count
+      - success_count
+      title: SnowflakeJobDefinition
+    SnowflakeJobRunPageResponse:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        query_cost:
+          type: number
+          title: Query Cost
+        bytes_scanned:
+          type: integer
+          title: Bytes Scanned
+        execution_time:
+          type: number
+          title: Execution Time
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        success_count:
+          type: integer
+          title: Success Count
+        total_count:
+          type: integer
+          title: Total Count
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+        annotation:
+          anyOf:
+          - $ref: '#/components/schemas/RunEvents'
+          - type: 'null'
+        query_parameterized_hashes:
+          items:
+            type: string
+          type: array
+          title: Query Parameterized Hashes
+        error_messages:
+          items:
+            type: string
+          type: array
+          title: Error Messages
+        execution_statuses:
+          items:
+            type: string
+          type: array
+          title: Execution Statuses
+        command_display:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Command Display
+      type: object
+      required:
+      - run_id
+      - query_cost
+      - bytes_scanned
+      - execution_time
+      - timestamp
+      - start_time
+      - success_count
+      - total_count
+      - warehouses
+      - query_parameterized_hashes
+      - error_messages
+      - execution_statuses
+      title: SnowflakeJobRunPageResponse
+    Page_WorkloadJobResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/WorkloadJobResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[WorkloadJobResponse]
+    DbtModelFilterResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DbtModelFilterItem'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        pages:
+          type: integer
+          title: Pages
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - pages
+      - size
+      title: DbtModelFilterResponse
     Page_WorkloadStoredProcedureChildQueryResponse_:
       properties:
         items:
@@ -7697,289 +6742,6 @@ components:
       - page
       - size
       title: Page[WorkloadStoredProcedureChildQueryResponse]
-    WorkloadSummaryResponse:
-      properties:
-        query_type:
-          type: string
-          title: Query Type
-        total_cost:
-          type: number
-          title: Total Cost
-        avg_cost:
-          type: number
-          title: Avg Cost
-        avg_execution_time:
-          type: number
-          title: Avg Execution Time
-        max_execution_time:
-          type: number
-          title: Max Execution Time
-        min_execution_time:
-          type: number
-          title: Min Execution Time
-        run_count:
-          type: integer
-          title: Run Count
-        success_count:
-          type: integer
-          title: Success Count
-        total_bytes_scanned:
-          type: number
-          title: Total Bytes Scanned
-        avg_bytes_scanned:
-          type: number
-          title: Avg Bytes Scanned
-        last_run_time:
-          type: string
-          format: date-time
-          title: Last Run Time
-        max_cost_savings:
-          type: number
-          title: Max Cost Savings
-        max_time_savings:
-          type: number
-          title: Max Time Savings
-      type: object
-      required:
-      - query_type
-      - total_cost
-      - avg_cost
-      - avg_execution_time
-      - max_execution_time
-      - min_execution_time
-      - run_count
-      - success_count
-      - total_bytes_scanned
-      - avg_bytes_scanned
-      - last_run_time
-      - max_cost_savings
-      - max_time_savings
-      title: WorkloadSummaryResponse
-    Page_TaskRunResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TaskRunResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[TaskRunResponse]
-    Page_DbtJobListingPageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DbtJobListingPageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[DbtJobListingPageResponse]
-    WorkloadGraphDataResponse:
-      properties:
-        data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Data
-      type: object
-      required:
-      - data
-      title: WorkloadGraphDataResponse
-    SnowflakeIndividualJobRunPageResponse:
-      properties:
-        run_id:
-          type: string
-          title: Run Id
-        query_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Id
-        query_cost:
-          type: number
-          title: Query Cost
-        bytes_scanned:
-          type: integer
-          title: Bytes Scanned
-        execution_time:
-          type: number
-          title: Execution Time
-        start_time:
-          type: string
-          format: date-time
-          title: Start Time
-        execution_status:
-          type: string
-          title: Execution Status
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        timestamp:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Timestamp
-        query_parameterized_hash:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Parameterized Hash
-        error_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Message
-        insights:
-          items:
-            type: string
-          type: array
-          title: Insights
-        annotation:
-          anyOf:
-          - $ref: '#/components/schemas/RunEvents'
-          - type: 'null'
-        total_queries:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total Queries
-      type: object
-      required:
-      - run_id
-      - query_cost
-      - bytes_scanned
-      - execution_time
-      - start_time
-      - execution_status
-      - warehouse_name
-      - timestamp
-      title: SnowflakeIndividualJobRunPageResponse
-    SnowflakeJobFilters:
-      properties:
-        warehouses:
-          items:
-            type: string
-          type: array
-          title: Warehouses
-          default: []
-        custom_tag_keys:
-          items:
-            type: string
-          type: array
-          title: Custom Tag Keys
-          default: []
-        teams:
-          items:
-            type: string
-          type: array
-          title: Teams
-          default: []
-        apps:
-          items:
-            type: string
-          type: array
-          title: Apps
-          default: []
-        integration_names:
-          items:
-            type: string
-          type: array
-          title: Integration Names
-          default: []
-        integration_environments:
-          items:
-            type: string
-          type: array
-          title: Integration Environments
-          default: []
-        integrations_with_environments:
-          items:
-            $ref: '#/components/schemas/IntegrationWithEnvironments'
-          type: array
-          title: Integrations With Environments
-          default: []
-      type: object
-      title: SnowflakeJobFilters
-      description: 'Bulk bounded-facet filters (AI-6471).
-
-
-        Returned by GET /query/v2/snowflake_jobs/filters/. Unbounded facets
-
-        (workflow_ids, custom-tag values, etc.) are served from per-facet
-
-        paginated endpoints — see the /snowflake_jobs/filters/<facet>
-
-        endpoints in app/api/queries_v2.py.'
-    QueryIndicesRequest:
-      properties:
-        spans:
-          items:
-            type: string
-          type: array
-          title: Spans
-      type: object
-      required:
-      - spans
-      title: QueryIndicesRequest
     app__schemas__queries__QuerySqlLineageResponse:
       properties:
         is_lineage:
@@ -8033,180 +6795,149 @@ components:
       - details
       - query_tags_meta
       title: QuerySqlLineageResponse
-    WorkloadPageResponse:
+    TaskWorkloadResponse:
       properties:
-        hash:
+        database_name:
           type: string
-          title: Hash
-        query_summary:
+          title: Database Name
+        schema_name:
           type: string
-          title: Query Summary
-        job_count:
+          title: Schema Name
+        name:
+          type: string
+          title: Name
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        run_count:
           type: integer
-          title: Job Count
+          title: Run Count
+        success_count:
+          type: integer
+          title: Success Count
+        failure_count:
+          type: integer
+          title: Failure Count
+        execution_time_ms:
+          type: number
+          title: Execution Time Ms
+        queued_time_ms:
+          type: number
+          title: Queued Time Ms
         cost:
           type: number
           title: Cost
-        query_type:
-          type: string
-          title: Query Type
-        bytes_scanned:
+        compute_cost:
           type: number
-          title: Bytes Scanned
-        execution_time:
+          title: Compute Cost
+        serverless_cost:
           type: number
-          title: Execution Time
-        warehouse_names:
-          items:
-            type: string
-          type: array
-          title: Warehouse Names
-        database_names:
-          items:
-            type: string
-          type: array
-          title: Database Names
+          title: Serverless Cost
+        credits_used:
+          type: number
+          title: Credits Used
+        serverless_credits_used:
+          type: number
+          title: Serverless Credits Used
       type: object
       required:
-      - hash
-      - query_summary
-      - job_count
+      - database_name
+      - schema_name
+      - name
+      - warehouse_name
+      - run_count
+      - success_count
+      - failure_count
+      - execution_time_ms
+      - queued_time_ms
       - cost
-      - query_type
-      - bytes_scanned
-      - execution_time
-      - warehouse_names
-      - database_names
-      title: WorkloadPageResponse
-    DbtJobTasksSummaryResponse:
-      properties:
-        total_cost:
-          type: number
-          minimum: 0.0
-          title: Total Cost
-          description: Total cost across all DBT task types
-        model_cost:
-          type: number
-          minimum: 0.0
-          title: Model Cost
-          description: Cost for DBT model tasks
-        test_cost:
-          type: number
-          minimum: 0.0
-          title: Test Cost
-          description: Cost for DBT test tasks
-        seed_cost:
-          type: number
-          minimum: 0.0
-          title: Seed Cost
-          description: Cost for DBT seed tasks
-        snapshot_cost:
-          type: number
-          minimum: 0.0
-          title: Snapshot Cost
-          description: Cost for DBT snapshot tasks
-        test_coverage:
-          anyOf:
-          - type: number
-            maximum: 100.0
-            minimum: 0.0
-          - type: 'null'
-          title: Test Coverage
-          description: Test coverage percentage (0-100)
-      type: object
-      required:
-      - total_cost
-      - model_cost
-      - test_cost
-      - seed_cost
-      - snapshot_cost
-      title: DbtJobTasksSummaryResponse
-      description: Response model for DBT job tasks summary with cost breakdown by task type.
-    StoredProceduresFilters:
-      properties:
-        warehouses:
-          items:
-            type: string
-          type: array
-          title: Warehouses
-          default: []
-        workflow_ids:
-          items:
-            type: string
-          type: array
-          title: Workflow Ids
-          default: []
-        teams:
-          items:
-            type: string
-          type: array
-          title: Teams
-          default: []
-        apps:
-          items:
-            type: string
-          type: array
-          title: Apps
-          default: []
-        workflow_ids_with_labels:
-          items:
-            $ref: '#/components/schemas/app__schemas__queries__FilterResponse'
-          type: array
-          title: Workflow Ids With Labels
-          default: []
-        databases:
-          items:
-            type: string
-          type: array
-          title: Databases
-          default: []
-      type: object
-      title: StoredProceduresFilters
-      description: 'Filters for /workloads/stored-procedures/filters.
+      - compute_cost
+      - serverless_cost
+      - credits_used
+      - serverless_credits_used
+      title: TaskWorkloadResponse
+      description: 'One aggregated Snowflake task row for /tasks/list.
 
 
-        Carried the pre-AI-6471 SnowflakeJobFilters shape (with workflow_ids
+        Rows are grouped by the qualified task name plus warehouse
 
-        and workflow_ids_with_labels) since the stored-procedures FE consumer
+        (``database_name``, ``schema_name``, ``name``, ``warehouse_name``) and
 
-        expects those fields. Split off from SnowflakeJobFilters so the
+        summed across the requested date range — mirroring the stored-procedures
 
-        snowflake_jobs filter contract can evolve independently of this one.
-
-        Only `warehouses` is ever populated for stored procedures today; the
-
-        rest are kept as empty defaults for FE back-compat.'
-    DbtJobFilterResponse:
+        listing shape. ``warehouse_name`` is empty for serverless tasks.'
+    Page_WorkloadChildQueryResponse_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/DbtJobFilterItem'
+            $ref: '#/components/schemas/WorkloadChildQueryResponse'
           type: array
           title: Items
         total:
-          type: integer
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
           title: Total
         page:
-          type: integer
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
           title: Page
         size:
-          type: integer
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
           title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
       required:
       - items
       - total
       - page
       - size
-      title: DbtJobFilterResponse
-    DbtJobListingPageResponse:
+      title: Page[WorkloadChildQueryResponse]
+    SnowflakeJobTaskAggregatePageResponse:
       properties:
-        command_display:
+        task_id:
           type: string
-          title: Command Display
-        command_which:
-          type: string
-          title: Command Which
+          title: Task Id
+        task_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Name
+        task_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Type
+        integration_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Name
+        integration_environment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Environment
+        integration_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Id
+        dbt_model_present:
+          type: boolean
+          title: Dbt Model Present
+          default: false
         query_cost:
           type: number
           title: Query Cost
@@ -8216,23 +6947,56 @@ components:
         execution_time:
           type: number
           title: Execution Time
-        run_count:
-          type: integer
-          title: Run Count
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
         success_count:
           type: integer
           title: Success Count
-        last_runtime:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Runtime
+        total_count:
+          type: integer
+          title: Total Count
         warehouses:
           items:
             type: string
           type: array
           title: Warehouses
+        annotation:
+          anyOf:
+          - $ref: '#/components/schemas/RunEvents'
+          - type: 'null'
+        query_parameterized_hashes:
+          items:
+            type: string
+          type: array
+          title: Query Parameterized Hashes
+        error_messages:
+          items:
+            type: string
+          type: array
+          title: Error Messages
+        execution_statuses:
+          items:
+            type: string
+          type: array
+          title: Execution Statuses
+        insights:
+          items:
+            type: string
+          type: array
+          title: Insights
+        commands:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Commands
         tags:
           anyOf:
           - items:
@@ -8240,241 +7004,148 @@ components:
             type: array
           - type: 'null'
           title: Tags
-        dbt_cloud_job_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Dbt Cloud Job Id
       type: object
       required:
-      - command_display
-      - command_which
+      - task_id
       - query_cost
       - bytes_scanned
       - execution_time
-      - run_count
+      - timestamp
+      - start_time
       - success_count
+      - total_count
       - warehouses
-      title: DbtJobListingPageResponse
-      description: 'Response for the dbt Jobs tab listing.
-
-
-        A "Job" is a unique dbt command fingerprint (e.g., "dbt build --select model+ --target PROD").
-
-        All invocations with the same command are grouped together.
-
-        Works for both dbt Core and dbt Cloud.
-
-        The command_display field is the stable identifier for each job.'
-    TaskSummaryResponse:
+      - query_parameterized_hashes
+      - error_messages
+      - execution_statuses
+      title: SnowflakeJobTaskAggregatePageResponse
+    QueryObjectV2:
       properties:
-        total_cost:
-          type: number
-          title: Total Cost
-        avg_cost:
-          type: number
-          title: Avg Cost
-        avg_execution_time:
-          type: number
-          title: Avg Execution Time
-        max_execution_time:
-          type: number
-          title: Max Execution Time
-        run_count:
-          type: integer
-          title: Run Count
-        total_bytes_scanned:
-          type: number
-          title: Total Bytes Scanned
-        avg_bytes_scanned:
-          type: number
-          title: Avg Bytes Scanned
-      type: object
-      required:
-      - total_cost
-      - avg_cost
-      - avg_execution_time
-      - max_execution_time
-      - run_count
-      - total_bytes_scanned
-      - avg_bytes_scanned
-      title: TaskSummaryResponse
-    QueryGroupResponse:
-      properties:
+        id:
+          type: string
+          title: Id
+        query_id:
+          type: string
+          title: Query Id
+        query_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Text
+        query_type:
+          type: string
+          title: Query Type
         query_hash:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Query Hash
-        query_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Name
-        trimmed_query:
-          type: string
-          title: Trimmed Query
-        full_query:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Full Query
-        total_run:
-          type: string
-          title: Total Run
-        avg_exec_time:
-          type: string
-          title: Avg Exec Time
-        avg_cost:
-          type: string
-          title: Avg Cost
-        total_cost:
-          type: string
-          title: Total Cost
-        annualized_cost:
-          type: string
-          title: Annualized Cost
-        distinct_warehouses:
-          type: integer
-          title: Distinct Warehouses
-        distinct_users:
-          type: integer
-          title: Distinct Users
-        distinct_roles:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Distinct Roles
         tags:
-          items:
-            type: string
-          type: array
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
           title: Tags
+        timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Timestamp
+        warehouse_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Name
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        execution_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Time
+        currency:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Currency
+        cost:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cost
+        percent_partition_scanned:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Percent Partition Scanned
+        bytes_spilled:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bytes Spilled
+        data_store_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Data Store Id
+        start_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Start Time
+        custom_tag:
+          anyOf:
+          - $ref: '#/components/schemas/QueryCustomTag'
+          - type: 'null'
+        percentage_scanned_from_cache:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Percentage Scanned From Cache
+        query_load_percent:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Load Percent
+        query_hash_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Query Hash Count
+        opportunities:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Opportunities
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
       type: object
       required:
-      - query_hash
-      - trimmed_query
-      - total_run
-      - avg_exec_time
-      - avg_cost
-      - total_cost
-      - annualized_cost
-      - distinct_warehouses
-      - distinct_users
-      - tags
-      title: QueryGroupResponse
-    Page_SnowflakeIndividualJobRunPageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SnowflakeIndividualJobRunPageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[SnowflakeIndividualJobRunPageResponse]
-    Page_WorkloadJobResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/WorkloadJobResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[WorkloadJobResponse]
-    Page_QueryGroupPageItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/QueryGroupPageItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[QueryGroupPageItem]
+      - id
+      - query_id
+      - query_type
+      title: QueryObjectV2
     HTTPValidationError:
       properties:
         detail:
@@ -8484,188 +7155,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    SnowflakeJobDefinition:
-      properties:
-        task_id:
-          type: string
-          title: Task Id
-        query_cost:
-          type: number
-          title: Query Cost
-        execution_time:
-          type: number
-          title: Execution Time
-        run_count:
-          type: integer
-          title: Run Count
-        success_count:
-          type: integer
-          title: Success Count
-        insights:
-          items:
-            type: string
-          type: array
-          title: Insights
-          default: []
-        hash:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Hash
-      type: object
-      required:
-      - task_id
-      - query_cost
-      - execution_time
-      - run_count
-      - success_count
-      title: SnowflakeJobDefinition
-    QueryFetchResponseV2:
-      properties:
-        query:
-          anyOf:
-          - $ref: '#/components/schemas/QueryObjectV2'
-          - type: 'null'
-        ok:
-          type: boolean
-          title: Ok
-        error_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Code
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: QueryFetchResponseV2
-    IntegrationWithEnvironments:
-      properties:
-        name:
-          type: string
-          title: Name
-        environments:
-          items:
-            type: string
-          type: array
-          title: Environments
-      type: object
-      required:
-      - name
-      - environments
-      title: IntegrationWithEnvironments
-    Page_SnowflakeJobTaskAggregatePageResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SnowflakeJobTaskAggregatePageResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[SnowflakeJobTaskAggregatePageResponse]
-    SnowflakeJobSettings:
-      properties:
-        prefix:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Prefix
-        workflow_id:
-          type: string
-          title: Workflow Id
-        run_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Run Id
-        task_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Task Id
-        project_id:
-          type: string
-          title: Project Id
-        app_id:
-          type: string
-          title: App Id
-        custom_tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-            maxItems: 15
-          - type: 'null'
-          title: Custom Tags
-          description: List of custom tag keys for filtering (max 15 tags per workload)
-      type: object
-      required:
-      - workflow_id
-      - project_id
-      - app_id
-      title: SnowflakeJobSettings
-    QueryGroupMetricsResponse:
-      properties:
-        num_runs:
-          type: integer
-          title: Num Runs
-        total_cost:
-          type: string
-          title: Total Cost
-        avg_execution_time:
-          type: string
-          title: Avg Execution Time
-        last_run_time:
-          type: string
-          title: Last Run Time
-        max_cost_savings:
-          type: string
-          title: Max Cost Savings
-        max_time_savings:
-          type: string
-          title: Max Time Savings
-      type: object
-      required:
-      - num_runs
-      - total_cost
-      - avg_execution_time
-      - last_run_time
-      - max_cost_savings
-      - max_time_savings
-      title: QueryGroupMetricsResponse
     QueryFiltersFetchAllResponse:
       properties:
         tags:
@@ -8748,29 +7237,454 @@ components:
       required:
       - ok
       title: QueryFiltersFetchAllResponse
-    DbtTagFilterResponse:
+    SnowflakeJobFetchAllPageResponse:
+      properties:
+        workflow_id:
+          type: string
+          title: Workflow Id
+        query_cost:
+          type: number
+          title: Query Cost
+        bytes_scanned:
+          type: integer
+          title: Bytes Scanned
+        execution_time:
+          type: number
+          title: Execution Time
+        last_runtime:
+          type: number
+          title: Last Runtime
+        max_runtime:
+          type: number
+          title: Max Runtime
+        min_runtime:
+          type: number
+          title: Min Runtime
+        runs:
+          type: number
+          title: Runs
+        warehouse_names:
+          items:
+            type: string
+          type: array
+          title: Warehouse Names
+        teams:
+          items:
+            type: string
+          type: array
+          title: Teams
+        apps:
+          items:
+            type: string
+          type: array
+          title: Apps
+        dbt_project_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dbt Project Name
+        tableau_dashboard_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tableau Dashboard Name
+        integration_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Name
+        integration_environment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Integration Environment
+        test_coverage:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Test Coverage
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+      type: object
+      required:
+      - workflow_id
+      - query_cost
+      - bytes_scanned
+      - execution_time
+      - last_runtime
+      - max_runtime
+      - min_runtime
+      - runs
+      - warehouse_names
+      - teams
+      - apps
+      title: SnowflakeJobFetchAllPageResponse
+    TaskRunsSummaryResponse:
+      properties:
+        database_name:
+          type: string
+          title: Database Name
+        schema_name:
+          type: string
+          title: Schema Name
+        name:
+          type: string
+          title: Name
+        total_cost:
+          type: number
+          title: Total Cost
+        avg_cost:
+          type: number
+          title: Avg Cost
+        run_count:
+          type: integer
+          title: Run Count
+        success_count:
+          type: integer
+          title: Success Count
+        failure_count:
+          type: integer
+          title: Failure Count
+        execution_time_ms:
+          type: number
+          title: Execution Time Ms
+        queued_time_ms:
+          type: number
+          title: Queued Time Ms
+        avg_execution_time_ms:
+          type: number
+          title: Avg Execution Time Ms
+        avg_queued_time_ms:
+          type: number
+          title: Avg Queued Time Ms
+        compute_cost:
+          type: number
+          title: Compute Cost
+        serverless_cost:
+          type: number
+          title: Serverless Cost
+        credits_used:
+          type: number
+          title: Credits Used
+        serverless_credits_used:
+          type: number
+          title: Serverless Credits Used
+        last_run_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Last Run Date
+      type: object
+      required:
+      - database_name
+      - schema_name
+      - name
+      - total_cost
+      - avg_cost
+      - run_count
+      - success_count
+      - failure_count
+      - execution_time_ms
+      - queued_time_ms
+      - avg_execution_time_ms
+      - avg_queued_time_ms
+      - compute_cost
+      - serverless_cost
+      - credits_used
+      - serverless_credits_used
+      title: TaskRunsSummaryResponse
+      description: 'Window aggregate (summary cards) for ONE task on the task-detail page.
+
+
+        Sourced from ``snowflake_tasks_aggregated`` and scoped to a single qualified
+
+        task (``database_name``, ``schema_name``, ``name``), summed across every
+
+        warehouse the task ran on. Mirrors the stored-procedures
+
+        ``WorkloadSummaryResponse`` summary-cards shape for the task side. Counts and
+
+        times default to zero (and ``last_run_date`` to ``None``) when no runs are
+
+        visible in the window.'
+    StoredProceduresFilters:
+      properties:
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+          default: []
+        workflow_ids:
+          items:
+            type: string
+          type: array
+          title: Workflow Ids
+          default: []
+        teams:
+          items:
+            type: string
+          type: array
+          title: Teams
+          default: []
+        apps:
+          items:
+            type: string
+          type: array
+          title: Apps
+          default: []
+        workflow_ids_with_labels:
+          items:
+            $ref: '#/components/schemas/app__schemas__queries__FilterResponse'
+          type: array
+          title: Workflow Ids With Labels
+          default: []
+        databases:
+          items:
+            type: string
+          type: array
+          title: Databases
+          default: []
+      type: object
+      title: StoredProceduresFilters
+      description: 'Filters for /workloads/stored-procedures/filters.
+
+
+        Carried the pre-AI-6471 SnowflakeJobFilters shape (with workflow_ids
+
+        and workflow_ids_with_labels) since the stored-procedures FE consumer
+
+        expects those fields. Split off from SnowflakeJobFilters so the
+
+        snowflake_jobs filter contract can evolve independently of this one.
+
+        Only `warehouses` is ever populated for stored procedures today; the
+
+        rest are kept as empty defaults for FE back-compat.'
+    SnowflakeIndividualJobRunPageResponse:
+      properties:
+        run_id:
+          type: string
+          title: Run Id
+        query_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Id
+        query_cost:
+          type: number
+          title: Query Cost
+        bytes_scanned:
+          type: integer
+          title: Bytes Scanned
+        execution_time:
+          type: number
+          title: Execution Time
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        execution_status:
+          type: string
+          title: Execution Status
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Timestamp
+        query_parameterized_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Parameterized Hash
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        insights:
+          items:
+            type: string
+          type: array
+          title: Insights
+        annotation:
+          anyOf:
+          - $ref: '#/components/schemas/RunEvents'
+          - type: 'null'
+        total_queries:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Queries
+      type: object
+      required:
+      - run_id
+      - query_cost
+      - bytes_scanned
+      - execution_time
+      - start_time
+      - execution_status
+      - warehouse_name
+      - timestamp
+      title: SnowflakeIndividualJobRunPageResponse
+    Page_Dict_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/DbtTagFilterItem'
+            additionalProperties: true
+            type: object
           type: array
           title: Items
         total:
-          type: integer
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
           title: Total
         page:
-          type: integer
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
           title: Page
         size:
-          type: integer
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
           title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
       required:
       - items
       - total
       - page
       - size
-      title: DbtTagFilterResponse
+      title: Page[Dict]
+    WorkloadJobResponse:
+      properties:
+        session_id:
+          type: integer
+          title: Session Id
+        query_summary:
+          type: string
+          title: Query Summary
+        query_cost:
+          type: number
+          title: Query Cost
+        execution_status:
+          type: string
+          title: Execution Status
+        bytes_scanned:
+          type: number
+          title: Bytes Scanned
+        execution_time:
+          type: number
+          title: Execution Time
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+      type: object
+      required:
+      - session_id
+      - query_summary
+      - query_cost
+      - execution_status
+      - bytes_scanned
+      - execution_time
+      - start_time
+      - timestamp
+      title: WorkloadJobResponse
+    DbtTagFilterItem:
+      properties:
+        tag:
+          type: string
+          title: Tag
+      type: object
+      required:
+      - tag
+      title: DbtTagFilterItem
+    WorkloadStoredProcedureChildQueryResponse:
+      properties:
+        query_type:
+          type: string
+          title: Query Type
+        query_tag:
+          type: string
+          title: Query Tag
+        query_id:
+          type: string
+          title: Query Id
+        rk:
+          type: string
+          title: Rk
+        query_summary:
+          type: string
+          title: Query Summary
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        execution_status:
+          type: string
+          title: Execution Status
+        execution_time:
+          type: number
+          title: Execution Time
+        bytes_scanned:
+          type: number
+          title: Bytes Scanned
+        cost:
+          type: number
+          title: Cost
+        hash:
+          type: string
+          title: Hash
+        has_child_queries:
+          type: boolean
+          title: Has Child Queries
+      type: object
+      required:
+      - query_type
+      - query_tag
+      - query_id
+      - rk
+      - query_summary
+      - start_time
+      - end_time
+      - warehouse_name
+      - execution_status
+      - execution_time
+      - bytes_scanned
+      - cost
+      - hash
+      - has_child_queries
+      title: WorkloadStoredProcedureChildQueryResponse
     SnowflakeJobDefinitionResponse:
       properties:
         run_id:
@@ -8790,49 +7704,200 @@ components:
       - timestamp
       - definition
       title: SnowflakeJobDefinitionResponse
-    ValidationError:
+    QueryGroupPageItem:
       properties:
-        loc:
+        query_hash:
+          type: string
+          title: Query Hash
+        trimmed_query:
+          type: string
+          title: Trimmed Query
+        full_query:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Full Query
+        total_run:
+          type: integer
+          title: Total Run
+        avg_exec_time:
+          type: string
+          title: Avg Exec Time
+        avg_cost:
+          type: number
+          title: Avg Cost
+        total_cost:
+          type: number
+          title: Total Cost
+        annualized_cost:
+          type: number
+          title: Annualized Cost
+        distinct_warehouses:
+          type: integer
+          title: Distinct Warehouses
+        distinct_users:
+          type: integer
+          title: Distinct Users
+        distinct_roles:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Distinct Roles
+        tags:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            type: string
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Tags
+        users:
+          items:
+            type: string
+          type: array
+          title: Users
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+        roles:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Roles
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    TaskInfo:
+      - query_hash
+      - trimmed_query
+      - total_run
+      - avg_exec_time
+      - avg_cost
+      - total_cost
+      - annualized_cost
+      - distinct_warehouses
+      - distinct_users
+      - tags
+      - users
+      - warehouses
+      title: QueryGroupPageItem
+    QueryIndicesResponse:
       properties:
-        execution_time:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Execution Time
-        query_cost:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Query Cost
-        execution_status:
+        spans:
+          additionalProperties: true
+          type: object
+          title: Spans
+        query_text:
+          type: string
+          title: Query Text
+      type: object
+      required:
+      - spans
+      - query_text
+      title: QueryIndicesResponse
+    PaginatedStringValuesResponse:
+      properties:
+        values:
+          items:
+            type: string
+          type: array
+          title: Values
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        total_pages:
+          type: integer
+          title: Total Pages
+      type: object
+      required:
+      - values
+      - total
+      - page
+      - size
+      - total_pages
+      title: PaginatedStringValuesResponse
+    QueryGroupMetricsResponse:
+      properties:
+        num_runs:
+          type: integer
+          title: Num Runs
+        total_cost:
+          type: string
+          title: Total Cost
+        avg_execution_time:
+          type: string
+          title: Avg Execution Time
+        last_run_time:
+          type: string
+          title: Last Run Time
+        max_cost_savings:
+          type: string
+          title: Max Cost Savings
+        max_time_savings:
+          type: string
+          title: Max Time Savings
+      type: object
+      required:
+      - num_runs
+      - total_cost
+      - avg_execution_time
+      - last_run_time
+      - max_cost_savings
+      - max_time_savings
+      title: QueryGroupMetricsResponse
+    IntegrationWithEnvironments:
+      properties:
+        name:
+          type: string
+          title: Name
+        environments:
+          items:
+            type: string
+          type: array
+          title: Environments
+      type: object
+      required:
+      - name
+      - environments
+      title: IntegrationWithEnvironments
+    QueryObject:
+      properties:
+        id:
+          type: string
+          title: Id
+        query_id:
+          type: string
+          title: Query Id
+        query_text:
           anyOf:
           - type: string
           - type: 'null'
-          title: Execution Status
-        error_message:
+          title: Query Text
+        query_type:
+          type: string
+          title: Query Type
+        tags:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/QueryTag'
+            type: array
+          - type: 'null'
+          title: Tags
+        timestamp:
           anyOf:
           - type: string
           - type: 'null'
-          title: Error Message
+          title: Timestamp
         warehouse_name:
           anyOf:
           - type: string
@@ -8843,13 +7908,548 @@ components:
           - type: string
           - type: 'null'
           title: Warehouse Size
-        query_hash:
+        user_name:
           anyOf:
           - type: string
           - type: 'null'
-          title: Query Hash
+          title: User Name
+        execution_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Time
+        currency:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Currency
+        cost:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cost
+        percent_partition_scanned:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Percent Partition Scanned
+        bytes_spilled:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bytes Spilled
+        data_store_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Data Store Id
+        start_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Start Time
+        custom_tag:
+          anyOf:
+          - $ref: '#/components/schemas/QueryCustomTag'
+          - type: 'null'
+        percentage_scanned_from_cache:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Percentage Scanned From Cache
+        query_load_percent:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Load Percent
+        query_hash_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Query Hash Count
       type: object
-      title: TaskInfo
+      required:
+      - id
+      - query_id
+      - query_type
+      title: QueryObject
+    Page_SnowflakeJobRunPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SnowflakeJobRunPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[SnowflakeJobRunPageResponse]
+    QueryHashTextResponse:
+      properties:
+        query_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Text
+      type: object
+      title: QueryHashTextResponse
+    Page_QueryGroupPageItem_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/QueryGroupPageItem'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[QueryGroupPageItem]
+    WorkloadType:
+      type: string
+      enum:
+      - NOTEBOOK
+      - STREAMLIT
+      - STORED_PROCEDURE
+      - UNKNOWN
+      title: WorkloadType
+    QueryFetchResponse:
+      properties:
+        query:
+          anyOf:
+          - $ref: '#/components/schemas/QueryObject'
+          - type: 'null'
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: QueryFetchResponse
+    SnowflakeJobFilters:
+      properties:
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+          default: []
+        custom_tag_keys:
+          items:
+            type: string
+          type: array
+          title: Custom Tag Keys
+          default: []
+        teams:
+          items:
+            type: string
+          type: array
+          title: Teams
+          default: []
+        apps:
+          items:
+            type: string
+          type: array
+          title: Apps
+          default: []
+        integration_names:
+          items:
+            type: string
+          type: array
+          title: Integration Names
+          default: []
+        integration_environments:
+          items:
+            type: string
+          type: array
+          title: Integration Environments
+          default: []
+        integrations_with_environments:
+          items:
+            $ref: '#/components/schemas/IntegrationWithEnvironments'
+          type: array
+          title: Integrations With Environments
+          default: []
+      type: object
+      title: SnowflakeJobFilters
+      description: 'Bulk bounded-facet filters (AI-6471).
+
+
+        Returned by GET /query/v2/snowflake_jobs/filters/. Unbounded facets
+
+        (workflow_ids, custom-tag values, etc.) are served from per-facet
+
+        paginated endpoints — see the /snowflake_jobs/filters/<facet>
+
+        endpoints in app/api/queries_v2.py.'
+    app__schemas__queries__TagObject:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        cost_savings:
+          type: boolean
+          title: Cost Savings
+        time_savings:
+          type: boolean
+          title: Time Savings
+      type: object
+      required:
+      - name
+      - description
+      - cost_savings
+      - time_savings
+      title: TagObject
+    QueryFetchResponseV2:
+      properties:
+        query:
+          anyOf:
+          - $ref: '#/components/schemas/QueryObjectV2'
+          - type: 'null'
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: QueryFetchResponseV2
+    WorkloadSummaryResponse:
+      properties:
+        query_type:
+          type: string
+          title: Query Type
+        total_cost:
+          type: number
+          title: Total Cost
+        avg_cost:
+          type: number
+          title: Avg Cost
+        avg_execution_time:
+          type: number
+          title: Avg Execution Time
+        max_execution_time:
+          type: number
+          title: Max Execution Time
+        min_execution_time:
+          type: number
+          title: Min Execution Time
+        run_count:
+          type: integer
+          title: Run Count
+        success_count:
+          type: integer
+          title: Success Count
+        total_bytes_scanned:
+          type: number
+          title: Total Bytes Scanned
+        avg_bytes_scanned:
+          type: number
+          title: Avg Bytes Scanned
+        last_run_time:
+          type: string
+          format: date-time
+          title: Last Run Time
+        max_cost_savings:
+          type: number
+          title: Max Cost Savings
+        max_time_savings:
+          type: number
+          title: Max Time Savings
+      type: object
+      required:
+      - query_type
+      - total_cost
+      - avg_cost
+      - avg_execution_time
+      - max_execution_time
+      - min_execution_time
+      - run_count
+      - success_count
+      - total_bytes_scanned
+      - avg_bytes_scanned
+      - last_run_time
+      - max_cost_savings
+      - max_time_savings
+      title: WorkloadSummaryResponse
+    QueryIndicesRequest:
+      properties:
+        spans:
+          items:
+            type: string
+          type: array
+          title: Spans
+      type: object
+      required:
+      - spans
+      title: QueryIndicesRequest
+    WorkloadGraphDataResponse:
+      properties:
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+      type: object
+      required:
+      - data
+      title: WorkloadGraphDataResponse
+    QueryCustomTag:
+      properties:
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        user:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: User
+      type: object
+      title: QueryCustomTag
+    CustomTagValuesResponse:
+      properties:
+        values:
+          items:
+            type: string
+          type: array
+          title: Values
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - values
+      - total
+      - page
+      - size
+      title: CustomTagValuesResponse
+      description: Response schema for distinct custom tag values from query_tag JSON column.
+    QueryTag:
+      properties:
+        tag_rk:
+          type: string
+          title: Tag Rk
+        reason:
+          type: string
+          title: Reason
+        reports:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Report'
+            type: array
+          - type: 'null'
+          title: Reports
+        tag_icon_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tag Icon Text
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - tag_rk
+      - reason
+      title: QueryTag
+    TaskWorkloadsFilters:
+      properties:
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+          default: []
+        databases:
+          items:
+            type: string
+          type: array
+          title: Databases
+          default: []
+        schemas:
+          items:
+            type: string
+          type: array
+          title: Schemas
+          default: []
+      type: object
+      title: TaskWorkloadsFilters
+      description: 'Filters for /tasks/filters.
+
+
+        Available dropdown values for the Snowflake tasks listing, sourced from
+
+        ``snowflake_tasks_aggregated``. Serverless tasks carry an empty
+
+        ``warehouse_name``; blank values are dropped so the dropdowns stay clean.'
+    Page_TaskWorkloadResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TaskWorkloadResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TaskWorkloadResponse]
+    DbtJobTasksSummaryResponse:
+      properties:
+        total_cost:
+          type: number
+          minimum: 0.0
+          title: Total Cost
+          description: Total cost across all DBT task types
+        model_cost:
+          type: number
+          minimum: 0.0
+          title: Model Cost
+          description: Cost for DBT model tasks
+        test_cost:
+          type: number
+          minimum: 0.0
+          title: Test Cost
+          description: Cost for DBT test tasks
+        seed_cost:
+          type: number
+          minimum: 0.0
+          title: Seed Cost
+          description: Cost for DBT seed tasks
+        snapshot_cost:
+          type: number
+          minimum: 0.0
+          title: Snapshot Cost
+          description: Cost for DBT snapshot tasks
+        test_coverage:
+          anyOf:
+          - type: number
+            maximum: 100.0
+            minimum: 0.0
+          - type: 'null'
+          title: Test Coverage
+          description: Test coverage percentage (0-100)
+      type: object
+      required:
+      - total_cost
+      - model_cost
+      - test_cost
+      - seed_cost
+      - snapshot_cost
+      title: DbtJobTasksSummaryResponse
+      description: Response model for DBT job tasks summary with cost breakdown by task type.
     Page_SnowflakeJobFetchAllPageResponse_:
       properties:
         items:
@@ -8888,20 +8488,484 @@ components:
       - page
       - size
       title: Page[SnowflakeJobFetchAllPageResponse]
-    QueryCustomTag:
+    DbtJobFilterItem:
       properties:
-        reason:
+        command_display:
+          type: string
+          title: Command Display
+      type: object
+      required:
+      - command_display
+      title: DbtJobFilterItem
+    Page_QueryFetchAllPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/QueryFetchAllPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[QueryFetchAllPageResponse]
+    SnowflakeJobRunCompareRequest:
+      properties:
+        workflow_id:
+          type: string
+          title: Workflow Id
+        run1_id:
+          type: string
+          title: Run1 Id
+        run2_id:
+          type: string
+          title: Run2 Id
+      type: object
+      required:
+      - workflow_id
+      - run1_id
+      - run2_id
+      title: SnowflakeJobRunCompareRequest
+    Page_SnowflakeJobTaskAggregatePageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SnowflakeJobTaskAggregatePageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[SnowflakeJobTaskAggregatePageResponse]
+    PaginatedLabeledValuesResponse:
+      properties:
+        values:
+          items:
+            $ref: '#/components/schemas/app__schemas__queries__FilterResponse'
+          type: array
+          title: Values
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        total_pages:
+          type: integer
+          title: Total Pages
+      type: object
+      required:
+      - values
+      - total
+      - page
+      - size
+      - total_pages
+      title: PaginatedLabeledValuesResponse
+    QueryGroupResponse:
+      properties:
+        query_hash:
+          type: string
+          title: Query Hash
+        query_name:
           anyOf:
           - type: string
           - type: 'null'
-          title: Reason
-        user:
+          title: Query Name
+        trimmed_query:
+          type: string
+          title: Trimmed Query
+        full_query:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Full Query
+        total_run:
+          type: string
+          title: Total Run
+        avg_exec_time:
+          type: string
+          title: Avg Exec Time
+        avg_cost:
+          type: string
+          title: Avg Cost
+        total_cost:
+          type: string
+          title: Total Cost
+        annualized_cost:
+          type: string
+          title: Annualized Cost
+        distinct_warehouses:
+          type: integer
+          title: Distinct Warehouses
+        distinct_users:
+          type: integer
+          title: Distinct Users
+        distinct_roles:
           anyOf:
           - type: integer
           - type: 'null'
-          title: User
+          title: Distinct Roles
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
       type: object
-      title: QueryCustomTag
+      required:
+      - query_hash
+      - trimmed_query
+      - total_run
+      - avg_exec_time
+      - avg_cost
+      - total_cost
+      - annualized_cost
+      - distinct_warehouses
+      - distinct_users
+      - tags
+      title: QueryGroupResponse
+    Page_WorkloadPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/WorkloadPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[WorkloadPageResponse]
+    TaskSummaryResponse:
+      properties:
+        total_cost:
+          type: number
+          title: Total Cost
+        avg_cost:
+          type: number
+          title: Avg Cost
+        avg_execution_time:
+          type: number
+          title: Avg Execution Time
+        max_execution_time:
+          type: number
+          title: Max Execution Time
+        run_count:
+          type: integer
+          title: Run Count
+        total_bytes_scanned:
+          type: number
+          title: Total Bytes Scanned
+        avg_bytes_scanned:
+          type: number
+          title: Avg Bytes Scanned
+      type: object
+      required:
+      - total_cost
+      - avg_cost
+      - avg_execution_time
+      - max_execution_time
+      - run_count
+      - total_bytes_scanned
+      - avg_bytes_scanned
+      title: TaskSummaryResponse
+    app__schemas__queries__FilterResponse:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: FilterResponse
+    RunEvents:
+      properties:
+        warehouse_change:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Change
+        code_change:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Code Change
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
+      type: object
+      title: RunEvents
+    Page_TaskRunResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TaskRunResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TaskRunResponse]
+    SnowflakeJobSettings:
+      properties:
+        prefix:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefix
+        workflow_id:
+          type: string
+          title: Workflow Id
+        run_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Run Id
+        task_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Id
+        project_id:
+          type: string
+          title: Project Id
+        app_id:
+          type: string
+          title: App Id
+        custom_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            maxItems: 15
+          - type: 'null'
+          title: Custom Tags
+          description: List of custom tag keys for filtering (max 15 tags per workload)
+      type: object
+      required:
+      - workflow_id
+      - project_id
+      - app_id
+      title: SnowflakeJobSettings
+    Page_DbtJobListingPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DbtJobListingPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DbtJobListingPageResponse]
+    DbtJobListingPageResponse:
+      properties:
+        command_display:
+          type: string
+          title: Command Display
+        command_which:
+          type: string
+          title: Command Which
+        query_cost:
+          type: number
+          title: Query Cost
+        bytes_scanned:
+          type: integer
+          title: Bytes Scanned
+        execution_time:
+          type: number
+          title: Execution Time
+        run_count:
+          type: integer
+          title: Run Count
+        success_count:
+          type: integer
+          title: Success Count
+        last_runtime:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Runtime
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        dbt_cloud_job_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dbt Cloud Job Id
+      type: object
+      required:
+      - command_display
+      - command_which
+      - query_cost
+      - bytes_scanned
+      - execution_time
+      - run_count
+      - success_count
+      - warehouses
+      title: DbtJobListingPageResponse
+      description: 'Response for the dbt Jobs tab listing.
+
+
+        A "Job" is a unique dbt command fingerprint (e.g., "dbt build --select model+ --target PROD").
+
+        All invocations with the same command are grouped together.
+
+        Works for both dbt Core and dbt Cloud.
+
+        The command_display field is the stable identifier for each job.'
     QueryFetchAllPageResponse:
       properties:
         id:
@@ -9068,185 +9132,56 @@ components:
             type: object
           - type: 'null'
           title: Query Tag
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
       type: object
       required:
       - id
       - query_id
       - query_type
       title: QueryFetchAllPageResponse
-    SnowflakeJobFetchAllPageResponse:
+    TaskInfo:
       properties:
-        workflow_id:
-          type: string
-          title: Workflow Id
-        query_cost:
-          type: number
-          title: Query Cost
-        bytes_scanned:
-          type: integer
-          title: Bytes Scanned
         execution_time:
-          type: number
+          anyOf:
+          - type: number
+          - type: 'null'
           title: Execution Time
-        last_runtime:
-          type: number
-          title: Last Runtime
-        max_runtime:
-          type: number
-          title: Max Runtime
-        min_runtime:
-          type: number
-          title: Min Runtime
-        runs:
-          type: number
-          title: Runs
-        warehouse_names:
-          items:
-            type: string
-          type: array
-          title: Warehouse Names
-        teams:
-          items:
-            type: string
-          type: array
-          title: Teams
-        apps:
-          items:
-            type: string
-          type: array
-          title: Apps
-        dbt_project_name:
+        query_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Query Cost
+        execution_status:
           anyOf:
           - type: string
           - type: 'null'
-          title: Dbt Project Name
-        tableau_dashboard_name:
+          title: Execution Status
+        error_message:
           anyOf:
           - type: string
           - type: 'null'
-          title: Tableau Dashboard Name
-        integration_name:
+          title: Error Message
+        warehouse_name:
           anyOf:
           - type: string
           - type: 'null'
-          title: Integration Name
-        integration_environment:
+          title: Warehouse Name
+        warehouse_size:
           anyOf:
           - type: string
           - type: 'null'
-          title: Integration Environment
-        test_coverage:
+          title: Warehouse Size
+        query_hash:
           anyOf:
           - type: string
           - type: 'null'
-          title: Test Coverage
-        instance_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Instance Id
+          title: Query Hash
       type: object
-      required:
-      - workflow_id
-      - query_cost
-      - bytes_scanned
-      - execution_time
-      - last_runtime
-      - max_runtime
-      - min_runtime
-      - runs
-      - warehouse_names
-      - teams
-      - apps
-      title: SnowflakeJobFetchAllPageResponse
-    QueryIndicesResponse:
-      properties:
-        spans:
-          additionalProperties: true
-          type: object
-          title: Spans
-        query_text:
-          type: string
-          title: Query Text
-      type: object
-      required:
-      - spans
-      - query_text
-      title: QueryIndicesResponse
-    QueryFetchResponse:
-      properties:
-        query:
-          anyOf:
-          - $ref: '#/components/schemas/QueryObject'
-          - type: 'null'
-        ok:
-          type: boolean
-          title: Ok
-        error_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Code
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: QueryFetchResponse
-    app__schemas__queries__TagObject:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        cost_savings:
-          type: boolean
-          title: Cost Savings
-        time_savings:
-          type: boolean
-          title: Time Savings
-      type: object
-      required:
-      - name
-      - description
-      - cost_savings
-      - time_savings
-      title: TagObject
-    TaskWorkloadsFilters:
-      properties:
-        warehouses:
-          items:
-            type: string
-          type: array
-          title: Warehouses
-          default: []
-        databases:
-          items:
-            type: string
-          type: array
-          title: Databases
-          default: []
-        schemas:
-          items:
-            type: string
-          type: array
-          title: Schemas
-          default: []
-      type: object
-      title: TaskWorkloadsFilters
-      description: 'Filters for /tasks/filters.
-
-
-        Available dropdown values for the Snowflake tasks listing, sourced from
-
-        ``snowflake_tasks_aggregated``. Serverless tasks carry an empty
-
-        ``warehouse_name``; blank values are dropped so the dropdowns stay clean.'
+      title: TaskInfo
     Page_WorkloadStoredProcedureJobResponse_:
       properties:
         items:
@@ -9285,11 +9220,134 @@ components:
       - page
       - size
       title: Page[WorkloadStoredProcedureJobResponse]
-    Page_WorkloadPageResponse_:
+    Report:
+      properties:
+        query_span:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Span
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        indices:
+          anyOf:
+          - items:
+              prefixItems:
+              - prefixItems:
+                - type: integer
+                - type: integer
+                type: array
+                maxItems: 2
+                minItems: 2
+              - prefixItems:
+                - type: integer
+                - type: integer
+                type: array
+                maxItems: 2
+                minItems: 2
+              type: array
+              maxItems: 2
+              minItems: 2
+            type: array
+          - type: 'null'
+          title: Indices
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      title: Report
+    WorkloadPageResponse:
+      properties:
+        hash:
+          type: string
+          title: Hash
+        query_summary:
+          type: string
+          title: Query Summary
+        job_count:
+          type: integer
+          title: Job Count
+        cost:
+          type: number
+          title: Cost
+        query_type:
+          type: string
+          title: Query Type
+        bytes_scanned:
+          type: number
+          title: Bytes Scanned
+        execution_time:
+          type: number
+          title: Execution Time
+        warehouse_names:
+          items:
+            type: string
+          type: array
+          title: Warehouse Names
+        database_names:
+          items:
+            type: string
+          type: array
+          title: Database Names
+      type: object
+      required:
+      - hash
+      - query_summary
+      - job_count
+      - cost
+      - query_type
+      - bytes_scanned
+      - execution_time
+      - warehouse_names
+      - database_names
+      title: WorkloadPageResponse
+    DbtModelFilterItem:
+      properties:
+        model_name:
+          type: string
+          title: Model Name
+      type: object
+      required:
+      - model_name
+      title: DbtModelFilterItem
+    DbtJobFilterResponse:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/WorkloadPageResponse'
+            $ref: '#/components/schemas/DbtJobFilterItem'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: DbtJobFilterResponse
+    Page_SnowflakeIndividualJobRunPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SnowflakeIndividualJobRunPageResponse'
           type: array
           title: Items
         total:
@@ -9322,78 +9380,7 @@ components:
       - total
       - page
       - size
-      title: Page[WorkloadPageResponse]
-    RunDiff:
-      properties:
-        type:
-          type: string
-          title: Type
-        task_id:
-          type: string
-          title: Task Id
-        run1:
-          $ref: '#/components/schemas/TaskInfo'
-        run2:
-          $ref: '#/components/schemas/TaskInfo'
-      type: object
-      required:
-      - type
-      - task_id
-      - run1
-      - run2
-      title: RunDiff
-    DbtTagFilterItem:
-      properties:
-        tag:
-          type: string
-          title: Tag
-      type: object
-      required:
-      - tag
-      title: DbtTagFilterItem
-    JobRunGraphResponse:
-      properties:
-        run_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Run Id
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        start_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Start Time
-        query_cost:
-          type: number
-          title: Query Cost
-        execution_time:
-          type: number
-          title: Execution Time
-        annotation:
-          anyOf:
-          - $ref: '#/components/schemas/RunEvents'
-          - type: 'null'
-      type: object
-      required:
-      - timestamp
-      - query_cost
-      - execution_time
-      title: JobRunGraphResponse
-      description: Lightweight response for runs graph — only fields needed for charting.
-    SnowflakeJobGraphDataRequest:
-      properties:
-        aggregate_by:
-          type: string
-          title: Aggregate By
-      type: object
-      required:
-      - aggregate_by
-      title: SnowflakeJobGraphDataRequest
+      title: Page[SnowflakeIndividualJobRunPageResponse]
   securitySchemes:
     HTTPBearer:
       type: http

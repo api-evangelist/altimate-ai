@@ -12,7 +12,12 @@ paths:
       summary: Create Public Prompt
       description: 'Create a public prompt (service user only).
 
-        This endpoint is specifically for service users to create public prompts.'
+        This endpoint is specifically for service users to create public prompts.
+
+
+        Deprecated: superseded by ``POST /internal/prompts`` (scope=global). Kept
+
+        for existing callers; not yet retired.'
       operationId: create_public_prompt_public_prompts_post
       requestBody:
         content:
@@ -44,7 +49,12 @@ paths:
       summary: Delete Public Prompt
       description: 'Delete a public prompt (service user only).
 
-        This endpoint is specifically for service users to delete public prompts.'
+        This endpoint is specifically for service users to delete public prompts.
+
+
+        Deprecated: superseded by ``DELETE /internal/prompts/{id}?scope=global``.
+
+        Kept for existing callers; not yet retired.'
       operationId: delete_public_prompt_public_prompts__prompt_id__delete
       deprecated: true
       security:
@@ -69,6 +79,27 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     PromptResponse:
       properties:
         id:
@@ -142,27 +173,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     CreatePublicPromptRequest:
       properties:
         title:

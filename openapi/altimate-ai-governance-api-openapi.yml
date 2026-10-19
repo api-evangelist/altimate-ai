@@ -90,6 +90,16 @@ paths:
           - type: string
           - type: 'null'
           title: Search
+      - name: snowflakeTags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Snowflaketags
       - name: navigationSource
         in: query
         required: false
@@ -223,6 +233,16 @@ paths:
           - type: string
           - type: 'null'
           title: Search
+      - name: snowflakeTags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Snowflaketags
       - name: navigationSource
         in: query
         required: false
@@ -617,51 +637,44 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    GovernanceRoleResponse:
+    Page_GovernanceUserResponse_:
       properties:
-        role_name:
-          type: string
-          title: Role Name
-        total_cost:
-          type: number
-          title: Total Cost
-        max_cost:
-          type: number
-          title: Max Cost
-        num_of_query_groups:
-          type: string
-          title: Num Of Query Groups
-        insights:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Insights
-        avg_cost:
-          type: number
-          title: Avg Cost
-        instance_id:
+        items:
+          items:
+            $ref: '#/components/schemas/GovernanceUserResponse'
+          type: array
+          title: Items
+        total:
           anyOf:
           - type: integer
+            minimum: 0.0
           - type: 'null'
-          title: Instance Id
-        num_of_queries:
-          type: string
-          title: Num Of Queries
-        num_of_adhoc_queries:
-          type: string
-          title: Num Of Adhoc Queries
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
       required:
-      - role_name
-      - total_cost
-      - max_cost
-      - num_of_query_groups
-      - avg_cost
-      - num_of_queries
-      - num_of_adhoc_queries
-      title: GovernanceRoleResponse
+      - items
+      - total
+      - page
+      - size
+      title: Page[GovernanceUserResponse]
     ValidationError:
       properties:
         loc:
@@ -721,53 +734,6 @@ components:
       - page
       - size
       title: Page[GovernanceRoleResponse]
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Page_GovernanceUserResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/GovernanceUserResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[GovernanceUserResponse]
     GovernanceUserResponse:
       properties:
         user_name:
@@ -811,6 +777,13 @@ components:
         last_success_login:
           type: string
           title: Last Success Login
+        snowflake_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Snowflake Tags
       type: object
       required:
       - user_name
@@ -822,6 +795,67 @@ components:
       - num_of_adhoc_queries
       - last_success_login
       title: GovernanceUserResponse
+    GovernanceRoleResponse:
+      properties:
+        role_name:
+          type: string
+          title: Role Name
+        total_cost:
+          type: number
+          title: Total Cost
+        max_cost:
+          type: number
+          title: Max Cost
+        num_of_query_groups:
+          type: string
+          title: Num Of Query Groups
+        insights:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Insights
+        avg_cost:
+          type: number
+          title: Avg Cost
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        num_of_queries:
+          type: string
+          title: Num Of Queries
+        num_of_adhoc_queries:
+          type: string
+          title: Num Of Adhoc Queries
+        snowflake_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Snowflake Tags
+      type: object
+      required:
+      - role_name
+      - total_cost
+      - max_cost
+      - num_of_query_groups
+      - avg_cost
+      - num_of_queries
+      - num_of_adhoc_queries
+      title: GovernanceRoleResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

@@ -63,6 +63,72 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /auth/google-login:
+    post:
+      tags:
+      - Auth
+      summary: Google Staff Login
+      description: 'Staff sign-in on the root domain with a Google Workspace account.
+
+
+        Returns the same payload as ``/login`` for the staff member''s
+
+        ``public_users`` row, which is created on their first sign-in. Tenant
+
+        subdomains keep their own login flows, so this is the public tenant only.'
+      operationId: google_staff_login_auth_google_login_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleStaffLoginIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '401':
+          description: Not a verified Altimate staff Google account
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Google Staff Login Auth Google Login Post
+        '404':
+          description: Only available on the root domain
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Google Staff Login Auth Google Login Post
+        '503':
+          description: Google sign-in is not configured
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 503 Google Staff Login Auth Google Login Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /auth/supertokens_user_info:
     get:
       tags:
@@ -162,6 +228,114 @@ paths:
                 type: object
                 additionalProperties: true
                 title: Response 400 Register New User Sso Auth Register Sso Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/social/exchange:
+    post:
+      tags:
+      - Auth
+      summary: Social Login Exchange
+      description: 'Exchange a short-lived social ``login_token`` for the app user, so the
+
+        instance subdomain can establish a session after the fixed public OAuth
+
+        callback verified the identity. Runs on the instance subdomain, so
+
+        ``tenant`` (from the subdomain) must match the token''s company.'
+      operationId: social_login_exchange_auth_social_exchange_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialExchangeIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginOut'
+        '400':
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Social Login Exchange Auth Social Exchange Post
+        '401':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Social Login Exchange Auth Social Exchange Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/social/connect-token:
+    post:
+      tags:
+      - Auth
+      summary: Social Connect Token
+      description: 'Mint a short-lived, one-time ``login_token`` for an already-authenticated
+
+        user so a client (e.g. the CLI) can obtain the session/auth_token via
+
+        /auth/social/exchange — reusing the same machinery as the Google flow.
+
+
+        The raw auth_token is never handed to the client over a loopback URL; the
+
+        exchanged token is one-time (its jti is consumed off the user row) and
+
+        short-lived.'
+      operationId: social_connect_token_auth_social_connect_token_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Social Connect Token Auth Social Connect Token Post
+        '401':
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Social Connect Token Auth Social Connect Token Post
         '422':
           description: Validation Error
           content:
@@ -466,7 +640,18 @@ paths:
       tags:
       - Auth
       summary: Patch Tenant Info
+      description: 'Deprecated: write tenant flags through ``PATCH /internal/feature-flags/
+
+        tenants/{tenant_name}`` (AI-9365), which validates against the flag
+
+        catalog, preserves concurrent edits and records an audit log.
+
+
+        Kept unchanged so existing callers (Settings > Beta Features, the
+
+        teammates toggle) keep working until they move to the new routes.'
       operationId: patch_tenant_info_auth_tenant_info_patch
+      deprecated: true
       security:
       - HTTPBearer: []
       - HTTPBearer: []
@@ -490,6 +675,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: No IdP is configured for this login host
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Patch Tenant Info Auth Tenant Info Patch
+        '403':
+          description: Owner role required
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Patch Tenant Info Auth Tenant Info Patch
+        '503':
+          description: Could not verify the identity provider configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 503 Patch Tenant Info Auth Tenant Info Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/login-config:
+    get:
+      tags:
+      - Auth
+      summary: Login Config
+      description: 'Public login-page bootstrap config — deliberately unauthenticated.
+
+
+        The frontend must decide which login experience to mount (SSO route tree
+
+        vs email/password form) before any session exists, so this cannot sit
+
+        behind has_token like /tenant-info. It exposes a single bit:
+
+        ``ssoLoginEnabled`` True means this login host uses SSO; False means no
+
+        server-side opinion, and the frontend falls back to its baked-in
+
+        SSO_ENABLED allowlist (legacy behaviour). The flag is therefore additive —
+
+        it can turn SSO on for a host, never off if already in frontend allowList.'
+      operationId: login_config_auth_login_config_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Login Config Auth Login Config Get
         '422':
           description: Validation Error
           content:
@@ -543,85 +798,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ResetPasswordIn:
-      properties:
-        token:
-          type: string
-          title: Token
-        password:
-          type: string
-          title: Password
-      type: object
-      required:
-      - token
-      - password
-      title: ResetPasswordIn
-    UserRegisterIn:
-      properties:
-        name:
-          type: string
-          title: Name
-        password:
-          type: string
-          title: Password
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - name
-      - password
-      - token
-      title: UserRegisterIn
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    SupertokensUserInfo:
-      properties:
-        email:
-          type: string
-          title: Email
-      type: object
-      required:
-      - email
-      title: SupertokensUserInfo
-    ForgotPasswordIn:
-      properties:
-        email:
-          type: string
-          format: email
-          title: Email
-      type: object
-      required:
-      - email
-      title: ForgotPasswordIn
     PermissionsFull:
       properties:
         uuid:
@@ -681,6 +857,11 @@ components:
           - type: boolean
           - type: 'null'
           title: Enablesnowflakecontracts
+        snowflakeTagsEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Snowflaketagsenabled
         enableComputePool:
           anyOf:
           - type: boolean
@@ -736,6 +917,16 @@ components:
           - type: boolean
           - type: 'null'
           title: Storedproceduresenabled
+        enableStreamlitWorkloads:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablestreamlitworkloads
+        sigmaWorkbooksEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Sigmaworkbooksenabled
         enableKnowledgeEngine:
           anyOf:
           - type: boolean
@@ -826,16 +1017,26 @@ components:
           - type: boolean
           - type: 'null'
           title: Queryaiservicesowneronly
+        enableAIConversations:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableaiconversations
+        enableAICaching:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableaicaching
+        enableAIServiceAlerts:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enableaiservicealerts
         isDatabricksTenant:
           anyOf:
           - type: boolean
           - type: 'null'
           title: Isdatabrickstenant
-        isSparkAnalysisEnabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Issparkanalysisenabled
         enableAltimateCode:
           anyOf:
           - type: boolean
@@ -846,6 +1047,11 @@ components:
           - type: boolean
           - type: 'null'
           title: Ssogroupsyncenabled
+        ssoLoginEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ssologinenabled
         ssoUserRefreshMins:
           anyOf:
           - type: integer
@@ -866,6 +1072,11 @@ components:
           - type: boolean
           - type: 'null'
           title: Enablestudioscheduledreports
+        enableStudioOpportunities:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablestudioopportunities
         showDefaultScheduleBlocks:
           anyOf:
           - type: boolean
@@ -891,6 +1102,11 @@ components:
           - type: boolean
           - type: 'null'
           title: Showcloudcosts
+        showCloudCostProjections:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Showcloudcostprojections
         whitelistedDomains:
           anyOf:
           - type: boolean
@@ -911,6 +1127,11 @@ components:
           - type: boolean
           - type: 'null'
           title: Enableimplementedtab
+        enableSystemStatus:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enablesystemstatus
         warehouseSchedulerEnabled:
           anyOf:
           - type: boolean
@@ -941,21 +1162,13 @@ components:
           - type: boolean
           - type: 'null'
           title: Enabletransparencyannotations
+        freemiumModeEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Freemiummodeenabled
       type: object
       title: PatchTenantInfoRequest
-    SSOUserRegisterIn:
-      properties:
-        firstName:
-          type: string
-          title: Firstname
-        lastName:
-          type: string
-          title: Lastname
-      type: object
-      required:
-      - firstName
-      - lastName
-      title: SSOUserRegisterIn
     UserLoginIn:
       properties:
         email:
@@ -970,6 +1183,109 @@ components:
       - email
       - password
       title: UserLoginIn
+    UserRegisterIn:
+      properties:
+        name:
+          type: string
+          title: Name
+        password:
+          type: string
+          title: Password
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - name
+      - password
+      - token
+      title: UserRegisterIn
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ResetPasswordIn:
+      properties:
+        token:
+          type: string
+          title: Token
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - token
+      - password
+      title: ResetPasswordIn
+    SSOUserRegisterIn:
+      properties:
+        firstName:
+          type: string
+          title: Firstname
+        lastName:
+          type: string
+          title: Lastname
+      type: object
+      required:
+      - firstName
+      - lastName
+      title: SSOUserRegisterIn
+    GroupTenantsRequest:
+      properties:
+        tenants:
+          items:
+            type: string
+          type: array
+          title: Tenants
+      type: object
+      required:
+      - tenants
+      title: GroupTenantsRequest
+    ForgotPasswordIn:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+      - email
+      title: ForgotPasswordIn
+    SupertokensUserInfo:
+      properties:
+        email:
+          type: string
+          title: Email
+      type: object
+      required:
+      - email
+      title: SupertokensUserInfo
     UserLoginOut:
       properties:
         id:
@@ -1030,26 +1346,17 @@ components:
       - is_onboarded
       - uuid
       title: UserLoginOut
-    GroupTenantsRequest:
+    GoogleStaffLoginIn:
       properties:
-        tenants:
-          items:
-            type: string
-          type: array
-          title: Tenants
+        credential:
+          type: string
+          maxLength: 8192
+          minLength: 1
+          title: Credential
       type: object
       required:
-      - tenants
-      title: GroupTenantsRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - credential
+      title: GoogleStaffLoginIn
     RolePermissionFull:
       properties:
         role_name:
@@ -1077,6 +1384,25 @@ components:
       - is_custom
       - permission
       title: RolePermissionFull
+    SocialExchangeIn:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: SocialExchangeIn
+      description: Exchange a short-lived social login_token for an app session.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

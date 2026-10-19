@@ -20,6 +20,10 @@ paths:
 
         - contract_ids: search parameter
 
+        - table_types: search parameter; slugs of the `get_table_types` labels
+
+        (e.g. `transient_table`, `iceberg_table`). Multi-select is OR.
+
         - keyword: general search parameter for table name or column name'
       operationId: get_all_tables__get
       security:
@@ -105,6 +109,26 @@ paths:
               type: string
           - type: 'null'
           title: Tags
+      - name: snowflakeTags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Snowflaketags
+      - name: table_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Table Types
       - name: keyword
         in: query
         required: false
@@ -987,6 +1011,16 @@ paths:
               type: string
           - type: 'null'
           title: Tag Rks
+      - name: snowflakeTags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Snowflaketags
       - name: total_cost
         in: query
         required: false
@@ -1065,6 +1099,16 @@ paths:
           - type: 'null'
           default: []
           title: Instance Ids
+      - name: table_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Table Types
       - name: navigationSource
         in: query
         required: false
@@ -1739,6 +1783,102 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /tables/inventory:
+    get:
+      tags:
+      - Tables
+      summary: Search Table Inventory Api
+      description: 'Name-searchable table inventory, read from `table_metadata` (AI-8314).
+
+
+        The Studio opportunity picker used `/tabledata`, a Snowflake cost rollup
+
+        that lists strictly fewer tables than the publish gate accepts — 1,253 of
+
+        2,920 on prod megatenant, and nothing at all on a new-pipeline tenant. This
+
+        reads the same table the gate verifies against, so anything listed here can
+
+        be published, and it searches server-side rather than filtering one
+
+        already-fetched page.'
+      operationId: search_table_inventory_api_tables_inventory_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Table name or database.schema.table
+          default: ''
+          title: Search
+        description: Table name or database.schema.table
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          default: 50
+          title: Size
+      - name: instance_ids
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+          title: Instance Ids
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Search Table Inventory Api Tables Inventory Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Search Table Inventory Api Tables Inventory Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /tables/tabledata/filters/rks/tablename:
     get:
       tags:
@@ -1940,6 +2080,94 @@ paths:
                 type: object
                 additionalProperties: true
                 title: Response 403 Get Table Rk Db Filters Api Tables Tabledata Filters Rks Db Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tables/tabledata/filters/snowflaketags:
+    get:
+      tags:
+      - Tables
+      summary: Get Table Snowflake Tag Filters Api
+      description: 'Distinct Snowflake object-tag values for a Snowflake Tags filter
+
+        dropdown, for the given ``entity`` surface (dataset / user / role /
+
+        compute_pool). Catalog-wide (from the ``snowflake_tags`` table for that
+
+        surface''s object domain), not scoped to the currently-loaded page — mirrors
+
+        the schema/db filter endpoints and the warehouse tag filter list. Options
+
+        are the ``format_tag`` strings the ``snowflaketags`` filter param is matched
+
+        against downstream.'
+      operationId: get_table_snowflake_tag_filters_api_tables_tabledata_filters_snowflaketags_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: entity
+        in: query
+        required: false
+        schema:
+          type: string
+          default: dataset
+          title: Entity
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Prefix
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableRkFilterResponse'
+        '400':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Table Snowflake Tag Filters Api Tables Tabledata Filters Snowflaketags Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Table Snowflake Tag Filters Api Tables Tabledata Filters Snowflaketags Get
         '422':
           description: Validation Error
           content:
@@ -2211,110 +2439,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    Page_TableFetchResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TableFetchResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[TableFetchResponse]
-    TableUpsertCustomTagResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        error_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Code
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: TableUpsertCustomTagResponse
-    TableRkFilterType:
-      type: string
-      enum:
-      - all
-      - tablename
-      - schema
-      - db
-      title: TableRkFilterType
-      description: Type of filter to apply on table resource keys
-    Page_TableDataResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TableDataResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[TableDataResponse]
     MatchResult:
       properties:
         table_name:
@@ -2336,209 +2460,6 @@ components:
       - table_purpose_match
       - column_description_matches
       title: MatchResult
-    AnnualizedCostsResponse:
-      properties:
-        annualized_total_cost:
-          type: number
-          title: Annualized Total Cost
-        annualized_insertion_cost:
-          type: number
-          title: Annualized Insertion Cost
-        annualized_storage_cost:
-          type: number
-          title: Annualized Storage Cost
-        annualized_clustering_cost:
-          type: number
-          title: Annualized Clustering Cost
-      type: object
-      required:
-      - annualized_total_cost
-      - annualized_insertion_cost
-      - annualized_storage_cost
-      - annualized_clustering_cost
-      title: AnnualizedCostsResponse
-    TableStorageOverTimeResponse:
-      properties:
-        table_owner:
-          type: string
-          title: Table Owner
-        active_storage:
-          type: string
-          title: Active Storage
-        time_travel_storage:
-          type: string
-          title: Time Travel Storage
-        failsafe_storage:
-          type: string
-          title: Failsafe Storage
-        cloned_storage:
-          type: string
-          title: Cloned Storage
-        cluster_key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cluster Key
-        cluster_cost:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cluster Cost
-        is_dynamic_table:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Dynamic Table
-        dynamic_table_attributes:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Dynamic Table Attributes
-      type: object
-      required:
-      - table_owner
-      - active_storage
-      - time_travel_storage
-      - failsafe_storage
-      - cloned_storage
-      title: TableStorageOverTimeResponse
-    app__schemas__tables__Tag:
-      properties:
-        label:
-          type: string
-          title: Label
-        reason:
-          type: string
-          title: Reason
-      type: object
-      required:
-      - label
-      - reason
-      title: Tag
-    ColumnUserAccessHistoryResponse:
-      properties:
-        num_queries:
-          type: integer
-          title: Num Queries
-        user_access:
-          items:
-            $ref: '#/components/schemas/UserAccessResponse'
-          type: array
-          title: User Access
-      type: object
-      required:
-      - num_queries
-      - user_access
-      title: ColumnUserAccessHistoryResponse
-    TableAccessResponse:
-      properties:
-        column_count:
-          type: integer
-          title: Column Count
-        cost:
-          type: number
-          title: Cost
-        column:
-          $ref: '#/components/schemas/TableColumnObjectResponse'
-        usage:
-          type: number
-          title: Usage
-        user_count:
-          type: integer
-          title: User Count
-        queries:
-          type: integer
-          title: Queries
-      type: object
-      required:
-      - column_count
-      - cost
-      - column
-      - usage
-      - user_count
-      - queries
-      title: TableAccessResponse
-    TableRkFilterResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/app__schemas__tables__FilterResponse'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-        pages:
-          type: integer
-          title: Pages
-        filter_type:
-          $ref: '#/components/schemas/TableRkFilterType'
-          default: all
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: TableRkFilterResponse
-      description: Response for table RK filters
-    TableSchemaMetadataUpdate:
-      properties:
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - description
-      title: TableSchemaMetadataUpdate
-    TableQueriesResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TableQueryResponse'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-        pages:
-          type: integer
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: TableQueriesResponse
-      description: Paginated response for table queries
-    app__schemas__tables__CostBreakdownResponse:
-      properties:
-        breakdown:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Breakdown
-      type: object
-      required:
-      - breakdown
-      title: CostBreakdownResponse
     TablesAccessedResponse:
       properties:
         resource_id:
@@ -2564,352 +2485,6 @@ components:
       - datasource_type
       - access_time
       title: TablesAccessedResponse
-    ColumnSchemaMetadata:
-      properties:
-        table_schema_id:
-          type: integer
-          title: Table Schema Id
-        column_description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Column Description
-        created_on:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Created On
-        name:
-          type: string
-          title: Name
-        datatype:
-          type: string
-          title: Datatype
-        tags:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ColumnTag'
-            type: array
-          - type: 'null'
-          title: Tags
-        description_frozen:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Description Frozen
-        last_modified_by:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Last Modified By
-      type: object
-      required:
-      - table_schema_id
-      - name
-      - datatype
-      title: ColumnSchemaMetadata
-    CustomTag:
-      properties:
-        reason:
-          type: string
-          title: Reason
-        user:
-          type: integer
-          title: User
-      type: object
-      required:
-      - reason
-      - user
-      title: CustomTag
-    Page_TableAccessResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TableAccessResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[TableAccessResponse]
-    UserAccessResponse:
-      properties:
-        usage:
-          type: number
-          title: Usage
-        user_name:
-          type: string
-          title: User Name
-      type: object
-      required:
-      - usage
-      - user_name
-      title: UserAccessResponse
-    TableOwnerFilterResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/app__schemas__tables__FilterResponse'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
-        pages:
-          type: integer
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: TableOwnerFilterResponse
-    app__schemas__tables__FilterResponse:
-      properties:
-        label:
-          type: string
-          title: Label
-        value:
-          type: string
-          title: Value
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        table_schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Table Schema
-      type: object
-      required:
-      - label
-      - value
-      title: FilterResponse
-    app__schemas__tables__ContractFetchResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        name:
-          type: string
-          title: Name
-        status:
-          type: string
-          title: Status
-        level:
-          type: string
-          title: Level
-      type: object
-      required:
-      - id
-      - name
-      - status
-      - level
-      title: ContractFetchResponse
-    TableMetadataUpdate:
-      properties:
-        purpose:
-          type: string
-          title: Purpose
-      type: object
-      required:
-      - purpose
-      title: TableMetadataUpdate
-    TableIdFomRkRequest:
-      properties:
-        table_rk:
-          type: string
-          title: Table Rk
-      type: object
-      required:
-      - table_rk
-      title: TableIdFomRkRequest
-    TableQueriesFiltersResponse:
-      properties:
-        warehouses:
-          items:
-            type: string
-          type: array
-          title: Warehouses
-        users:
-          items:
-            type: string
-          type: array
-          title: Users
-        access_types:
-          items:
-            type: string
-          type: array
-          title: Access Types
-        insights:
-          items:
-            type: string
-          type: array
-          title: Insights
-      type: object
-      required:
-      - warehouses
-      - users
-      - access_types
-      - insights
-      title: TableQueriesFiltersResponse
-      description: Response model for table queries filters
-    TableDataFilterResponse:
-      properties:
-        rks:
-          items:
-            $ref: '#/components/schemas/TableColumnObjectResponse'
-          type: array
-          title: Rks
-        tag_rks:
-          items:
-            type: string
-          type: array
-          title: Tag Rks
-        owners:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Owners
-      type: object
-      required:
-      - rks
-      - tag_rks
-      title: TableDataFilterResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    TableColumnObjectResponse:
-      properties:
-        rk:
-          type: string
-          title: Rk
-        name:
-          type: string
-          title: Name
-        path:
-          type: string
-          title: Path
-      type: object
-      required:
-      - rk
-      - name
-      - path
-      title: TableColumnObjectResponse
-    TableAccessHistory:
-      properties:
-        table_id:
-          type: integer
-          title: Table Id
-        column_rk:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Column Rk
-          default: []
-        order_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Order By
-          default: usage
-        sort_order:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Sort Order
-          default: asc
-      type: object
-      required:
-      - table_id
-      title: TableAccessHistory
-    TableUpsertCustomTagRequest:
-      properties:
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-      type: object
-      title: TableUpsertCustomTagRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     TableFetchResponse:
       properties:
         id:
@@ -2972,6 +2547,13 @@ components:
           anyOf:
           - $ref: '#/components/schemas/MatchResult'
           - type: 'null'
+        snowflake_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Snowflake Tags
       type: object
       required:
       - id
@@ -2981,21 +2563,431 @@ components:
       - columns
       - contracts
       title: TableFetchResponse
-    ColumnTag:
+    TableDataResponse:
       properties:
-        name:
-          type: string
-          title: Name
-        description:
+        rk:
+          anyOf:
+          - $ref: '#/components/schemas/TableColumnObjectResponse'
+          - type: 'null'
+        resource_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Resource Id
+        total_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Total Cost
+        insertion_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Insertion Cost
+        storage_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage Cost
+        clustering_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Clustering Cost
+        tag_rks:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tag Rks
+        snowflake_tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Snowflake Tags
+        reads:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Reads
+        writes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Writes
+        read_write_ratio:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Read Write Ratio
+        owner:
           anyOf:
           - type: string
           - type: 'null'
-          title: Description
-          default: ''
+          title: Owner
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+      type: object
+      title: TableDataResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TableStorageOverTimeResponse:
+      properties:
+        table_owner:
+          type: string
+          title: Table Owner
+        active_storage:
+          type: string
+          title: Active Storage
+        time_travel_storage:
+          type: string
+          title: Time Travel Storage
+        failsafe_storage:
+          type: string
+          title: Failsafe Storage
+        cloned_storage:
+          type: string
+          title: Cloned Storage
+        cluster_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Key
+        cluster_cost:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Cost
+        is_dynamic_table:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Dynamic Table
+        dynamic_table_attributes:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Dynamic Table Attributes
+      type: object
+      required:
+      - table_owner
+      - active_storage
+      - time_travel_storage
+      - failsafe_storage
+      - cloned_storage
+      title: TableStorageOverTimeResponse
+    app__schemas__tables__ContractFetchResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        status:
+          type: string
+          title: Status
+        level:
+          type: string
+          title: Level
+      type: object
+      required:
+      - id
       - name
-      title: ColumnTag
+      - status
+      - level
+      title: ContractFetchResponse
+    TableOwnerFilterResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/app__schemas__tables__FilterResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: TableOwnerFilterResponse
+    CustomTag:
+      properties:
+        reason:
+          type: string
+          title: Reason
+        user:
+          type: integer
+          title: User
+      type: object
+      required:
+      - reason
+      - user
+      title: CustomTag
+    TableUpsertCustomTagRequest:
+      properties:
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+      type: object
+      title: TableUpsertCustomTagRequest
+    Page_TableAccessResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableAccessResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TableAccessResponse]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    TableRkFilterType:
+      type: string
+      enum:
+      - all
+      - tablename
+      - schema
+      - db
+      title: TableRkFilterType
+      description: Type of filter to apply on table resource keys
+    TableQueriesFiltersResponse:
+      properties:
+        warehouses:
+          items:
+            type: string
+          type: array
+          title: Warehouses
+        users:
+          items:
+            type: string
+          type: array
+          title: Users
+        access_types:
+          items:
+            type: string
+          type: array
+          title: Access Types
+        insights:
+          items:
+            type: string
+          type: array
+          title: Insights
+      type: object
+      required:
+      - warehouses
+      - users
+      - access_types
+      - insights
+      title: TableQueriesFiltersResponse
+      description: Response model for table queries filters
+    TableAccessHistory:
+      properties:
+        table_id:
+          type: integer
+          title: Table Id
+        column_rk:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Column Rk
+          default: []
+        order_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+          default: usage
+        sort_order:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sort Order
+          default: asc
+      type: object
+      required:
+      - table_id
+      title: TableAccessHistory
+    TableUpsertCustomTagResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: TableUpsertCustomTagResponse
+    TableColumnObjectResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+      type: object
+      required:
+      - rk
+      - name
+      - path
+      title: TableColumnObjectResponse
+    app__schemas__tables__FilterResponse:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: string
+          title: Value
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        table_schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Table Schema
+      type: object
+      required:
+      - label
+      - value
+      title: FilterResponse
+    ColumnUserAccessHistoryResponse:
+      properties:
+        num_queries:
+          type: integer
+          title: Num Queries
+        user_access:
+          items:
+            $ref: '#/components/schemas/UserAccessResponse'
+          type: array
+          title: User Access
+      type: object
+      required:
+      - num_queries
+      - user_access
+      title: ColumnUserAccessHistoryResponse
+    PaginatedFilterResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/app__schemas__tables__FilterResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: PaginatedFilterResponse
     TableQueryResponse:
       properties:
         query_id:
@@ -3079,80 +3071,234 @@ components:
       - access_type
       title: TableQueryResponse
       description: Response model for a single query that accessed a table
-    TableDataResponse:
+    TableRkFilterResponse:
       properties:
-        rk:
-          anyOf:
-          - $ref: '#/components/schemas/TableColumnObjectResponse'
-          - type: 'null'
-        resource_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Resource Id
-        total_cost:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Total Cost
-        insertion_cost:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Insertion Cost
-        storage_cost:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Storage Cost
-        clustering_cost:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Clustering Cost
+        items:
+          items:
+            $ref: '#/components/schemas/app__schemas__tables__FilterResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+        filter_type:
+          $ref: '#/components/schemas/TableRkFilterType'
+          default: all
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: TableRkFilterResponse
+      description: Response for table RK filters
+    AnnualizedCostsResponse:
+      properties:
+        annualized_total_cost:
+          type: number
+          title: Annualized Total Cost
+        annualized_insertion_cost:
+          type: number
+          title: Annualized Insertion Cost
+        annualized_storage_cost:
+          type: number
+          title: Annualized Storage Cost
+        annualized_clustering_cost:
+          type: number
+          title: Annualized Clustering Cost
+      type: object
+      required:
+      - annualized_total_cost
+      - annualized_insertion_cost
+      - annualized_storage_cost
+      - annualized_clustering_cost
+      title: AnnualizedCostsResponse
+    TableDataFilterResponse:
+      properties:
+        rks:
+          items:
+            $ref: '#/components/schemas/TableColumnObjectResponse'
+          type: array
+          title: Rks
         tag_rks:
+          items:
+            type: string
+          type: array
+          title: Tag Rks
+        owners:
           anyOf:
           - items:
               type: string
             type: array
           - type: 'null'
-          title: Tag Rks
-        reads:
+          title: Owners
+      type: object
+      required:
+      - rks
+      - tag_rks
+      title: TableDataFilterResponse
+    UserAccessResponse:
+      properties:
+        usage:
+          type: number
+          title: Usage
+        user_name:
+          type: string
+          title: User Name
+      type: object
+      required:
+      - usage
+      - user_name
+      title: UserAccessResponse
+    TableAccessResponse:
+      properties:
+        column_count:
+          type: integer
+          title: Column Count
+        cost:
+          type: number
+          title: Cost
+        column:
+          $ref: '#/components/schemas/TableColumnObjectResponse'
+        usage:
+          type: number
+          title: Usage
+        user_count:
+          type: integer
+          title: User Count
+        queries:
+          type: integer
+          title: Queries
+      type: object
+      required:
+      - column_count
+      - cost
+      - column
+      - usage
+      - user_count
+      - queries
+      title: TableAccessResponse
+    app__schemas__tables__CostBreakdownResponse:
+      properties:
+        breakdown:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Breakdown
+      type: object
+      required:
+      - breakdown
+      title: CostBreakdownResponse
+    TableIdFomRkRequest:
+      properties:
+        table_rk:
+          type: string
+          title: Table Rk
+      type: object
+      required:
+      - table_rk
+      title: TableIdFomRkRequest
+    Page_TableDataResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableDataResponse'
+          type: array
+          title: Items
+        total:
           anyOf:
           - type: integer
+            minimum: 0.0
           - type: 'null'
-          title: Reads
-        writes:
+          title: Total
+        page:
           anyOf:
           - type: integer
+            minimum: 1.0
           - type: 'null'
-          title: Writes
-        read_write_ratio:
+          title: Page
+        size:
           anyOf:
-          - type: number
+          - type: integer
+            minimum: 1.0
           - type: 'null'
-          title: Read Write Ratio
-        owner:
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TableDataResponse]
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ColumnTag:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
           anyOf:
           - type: string
           - type: 'null'
-          title: Owner
-        instance_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Instance Id
-      type: object
-      title: TableDataResponse
-    TableAccessHistoryColumns:
-      properties:
-        column_rk:
-          type: string
-          title: Column Rk
+          title: Description
+          default: ''
       type: object
       required:
-      - column_rk
-      title: TableAccessHistoryColumns
+      - name
+      title: ColumnTag
+    TableQueriesResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableQueryResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: TableQueriesResponse
+      description: Paginated response for table queries
     TableInsightsResponse:
       properties:
         tags:
@@ -3168,61 +3314,140 @@ components:
           additionalProperties: true
           type: object
           title: Insights
-        is_dynamic_table:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Dynamic Table
-        is_table:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Table
-        is_external_table:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is External Table
-        is_event_table:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Event Table
-        is_materialized_view:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Materialized View
-        is_iceberg:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Iceberg
-        is_hybrid:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Hybrid
-        is_immutable:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Immutable
-        is_temporary:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Temporary
-        is_secure:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Secure
+        table_types:
+          items:
+            type: string
+          type: array
+          title: Table Types
+          default: []
       type: object
       required:
       - tags
       - insights
       title: TableInsightsResponse
+    TableSchemaMetadataUpdate:
+      properties:
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - description
+      title: TableSchemaMetadataUpdate
+    Page_TableFetchResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TableFetchResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[TableFetchResponse]
+    ColumnSchemaMetadata:
+      properties:
+        table_schema_id:
+          type: integer
+          title: Table Schema Id
+        column_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Column Description
+        created_on:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created On
+        name:
+          type: string
+          title: Name
+        datatype:
+          type: string
+          title: Datatype
+        tags:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ColumnTag'
+            type: array
+          - type: 'null'
+          title: Tags
+        description_frozen:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Description Frozen
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
+      type: object
+      required:
+      - table_schema_id
+      - name
+      - datatype
+      title: ColumnSchemaMetadata
+    app__schemas__tables__Tag:
+      properties:
+        label:
+          type: string
+          title: Label
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - label
+      - reason
+      title: Tag
+    TableAccessHistoryColumns:
+      properties:
+        column_rk:
+          type: string
+          title: Column Rk
+      type: object
+      required:
+      - column_rk
+      title: TableAccessHistoryColumns
+    TableMetadataUpdate:
+      properties:
+        purpose:
+          type: string
+          title: Purpose
+      type: object
+      required:
+      - purpose
+      title: TableMetadataUpdate
   securitySchemes:
     HTTPBearer:
       type: http

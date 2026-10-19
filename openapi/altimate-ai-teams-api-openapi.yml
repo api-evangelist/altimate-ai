@@ -147,6 +147,10 @@ paths:
         in: query
         required: false
         schema:
+          enum:
+          - day
+          - week
+          - month
           type: string
           default: day
           title: Aggregate By
@@ -251,6 +255,10 @@ paths:
         in: query
         required: false
         schema:
+          enum:
+          - cost
+          - percentage_spend
+          - percentage_change_from_previous_period
           type: string
           description: 'Order by: cost, percentage_spend, percentage_change_from_previous_period'
           default: cost
@@ -260,6 +268,9 @@ paths:
         in: query
         required: false
         schema:
+          enum:
+          - asc
+          - desc
           type: string
           description: 'Order direction: asc, desc'
           default: desc
@@ -347,21 +358,58 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    DailyTeamSpend:
+    Body_upload_team_rule_file_teams_team_rule_file_post:
       properties:
-        date:
+        file:
           type: string
-          title: Date
-        team_spends:
-          additionalProperties:
-            type: number
-          type: object
-          title: Team Spends
+          format: binary
+          title: File
       type: object
       required:
-      - date
-      - team_spends
-      title: DailyTeamSpend
+      - file
+      title: Body_upload_team_rule_file_teams_team_rule_file_post
+    app__schemas__team__CostSummary:
+      properties:
+        total_spend:
+          type: number
+          title: Total Spend
+        active_teams:
+          type: integer
+          title: Active Teams
+        average_daily_spend:
+          type: number
+          title: Average Daily Spend
+        unaccounted_spend:
+          type: number
+          title: Unaccounted Spend
+      type: object
+      required:
+      - total_spend
+      - active_teams
+      - average_daily_spend
+      - unaccounted_spend
+      title: CostSummary
+    CostGraphResponse:
+      properties:
+        summary:
+          $ref: '#/components/schemas/app__schemas__team__CostSummary'
+        spend_by_teams:
+          items:
+            $ref: '#/components/schemas/DailyTeamSpend'
+          type: array
+          title: Spend By Teams
+        meta:
+          additionalProperties:
+            type: string
+          type: object
+          title: Meta
+          description: Period start and end dates
+      type: object
+      required:
+      - summary
+      - spend_by_teams
+      - meta
+      title: CostGraphResponse
     ValidationError:
       properties:
         loc:
@@ -416,36 +464,21 @@ components:
       required:
       - file
       title: Body_upload_user_team_file_teams_user_team_file_post
-    CostGraphResponse:
+    DailyTeamSpend:
       properties:
-        summary:
-          $ref: '#/components/schemas/app__schemas__team__CostSummary'
-        spend_by_teams:
-          items:
-            $ref: '#/components/schemas/DailyTeamSpend'
-          type: array
-          title: Spend By Teams
-        meta:
+        date:
+          type: string
+          title: Date
+        team_spends:
           additionalProperties:
-            type: string
+            type: number
           type: object
-          title: Meta
-          description: Period start and end dates
+          title: Team Spends
       type: object
       required:
-      - summary
-      - spend_by_teams
-      - meta
-      title: CostGraphResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - date
+      - team_spends
+      title: DailyTeamSpend
     Page_TeamSpend_:
       properties:
         items:
@@ -484,37 +517,15 @@ components:
       - page
       - size
       title: Page[TeamSpend]
-    Body_upload_team_rule_file_teams_team_rule_file_post:
+    HTTPValidationError:
       properties:
-        file:
-          type: string
-          format: binary
-          title: File
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - file
-      title: Body_upload_team_rule_file_teams_team_rule_file_post
-    app__schemas__team__CostSummary:
-      properties:
-        total_spend:
-          type: number
-          title: Total Spend
-        active_teams:
-          type: integer
-          title: Active Teams
-        average_daily_spend:
-          type: number
-          title: Average Daily Spend
-        unaccounted_spend:
-          type: number
-          title: Unaccounted Spend
-      type: object
-      required:
-      - total_spend
-      - active_teams
-      - average_daily_spend
-      - unaccounted_spend
-      title: CostSummary
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

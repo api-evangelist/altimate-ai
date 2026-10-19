@@ -469,6 +469,73 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    ShareLinkListResponse:
+      properties:
+        share_links:
+          items:
+            $ref: '#/components/schemas/ShareLinkResponse'
+          type: array
+          title: Share Links
+        total:
+          type: integer
+          title: Total
+      type: object
+      required:
+      - share_links
+      - total
+      title: ShareLinkListResponse
+      description: Response containing a list of share links.
+    ShareToSlackResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - success
+      title: ShareToSlackResponse
+      description: Response after sharing to Slack.
+    SharedSessionResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        session_name:
+          type: string
+          title: Session Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        share_title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Title
+        turns:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Turns
+        is_read_only:
+          type: boolean
+          title: Is Read Only
+          default: true
+      type: object
+      required:
+      - session_id
+      - session_name
+      - created_at
+      - share_title
+      - turns
+      title: SharedSessionResponse
+      description: Response when viewing a shared session.
     ValidationError:
       properties:
         loc:
@@ -490,6 +557,68 @@ components:
       - msg
       - type
       title: ValidationError
+    ShareLinkCreateRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Session ID to share
+        access_type:
+          $ref: '#/components/schemas/ShareAccessType'
+          description: Who can access this link
+          default: anyone
+        expires_in_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Expires In Days
+          description: Number of days until expiration. None = never expires
+        user_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: User Ids
+          description: User IDs allowed to access (only for 'specific_people' access type)
+        team_ids:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Team Ids
+          description: Team (UserGroup) IDs allowed to access (only for 'team' access type)
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+          description: Optional title for the share link
+      type: object
+      required:
+      - session_id
+      title: ShareLinkCreateRequest
+      description: Request to create a new share link.
+    ShareToSlackRequest:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+          description: Studio session ID to share
+        webhook_id:
+          type: integer
+          title: Webhook Id
+          description: Notification ID (from notifications table) for webhook delivery
+      type: object
+      required:
+      - session_id
+      - webhook_id
+      title: ShareToSlackRequest
+      description: Request to share a Studio session to Slack via webhook.
     ShareLinkResponse:
       properties:
         id:
@@ -562,21 +691,6 @@ components:
       - team
       title: ShareAccessType
       description: Access type for share links.
-    ShareToSlackResponse:
-      properties:
-        success:
-          type: boolean
-          title: Success
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - success
-      title: ShareToSlackResponse
-      description: Response after sharing to Slack.
     HTTPValidationError:
       properties:
         detail:
@@ -586,120 +700,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    ShareLinkListResponse:
-      properties:
-        share_links:
-          items:
-            $ref: '#/components/schemas/ShareLinkResponse'
-          type: array
-          title: Share Links
-        total:
-          type: integer
-          title: Total
-      type: object
-      required:
-      - share_links
-      - total
-      title: ShareLinkListResponse
-      description: Response containing a list of share links.
-    ShareLinkCreateRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-          description: Session ID to share
-        access_type:
-          $ref: '#/components/schemas/ShareAccessType'
-          description: Who can access this link
-          default: anyone
-        expires_in_days:
-          anyOf:
-          - type: integer
-            maximum: 365.0
-            minimum: 1.0
-          - type: 'null'
-          title: Expires In Days
-          description: Number of days until expiration. None = never expires
-        user_ids:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: User Ids
-          description: User IDs allowed to access (only for 'specific_people' access type)
-        team_ids:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Team Ids
-          description: Team (UserGroup) IDs allowed to access (only for 'team' access type)
-        title:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Title
-          description: Optional title for the share link
-      type: object
-      required:
-      - session_id
-      title: ShareLinkCreateRequest
-      description: Request to create a new share link.
-    ShareToSlackRequest:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-          description: Studio session ID to share
-        webhook_id:
-          type: integer
-          title: Webhook Id
-          description: Notification ID (from notifications table) for webhook delivery
-      type: object
-      required:
-      - session_id
-      - webhook_id
-      title: ShareToSlackRequest
-      description: Request to share a Studio session to Slack via webhook.
-    SharedSessionResponse:
-      properties:
-        session_id:
-          type: string
-          title: Session Id
-        session_name:
-          type: string
-          title: Session Name
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        share_title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Share Title
-        turns:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Turns
-        is_read_only:
-          type: boolean
-          title: Is Read Only
-          default: true
-      type: object
-      required:
-      - session_id
-      - session_name
-      - created_at
-      - share_title
-      - turns
-      title: SharedSessionResponse
-      description: Response when viewing a shared session.
   securitySchemes:
     HTTPBearer:
       type: http

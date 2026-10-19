@@ -11,7 +11,6 @@ paths:
       - Databricks Connections
       summary: Test Databricks connection credentials
       operationId: test_connection_api_v1_databricks_connections_test_post
-      deprecated: true
       security:
       - HTTPBearer: []
       - HTTPBearer: []
@@ -55,7 +54,6 @@ paths:
       - Databricks Connections
       summary: Create a new Databricks connection
       operationId: create_connection_api_v1_databricks_connections_post
-      deprecated: true
       security:
       - HTTPBearer: []
       - HTTPBearer: []
@@ -98,7 +96,6 @@ paths:
       - Databricks Connections
       summary: List all Databricks connections
       operationId: list_connections_api_v1_databricks_connections_get
-      deprecated: true
       security:
       - HTTPBearer: []
       - HTTPBearer: []
@@ -131,7 +128,6 @@ paths:
       - Databricks Connections
       summary: Get a Databricks connection by ID
       operationId: get_connection_api_v1_databricks_connections__connection_id__get
-      deprecated: true
       security:
       - HTTPBearer: []
       - HTTPBearer: []
@@ -161,12 +157,91 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Databricks Connections
+      summary: Update a Databricks connection
+      description: 'Edit a connection.
+
+
+        Credentials may be omitted to keep the stored ones; everything else in the body
+
+        replaces the stored value. Switching `auth_type` requires fresh credentials,
+
+        because the stored `key` format changes with it.'
+      operationId: update_connection_api_v1_databricks_connections__connection_id__put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/DatabricksConnectionUpdatePAT'
+              - $ref: '#/components/schemas/DatabricksConnectionUpdateOAuthM2M'
+              discriminator:
+                propertyName: auth_type
+                mapping:
+                  pat: '#/components/schemas/DatabricksConnectionUpdatePAT'
+                  oauth_m2m: '#/components/schemas/DatabricksConnectionUpdateOAuthM2M'
+              title: Request
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabricksConnectionResponse'
+        '400':
+          description: Connection test failed, or credentials missing for an auth-type switch
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Update Connection Api V1 Databricks Connections  Connection Id  Put
+        '404':
+          description: Connection not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Update Connection Api V1 Databricks Connections  Connection Id  Put
+        '409':
+          description: Another connection already has this configuration or name
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 409 Update Connection Api V1 Databricks Connections  Connection Id  Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
       - Databricks Connections
       summary: Delete a Databricks connection
       operationId: delete_connection_api_v1_databricks_connections__connection_id__delete
-      deprecated: true
       security:
       - HTTPBearer: []
       - HTTPBearer: []
@@ -192,13 +267,90 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/connections/{connection_id}/workspaces:
+    get:
+      tags:
+      - Databricks Connections
+      summary: List the workspaces under this connection's account
+      description: 'Workspaces belonging to the account this connection authenticates against.
+
+
+        Read from the ClickHouse workspace inventory, scoped to this connection''s
+
+        account and, by default, to the workspaces we actually ingest from. RBAC
+
+        additionally scopes the result to the caller''s granted workspaces, so
+
+        ``scope=account`` cannot be used to enumerate workspaces the caller''s group
+
+        was never granted.'
+      operationId: list_connection_workspaces_api_v1_databricks_connections__connection_id__workspaces_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Connection Id
+      - name: scope
+        in: query
+        required: false
+        schema:
+          enum:
+          - onboarded
+          - account
+          type: string
+          description: '''onboarded'' (default): RUNNING workspaces we hold data for — what the connections page means by connected. ''account'': the raw Databricks account inventory, including workspaces nobody granted us access to and ones since BANNED — for an onboarding picker, not a status panel.'
+          default: onboarded
+          title: Scope
+        description: '''onboarded'' (default): RUNNING workspaces we hold data for — what the connections page means by connected. ''account'': the raw Databricks account inventory, including workspaces nobody granted us access to and ones since BANNED — for an onboarding picker, not a status panel.'
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatabricksWorkspaceOption'
+                title: Response List Connection Workspaces Api V1 Databricks Connections  Connection Id  Workspaces Get
+        '404':
+          description: Connection not found, or it has no resolved account
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 List Connection Workspaces Api V1 Databricks Connections  Connection Id  Workspaces Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/databricks/connections/{connection_id}/validate:
     post:
       tags:
       - Databricks Connections
       summary: Re-validate an existing connection
       operationId: validate_connection_api_v1_databricks_connections__connection_id__validate_post
-      deprecated: true
       security:
       - HTTPBearer: []
       - HTTPBearer: []
@@ -228,8 +380,1104 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/sync-history:
+    get:
+      tags:
+      - Databricks Connections
+      summary: Databricks ingestion run history (audit)
+      description: 'Paginated Databricks ingestion runs for the tenant, newest activity first.
+
+
+        Scoped to loader runs (``databricks_loader_*``) — the family this audit
+
+        categorizes. Tenant-wide, with no per-connection scoping: loader runs leave
+
+        ``global_tasks.data_store_id`` null, so nothing attributes a loader run to
+
+        the connection that produced it and a ``data_store_id`` filter would match
+
+        zero rows. (Only ``databricks_extractor_*`` runs carry ``data_store_id``, and
+
+        then only recently; Last Sync in ``crud.sync`` uses those for attribution,
+
+        but they are a different run family and outside this loader-activity feed.)
+
+
+        ``status`` is enum-typed so an unknown value is a 422 from FastAPI. Left as
+
+        free text it reaches Postgres as a cast to ``global_task_status_type`` and
+
+        comes back as an unexplained 500.'
+      operationId: get_databricks_sync_history_api_v1_databricks_sync_history_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/GlobalTaskStatusType'
+          description: Filter to these global_tasks statuses (e.g. completed, ingestion_failed).
+          default: []
+          title: Status
+        description: Filter to these global_tasks statuses (e.g. completed, ingestion_failed).
+      - name: category
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/DatabricksSyncCategory'
+          - type: 'null'
+          description: Filter to one ingestion family (system_tables, cloud_cost, ...).
+          title: Category
+        description: Filter to one ingestion family (system_tables, cloud_cost, ...).
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_DatabricksSyncRun_'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Get Databricks Sync History Api V1 Databricks Sync History Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Databricks Sync History Api V1 Databricks Sync History Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    DatabricksAuthType:
+      type: string
+      enum:
+      - pat
+      - oauth_m2m
+      title: DatabricksAuthType
+      description: 'Stored auth methods for Databricks connections.
+
+
+        Entra-managed service principals are not a separate type — they are
+
+        ``oauth_m2m`` rows whose ``azure_tenant_id`` lives in
+
+        ``connection_info``; its presence routes token minting to Microsoft
+
+        Entra ID instead of the workspace OIDC endpoint.'
+    DatabricksConnectionTestRequestOAuthM2M:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path. Derived from `sql_warehouse_id` when that is supplied; still accepted directly for the pre-consolidation shape.
+        workspace_url:
+          anyOf:
+          - type: string
+            maxLength: 256
+            pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          - type: 'null'
+          title: Workspace Url
+          description: Workspace URL as the customer sees it, with or without scheme (AWS *.cloud.databricks.com, Azure adb-*.azuredatabricks.net). `server_hostname` is derived from it.
+        sql_warehouse_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 1
+            pattern: ^[A-Za-z0-9]+$
+          - type: 'null'
+          title: Sql Warehouse Id
+          description: SQL warehouse id; `http_path` is derived from it.
+        name:
+          type: string
+          title: Name
+          default: connection_test
+        auth_type:
+          type: string
+          const: oauth_m2m
+          title: Auth Type
+        client_id:
+          type: string
+          minLength: 1
+          title: Client Id
+        client_secret:
+          type: string
+          minLength: 1
+          title: Client Secret
+        azure_tenant_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Azure Tenant Id
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - auth_type
+      - client_id
+      - client_secret
+      title: DatabricksConnectionTestRequestOAuthM2M
+    DatabricksConnectionCreateOAuthM2M:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path. Derived from `sql_warehouse_id` when that is supplied; still accepted directly for the pre-consolidation shape.
+        workspace_url:
+          anyOf:
+          - type: string
+            maxLength: 256
+            pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          - type: 'null'
+          title: Workspace Url
+          description: Workspace URL as the customer sees it, with or without scheme (AWS *.cloud.databricks.com, Azure adb-*.azuredatabricks.net). `server_hostname` is derived from it.
+        sql_warehouse_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 1
+            pattern: ^[A-Za-z0-9]+$
+          - type: 'null'
+          title: Sql Warehouse Id
+          description: SQL warehouse id; `http_path` is derived from it.
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        databricks_account_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Databricks Account Id
+          description: Databricks account id. Verified against the account probed from the workspace; stored as instances.account_name.
+        system_catalog_scope:
+          anyOf:
+          - type: string
+            enum:
+            - all
+            - specific
+          - type: 'null'
+          title: System Catalog Scope
+          description: Whether ingestion reads all system schemas or a named subset.
+        system_catalog_schemas:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: System Catalog Schemas
+          description: Comma-separated schemas; required when scope is 'specific'.
+        workspace_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Workspace Resource Id
+        azure_region:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Azure Region
+        storage_account_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Storage Account Resource Id
+        storage_account_fqdn:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Storage Account Fqdn
+        s3_role_arn:
+          anyOf:
+          - type: string
+            pattern: ^arn:aws:iam::\d{12}:role/.+$
+          - type: 'null'
+          title: S3 Role Arn
+        s3_external_id:
+          anyOf:
+          - type: string
+            maxLength: 1224
+          - type: 'null'
+          title: S3 External Id
+        s3_location:
+          anyOf:
+          - type: string
+            pattern: ^(s3|abfss)://.+$
+          - type: 'null'
+          title: S3 Location
+        log_tenant_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Log Tenant Id
+        log_client_id:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Log Client Id
+        log_client_secret:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: Log Client Secret
+        storage_account:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Storage Account
+        container:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Container
+        log_path:
+          anyOf:
+          - type: string
+            maxLength: 512
+            pattern: ^abfss://.+$
+          - type: 'null'
+          title: Log Path
+          description: abfss://… log root
+        auth_type:
+          type: string
+          const: oauth_m2m
+          title: Auth Type
+        client_id:
+          type: string
+          minLength: 1
+          title: Client Id
+        client_secret:
+          type: string
+          minLength: 1
+          title: Client Secret
+        azure_tenant_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Azure Tenant Id
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - name
+      - auth_type
+      - client_id
+      - client_secret
+      title: DatabricksConnectionCreateOAuthM2M
+    DatabricksSyncCategory:
+      type: string
+      enum:
+      - system_tables
+      - cloud_cost
+      - lineage
+      title: DatabricksSyncCategory
+      description: Which ingestion family a run belongs to, for grouping the audit table.
+    DatabricksConnectionCreatePAT:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path. Derived from `sql_warehouse_id` when that is supplied; still accepted directly for the pre-consolidation shape.
+        workspace_url:
+          anyOf:
+          - type: string
+            maxLength: 256
+            pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          - type: 'null'
+          title: Workspace Url
+          description: Workspace URL as the customer sees it, with or without scheme (AWS *.cloud.databricks.com, Azure adb-*.azuredatabricks.net). `server_hostname` is derived from it.
+        sql_warehouse_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 1
+            pattern: ^[A-Za-z0-9]+$
+          - type: 'null'
+          title: Sql Warehouse Id
+          description: SQL warehouse id; `http_path` is derived from it.
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        databricks_account_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Databricks Account Id
+          description: Databricks account id. Verified against the account probed from the workspace; stored as instances.account_name.
+        system_catalog_scope:
+          anyOf:
+          - type: string
+            enum:
+            - all
+            - specific
+          - type: 'null'
+          title: System Catalog Scope
+          description: Whether ingestion reads all system schemas or a named subset.
+        system_catalog_schemas:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: System Catalog Schemas
+          description: Comma-separated schemas; required when scope is 'specific'.
+        workspace_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Workspace Resource Id
+        azure_region:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Azure Region
+        storage_account_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Storage Account Resource Id
+        storage_account_fqdn:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Storage Account Fqdn
+        s3_role_arn:
+          anyOf:
+          - type: string
+            pattern: ^arn:aws:iam::\d{12}:role/.+$
+          - type: 'null'
+          title: S3 Role Arn
+        s3_external_id:
+          anyOf:
+          - type: string
+            maxLength: 1224
+          - type: 'null'
+          title: S3 External Id
+        s3_location:
+          anyOf:
+          - type: string
+            pattern: ^(s3|abfss)://.+$
+          - type: 'null'
+          title: S3 Location
+        log_tenant_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Log Tenant Id
+        log_client_id:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Log Client Id
+        log_client_secret:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: Log Client Secret
+        storage_account:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Storage Account
+        container:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Container
+        log_path:
+          anyOf:
+          - type: string
+            maxLength: 512
+            pattern: ^abfss://.+$
+          - type: 'null'
+          title: Log Path
+          description: abfss://… log root
+        auth_type:
+          type: string
+          const: pat
+          title: Auth Type
+          default: pat
+        access_token:
+          type: string
+          minLength: 1
+          title: Access Token
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - name
+      - access_token
+      title: DatabricksConnectionCreatePAT
+    DatabricksConnectionUpdateOAuthM2M:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path. Derived from `sql_warehouse_id` when that is supplied; still accepted directly for the pre-consolidation shape.
+        workspace_url:
+          anyOf:
+          - type: string
+            maxLength: 256
+            pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          - type: 'null'
+          title: Workspace Url
+          description: Workspace URL as the customer sees it, with or without scheme (AWS *.cloud.databricks.com, Azure adb-*.azuredatabricks.net). `server_hostname` is derived from it.
+        sql_warehouse_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 1
+            pattern: ^[A-Za-z0-9]+$
+          - type: 'null'
+          title: Sql Warehouse Id
+          description: SQL warehouse id; `http_path` is derived from it.
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        databricks_account_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Databricks Account Id
+          description: Databricks account id. Verified against the account probed from the workspace; stored as instances.account_name.
+        system_catalog_scope:
+          anyOf:
+          - type: string
+            enum:
+            - all
+            - specific
+          - type: 'null'
+          title: System Catalog Scope
+          description: Whether ingestion reads all system schemas or a named subset.
+        system_catalog_schemas:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: System Catalog Schemas
+          description: Comma-separated schemas; required when scope is 'specific'.
+        workspace_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Workspace Resource Id
+        azure_region:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Azure Region
+        storage_account_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Storage Account Resource Id
+        storage_account_fqdn:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Storage Account Fqdn
+        s3_role_arn:
+          anyOf:
+          - type: string
+            pattern: ^arn:aws:iam::\d{12}:role/.+$
+          - type: 'null'
+          title: S3 Role Arn
+        s3_external_id:
+          anyOf:
+          - type: string
+            maxLength: 1224
+          - type: 'null'
+          title: S3 External Id
+        s3_location:
+          anyOf:
+          - type: string
+            pattern: ^(s3|abfss)://.+$
+          - type: 'null'
+          title: S3 Location
+        log_tenant_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Log Tenant Id
+        log_client_id:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Log Client Id
+        log_client_secret:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: Log Client Secret
+        storage_account:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Storage Account
+        container:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Container
+        log_path:
+          anyOf:
+          - type: string
+            maxLength: 512
+            pattern: ^abfss://.+$
+          - type: 'null'
+          title: Log Path
+          description: abfss://… log root
+        auth_type:
+          type: string
+          const: oauth_m2m
+          title: Auth Type
+        client_id:
+          type: string
+          minLength: 1
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Client Secret
+        azure_tenant_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Azure Tenant Id
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - name
+      - auth_type
+      - client_id
+      title: DatabricksConnectionUpdateOAuthM2M
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    GlobalTaskStatusType:
+      type: string
+      enum:
+      - started
+      - pending_ingestion
+      - ingestion_failed
+      - fetched
+      - airflow_scheduled
+      - airflow_failed
+      - airflow_processed
+      - celery_scheduled
+      - celery_failed
+      - completed
+      title: GlobalTaskStatusType
+    DatabricksConnectionTestRequestPAT:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path. Derived from `sql_warehouse_id` when that is supplied; still accepted directly for the pre-consolidation shape.
+        workspace_url:
+          anyOf:
+          - type: string
+            maxLength: 256
+            pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          - type: 'null'
+          title: Workspace Url
+          description: Workspace URL as the customer sees it, with or without scheme (AWS *.cloud.databricks.com, Azure adb-*.azuredatabricks.net). `server_hostname` is derived from it.
+        sql_warehouse_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 1
+            pattern: ^[A-Za-z0-9]+$
+          - type: 'null'
+          title: Sql Warehouse Id
+          description: SQL warehouse id; `http_path` is derived from it.
+        name:
+          type: string
+          title: Name
+          default: connection_test
+        auth_type:
+          type: string
+          const: pat
+          title: Auth Type
+          default: pat
+        access_token:
+          type: string
+          minLength: 1
+          title: Access Token
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - access_token
+      title: DatabricksConnectionTestRequestPAT
+    DatabricksConnectionUpdatePAT:
+      properties:
+        type:
+          type: string
+          title: Type
+          default: databricks
+        server_hostname:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          title: Server Hostname
+          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
+        http_path:
+          type: string
+          maxLength: 256
+          minLength: 1
+          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
+          title: Http Path
+          description: SQL warehouse HTTP path. Derived from `sql_warehouse_id` when that is supplied; still accepted directly for the pre-consolidation shape.
+        workspace_url:
+          anyOf:
+          - type: string
+            maxLength: 256
+            pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
+          - type: 'null'
+          title: Workspace Url
+          description: Workspace URL as the customer sees it, with or without scheme (AWS *.cloud.databricks.com, Azure adb-*.azuredatabricks.net). `server_hostname` is derived from it.
+        sql_warehouse_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+            minLength: 1
+            pattern: ^[A-Za-z0-9]+$
+          - type: 'null'
+          title: Sql Warehouse Id
+          description: SQL warehouse id; `http_path` is derived from it.
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        databricks_account_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Databricks Account Id
+          description: Databricks account id. Verified against the account probed from the workspace; stored as instances.account_name.
+        system_catalog_scope:
+          anyOf:
+          - type: string
+            enum:
+            - all
+            - specific
+          - type: 'null'
+          title: System Catalog Scope
+          description: Whether ingestion reads all system schemas or a named subset.
+        system_catalog_schemas:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: System Catalog Schemas
+          description: Comma-separated schemas; required when scope is 'specific'.
+        workspace_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Workspace Resource Id
+        azure_region:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Azure Region
+        storage_account_resource_id:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Storage Account Resource Id
+        storage_account_fqdn:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Storage Account Fqdn
+        s3_role_arn:
+          anyOf:
+          - type: string
+            pattern: ^arn:aws:iam::\d{12}:role/.+$
+          - type: 'null'
+          title: S3 Role Arn
+        s3_external_id:
+          anyOf:
+          - type: string
+            maxLength: 1224
+          - type: 'null'
+          title: S3 External Id
+        s3_location:
+          anyOf:
+          - type: string
+            pattern: ^(s3|abfss)://.+$
+          - type: 'null'
+          title: S3 Location
+        log_tenant_id:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Log Tenant Id
+        log_client_id:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Log Client Id
+        log_client_secret:
+          anyOf:
+          - type: string
+            maxLength: 1024
+          - type: 'null'
+          title: Log Client Secret
+        storage_account:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Storage Account
+        container:
+          anyOf:
+          - type: string
+            maxLength: 128
+          - type: 'null'
+          title: Container
+        log_path:
+          anyOf:
+          - type: string
+            maxLength: 512
+            pattern: ^abfss://.+$
+          - type: 'null'
+          title: Log Path
+          description: abfss://… log root
+        auth_type:
+          type: string
+          const: pat
+          title: Auth Type
+          default: pat
+        access_token:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Access Token
+      type: object
+      required:
+      - server_hostname
+      - http_path
+      - name
+      title: DatabricksConnectionUpdatePAT
+    DatabricksConnectionTestResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        catalogs:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Catalogs
+        catalogs_complete:
+          type: boolean
+          title: Catalogs Complete
+          default: true
+        cloud_warning:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cloud Warning
+        current_catalog:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Catalog
+        metastore_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Metastore Id
+      type: object
+      required:
+      - ok
+      title: DatabricksConnectionTestResponse
+    Page_DatabricksSyncRun_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DatabricksSyncRun'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[DatabricksSyncRun]
+    DatabricksWorkspaceOption:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          type: string
+          title: Workspace Name
+        workspace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Url
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      type: object
+      required:
+      - workspace_id
+      - workspace_name
+      title: DatabricksWorkspaceOption
+      description: 'One workspace under a connection''s Databricks account.
+
+
+        Sourced from the ClickHouse workspace inventory (`dbx_access_workspaces`),
+
+        which ingestion populates; a connection does not enumerate workspaces itself.'
     DatabricksConnectionResponse:
       properties:
         id:
@@ -262,11 +1510,107 @@ components:
           - type: string
           - type: 'null'
           title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
         metastore_id:
           anyOf:
           - type: string
           - type: 'null'
           title: Metastore Id
+        catalogs:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Catalogs
+        databricks_account_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Databricks Account Id
+        workspace_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Url
+        sql_warehouse_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sql Warehouse Id
+        system_catalog_scope:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Catalog Scope
+        system_catalog_schemas:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Catalog Schemas
+        workspace_resource_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Resource Id
+        azure_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Azure Region
+        storage_account_resource_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Storage Account Resource Id
+        storage_account_fqdn:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Storage Account Fqdn
+        log_tenant_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Log Tenant Id
+        log_client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Log Client Id
+        storage_account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Storage Account
+        container:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Container
+        log_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Log Path
+        has_log_client_secret:
+          type: boolean
+          title: Has Log Client Secret
+          default: false
+        s3_role_arn:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: S3 Role Arn
+        s3_location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: S3 Location
         is_valid:
           type: boolean
           title: Is Valid
@@ -304,226 +1648,63 @@ components:
       - created_at
       - last_modified_at
       title: DatabricksConnectionResponse
-    ValidationError:
+    DatabricksSyncRun:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        batch_id:
+          type: integer
+          title: Batch Id
+        dataset_type:
           type: string
-          title: Message
-        type:
+          title: Dataset Type
+        label:
           type: string
-          title: Error Type
+          title: Label
+        category:
+          $ref: '#/components/schemas/DatabricksSyncCategory'
+        status:
+          type: string
+          title: Status
+        deployment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Deployment
+        fetch_start_datetime:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Fetch Start Datetime
+        fetch_end_datetime:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Fetch End Datetime
+        last_updated_on:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Updated On
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DatabricksConnectionTestRequestPAT:
-      properties:
-        type:
-          type: string
-          title: Type
-          default: databricks
-        server_hostname:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
-          title: Server Hostname
-          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
-        http_path:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
-          title: Http Path
-          description: SQL warehouse HTTP path
-        name:
-          type: string
-          title: Name
-          default: connection_test
-        auth_type:
-          type: string
-          const: pat
-          title: Auth Type
-          default: pat
-        access_token:
-          type: string
-          minLength: 1
-          title: Access Token
-      type: object
-      required:
-      - server_hostname
-      - http_path
-      - access_token
-      title: DatabricksConnectionTestRequestPAT
-    DatabricksConnectionCreateOAuthM2M:
-      properties:
-        type:
-          type: string
-          title: Type
-          default: databricks
-        server_hostname:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
-          title: Server Hostname
-          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
-        http_path:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
-          title: Http Path
-          description: SQL warehouse HTTP path
-        name:
-          type: string
-          maxLength: 64
-          minLength: 1
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 512
-          - type: 'null'
-          title: Description
-        auth_type:
-          type: string
-          const: oauth_m2m
-          title: Auth Type
-        client_id:
-          type: string
-          minLength: 1
-          title: Client Id
-        client_secret:
-          type: string
-          minLength: 1
-          title: Client Secret
-        azure_tenant_id:
-          anyOf:
-          - type: string
-            minLength: 1
-          - type: 'null'
-          title: Azure Tenant Id
-      type: object
-      required:
-      - server_hostname
-      - http_path
-      - name
-      - auth_type
-      - client_id
-      - client_secret
-      title: DatabricksConnectionCreateOAuthM2M
-    DatabricksConnectionTestResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        workspace_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Id
-        catalogs:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Catalogs
-        current_catalog:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Current Catalog
-        metastore_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Metastore Id
-      type: object
-      required:
-      - ok
-      title: DatabricksConnectionTestResponse
-    DatabricksConnectionTestRequestOAuthM2M:
-      properties:
-        type:
-          type: string
-          title: Type
-          default: databricks
-        server_hostname:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
-          title: Server Hostname
-          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
-        http_path:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
-          title: Http Path
-          description: SQL warehouse HTTP path
-        name:
-          type: string
-          title: Name
-          default: connection_test
-        auth_type:
-          type: string
-          const: oauth_m2m
-          title: Auth Type
-        client_id:
-          type: string
-          minLength: 1
-          title: Client Id
-        client_secret:
-          type: string
-          minLength: 1
-          title: Client Secret
-        azure_tenant_id:
-          anyOf:
-          - type: string
-            minLength: 1
-          - type: 'null'
-          title: Azure Tenant Id
-      type: object
-      required:
-      - server_hostname
-      - http_path
-      - auth_type
-      - client_id
-      - client_secret
-      title: DatabricksConnectionTestRequestOAuthM2M
-    DatabricksAuthType:
-      type: string
-      enum:
-      - pat
-      - oauth_m2m
-      title: DatabricksAuthType
-      description: 'Stored auth methods for Databricks connections.
+      - batch_id
+      - dataset_type
+      - label
+      - category
+      - status
+      title: DatabricksSyncRun
+      description: 'One ingestion run, as recorded in ``public.global_tasks``.
 
 
-        Entra-managed service principals are not a separate type — they are
+        ``fetch_start_datetime``/``fetch_end_datetime`` bound the *business* window the
 
-        ``oauth_m2m`` rows whose ``azure_tenant_id`` lives in
+        run loaded; ``last_updated_on`` is when the run itself last changed state. A
 
-        ``connection_info``; its presence routes token minting to Microsoft
+        still-running or failed run has a window but no completion, so the status is
 
-        Entra ID instead of the workspace OIDC endpoint.'
+        what tells them apart — never the timestamps.'
     HTTPValidationError:
       properties:
         detail:
@@ -533,53 +1714,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    DatabricksConnectionCreatePAT:
-      properties:
-        type:
-          type: string
-          title: Type
-          default: databricks
-        server_hostname:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^(https?://)?[a-zA-Z0-9][a-zA-Z0-9\-]*(\.[a-zA-Z0-9\-]+)*\.(cloud\.databricks\.com|azuredatabricks\.net|gcp\.databricks\.com)/?$
-          title: Server Hostname
-          description: Databricks workspace hostname. Must end in cloud.databricks.com, azuredatabricks.net, or gcp.databricks.com.
-        http_path:
-          type: string
-          maxLength: 256
-          minLength: 1
-          pattern: ^/sql/[0-9.]+/warehouses/[A-Za-z0-9]+$
-          title: Http Path
-          description: SQL warehouse HTTP path
-        name:
-          type: string
-          maxLength: 64
-          minLength: 1
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 512
-          - type: 'null'
-          title: Description
-        auth_type:
-          type: string
-          const: pat
-          title: Auth Type
-          default: pat
-        access_token:
-          type: string
-          minLength: 1
-          title: Access Token
-      type: object
-      required:
-      - server_hostname
-      - http_path
-      - name
-      - access_token
-      title: DatabricksConnectionCreatePAT
   securitySchemes:
     HTTPBearer:
       type: http

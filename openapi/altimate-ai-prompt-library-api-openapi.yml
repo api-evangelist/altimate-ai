@@ -74,6 +74,16 @@ paths:
           description: Filter by public/tenant prompts
           title: Is Public
         description: Filter by public/tenant prompts
+      - name: integration_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Tenant platform (e.g. snowflake, databricks, dbt). Scopes public prompts so Databricks tenants only see Databricks prompts and non-Databricks tenants don't see Databricks prompts.
+          title: Integration Type
+        description: Tenant platform (e.g. snowflake, databricks, dbt). Scopes public prompts so Databricks tenants only see Databricks prompts and non-Databricks tenants don't see Databricks prompts.
       - name: type
         in: query
         required: false
@@ -155,7 +165,12 @@ paths:
 
         All prompts are stored in the tenant table, owned by the creating user
 
-        (the service user, Altimate AI, included).'
+        (the service user, Altimate AI, included).
+
+
+        Deprecated for staff use: superseded by ``POST /internal/prompts``. Kept
+
+        for existing tenant callers; not yet retired.'
       operationId: create_prompt_prompts__post
       deprecated: true
       security:
@@ -189,6 +204,20 @@ paths:
 
         Returns tags from both public and tenant prompts that the user can access.'
       operationId: get_unique_tags_prompts_tags_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: integration_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Tenant platform (e.g. snowflake, databricks, dbt). Scopes public-prompt tags to the tenant's platform.
+          title: Integration Type
+        description: Tenant platform (e.g. snowflake, databricks, dbt). Scopes public-prompt tags to the tenant's platform.
       responses:
         '200':
           description: Successful Response
@@ -196,9 +225,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagsResponse'
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /prompts/starter:
     get:
       tags:
@@ -402,6 +434,44 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    Page_PromptResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PromptResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[PromptResponse]
     ValidationError:
       properties:
         loc:
@@ -423,6 +493,61 @@ components:
       - msg
       - type
       title: ValidationError
+    StarterPromptsResponse:
+      properties:
+        hello_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Hello Message
+        prompts:
+          items:
+            $ref: '#/components/schemas/PromptResponse'
+          type: array
+          title: Prompts
+      type: object
+      required:
+      - prompts
+      title: StarterPromptsResponse
+      description: Response schema for starter prompts with contextual hello message
+    CreatePromptRequest:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        prompt_text:
+          type: string
+          minLength: 1
+          title: Prompt Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        teams:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Teams
+        attributes:
+          additionalProperties: true
+          type: object
+          title: Attributes
+      type: object
+      required:
+      - prompt_text
+      title: CreatePromptRequest
+      description: Request schema for creating a new prompt
     PromptResponse:
       properties:
         id:
@@ -487,120 +612,6 @@ components:
       - updated_at
       title: PromptResponse
       description: Response schema for a single prompt
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    TagsResponse:
-      properties:
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-      type: object
-      required:
-      - tags
-      title: TagsResponse
-      description: Response schema for unique tags
-    StarterPromptsResponse:
-      properties:
-        hello_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Hello Message
-        prompts:
-          items:
-            $ref: '#/components/schemas/PromptResponse'
-          type: array
-          title: Prompts
-      type: object
-      required:
-      - prompts
-      title: StarterPromptsResponse
-      description: Response schema for starter prompts with contextual hello message
-    CreatePromptRequest:
-      properties:
-        title:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Title
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        prompt_text:
-          type: string
-          minLength: 1
-          title: Prompt Text
-        tags:
-          items:
-            type: string
-          type: array
-          title: Tags
-        teams:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Teams
-        attributes:
-          additionalProperties: true
-          type: object
-          title: Attributes
-      type: object
-      required:
-      - prompt_text
-      title: CreatePromptRequest
-      description: Request schema for creating a new prompt
-    Page_PromptResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/PromptResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[PromptResponse]
     UpdatePromptRequest:
       properties:
         title:
@@ -643,6 +654,27 @@ components:
       type: object
       title: UpdatePromptRequest
       description: Request schema for updating an existing prompt
+    TagsResponse:
+      properties:
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+      type: object
+      required:
+      - tags
+      title: TagsResponse
+      description: Response schema for unique tags
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

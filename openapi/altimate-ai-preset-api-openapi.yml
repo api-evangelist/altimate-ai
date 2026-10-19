@@ -281,38 +281,58 @@ components:
       required:
       - preset_id
       title: CreatePresetResponse
-    ValidationError:
+    Preset:
+      type: string
+      enum:
+      - filter
+      - column_picker
+      - optin_features
+      title: Preset
+    UpdatePresetRequest:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        applicable_for:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Applicable For
         type:
-          type: string
-          title: Error Type
+          anyOf:
+          - $ref: '#/components/schemas/Preset'
+          - type: 'null'
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    GetAllPresetResponse:
+      title: UpdatePresetRequest
+    CreatePresetRequest:
       properties:
-        presets:
-          items:
-            $ref: '#/components/schemas/PresetModel'
-          type: array
-          title: Presets
+        name:
+          type: string
+          title: Name
+        data:
+          additionalProperties: true
+          type: object
+          title: Data
+        applicable_for:
+          type: string
+          title: Applicable For
+        type:
+          $ref: '#/components/schemas/Preset'
       type: object
       required:
-      - presets
-      title: GetAllPresetResponse
+      - name
+      - data
+      - applicable_for
+      - type
+      title: CreatePresetRequest
     PresetModel:
       properties:
         name:
@@ -339,37 +359,6 @@ components:
       - applicable_for
       - type
       title: PresetModel
-    UpdatePresetRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        data:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Data
-        applicable_for:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Applicable For
-        type:
-          anyOf:
-          - $ref: '#/components/schemas/Preset'
-          - type: 'null'
-      type: object
-      title: UpdatePresetRequest
-    Preset:
-      type: string
-      enum:
-      - filter
-      - column_picker
-      - optin_features
-      title: Preset
     HTTPValidationError:
       properties:
         detail:
@@ -379,6 +368,27 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     DeletePresetResponse:
       properties:
         preset_id:
@@ -388,35 +398,6 @@ components:
       required:
       - preset_id
       title: DeletePresetResponse
-    GetPresetResponse:
-      properties:
-        preset:
-          $ref: '#/components/schemas/PresetModel'
-      type: object
-      required:
-      - preset
-      title: GetPresetResponse
-    CreatePresetRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        data:
-          additionalProperties: true
-          type: object
-          title: Data
-        applicable_for:
-          type: string
-          title: Applicable For
-        type:
-          $ref: '#/components/schemas/Preset'
-      type: object
-      required:
-      - name
-      - data
-      - applicable_for
-      - type
-      title: CreatePresetRequest
     UpdatePresetResponse:
       properties:
         preset_id:
@@ -426,6 +407,25 @@ components:
       required:
       - preset_id
       title: UpdatePresetResponse
+    GetAllPresetResponse:
+      properties:
+        presets:
+          items:
+            $ref: '#/components/schemas/PresetModel'
+          type: array
+          title: Presets
+      type: object
+      required:
+      - presets
+      title: GetAllPresetResponse
+    GetPresetResponse:
+      properties:
+        preset:
+          $ref: '#/components/schemas/PresetModel'
+      type: object
+      required:
+      - preset
+      title: GetPresetResponse
   securitySchemes:
     HTTPBearer:
       type: http

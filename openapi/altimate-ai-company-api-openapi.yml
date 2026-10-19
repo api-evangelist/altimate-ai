@@ -200,7 +200,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CompanyCreateIn'
+              $ref: '#/components/schemas/CompanyEditIn'
       responses:
         '200':
           description: Successful Response
@@ -348,6 +348,65 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - HTTPBearer: []
+  /companies/register-social:
+    post:
+      tags:
+      - Company
+      summary: Company Register Social
+      description: 'Provision a new tenant for a socially-authenticated (Google) user.
+
+
+        Runs on the public tenant against a verified SuperTokens session — the user
+
+        has already completed Google OAuth and passed the Workspace `hd` gate in the
+
+        sign-in-up hook. Email comes from the session (never from the client); only
+
+        the instance name (and optional display name) come from the request.
+
+        Creates the tenant + Owner + billing + community credits and returns the
+
+        gateway credential. If the instance name is taken, returns
+
+        ``status="instance_taken"`` so the UI can re-prompt.'
+      operationId: company_register_social_companies_register_social_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialRegisterIn'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialRegisterResponse'
+        '403':
+          description: Forbidden in the tenant domain.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 403 Company Register Social Companies Register Social Post
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Company Register Social Companies Register Social Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
   /companies/verify-user:
     post:
       tags:
@@ -421,7 +480,64 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    CompanyCreateIn:
+    SocialRegisterIn:
+      properties:
+        company:
+          type: string
+          title: Company
+        newsletter:
+          type: boolean
+          title: Newsletter
+          default: false
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        source_insight:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Insight
+        referral_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Referral Code
+        survey_responses:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Survey Responses
+        primary_warehouse:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Primary Warehouse
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
+      type: object
+      required:
+      - company
+      title: SocialRegisterIn
+      description: 'Provision a new tenant for a socially-authenticated (OAuth) user.
+
+
+        Email is taken from the verified SuperTokens session; the client supplies
+
+        the chosen instance name and, optionally, the display name read from the
+
+        OAuth profile (falls back to the email local-part when absent).'
+    CompanyIndexResponse:
       properties:
         name:
           anyOf:
@@ -433,29 +549,71 @@ components:
           - type: string
           - type: 'null'
           title: Country
-      type: object
-      title: CompanyCreateIn
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        uuid:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          format: uuid
+          title: Uuid
+        provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Provider
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        existence_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Existence Time
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - uuid
+      title: CompanyIndexResponse
+    SocialRegisterResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - instance_taken
+          title: Status
+        instance:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instance
+        api_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Url
+        login_token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Login Token
+      type: object
+      required:
+      - status
+      title: SocialRegisterResponse
+      description: 'Result of provisioning a tenant for a social (OAuth) signup.
+
+
+        On success, carries a short-lived ``login_token`` the client exchanges (via
+
+        /auth/social/exchange) for the gateway credential — the raw api_key is never
+
+        returned to the client. When the chosen instance name is taken (or belongs to
+
+        an instance running its own IdP), ``status == "instance_taken"`` and the
+
+        fields are null so the UI can re-prompt — the two negatives are intentionally
+
+        indistinguishable so the response can''t enumerate SSO instances.'
     CompanyRegister:
       properties:
         company:
@@ -490,6 +648,16 @@ components:
             type: object
           - type: 'null'
           title: Survey Responses
+        primary_warehouse:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Primary Warehouse
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
       type: object
       required:
       - company
@@ -498,6 +666,27 @@ components:
       - password
       - newsletter
       title: CompanyRegister
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     InviteVerifyIn:
       properties:
         token:
@@ -507,7 +696,7 @@ components:
       required:
       - token
       title: InviteVerifyIn
-    CompanyIndexResponse:
+    CompanyCreateIn:
       properties:
         name:
           anyOf:
@@ -519,25 +708,38 @@ components:
           - type: string
           - type: 'null'
           title: Country
-        uuid:
+        provider:
           type: string
-          format: uuid
-          title: Uuid
-        created_at:
+          enum:
+          - snowflake
+          - databricks
+          title: Provider
+          default: snowflake
+      type: object
+      title: CompanyCreateIn
+    CompanyEditIn:
+      properties:
+        name:
           anyOf:
           - type: string
-            format: date-time
           - type: 'null'
-          title: Created At
-        existence_time:
+          title: Name
+        country:
           anyOf:
           - type: string
           - type: 'null'
-          title: Existence Time
+          title: Country
+      type: object
+      title: CompanyEditIn
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
       type: object
       required:
-      - uuid
-      title: CompanyIndexResponse
+      - ok
+      title: StandardResponse
     GetAllCompaniesResponse:
       properties:
         companies:
@@ -548,15 +750,6 @@ components:
           default: []
       type: object
       title: GetAllCompaniesResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     Page_CompanyIndexResponse_:
       properties:
         items:
@@ -608,15 +801,15 @@ components:
           title: Company Url
       type: object
       title: GetCompanyByEmailResponse
-    StandardResponse:
+    HTTPValidationError:
       properties:
-        ok:
-          type: boolean
-          title: Ok
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - ok
-      title: StandardResponse
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

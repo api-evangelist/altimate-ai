@@ -98,6 +98,20 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    MaskDataResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: MaskDataResponse
     ValidationError:
       properties:
         loc:
@@ -119,29 +133,6 @@ components:
       - msg
       - type
       title: ValidationError
-    MaskData:
-      properties:
-        label:
-          type: string
-          title: Label
-        masking_type:
-          $ref: '#/components/schemas/MaskingType'
-        regex:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Regex
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default
-          default: ''
-      type: object
-      required:
-      - label
-      - masking_type
-      title: MaskData
     HTTPValidationError:
       properties:
         detail:
@@ -151,20 +142,13 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    MaskDataResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: MaskDataResponse
+    MaskingType:
+      type: string
+      enum:
+      - allow
+      - mask
+      - block
+      title: MaskingType
     GetMaskDataResponse:
       properties:
         mask_data:
@@ -188,13 +172,29 @@ components:
       required:
       - mask_data
       title: MaskDataRequest
-    MaskingType:
-      type: string
-      enum:
-      - allow
-      - mask
-      - block
-      title: MaskingType
+    MaskData:
+      properties:
+        label:
+          type: string
+          title: Label
+        masking_type:
+          $ref: '#/components/schemas/MaskingType'
+        regex:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Regex
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default
+          default: ''
+      type: object
+      required:
+      - label
+      - masking_type
+      title: MaskData
   securitySchemes:
     HTTPBearer:
       type: http

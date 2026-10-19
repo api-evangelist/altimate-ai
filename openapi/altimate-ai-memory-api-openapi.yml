@@ -122,51 +122,105 @@ paths:
       tags:
       - Memory
       summary: Search Memory
-      description: Search for memories in the system.
+      description: 'Search for memories in the system.
+
+
+        Filtering happens after the memory service has ranked and limited its
+
+        result, so a page can come back shorter than the requested limit — and for
+
+        search, trimming after ranking drops the next-best matches rather than
+
+        promoting them. A short page does not mean there are no more records.
+
+        Pushing the predicate into the service would fix both; it does not accept
+
+        one today.'
       operationId: search_memory_datamates_memory_search_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: include_sources
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Client sources to include that are hidden by default. Repeat the parameter or supply a comma-separated list. Currently only 'altimate-code' is hidden.
+          title: Include Sources
+        description: Client sources to include that are hidden by default. Repeat the parameter or supply a comma-separated list. Currently only 'altimate-code' is hidden.
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                items:
-                  additionalProperties: true
-                  type: object
                 type: array
+                items:
+                  type: object
+                  additionalProperties: true
                 title: Response Search Memory Datamates Memory Search Get
         '400':
           description: Invalid request
         '403':
           description: Forbidden
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /datamates/memory/list:
     get:
       tags:
       - Memory
       summary: List Memories
-      description: List all memories in the system.
+      description: 'List all memories in the system.
+
+
+        Filtering happens after the memory service has applied its own limit, so a
+
+        page can come back shorter than requested. A short page does not mean there
+
+        are no more records.'
       operationId: list_memories_datamates_memory_list_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: include_sources
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Client sources to include that are hidden by default. Repeat the parameter or supply a comma-separated list. Currently only 'altimate-code' is hidden.
+          title: Include Sources
+        description: Client sources to include that are hidden by default. Repeat the parameter or supply a comma-separated list. Currently only 'altimate-code' is hidden.
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                items:
-                  additionalProperties: true
-                  type: object
                 type: array
+                items:
+                  type: object
+                  additionalProperties: true
                 title: Response List Memories Datamates Memory List Get
         '400':
           description: Invalid request
         '403':
           description: Forbidden
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /datamates/memory/all:
     delete:
       tags:
@@ -227,6 +281,135 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    AddMemoryRequest:
+      properties:
+        messages:
+          items:
+            $ref: '#/components/schemas/Message'
+          type: array
+          title: Messages
+        memory_options:
+          anyOf:
+          - $ref: '#/components/schemas/MemoryOptions'
+          - type: 'null'
+      type: object
+      required:
+      - messages
+      title: AddMemoryRequest
+    MemoryResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        result:
+          anyOf:
+          - $ref: '#/components/schemas/MemoryWriteResults'
+          - items:
+              $ref: '#/components/schemas/MemoryRecordRef'
+            type: array
+          - {}
+          - type: 'null'
+          title: Result
+        extracted:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Extracted
+        memory_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Memory Type
+        confidence:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Confidence
+      type: object
+      required:
+      - message
+      title: MemoryResponse
+      description: "Envelope returned by the create, update and delete memory routes.\n\n``/search`` and ``/list`` do not use this model — they declare\n``response_model=list[dict]`` and return the service's rows directly.\n\n``message`` is the only field the memory Lambda has always returned. The\nremaining fields exist on some responses and are surfaced here because\n``response_model`` filtering would otherwise discard them before any caller\nsees them.\n\n``result`` carries the memory-store payload for a create, including the id\nof the record that was written. Without it a client has to re-list and match\non its own metadata to discover the id of the record it just created.\n\n``extracted`` reports whether the Lambda's extraction step produced a\nstructured memory. **It is not a stored/not-stored signal.** Two responses\ncarry ``extracted=False``:\n\n* the extractor declined the content — no ``result``, nothing was stored;\n* the extractor errored and the Lambda fell back to storing the raw\n  messages — ``result`` is present and the content *was* stored.\n\nCallers deciding whether a record exists must therefore test ``result``,\nnot ``extracted``.\n\nEvery added field is optional: update and delete responses carry none of\nthem, and a declined create carries ``extracted`` without ``result``."
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    MemoryRecordRef:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        memory:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Memory
+        event:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Event
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      type: object
+      title: MemoryRecordRef
+      description: 'One record produced by a create.
+
+
+        Bounded on purpose: the memory service''s payload is not a published
+
+        contract, so echoing it verbatim would forward whatever it grows next
+
+        straight to clients and document nothing in the schema. Unknown fields are
+
+        dropped rather than passed through.'
+    MemoryWriteResults:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/MemoryRecordRef'
+          type: array
+          title: Results
+      type: object
+      required:
+      - results
+      title: MemoryWriteResults
+      description: 'The envelope a create is observed to return.
+
+
+        Captured from the live service: ``{"results": [{"id": ..., "event": "ADD",
+
+        ...}]}``. Modelled explicitly so the id is discoverable in the schema
+
+        rather than by inspection.'
     MemoryOptions:
       properties:
         metadata:
@@ -252,60 +435,6 @@ components:
           title: Project Id
       type: object
       title: MemoryOptions
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    MemoryResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: MemoryResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AddMemoryRequest:
-      properties:
-        messages:
-          items:
-            $ref: '#/components/schemas/Message'
-          type: array
-          title: Messages
-        memory_options:
-          anyOf:
-          - $ref: '#/components/schemas/MemoryOptions'
-          - type: 'null'
-      type: object
-      required:
-      - messages
-      title: AddMemoryRequest
     Message:
       properties:
         content:
@@ -322,6 +451,15 @@ components:
       - content
       - role
       title: Message
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

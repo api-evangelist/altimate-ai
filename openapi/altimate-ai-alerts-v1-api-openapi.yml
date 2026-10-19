@@ -52,6 +52,16 @@ paths:
           - type: string
           - type: 'null'
           title: Category
+      - name: source
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: '''metric'' or ''playground_report'''
+          title: Source
+        description: '''metric'' or ''playground_report'''
       - name: search
         in: query
         required: false
@@ -283,7 +293,9 @@ paths:
       tags:
       - Alerts V1
       summary: Get Runs
-      description: Paginated execution history for a rule.
+      description: 'Paginated execution history for a rule, optionally filtered by status
+
+        and an ``executed_at`` date range (powers the history page''s date filter).'
       operationId: get_runs_api_v1_alerts_rules__rule_id__runs_get
       security:
       - HTTPBearer: []
@@ -320,6 +332,28 @@ paths:
           - type: string
           - type: 'null'
           title: Status
+      - name: start
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Only runs executed at/after this time (ISO-8601)
+          title: Start
+        description: Only runs executed at/after this time (ISO-8601)
+      - name: end
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Only runs executed before this time (ISO-8601)
+          title: End
+        description: Only runs executed before this time (ISO-8601)
       responses:
         '200':
           description: Successful Response
@@ -327,6 +361,115 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RunsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/alerts/rules/{rule_id}/report-artifacts:
+    get:
+      tags:
+      - Alerts V1
+      summary: Get Report Artifacts
+      description: List only artifacts whose frozen data scope still matches the reader.
+      operationId: get_report_artifacts_api_v1_alerts_rules__rule_id__report_artifacts_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Rule Id
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Cursor
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportArtifactListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/alerts/rules/{rule_id}/report-artifacts/{artifact_id}:
+    get:
+      tags:
+      - Alerts V1
+      summary: Get Report Artifact
+      operationId: get_report_artifact_api_v1_alerts_rules__rule_id__report_artifacts__artifact_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Rule Id
+      - name: artifact_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Artifact Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportArtifactDetailResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/alerts/rules/{rule_id}/report-artifacts/{artifact_id}/download:
+    get:
+      tags:
+      - Alerts V1
+      summary: Download Report Artifact
+      operationId: download_report_artifact_api_v1_alerts_rules__rule_id__report_artifacts__artifact_id__download_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Rule Id
+      - name: artifact_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Artifact Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/pdf: {}
         '422':
           description: Validation Error
           content:
@@ -423,6 +566,87 @@ paths:
           content:
             application/json:
               schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/alerts/preview/playground-report:
+    post:
+      tags:
+      - Alerts V1
+      summary: Preview Playground Report
+      description: 'Preview what a playground report would look like.
+
+
+        Regenerates the session through the same ask pipeline a scheduled run uses,
+
+        so the preview shows the content the next delivery would carry — it costs an
+
+        LLM run and appends a new assistant turn to the session, but nothing is
+
+        delivered and no run is recorded. Blocks for the length of that run.
+
+
+        Distinct from ``/preview`` because playground reports have no metric_config
+
+        and need no ClickHouse access.'
+      operationId: preview_playground_report_api_v1_alerts_preview_playground_report_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaygroundReportPreviewRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundReportPreviewResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /api/v1/alerts/notifications/test/playground-report:
+    post:
+      tags:
+      - Alerts V1
+      summary: Test Playground Report Notification
+      description: 'Send a playground report to one destination as a test.
+
+
+        Distinct from ``/notifications/test``, which is metric-only (it requires
+
+        entity_type + metric_config). Regenerates the session and delivers through
+
+        the same helpers a scheduled run uses, so a passing test means the real
+
+        delivery works. Records no run; blocks for the length of the LLM run.'
+      operationId: test_playground_report_notification_api_v1_alerts_notifications_test_playground_report_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaygroundReportTestRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundReportTestResponse'
         '422':
           description: Validation Error
           content:
@@ -710,92 +934,22 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    RecentRunResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        status:
-          type: string
-          title: Status
-        executed_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Executed At
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - id
-      - status
-      title: RecentRunResponse
-      description: Lightweight run summary for embedding in RuleResponse.recent_runs.
-    RunsListResponse:
+    ReportArtifactListResponse:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/RunResponse'
+            $ref: '#/components/schemas/ReportArtifactResponse'
           type: array
           title: Items
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Cursor
       type: object
       required:
       - items
-      - total
-      - page
-      - size
-      title: RunsListResponse
-    Page_RuleResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/RuleResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[RuleResponse]
+      title: ReportArtifactListResponse
     AdminExecuteRequest:
       properties:
         reason:
@@ -816,350 +970,14 @@ components:
       - reason
       title: AdminExecuteRequest
       description: Request body for admin on-demand rule execution.
-    MetricParams:
-      properties:
-        comparison_type:
-          type: string
-          title: Comparison Type
-          description: '''absolute_value'' or ''relative_value'''
-          default: absolute_value
-        threshold_type:
-          type: string
-          title: Threshold Type
-          description: '''exceeds'', ''below'', ''changes_by'', or ''changes_by_percent'''
-          default: exceeds
-        threshold_value:
-          type: number
-          title: Threshold Value
-          description: Threshold to compare against
-          default: 0
-        aggregation:
-          type: string
-          title: Aggregation
-          description: '''sum'', ''mean'', ''max'', or ''min'''
-          default: sum
-        date_range:
-          type: string
-          title: Date Range
-          description: '''previous_day'', ''previous_week'', ''previous_month'', or ''previous_year'''
-          default: previous_day
-        is_percentage:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Percentage
-          description: Derived from threshold_type; included by templates
-      type: object
-      title: MetricParams
-      description: Evaluation parameters within a metric config.
-    DryRunRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Name
-          default: Dry Run
-        rule_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rule Type
-          default: alert
-        platform:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Platform
-        entity_type:
-          type: string
-          title: Entity Type
-        metric_config:
-          $ref: '#/components/schemas/MetricConfig'
-        delivery:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Delivery
-          description: Ignored for evaluation; accepted so full rule JSON can be pasted.
-        reference_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Reference Time
-          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
-      type: object
-      required:
-      - entity_type
-      - metric_config
-      title: DryRunRequest
-      description: 'Run evaluation against a rule config without saving.
-
-
-        Accepts the same shape as RuleCreateRequest so the payload can be
-
-        copy-pasted from the saved column / frontend config JSON.'
-    NotificationTestResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-        target:
-          type: string
-          title: Target
-          description: Channel type — 'email', 'slack', or 'webhook'
-        chart_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Chart Url
-        error:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error
-      type: object
-      required:
-      - ok
-      - target
-      title: NotificationTestResponse
-      description: Result of a test notification dispatch.
-    MetricConfig:
-      properties:
-        metric_name:
-          type: string
-          title: Metric Name
-          description: Metric identifier, e.g. 'warehouse_daily_cost'
-        params:
-          $ref: '#/components/schemas/MetricParams'
-        filters:
-          items:
-            $ref: '#/components/schemas/MetricFilter'
-          type: array
-          title: Filters
-        category:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Category
-          description: Entity type echo; included by templates
-      type: object
-      required:
-      - metric_name
-      title: MetricConfig
-      description: Typed representation of the metric_config JSON stored in alert rules.
-    RunResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        rule_id:
-          type: integer
-          title: Rule Id
-        status:
-          type: string
-          title: Status
-        result:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Result
-        error:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Error
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        executed_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Executed At
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - rule_id
-      - status
-      - created_at
-      title: RunResponse
-    NotificationTestRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
-          title: Name
-          default: Test alert
-        rule_type:
-          type: string
-          pattern: ^(alert|report)$
-          title: Rule Type
-          default: alert
-        platform:
-          anyOf:
-          - type: string
-            pattern: ^(snowflake|databricks)$
-          - type: 'null'
-          title: Platform
-        entity_type:
-          type: string
-          title: Entity Type
-        metric_config:
-          $ref: '#/components/schemas/MetricConfig'
-        alert_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Alert Message
-        notifier:
-          $ref: '#/components/schemas/NotifierConfig'
-          description: Single channel to test (email, slack, or webhook).
-        reference_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Reference Time
-          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
-      type: object
-      required:
-      - entity_type
-      - metric_config
-      - notifier
-      title: NotificationTestRequest
-      description: 'Send a test notification using a draft rule config.
-
-
-        Alert tests run the same evaluator + chart pipeline as a real alert.
-
-        Report tests build the corresponding report payload directly so the test
-
-        message matches scheduled report delivery instead of alert delivery.'
-    EvaluateRequest:
-      properties:
-        dry_run:
-          type: boolean
-          title: Dry Run
-          default: true
-      type: object
-      title: EvaluateRequest
-    DeliveryConfig:
-      properties:
-        schedule:
-          anyOf:
-          - $ref: '#/components/schemas/DeliverySchedule'
-          - type: 'null'
-          description: When to run; None uses default cron.
-        notifiers:
-          items:
-            $ref: '#/components/schemas/NotifierConfig'
-          type: array
-          title: Notifiers
-          description: Where to send (email, Slack, etc.).
-      type: object
-      title: DeliveryConfig
-      description: When and where to deliver alert/report (schedule + notifiers).
-    RuleUpdateRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 2000
-          - type: 'null'
-          title: Description
-        rule_type:
-          anyOf:
-          - type: string
-            pattern: ^(alert|report)$
-          - type: 'null'
-          title: Rule Type
-        platform:
-          anyOf:
-          - type: string
-            pattern: ^(snowflake|databricks)$
-          - type: 'null'
-          title: Platform
-        entity_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Entity Type
-        metric_config:
-          anyOf:
-          - $ref: '#/components/schemas/MetricConfig'
-          - type: 'null'
-        delivery:
-          anyOf:
-          - $ref: '#/components/schemas/DeliveryConfig'
-          - type: 'null'
-        alert_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Alert Message
-        status:
-          anyOf:
-          - type: string
-            pattern: ^(active|inactive)$
-          - type: 'null'
-          title: Status
-      type: object
-      title: RuleUpdateRequest
-    NotifierConfig:
-      properties:
-        type:
-          type: string
-          title: Type
-          description: '''email'', ''slack'', or ''webhook'''
-        recipients:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Recipients
-          description: Email addresses; used when type is 'email'
-        channel:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Channel
-          description: Slack notification ID; used when type is 'slack'
-        webhook_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Webhook Url
-          description: HTTP(S) URL for POST delivery; used when type is 'webhook'
-      type: object
-      required:
-      - type
-      title: NotifierConfig
-      description: Single delivery destination (email, Slack, or webhook).
     RunResultResponse:
       properties:
+        display_context:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Display Context
         run_id:
           anyOf:
           - type: string
@@ -1236,30 +1054,316 @@ components:
       - status
       - executed_at
       title: RunResultResponse
-    RuleResponse:
+    NotificationTestResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        target:
+          type: string
+          title: Target
+          description: Channel type — 'email', 'slack', or 'webhook'
+        chart_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chart Url
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      required:
+      - ok
+      - target
+      title: NotificationTestResponse
+      description: Result of a test notification dispatch.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    MetricFilter:
+      properties:
+        key:
+          type: string
+          title: Key
+          description: Filter dimension name, e.g. 'warehouse'
+        value:
+          items:
+            type: string
+          type: array
+          title: Value
+          description: Filter values, e.g. ['WH1', 'WH2'], ['all'], or ['ANY']
+        order:
+          type: integer
+          title: Order
+          description: Display order of this filter
+          default: 0
+      type: object
+      required:
+      - key
+      title: MetricFilter
+      description: A single dimension filter for a metric query.
+    NotifierConfig:
+      properties:
+        type:
+          type: string
+          title: Type
+          description: '''email'', ''slack'', or ''webhook'''
+        recipients:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Recipients
+          description: Email addresses; used when type is 'email'
+        channel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Channel
+          description: Slack notification ID; used when type is 'slack'
+        webhook_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Webhook Url
+          description: HTTP(S) URL for POST delivery; used when type is 'webhook'
+      type: object
+      required:
+      - type
+      title: NotifierConfig
+      description: Single delivery destination (email, Slack, or webhook).
+    PlaygroundReportPreviewResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        content_scope:
+          type: string
+          title: Content Scope
+        content:
+          type: string
+          title: Content
+          description: Report body as markdown
+        html:
+          type: string
+          title: Html
+          description: Rendered email HTML
+        subject:
+          type: string
+          title: Subject
+        first_question:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Question
+        playground_url:
+          type: string
+          title: Playground Url
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        is_empty:
+          type: boolean
+          title: Is Empty
+      type: object
+      required:
+      - session_id
+      - content_scope
+      - content
+      - html
+      - subject
+      - playground_url
+      - generated_at
+      - is_empty
+      title: PlaygroundReportPreviewResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ReportArtifactDetailResponse:
       properties:
         id:
-          type: integer
+          type: string
           title: Id
+        window_start:
+          type: string
+          title: Window Start
+        window_end:
+          type: string
+          title: Window End
+        state:
+          type: string
+          title: State
+        created_at:
+          type: string
+          title: Created At
+        mime_type:
+          type: string
+          title: Mime Type
+        byte_size:
+          type: integer
+          title: Byte Size
+        sha256:
+          type: string
+          title: Sha256
+        summary:
+          additionalProperties: true
+          type: object
+          title: Summary
+        months:
+          items:
+            $ref: '#/components/schemas/ReportMonthResponse'
+          type: array
+          title: Months
+      type: object
+      required:
+      - id
+      - window_start
+      - window_end
+      - state
+      - created_at
+      - mime_type
+      - byte_size
+      - sha256
+      - summary
+      - months
+      title: ReportArtifactDetailResponse
+    RunsListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/RunResponse'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: RunsListResponse
+    MetricParams:
+      properties:
+        comparison_type:
+          type: string
+          title: Comparison Type
+          description: '''absolute_value'' or ''relative_value'''
+          default: absolute_value
+        threshold_type:
+          type: string
+          title: Threshold Type
+          description: '''exceeds'', ''below'', ''changes_by'', or ''changes_by_percent'''
+          default: exceeds
+        threshold_value:
+          type: number
+          title: Threshold Value
+          description: Threshold to compare against
+          default: 0
+        aggregation:
+          type: string
+          title: Aggregation
+          description: '''sum'', ''mean'', ''max'', or ''min'''
+          default: sum
+        date_range:
+          type: string
+          title: Date Range
+          description: '''previous_day'', ''previous_week'', ''previous_month'', or ''previous_year'''
+          default: previous_day
+        is_percentage:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Percentage
+          description: Derived from threshold_type; included by templates
+      type: object
+      title: MetricParams
+      description: Evaluation parameters within a metric config.
+    PlaygroundReportPreviewRequest:
+      properties:
+        session_id:
+          type: string
+          maxLength: 255
+          title: Session Id
+        content_scope:
+          type: string
+          pattern: ^(first_query|last_answer|full_chat)$
+          title: Content Scope
+          description: first_query | last_answer | full_chat
+          default: first_query
+        report_name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Report Name
+          description: The rule's name (or the name typed into an unsaved form). Reaches the subject line, so pass it for the preview to match what a scheduled run would send. Falls back to a placeholder.
+      type: object
+      required:
+      - session_id
+      title: PlaygroundReportPreviewRequest
+      description: 'Preview a playground report from a Studio session, before/without
+
+        saving a rule. Regenerates the session through the same ask pipeline a
+
+        scheduled run uses, then renders the fresh answer — no delivery, and the
+
+        turns the run appends are discarded once rendered.'
+    DryRunRequest:
+      properties:
         name:
-          type: string
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
           title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
+          default: Dry Run
         rule_type:
-          type: string
-          title: Rule Type
-        platform:
-          type: string
-          title: Platform
-        category:
           anyOf:
           - type: string
           - type: 'null'
-          title: Category
+          title: Rule Type
+          default: alert
+        platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Platform
         entity_type:
           type: string
           title: Entity Type
@@ -1271,52 +1375,45 @@ components:
             type: object
           - type: 'null'
           title: Delivery
-        alert_message:
+          description: Ignored for evaluation; accepted so full rule JSON can be pasted.
+        reference_time:
           anyOf:
           - type: string
+            format: date-time
           - type: 'null'
-          title: Alert Message
-        status:
-          type: string
-          title: Status
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        created_by:
-          type: integer
-          title: Created By
-        last_run:
-          anyOf:
-          - $ref: '#/components/schemas/RunResponse'
-          - type: 'null'
-        recent_runs:
-          items:
-            $ref: '#/components/schemas/RecentRunResponse'
-          type: array
-          title: Recent Runs
-        summary:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Summary
+          title: Reference Time
+          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
       type: object
       required:
-      - id
-      - name
-      - rule_type
-      - platform
       - entity_type
       - metric_config
-      - status
-      - created_at
-      - updated_at
-      - created_by
-      title: RuleResponse
+      title: DryRunRequest
+      description: 'Run evaluation against a rule config without saving.
+
+
+        Accepts the same shape as RuleCreateRequest so the payload can be
+
+        copy-pasted from the saved column / frontend config JSON.'
+    PlaygroundReportTestResult:
+      properties:
+        target:
+          type: string
+          title: Target
+          description: '''email'' or ''slack'''
+        ok:
+          type: boolean
+          title: Ok
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      required:
+      - target
+      - ok
+      title: PlaygroundReportTestResult
+      description: Outcome for one destination of a test send.
     DeliverySchedule:
       properties:
         cron:
@@ -1332,15 +1429,272 @@ components:
       type: object
       title: DeliverySchedule
       description: When to run the alert/report.
-    HTTPValidationError:
+    Page_RuleResponse_:
       properties:
-        detail:
+        items:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/RuleResponse'
           type: array
-          title: Detail
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
       type: object
-      title: HTTPValidationError
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[RuleResponse]
+    ReportMonthResponse:
+      properties:
+        period_start:
+          type: string
+          title: Period Start
+        revision:
+          type: integer
+          title: Revision
+        state:
+          type: string
+          title: State
+        subtotal:
+          type: string
+          title: Subtotal
+        currency:
+          type: string
+          title: Currency
+        lines:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Lines
+        coverage_checks:
+          additionalProperties: true
+          type: object
+          title: Coverage Checks
+      type: object
+      required:
+      - period_start
+      - revision
+      - state
+      - subtotal
+      - currency
+      - lines
+      - coverage_checks
+      title: ReportMonthResponse
+    PreviewRequest:
+      properties:
+        metric_config:
+          $ref: '#/components/schemas/MetricConfig'
+        rule_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rule Type
+          description: '''alert'' or ''report'' — reports may show resource-wise splits'
+      type: object
+      required:
+      - metric_config
+      title: PreviewRequest
+    MetricConfig:
+      properties:
+        metric_name:
+          type: string
+          title: Metric Name
+          description: Metric identifier, e.g. 'warehouse_daily_cost'
+        params:
+          $ref: '#/components/schemas/MetricParams'
+        filters:
+          items:
+            $ref: '#/components/schemas/MetricFilter'
+          type: array
+          title: Filters
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+          description: Entity type echo; included by templates
+        team_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Team Id
+          description: RBAC team (user_group) whose resources this rule is scoped to. Stamped from the x-user-group-id header at create/update; used at fire time to scope evaluation. None = unscoped.
+      type: object
+      required:
+      - metric_name
+      title: MetricConfig
+      description: Typed representation of the metric_config JSON stored in alert rules.
+    PlaygroundReportTestRequest:
+      properties:
+        session_id:
+          type: string
+          maxLength: 255
+          title: Session Id
+        content_scope:
+          type: string
+          pattern: ^(first_query|last_answer|full_chat)$
+          title: Content Scope
+          description: first_query | last_answer | full_chat
+          default: first_query
+        report_name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Report Name
+        notifiers:
+          items:
+            $ref: '#/components/schemas/NotifierConfig'
+          type: array
+          minItems: 1
+          title: Notifiers
+          description: Destinations to test. Sent as a LIST so email + Slack are covered by ONE generation — a request per destination meant two concurrent regenerations of the same session, which raced. Only 'email' and 'slack' are delivered for playground reports; 'slack' takes a numeric Notification id as a string in 'channel'.
+      type: object
+      required:
+      - session_id
+      - notifiers
+      title: PlaygroundReportTestRequest
+      description: 'Deliver a playground report to ONE destination as a test.
+
+
+        The report counterpart of ``NotificationTestRequest`` (which is metric-only:
+
+        it requires entity_type + metric_config). Regenerates the session and
+
+        delivers through the same helpers a scheduled run uses; records no run.'
+    EvaluateRequest:
+      properties:
+        dry_run:
+          type: boolean
+          title: Dry Run
+          default: true
+      type: object
+      title: EvaluateRequest
+    PlaygroundReportTestResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+          description: True only if every destination succeeded
+        results:
+          items:
+            $ref: '#/components/schemas/PlaygroundReportTestResult'
+          type: array
+          title: Results
+      type: object
+      required:
+      - ok
+      - results
+      title: PlaygroundReportTestResponse
+      description: 'Result of a test send, one entry per notifier.
+
+
+        Per-destination rather than a single flag so a partial failure names which
+
+        destination failed — "email failed, Slack worked" is the common case.'
+    NotificationTestRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+          default: Test alert
+        rule_type:
+          type: string
+          pattern: ^(alert|report)$
+          title: Rule Type
+          default: alert
+        platform:
+          anyOf:
+          - type: string
+            pattern: ^(snowflake|databricks)$
+          - type: 'null'
+          title: Platform
+        entity_type:
+          type: string
+          title: Entity Type
+        metric_config:
+          $ref: '#/components/schemas/MetricConfig'
+        alert_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alert Message
+        notifier:
+          $ref: '#/components/schemas/NotifierConfig'
+          description: Single channel to test (email, slack, or webhook).
+        reference_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reference Time
+          description: Evaluate as if 'now' were this timestamp (ISO-8601). Defaults to UTC now.
+      type: object
+      required:
+      - entity_type
+      - metric_config
+      - notifier
+      title: NotificationTestRequest
+      description: 'Send a test notification using a draft rule config.
+
+
+        Alert tests run the same evaluator + chart pipeline as a real alert.
+
+        Report tests build the corresponding report payload directly so the test
+
+        message matches scheduled report delivery instead of alert delivery.'
+    RecentRunResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        status:
+          type: string
+          title: Status
+        executed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Executed At
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - id
+      - status
+      title: RecentRunResponse
+      description: Lightweight run summary for embedding in RuleResponse.recent_runs.
     QueryLogResponse:
       properties:
         label:
@@ -1378,41 +1732,231 @@ components:
       - label
       - sql
       title: QueryLogResponse
-    PreviewRequest:
+    RunResponse:
       properties:
-        metric_config:
-          $ref: '#/components/schemas/MetricConfig'
+        id:
+          type: integer
+          title: Id
+        rule_id:
+          type: integer
+          title: Rule Id
+        status:
+          type: string
+          title: Status
+        result:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Result
+        error:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Error
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        executed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Executed At
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        destinations:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Destinations
+          description: 'Recipients this run was delivered to, snapshotted at run time
+
+            (lifted from ``result.destinations``) so the run-history "Destination"
+
+            column doesn''t have to reach into the result blob. Computed (not an
+
+            input field) so it''s never read off the ORM row, which has no such
+
+            column. Playground reports write
+
+            ``{"emails": [...], "slack_webhook_id": ...}``; metric rules leave it
+
+            unset (None).'
+          readOnly: true
+      type: object
+      required:
+      - id
+      - rule_id
+      - status
+      - created_at
+      - destinations
+      title: RunResponse
+    DeliveryConfig:
+      properties:
+        schedule:
+          anyOf:
+          - $ref: '#/components/schemas/DeliverySchedule'
+          - type: 'null'
+          description: When to run; None uses default cron.
+        notifiers:
+          items:
+            $ref: '#/components/schemas/NotifierConfig'
+          type: array
+          title: Notifiers
+          description: Where to send (email, Slack, etc.).
+      type: object
+      title: DeliveryConfig
+      description: When and where to deliver alert/report (schedule + notifiers).
+    RuleCreateRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 2000
+          - type: 'null'
+          title: Description
         rule_type:
           anyOf:
           - type: string
           - type: 'null'
           title: Rule Type
-          description: '''alert'' or ''report'' — reports may show resource-wise splits'
+          default: alert
+        source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
+          default: metric
+        platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Platform
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+        metric_config:
+          anyOf:
+          - $ref: '#/components/schemas/MetricConfig'
+          - type: 'null'
+        session_id:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Session Id
+        content_scope:
+          anyOf:
+          - type: string
+            pattern: ^(first_query|last_answer|full_chat)$
+          - type: 'null'
+          title: Content Scope
+        delivery:
+          anyOf:
+          - $ref: '#/components/schemas/DeliveryConfig'
+          - type: 'null'
+        alert_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alert Message
+        visibility:
+          anyOf:
+          - type: string
+            pattern: ^(private|team_readonly|team)$
+          - type: 'null'
+          title: Visibility
       type: object
-      required:
-      - metric_config
-      title: PreviewRequest
-    ValidationError:
+      title: RuleCreateRequest
+      description: 'Create request — field-level validation happens in validate_rule_create()
+
+        so we get contextual error codes instead of generic Pydantic 422s.'
+    RuleUpdateRequest:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 2000
+          - type: 'null'
+          title: Description
+        rule_type:
+          anyOf:
+          - type: string
+            pattern: ^(alert|report)$
+          - type: 'null'
+          title: Rule Type
+        platform:
+          anyOf:
+          - type: string
+            pattern: ^(snowflake|databricks)$
+          - type: 'null'
+          title: Platform
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+        metric_config:
+          anyOf:
+          - $ref: '#/components/schemas/MetricConfig'
+          - type: 'null'
+        session_id:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Session Id
+        content_scope:
+          anyOf:
+          - type: string
+            pattern: ^(first_query|last_answer|full_chat)$
+          - type: 'null'
+          title: Content Scope
+        delivery:
+          anyOf:
+          - $ref: '#/components/schemas/DeliveryConfig'
+          - type: 'null'
+        alert_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Alert Message
+        status:
+          anyOf:
+          - type: string
+            pattern: ^(active|inactive)$
+          - type: 'null'
+          title: Status
+        visibility:
+          anyOf:
+          - type: string
+            pattern: ^(private|team_readonly|team)$
+          - type: 'null'
+          title: Visibility
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      title: RuleUpdateRequest
     RulesListResponse:
       properties:
         total:
@@ -1434,31 +1978,73 @@ components:
       - alerts
       - reports
       title: RulesListResponse
-    RuleCreateRequest:
+    ReportArtifactResponse:
       properties:
+        id:
+          type: string
+          title: Id
+        window_start:
+          type: string
+          title: Window Start
+        window_end:
+          type: string
+          title: Window End
+        state:
+          type: string
+          title: State
+        created_at:
+          type: string
+          title: Created At
+        mime_type:
+          type: string
+          title: Mime Type
+        byte_size:
+          type: integer
+          title: Byte Size
+        sha256:
+          type: string
+          title: Sha256
+      type: object
+      required:
+      - id
+      - window_start
+      - window_end
+      - state
+      - created_at
+      - mime_type
+      - byte_size
+      - sha256
+      title: ReportArtifactResponse
+    RuleResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
         name:
-          anyOf:
-          - type: string
-            maxLength: 255
-          - type: 'null'
+          type: string
           title: Name
         description:
           anyOf:
           - type: string
-            maxLength: 2000
           - type: 'null'
           title: Description
         rule_type:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Rule Type
-          default: alert
+        source:
+          type: string
+          title: Source
+          default: metric
         platform:
           anyOf:
           - type: string
           - type: 'null'
           title: Platform
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
         entity_type:
           anyOf:
           - type: string
@@ -1468,42 +2054,86 @@ components:
           anyOf:
           - $ref: '#/components/schemas/MetricConfig'
           - type: 'null'
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+        content_scope:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Scope
         delivery:
           anyOf:
-          - $ref: '#/components/schemas/DeliveryConfig'
+          - additionalProperties: true
+            type: object
           - type: 'null'
+          title: Delivery
         alert_message:
           anyOf:
           - type: string
           - type: 'null'
           title: Alert Message
-      type: object
-      title: RuleCreateRequest
-      description: 'Create request — field-level validation happens in validate_rule_create()
-
-        so we get contextual error codes instead of generic Pydantic 422s.'
-    MetricFilter:
-      properties:
-        key:
+        status:
           type: string
-          title: Key
-          description: Filter dimension name, e.g. 'warehouse'
-        value:
-          items:
-            type: string
-          type: array
-          title: Value
-          description: Filter values, e.g. ['WH1', 'WH2'], ['all'], or ['ANY']
-        order:
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        created_by:
           type: integer
-          title: Order
-          description: Display order of this filter
-          default: 0
+          title: Created By
+        visibility:
+          type: string
+          title: Visibility
+          default: private
+        team_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Team Id
+        can_edit:
+          type: boolean
+          title: Can Edit
+          default: true
+        can_delete:
+          type: boolean
+          title: Can Delete
+          default: false
+        can_share:
+          type: boolean
+          title: Can Share
+          default: false
+        last_run:
+          anyOf:
+          - $ref: '#/components/schemas/RunResponse'
+          - type: 'null'
+        recent_runs:
+          items:
+            $ref: '#/components/schemas/RecentRunResponse'
+          type: array
+          title: Recent Runs
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
       type: object
       required:
-      - key
-      title: MetricFilter
-      description: A single dimension filter for a metric query.
+      - id
+      - name
+      - rule_type
+      - status
+      - created_at
+      - updated_at
+      - created_by
+      title: RuleResponse
   securitySchemes:
     HTTPBearer:
       type: http

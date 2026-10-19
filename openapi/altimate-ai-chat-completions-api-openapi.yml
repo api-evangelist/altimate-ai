@@ -13,7 +13,7 @@ paths:
       description: 'Create a chat completion (OpenAI-compatible).
 
 
-        Uses litellm with provider fallback: Azure GPT-5.5 → Anthropic Sonnet 4.6.
+        Uses litellm with provider fallback: Anthropic Sonnet 5 → Azure GPT-5.5.
 
         The model in the request is ignored — provider selection is automatic.'
       operationId: create_chat_completion_agents_v1_chat_completions_post
@@ -52,205 +52,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ImageContent:
-      properties:
-        type:
-          type: string
-          const: image_url
-          title: Type
-          default: image
-        image_url:
-          $ref: '#/components/schemas/ImageUrl'
-        cache_control:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Cache Control
-      type: object
-      required:
-      - image_url
-      title: ImageContent
-    ToolContent:
-      properties:
-        type:
-          type: string
-          const: text
-          title: Type
-          default: text
-        text:
-          type: string
-          title: Text
-      type: object
-      required:
-      - text
-      title: ToolContent
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    AssistantMessage:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        role:
-          type: string
-          const: assistant
-          title: Role
-          default: assistant
-        content:
-          anyOf:
-          - type: string
-          - items:
-              anyOf:
-              - $ref: '#/components/schemas/TextContent'
-              - $ref: '#/components/schemas/ImageContent'
-            type: array
-          - type: 'null'
-          title: Content
-        tool_calls:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ToolCall'
-            type: array
-          - type: 'null'
-          title: Tool Calls
-      type: object
-      title: AssistantMessage
-    Function:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        parameters:
-          title: Parameters
-      type: object
-      required:
-      - name
-      - parameters
-      title: Function
-    ResponseFunction:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        arguments:
-          type: string
-          title: Arguments
-      type: object
-      required:
-      - arguments
-      title: ResponseFunction
-    ToolCall:
-      properties:
-        index:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Index
-        id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Id
-        type:
-          type: string
-          const: function
-          title: Type
-          default: function
-        function:
-          $ref: '#/components/schemas/ResponseFunction'
-      type: object
-      required:
-      - function
-      title: ToolCall
-    StreamOptions:
-      properties:
-        include_usage:
-          type: boolean
-          title: Include Usage
-          default: true
-      type: object
-      title: StreamOptions
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    SystemMessage:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        role:
-          type: string
-          const: system
-          title: Role
-          default: system
-        content:
-          anyOf:
-          - type: string
-          - items:
-              $ref: '#/components/schemas/TextContent'
-            type: array
-          title: Content
-      type: object
-      required:
-      - content
-      title: SystemMessage
-    TextContent:
-      properties:
-        type:
-          type: string
-          const: text
-          title: Type
-          default: text
-        text:
-          type: string
-          title: Text
-        cache_control:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Cache Control
-      type: object
-      required:
-      - text
-      title: TextContent
     ChatRequest:
       properties:
         messages:
@@ -370,34 +171,46 @@ components:
       required:
       - messages
       title: ChatRequest
-    Tool:
+    Function:
       properties:
-        type:
+        name:
           type: string
-          const: function
-          title: Type
-          default: function
-        function:
-          $ref: '#/components/schemas/Function'
-      type: object
-      required:
-      - function
-      title: Tool
-    ImageUrl:
-      properties:
-        url:
-          type: string
-          title: Url
-        detail:
+          title: Name
+        description:
           anyOf:
           - type: string
           - type: 'null'
-          title: Detail
-          default: auto
+          title: Description
+        parameters:
+          title: Parameters
       type: object
       required:
-      - url
-      title: ImageUrl
+      - name
+      - parameters
+      title: Function
+    SystemMessage:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        role:
+          type: string
+          const: system
+          title: Role
+          default: system
+        content:
+          anyOf:
+          - type: string
+          - items:
+              $ref: '#/components/schemas/TextContent'
+            type: array
+          title: Content
+      type: object
+      required:
+      - content
+      title: SystemMessage
     UserMessage:
       properties:
         name:
@@ -423,6 +236,81 @@ components:
       required:
       - content
       title: UserMessage
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ImageContent:
+      properties:
+        type:
+          type: string
+          const: image_url
+          title: Type
+          default: image
+        image_url:
+          $ref: '#/components/schemas/ImageUrl'
+        cache_control:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Cache Control
+      type: object
+      required:
+      - image_url
+      title: ImageContent
+    TextContent:
+      properties:
+        type:
+          type: string
+          const: text
+          title: Type
+          default: text
+        text:
+          type: string
+          title: Text
+        cache_control:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Cache Control
+      type: object
+      required:
+      - text
+      title: TextContent
+    ImageUrl:
+      properties:
+        url:
+          type: string
+          title: Url
+        detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Detail
+          default: auto
+      type: object
+      required:
+      - url
+      title: ImageUrl
     ToolMessage:
       properties:
         role:
@@ -449,6 +337,118 @@ components:
       - content
       - tool_call_id
       title: ToolMessage
+    ResponseFunction:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        arguments:
+          type: string
+          title: Arguments
+      type: object
+      required:
+      - arguments
+      title: ResponseFunction
+    AssistantMessage:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        role:
+          type: string
+          const: assistant
+          title: Role
+          default: assistant
+        content:
+          anyOf:
+          - type: string
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/TextContent'
+              - $ref: '#/components/schemas/ImageContent'
+            type: array
+          - type: 'null'
+          title: Content
+        tool_calls:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ToolCall'
+            type: array
+          - type: 'null'
+          title: Tool Calls
+      type: object
+      title: AssistantMessage
+    ToolContent:
+      properties:
+        type:
+          type: string
+          const: text
+          title: Type
+          default: text
+        text:
+          type: string
+          title: Text
+      type: object
+      required:
+      - text
+      title: ToolContent
+    ToolCall:
+      properties:
+        index:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Index
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        type:
+          type: string
+          const: function
+          title: Type
+          default: function
+        function:
+          $ref: '#/components/schemas/ResponseFunction'
+      type: object
+      required:
+      - function
+      title: ToolCall
+    StreamOptions:
+      properties:
+        include_usage:
+          type: boolean
+          title: Include Usage
+          default: true
+      type: object
+      title: StreamOptions
+    Tool:
+      properties:
+        type:
+          type: string
+          const: function
+          title: Type
+          default: function
+        function:
+          $ref: '#/components/schemas/Function'
+      type: object
+      required:
+      - function
+      title: Tool
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

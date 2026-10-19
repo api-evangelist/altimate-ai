@@ -228,7 +228,9 @@ paths:
       description: 'Get overall savings summary.
 
 
-        Combines autonomous (always 0 for Databricks) and assisted savings.'
+        Combines realized autonomous (job + warehouse + cluster auto-tune) and
+
+        assisted savings.'
       operationId: get_overall_savings_api_v1_databricks_savings_overall_get
       security:
       - HTTPBearer: []
@@ -283,6 +285,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SavingsOverallResponse'
+        '403':
+          description: Not authorized
+        '404':
+          description: No ClickHouse database configured
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/savings/timeseries:
+    get:
+      tags:
+      - Databricks Savings
+      summary: Get per-day realized autonomous savings
+      description: 'Get the per-day realized autonomous savings series for the summary
+
+        savings view.
+
+
+        Time-wise view of the headline autonomous savings number: one point per
+
+        day with the day''s realized savings and its min-max range.'
+      operationId: get_savings_timeseries_api_v1_databricks_savings_timeseries_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          description: End date
+          title: End Date
+        description: End date
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by workspace ID
+          title: Workspace Id
+        description: Filter by workspace ID
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsTimeseriesResponse'
         '403':
           description: Not authorized
         '404':
@@ -377,27 +456,56 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
+    TrackedAssistedSavingsResponse:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Total money saved from implemented opportunities
+          default: 0
+        time_saved:
           type: string
-          title: Message
-        type:
+          title: Time Saved
+          description: Human-readable time savings
+          default: 0 days
+        opportunities:
+          type: integer
+          title: Opportunities
+          description: Count of opportunities contributing to savings
+          default: 0
+        currency:
           type: string
-          title: Error Type
+          title: Currency
+          description: Currency code
+          default: USD
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      title: TrackedAssistedSavingsResponse
+      description: Response model for tracked assisted savings from PostgreSQL (parity with Snowflake).
+    app__schemas__databricks__savings__AssistedSavingsResponse:
+      properties:
+        total_assisted_savings:
+          type: number
+          title: Total Assisted Savings
+          description: Total money saved from implemented opportunities
+          default: 0
+        time_saved:
+          type: string
+          title: Time Saved
+          description: Human-readable time savings
+          default: 0 days
+        opportunities:
+          type: integer
+          title: Opportunities
+          description: Count of opportunities contributing to savings
+          default: 0
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: AssistedSavingsResponse
+      description: Response model for assisted savings endpoint.
     SavingsOverallEstimateResponse:
       properties:
         total_savings:
@@ -408,6 +516,16 @@ components:
           type: number
           title: Total Autonomous Savings
           description: Per-month autonomous savings
+          default: 0
+        total_autonomous_dbu_savings:
+          type: number
+          title: Total Autonomous Dbu Savings
+          description: DBU component of the per-month autonomous savings
+          default: 0
+        total_autonomous_infra_savings:
+          type: number
+          title: Total Autonomous Infra Savings
+          description: Infrastructure component of the per-month autonomous savings
           default: 0
         total_assisted_savings:
           type: number
@@ -444,6 +562,16 @@ components:
           title: Total Assisted Savings Estimate
           description: Projected assisted savings
           default: 0
+        total_autonomous_dbu_savings_estimate:
+          type: number
+          title: Total Autonomous Dbu Savings Estimate
+          description: DBU component of projected autonomous savings
+          default: 0
+        total_autonomous_infra_savings_estimate:
+          type: number
+          title: Total Autonomous Infra Savings Estimate
+          description: Infrastructure component of projected autonomous savings
+          default: 0
         total_time_saved_estimate:
           type: string
           title: Total Time Saved Estimate
@@ -459,6 +587,53 @@ components:
       - total_savings
       title: SavingsOverallEstimateResponse
       description: Response model for overall savings estimate endpoint (future projections).
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SavingsTimeseriesResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/SavingsTimeseriesItem'
+          type: array
+          title: Graph
+          description: Per-day realized autonomous savings points
+          default: []
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: SavingsTimeseriesResponse
+      description: Response model for the per-day autonomous savings timeseries.
     SavingsGraphItem:
       properties:
         date:
@@ -480,6 +655,49 @@ components:
       - date
       title: SavingsGraphItem
       description: Single data point in savings graph.
+    AutonomousSavingsResponse:
+      properties:
+        graph:
+          items:
+            $ref: '#/components/schemas/SavingsGraphItem'
+          type: array
+          title: Graph
+          description: Graph data (always empty for Databricks)
+          default: []
+        currency:
+          type: string
+          title: Currency
+          description: Currency code
+          default: USD
+      type: object
+      title: AutonomousSavingsResponse
+      description: Response model for autonomous savings endpoint.
+    SavingsTimeseriesItem:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: Day (ISO format)
+        value:
+          type: number
+          title: Value
+          description: Realized autonomous savings for the day
+          default: 0
+        min_value:
+          type: number
+          title: Min Value
+          description: Low end of the savings range
+          default: 0
+        max_value:
+          type: number
+          title: Max Value
+          description: High end of the savings range
+          default: 0
+      type: object
+      required:
+      - date
+      title: SavingsTimeseriesItem
+      description: Single per-day realized autonomous savings point.
     SavingsOverallResponse:
       properties:
         total_savings:
@@ -489,7 +707,7 @@ components:
         total_autonomous_savings:
           type: number
           title: Total Autonomous Savings
-          description: Autonomous savings (always 0 for Databricks)
+          description: Realized autonomous savings over the window (job + warehouse + cluster auto-tune)
           default: 0
         total_assisted_savings:
           type: number
@@ -521,82 +739,6 @@ components:
       - total_savings
       title: SavingsOverallResponse
       description: Response model for overall savings endpoint.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AutonomousSavingsResponse:
-      properties:
-        graph:
-          items:
-            $ref: '#/components/schemas/SavingsGraphItem'
-          type: array
-          title: Graph
-          description: Graph data (always empty for Databricks)
-          default: []
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-      type: object
-      title: AutonomousSavingsResponse
-      description: Response model for autonomous savings endpoint.
-    app__schemas__databricks__savings__AssistedSavingsResponse:
-      properties:
-        total_assisted_savings:
-          type: number
-          title: Total Assisted Savings
-          description: Total money saved from implemented opportunities
-          default: 0
-        time_saved:
-          type: string
-          title: Time Saved
-          description: Human-readable time savings
-          default: 0 days
-        opportunities:
-          type: integer
-          title: Opportunities
-          description: Count of opportunities contributing to savings
-          default: 0
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-      type: object
-      title: AssistedSavingsResponse
-      description: Response model for assisted savings endpoint.
-    TrackedAssistedSavingsResponse:
-      properties:
-        total_assisted_savings:
-          type: number
-          title: Total Assisted Savings
-          description: Total money saved from implemented opportunities
-          default: 0
-        time_saved:
-          type: string
-          title: Time Saved
-          description: Human-readable time savings
-          default: 0 days
-        opportunities:
-          type: integer
-          title: Opportunities
-          description: Count of opportunities contributing to savings
-          default: 0
-        currency:
-          type: string
-          title: Currency
-          description: Currency code
-          default: USD
-      type: object
-      title: TrackedAssistedSavingsResponse
-      description: Response model for tracked assisted savings from PostgreSQL (parity with Snowflake).
   securitySchemes:
     HTTPBearer:
       type: http

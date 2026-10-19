@@ -1,0 +1,331 @@
+openapi: 3.2.0
+info:
+  title: Fast INTERNAL RUNTIME CONFIG API
+  version: 0.1.0
+tags:
+- name: INTERNAL_RUNTIME_CONFIG
+paths:
+  /internal/configs:
+    get:
+      tags:
+      - INTERNAL_RUNTIME_CONFIG
+      summary: List Configs
+      description: Every registered key with its default and the stored overrides.
+      operationId: list_configs_internal_configs_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ConfigEntry'
+                type: array
+                title: Response List Configs Internal Configs Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /internal/configs/global:
+    patch:
+      tags:
+      - INTERNAL_RUNTIME_CONFIG
+      summary: Update Global Configs
+      description: Set or reset global values; returns the committed state.
+      operationId: update_global_configs_internal_configs_global_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigChangeRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ConfigEntry'
+                type: array
+                title: Response Update Global Configs Internal Configs Global Patch
+        '404':
+          description: Unknown tenant
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 404 Update Global Configs Internal Configs Global Patch
+        '422':
+          description: Unknown key, invalid value or scope not allowed
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 422 Update Global Configs Internal Configs Global Patch
+        '503':
+          description: Runtime config storage unavailable
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 503 Update Global Configs Internal Configs Global Patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /internal/configs/tenants/{tenant_name}:
+    patch:
+      tags:
+      - INTERNAL_RUNTIME_CONFIG
+      summary: Update Tenant Configs
+      description: Set or reset one tenant's overrides; returns the committed state.
+      operationId: update_tenant_configs_internal_configs_tenants__tenant_name__patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tenant_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Tenant Name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigChangeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConfigEntry'
+                title: Response Update Tenant Configs Internal Configs Tenants  Tenant Name  Patch
+        '404':
+          description: Unknown tenant
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Update Tenant Configs Internal Configs Tenants  Tenant Name  Patch
+        '422':
+          description: Unknown key, invalid value or scope not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 422 Update Tenant Configs Internal Configs Tenants  Tenant Name  Patch
+        '503':
+          description: Runtime config storage unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 503 Update Tenant Configs Internal Configs Tenants  Tenant Name  Patch
+  /internal/configs/history:
+    get:
+      tags:
+      - INTERNAL_RUNTIME_CONFIG
+      summary: Get Config History
+      description: 'Newest first. Page with ``before_id`` = the last ``id`` received.
+
+
+        ``tenant_name`` keeps only that tenant''s overrides.'
+      operationId: get_config_history_internal_configs_history_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: before_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+          title: Before Id
+      - name: tenant_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Tenant Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConfigAuditEntry'
+                title: Response Get Config History Internal Configs History Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ConfigEntry:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+        default:
+          title: Default
+        scopes:
+          items:
+            type: string
+          type: array
+          title: Scopes
+        global_value:
+          title: Global Value
+        global_overridden:
+          type: boolean
+          title: Global Overridden
+        tenant_overrides:
+          additionalProperties: true
+          type: object
+          title: Tenant Overrides
+      type: object
+      required:
+      - name
+      - scopes
+      - global_overridden
+      - tenant_overrides
+      title: ConfigEntry
+    ConfigAuditEntry:
+      properties:
+        id:
+          type: integer
+          title: Id
+        created_at:
+          title: Created At
+        flag_key:
+          type: string
+          title: Flag Key
+        name:
+          type: string
+          title: Name
+        scope:
+          type: string
+          enum:
+          - global
+          - tenant
+          title: Scope
+        tenant:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant
+        old_present:
+          type: boolean
+          title: Old Present
+        old_value:
+          title: Old Value
+        new_present:
+          type: boolean
+          title: New Present
+        new_value:
+          title: New Value
+        actor_email:
+          type: string
+          title: Actor Email
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+      type: object
+      required:
+      - id
+      - created_at
+      - flag_key
+      - name
+      - scope
+      - old_present
+      - new_present
+      - actor_email
+      title: ConfigAuditEntry
+    ConfigChangeRequest:
+      properties:
+        changes:
+          additionalProperties: true
+          type: object
+          minProperties: 1
+          title: Changes
+        reason:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Reason
+      additionalProperties: false
+      type: object
+      required:
+      - changes
+      title: ConfigChangeRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

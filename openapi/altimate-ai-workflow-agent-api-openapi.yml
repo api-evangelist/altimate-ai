@@ -222,18 +222,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    CronSyncRequest:
-      properties:
-        jobs:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Jobs
-      type: object
-      required:
-      - jobs
-      title: CronSyncRequest
     MessageReportRequest:
       properties:
         session_id:
@@ -262,6 +250,18 @@ components:
       - role
       - content
       title: MessageReportRequest
+    CronSyncRequest:
+      properties:
+        jobs:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Jobs
+      type: object
+      required:
+      - jobs
+      title: CronSyncRequest
     ValidationError:
       properties:
         loc:
@@ -283,65 +283,6 @@ components:
       - msg
       - type
       title: ValidationError
-    CommandAckRequest:
-      properties:
-        status:
-          type: string
-          title: Status
-          default: executed
-        result:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Result
-        error:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error
-      type: object
-      title: CommandAckRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    HeartbeatRequest:
-      properties:
-        instance_id:
-          type: string
-          title: Instance Id
-        status:
-          type: string
-          title: Status
-          default: healthy
-        vitals:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Vitals
-        llm_usage:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Llm Usage
-        capacity:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Capacity
-      type: object
-      required:
-      - instance_id
-      title: HeartbeatRequest
     SessionReportRequest:
       properties:
         openclaw_session_id:
@@ -377,6 +318,65 @@ components:
       required:
       - openclaw_session_id
       title: SessionReportRequest
+    HeartbeatRequest:
+      properties:
+        instance_id:
+          type: string
+          title: Instance Id
+        status:
+          type: string
+          title: Status
+          default: healthy
+        vitals:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Vitals
+        llm_usage:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Llm Usage
+        capacity:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Capacity
+      type: object
+      required:
+      - instance_id
+      title: HeartbeatRequest
+    CommandAckRequest:
+      properties:
+        status:
+          type: string
+          title: Status
+          default: executed
+        result:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Result
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      title: CommandAckRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

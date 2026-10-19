@@ -73,7 +73,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-06-17T12:35:39.834881'
+          default: '2026-09-16T06:12:41.590409'
           title: Start Date
       - name: end_date
         in: query
@@ -81,7 +81,7 @@ paths:
         schema:
           type: string
           format: date-time
-          default: '2026-07-17T12:35:39.834965'
+          default: '2026-10-16T06:12:41.590493'
           title: End Date
       - name: workflow_type
         in: query
@@ -160,34 +160,24 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    WorkloadAttributeValues:
+    WorkloadAttribute:
       properties:
-        attribute_key:
+        key:
           type: string
-          title: Attribute Key
-        values:
-          items:
-            type: string
-          type: array
-          title: Values
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
+          title: Key
+        label:
+          type: string
+          title: Label
+        is_custom:
+          type: boolean
+          title: Is Custom
+          default: false
       type: object
       required:
-      - attribute_key
-      - values
-      - total
-      - page
-      - size
-      title: WorkloadAttributeValues
-      description: Response schema for distinct values of a workload attribute (for filter dropdowns).
+      - key
+      - label
+      title: WorkloadAttribute
+      description: Represents a single workload attribute for grouping and filtering.
     ValidationError:
       properties:
         loc:
@@ -221,6 +211,34 @@ components:
       - options
       title: WorkloadAttributes
       description: Response schema for available workload attributes.
+    WorkloadAttributeValues:
+      properties:
+        attribute_key:
+          type: string
+          title: Attribute Key
+        values:
+          items:
+            type: string
+          type: array
+          title: Values
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - attribute_key
+      - values
+      - total
+      - page
+      - size
+      title: WorkloadAttributeValues
+      description: Response schema for distinct values of a workload attribute (for filter dropdowns).
     HTTPValidationError:
       properties:
         detail:
@@ -230,24 +248,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    WorkloadAttribute:
-      properties:
-        key:
-          type: string
-          title: Key
-        label:
-          type: string
-          title: Label
-        is_custom:
-          type: boolean
-          title: Is Custom
-          default: false
-      type: object
-      required:
-      - key
-      - label
-      title: WorkloadAttribute
-      description: Represents a single workload attribute for grouping and filtering.
   securitySchemes:
     HTTPBearer:
       type: http

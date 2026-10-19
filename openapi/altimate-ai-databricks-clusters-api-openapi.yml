@@ -1120,6 +1120,211 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/config:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Cluster-wide Auto Tune backoff/notification config
+      description: 'Read-only backoff threshold + notification config for the cluster.
+
+        Missing keys fall back to the PG-overridable code-constant defaults.'
+      operationId: get_cluster_auto_tune_config_api_v1_databricks_clusters__cluster_id__auto_tune_config_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAutoTuneConfigResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Databricks Clusters
+      summary: Save cluster-wide Auto Tune backoff/notification config
+      description: 'Persist the cluster-wide backoff + notification config. A plain
+
+        config write — never touches the axis toggles, never calls
+
+        Databricks, never triggers the pre-touch defaults capture.'
+      operationId: save_cluster_auto_tune_config_api_v1_databricks_clusters__cluster_id__auto_tune_config_patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClusterAutoTuneConfigRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAutoTuneConfigResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/config/reset:
+    post:
+      tags:
+      - Databricks Clusters
+      summary: Reset the cluster's backoff policy to its defaults
+      description: 'Reset ONLY the backoff policy to defaults — never disables Auto
+
+        Tune, never resets notification config or the optimization toggles.'
+      operationId: reset_cluster_auto_tune_config_api_v1_databricks_clusters__cluster_id__auto_tune_config_reset_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAutoTuneConfigResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/databricks/clusters/{cluster_id}/auto-tune/history:
     get:
       tags:
@@ -1226,6 +1431,94 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/toggle-events:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Cluster-level Auto Tune enabled/disabled events for chart markers
+      description: 'Master enable/disable events only — never per-optimization toggle
+
+        changes — for the Cost Savings chart''s vertical markers.'
+      operationId: get_cluster_auto_tune_toggle_events_api_v1_databricks_clusters__cluster_id__auto_tune_toggle_events_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date
+          title: End Date
+        description: End date
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAutoTuneToggleEventsResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/databricks/clusters/{cluster_id}/auto-tune/savings-trends:
     get:
       tags:
@@ -1321,8 +1614,800 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/databricks/clusters/{cluster_id}/auto-tune/infra-cost-trends:
+    get:
+      tags:
+      - Databricks Clusters
+      summary: Per-period Infra-mode cost/savings series for an all-purpose cluster
+      description: 'Cost Savings chart data for Infra mode: cloud cost from
+
+        ``dbx_cloud_cost_daily`` plus the savings mart''s infra-savings leg,
+
+        in the same response shape as the DBU-mode savings-trends endpoint.
+
+        Empty series when the tenant has no cloud-cost feed.'
+      operationId: get_cluster_auto_tune_infra_cost_trends_api_v1_databricks_clusters__cluster_id__auto_tune_infra_cost_trends_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: cluster_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cluster Id
+      - name: instance_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          description: Tenant instance ID (workspace)
+          title: Instance Id
+        description: Tenant instance ID (workspace)
+      - name: workspace_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional Databricks workspace_id to scope the lookup.
+          title: Workspace Id
+        description: Optional Databricks workspace_id to scope the lookup.
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Start date
+          title: Start Date
+        description: Start date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: End date
+          title: End Date
+        description: End date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'Time granularity: ''day'', ''week'', or ''month'''
+          default: day
+          title: Granularity
+        description: 'Time granularity: ''day'', ''week'', or ''month'''
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoTuneSavingsTrendsResponse'
+        '403':
+          description: Not authorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ClusterCostTrendItem:
+      properties:
+        period:
+          type: string
+          title: Period
+        compute_type:
+          type: string
+          title: Compute Type
+          description: 'Compute type bucket: ''all_purpose'', ''jobs'', or ''serverless''.'
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      - compute_type
+      title: ClusterCostTrendItem
+      description: Single data point for cluster cost trends by compute type.
+    ClusterAutoTuneNotificationConfigWrite:
+      properties:
+        notify_backoffs_and_failures:
+          type: boolean
+          title: Notify Backoffs And Failures
+          default: true
+        notify_changes_applied:
+          type: boolean
+          title: Notify Changes Applied
+          default: false
+        slack_enabled:
+          type: boolean
+          title: Slack Enabled
+          default: false
+        slack_channel_ids:
+          items:
+            type: integer
+          type: array
+          maxItems: 50
+          title: Slack Channel Ids
+        email_enabled:
+          type: boolean
+          title: Email Enabled
+          default: false
+        email_recipients:
+          items:
+            type: string
+            format: email
+          type: array
+          maxItems: 50
+          title: Email Recipients
+      type: object
+      title: ClusterAutoTuneNotificationConfigWrite
+      description: 'Write-path variant with strict recipient validation.
+
+
+        Kept separate from the base model deliberately: the base is also the
+
+        READ shape for values already stored in JSONB, and a historical bad
+
+        address must never brick config reads or the notification dispatcher
+
+        — only new writes are held to ``EmailStr``.'
+    ToggleAutoTunePreflight:
+      properties:
+        blocked:
+          type: boolean
+          title: Blocked
+          default: false
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        actionable_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actionable Message
+        can_manage_blocked:
+          type: boolean
+          title: Can Manage Blocked
+          default: false
+        turn_off_allowed:
+          type: boolean
+          title: Turn Off Allowed
+          default: false
+      type: object
+      title: ToggleAutoTunePreflight
+      description: 'Surfaced to the FE so it can render an actionable error inline.
+
+
+        When ``blocked=False`` the toggle pipeline ran. When ``blocked=True``
+
+        no DB writes happened and ``actionable_message`` should be shown to
+
+        the user verbatim (e.g. "ask your workspace admin to add r5.xlarge
+
+        to the policy allowlist").'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ClusterAutoTuneBackoffPolicy:
+      properties:
+        restarts_after_shutdown:
+          type: integer
+          maximum: 10.0
+          minimum: 3.0
+          title: Restarts After Shutdown
+          description: Premature termination→restart pairs since apply that trigger an Auto Termination backoff. 3–10.
+          default: 3
+        cold_start_threshold_per_day:
+          type: integer
+          maximum: 10.0
+          minimum: 3.0
+          title: Cold Start Threshold Per Day
+          description: Cold starts per UTC day that trigger a Min Worker Node Sizing backoff. 3–10.
+          default: 5
+        cold_start_threshold_pct:
+          type: integer
+          maximum: 1000.0
+          minimum: 100.0
+          title: Cold Start Threshold Pct
+          description: Backoff sensitivity as a percent of the recommendation's observed pre-tune baseline rate — applied to BOTH axes (auto-terminate restart churn and worker-resize cold starts). 150 = trip when the post-apply rate exceeds 1.5x baseline. Min 100%.
+          default: 150
+        trigger_action:
+          type: string
+          const: rollback
+          title: Trigger Action
+          description: What a backoff does. Always 'rollback' (step back to the last config that ran clean); any other stored value reads as 'rollback'.
+          default: rollback
+      type: object
+      title: ClusterAutoTuneBackoffPolicy
+      description: 'Cluster-wide backoff policy — the "when a change misbehaves"
+
+        guardrail applying to every enabled optimization on the cluster.
+
+
+        Stored under the ``backoff_policy`` key in
+
+        ``databricks_auto_tune_configuration.configuration``. The integer
+
+        defaults come straight from the backoff monitor''s own env-overridable
+
+        constants (``backoff_constants.py``) so the form''s baselines always
+
+        match what the pod actually enforces. Execution time and query
+
+        latency are deliberately absent — neither signal applies to
+
+        all-purpose clusters (no per-run baseline, no query stream). Each
+
+        threshold belongs to one optimization axis and is editable only
+
+        while that axis is enabled: ``restarts_after_shutdown`` to Auto
+
+        Termination; ``cold_start_threshold_per_day`` to Min Worker Node
+
+        Sizing. The per-step monitoring horizon is no longer configurable —
+
+        each axis holds a fixed backoff window (``_window_days_for_axis`` in
+
+        the monitor), so the step-down cadence is not user-tunable.'
+    app__schemas__databricks__cluster__OversizedClustersResponse:
+      properties:
+        clusters:
+          items:
+            $ref: '#/components/schemas/OversizedCluster'
+          type: array
+          title: Clusters
+        cpu_threshold:
+          type: number
+          title: Cpu Threshold
+        memory_threshold:
+          type: number
+          title: Memory Threshold
+      type: object
+      required:
+      - clusters
+      - cpu_threshold
+      - memory_threshold
+      title: OversizedClustersResponse
+      description: Response for oversized clusters.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ClusterStateChange:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        state:
+          type: string
+          title: State
+        change_time:
+          type: string
+          format: date-time
+          title: Change Time
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - state
+      - change_time
+      title: ClusterStateChange
+      description: A single state change record.
+    ClusterAutoTuneToggleEventsResponse:
+      properties:
+        events:
+          items:
+            $ref: '#/components/schemas/ClusterAutoTuneToggleEvent'
+          type: array
+          title: Events
+      type: object
+      title: ClusterAutoTuneToggleEventsResponse
+      description: List response for ``GET /auto-tune/toggle-events``.
+    ClusterUtilizationPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+          default: 0
+        avg_memory:
+          type: number
+          title: Avg Memory
+          default: 0
+        sample_count:
+          type: integer
+          title: Sample Count
+          default: 0
+      type: object
+      required:
+      - period
+      title: ClusterUtilizationPoint
+      description: Single point in utilization timeseries.
+    ClustersCostTrendsResponse:
+      properties:
+        trends:
+          items:
+            $ref: '#/components/schemas/ClusterCostTrendItem'
+          type: array
+          title: Trends
+          description: Cost trends broken down by compute type
+        compute_types:
+          items:
+            type: string
+          type: array
+          title: Compute Types
+          description: Distinct compute types present, ordered by total cost desc (legend order).
+        granularity:
+          type: string
+          title: Granularity
+          description: Time granularity (day, week, month)
+        total_dbus:
+          type: number
+          title: Total Dbus
+          description: Total DBUs in period
+          default: 0
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total estimated cost
+          default: 0
+      type: object
+      required:
+      - trends
+      - compute_types
+      - granularity
+      title: ClustersCostTrendsResponse
+      description: Response for all clusters cost trends (aggregated across all clusters).
+    AutoTuneSavingsTrendPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        dbu_savings:
+          type: number
+          title: Dbu Savings
+          default: 0.0
+        infra_savings:
+          type: number
+          title: Infra Savings
+          default: 0.0
+        rec_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rec Type
+      type: object
+      required:
+      - period
+      title: AutoTuneSavingsTrendPoint
+      description: One day's auto-tune savings, split into DBU and infra components.
+    ClusterAutoTuneConfigResponse:
+      properties:
+        backoff_policy:
+          $ref: '#/components/schemas/ClusterAutoTuneBackoffPolicy'
+        notification_config:
+          $ref: '#/components/schemas/ClusterAutoTuneNotificationConfig'
+        entity_type:
+          type: string
+          title: Entity Type
+          default: all_purpose
+      type: object
+      title: ClusterAutoTuneConfigResponse
+      description: 'Response for the cluster Auto Tune config read/write endpoints.
+
+
+        ``entity_type`` is the discriminator this response shape carries so
+
+        the same route family can be reused by SQL warehouses and job
+
+        clusters later — only clusters wire a route to it today.'
+    ClusterAutoTuneRecommendationItem:
+      properties:
+        entity_id:
+          type: string
+          title: Entity Id
+        entity_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Name
+        rec_type:
+          type: string
+          title: Rec Type
+        rec_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rec Source
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        owned_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owned By
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        current_config:
+          additionalProperties: true
+          type: object
+          title: Current Config
+        recommended_config:
+          additionalProperties: true
+          type: object
+          title: Recommended Config
+        current_cost_per_hr_dbu:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Current Cost Per Hr Dbu
+        recommended_cost_per_hr_dbu:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Recommended Cost Per Hr Dbu
+        estimated_savings_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Estimated Savings Pct
+        recommendation_summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recommendation Summary
+        reasoning:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reasoning
+        customer_reasoning:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Customer Reasoning
+        inference_start_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Inference Start Date
+        inference_end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Inference End Date
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        latest_action_event_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Action Event Type
+        applied_config:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Applied Config
+      type: object
+      required:
+      - entity_id
+      - rec_type
+      title: ClusterAutoTuneRecommendationItem
+      description: 'A single all-purpose-cluster recommendation from
+
+        ``databricks_auto_tune_recommendation`` (``entity_type=''all_purpose''``).
+
+
+        The FE renders one drawer toggle per ``rec_type``. ``enabled`` is the
+
+        resolved sub-toggle state — read from the cluster''s
+
+        ``databricks_auto_tune_configuration.configuration`` JSONB
+
+        (``resize_enabled`` / ``auto_terminate_enabled``).'
+    ClusterCostResponse:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+        daily_average_dbus:
+          type: number
+          title: Daily Average Dbus
+          default: 0
+        daily_average_cost:
+          type: number
+          title: Daily Average Cost
+          default: 0
+        window_days:
+          type: integer
+          title: Window Days
+          description: Denominator behind daily_average_dbus/daily_average_cost — the inclusive day count of the requested [start_date, end_date] window, NOT the count of days the cluster actually had billing. A cluster billed on only 3 of a 30-day window shows its true $/day rate across the window, not an inflated per-active-day rate.
+          default: 1
+        timeseries:
+          items:
+            $ref: '#/components/schemas/ClusterCostPoint'
+          type: array
+          title: Timeseries
+          default: []
+      type: object
+      required:
+      - cluster_id
+      title: ClusterCostResponse
+      description: Response for cluster cost data.
+    ClusterStateHistoryResponse:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        history:
+          items:
+            $ref: '#/components/schemas/ClusterStateChange'
+          type: array
+          title: History
+      type: object
+      required:
+      - cluster_id
+      - history
+      title: ClusterStateHistoryResponse
+      description: Response for cluster state history.
+    OversizedCluster:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+        avg_memory:
+          type: number
+          title: Avg Memory
+        sample_count:
+          type: integer
+          title: Sample Count
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      - avg_cpu
+      - avg_memory
+      - sample_count
+      title: OversizedCluster
+      description: Information about an oversized cluster.
+    ClusterDetail:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        cluster_name:
+          type: string
+          title: Cluster Name
+        workspace_id:
+          type: string
+          title: Workspace Id
+        workspace_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Name
+        instance_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Instance Id
+        driver_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Driver Node Type
+        worker_node_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Worker Node Type
+        worker_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Worker Count
+        min_autoscale_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Autoscale Workers
+        max_autoscale_workers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Autoscale Workers
+        cluster_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cluster Source
+        compute_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Compute Type
+          description: Derived compute classification ('all_purpose', 'jobs', 'dlt'). The Auto Tune tab is only available when this is 'all_purpose'.
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        last_state_change:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last State Change
+        creator_user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator User Name
+        spark_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Spark Version
+        runtime_engine:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Runtime Engine
+        enable_photon:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enable Photon
+          description: Whether the cluster runs a Photon runtime, derived from the Databricks runtime version (dbr_version). None when the runtime version is unknown.
+        autotermination_minutes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Autotermination Minutes
+        is_deleted:
+          type: boolean
+          title: Is Deleted
+          description: True when the cluster has been soft-deleted in Databricks but still has inventory/billing history — the clusters list surfaces these rows (they may still have billed cost in the selected window), so the detail page returns them too instead of 404ing.
+          default: false
+      type: object
+      required:
+      - cluster_id
+      - cluster_name
+      - workspace_id
+      title: ClusterDetail
+      description: Detailed information for a cluster.
+    ClusterCostPoint:
+      properties:
+        period:
+          type: string
+          title: Period
+        total_dbus:
+          type: number
+          title: Total Dbus
+          default: 0
+        estimated_cost:
+          type: number
+          title: Estimated Cost
+          default: 0
+      type: object
+      required:
+      - period
+      title: ClusterCostPoint
+      description: Single data point for cluster cost timeseries.
     ClusterFilterOptions:
       properties:
         cluster_names:
@@ -1353,6 +2438,426 @@ components:
       type: object
       title: ClusterFilterOptions
       description: Filter options for clusters.
+    AutoTuneSavingsTrendsResponse:
+      properties:
+        actual:
+          items:
+            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
+          type: array
+          title: Actual
+        potential:
+          items:
+            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
+          type: array
+          title: Potential
+        granularity:
+          type: string
+          title: Granularity
+      type: object
+      required:
+      - actual
+      - potential
+      - granularity
+      title: AutoTuneSavingsTrendsResponse
+      description: 'Per-day auto-tune savings for a job, split into realized and potential.
+
+
+        ``actual`` holds savings on runs where an applied recommendation was in
+
+        effect; ``potential`` holds the savings those runs would have earned from
+
+        the active recommendation had it been applied. Each series is bucketed by
+
+        the run window (``period_start_time``).'
+    AutoTuneStatusResponse:
+      properties:
+        state:
+          anyOf:
+          - type: string
+            enum:
+            - enabled_active
+            - enabled_monitoring
+            - disabled
+            - unavailable
+          - type: 'null'
+          title: State
+        has_applied:
+          type: boolean
+          title: Has Applied
+          default: false
+        auto_tune_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Tune Mode
+          description: '"enabled" if any task on the job has Auto Tune turned on. "disabled" if all active-recommendation tasks are off. None when there are no recommendations and no stored enrollment.'
+        preflight:
+          $ref: '#/components/schemas/ToggleAutoTunePreflight'
+        recommendation_count:
+          type: integer
+          title: Recommendation Count
+          default: 0
+        axis_flags:
+          anyOf:
+          - additionalProperties:
+              type: boolean
+            type: object
+          - type: 'null'
+          title: Axis Flags
+        axis_preflight:
+          anyOf:
+          - additionalProperties:
+              $ref: '#/components/schemas/ToggleAutoTunePreflight'
+            type: object
+          - type: 'null'
+          title: Axis Preflight
+        at_scoped_spend_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: At Scoped Spend Usd
+        tasks_enabled:
+          type: integer
+          title: Tasks Enabled
+          default: 0
+        tasks_total:
+          type: integer
+          title: Tasks Total
+          default: 0
+        annualized_cost_savings_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Annualized Cost Savings Usd
+        additional_potential_savings_usd_per_month:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Additional Potential Savings Usd Per Month
+        realized_savings_usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Realized Savings Usd
+        infra_cost_available:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Infra Cost Available
+      type: object
+      title: AutoTuneStatusResponse
+      description: "Page-level status for the Auto Tune tab.\n\nReturned by GET /databricks/jobs/{job_id}/auto-tune/status. The FE\nuses this on JobDetail page mount to drive:\n\n- Master toggle position in the page header (auto_tune_mode).\n- Explicit active/monitoring/disabled/unavailable UI state (state).\n- Whether the toggle is interactive or disabled with a HoverCard\n  explaining why (preflight.blocked + actionable_message).\n- Whether the Auto Tune tab content renders the full panel or the\n  empty state (recommendation_count + auto_tune_mode).\n\nRead-only — no DB writes happen on this call."
+    PaginatedNamesResponse:
+      properties:
+        items:
+          items:
+            type: string
+          type: array
+          title: Items
+        page:
+          type: integer
+          title: Page
+          description: Current page number (1-indexed)
+          default: 1
+        size:
+          type: integer
+          title: Size
+          description: Items per page
+          default: 20
+        total:
+          type: integer
+          title: Total
+          description: Total number of matching names
+          default: 0
+      type: object
+      title: PaginatedNamesResponse
+      description: Paginated list of distinct filter-option names.
+    ClusterAutoTuneToggleResponse:
+      properties:
+        auto_tune_mode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auto Tune Mode
+        audit_event_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Audit Event Id
+        entity_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Name
+        preflight:
+          $ref: '#/components/schemas/ToggleAutoTunePreflight'
+        rolled_back_rec_types:
+          items:
+            type: string
+          type: array
+          title: Rolled Back Rec Types
+      type: object
+      title: ClusterAutoTuneToggleResponse
+      description: 'Response for the cluster Auto Tune toggle endpoint.
+
+
+        Returns the resolved master ``auto_tune_mode`` so the FE can re-render
+
+        the header pill without a second round-trip.'
+    ClusterAutoTuneToggleEvent:
+      properties:
+        event_type:
+          type: string
+          enum:
+          - enabled
+          - disabled
+          title: Event Type
+        change_timestamp:
+          type: string
+          format: date-time
+          title: Change Timestamp
+      type: object
+      required:
+      - event_type
+      - change_timestamp
+      title: ClusterAutoTuneToggleEvent
+      description: 'One Auto Tune event for the Cost Savings chart''s labeled vertical
+
+        markers: cluster-level enable/disable transitions only. Per-axis
+
+        toggles and monitor-triggered rows (backoffs, axis-level reverts)
+
+        draw no marker — they belong to the Agent Decisions chart and the
+
+        history card, which read the history endpoint.'
+    ClusterAutoTuneNotificationConfig:
+      properties:
+        notify_backoffs_and_failures:
+          type: boolean
+          title: Notify Backoffs And Failures
+          default: true
+        notify_changes_applied:
+          type: boolean
+          title: Notify Changes Applied
+          default: false
+        slack_enabled:
+          type: boolean
+          title: Slack Enabled
+          default: false
+        slack_channel_ids:
+          items:
+            type: integer
+          type: array
+          maxItems: 50
+          title: Slack Channel Ids
+        email_enabled:
+          type: boolean
+          title: Email Enabled
+          default: false
+        email_recipients:
+          items:
+            type: string
+          type: array
+          maxItems: 50
+          title: Email Recipients
+      type: object
+      title: ClusterAutoTuneNotificationConfig
+      description: 'Cluster-wide Auto Tune notification preferences.
+
+
+        Stored under the ``notification_config`` key in
+
+        ``databricks_auto_tune_configuration.configuration``. References
+
+        Slack channel ids from the tenant''s ``notifications`` table by
+
+        reference only — never a webhook URL inline (see
+
+        ``NotificationConfigPublic`` for the same redaction rule on the
+
+        generic notifications settings page).'
+    ClustersResponse:
+      properties:
+        clusters:
+          items:
+            $ref: '#/components/schemas/ClusterSummary'
+          type: array
+          title: Clusters
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of clusters
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items per page
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          description: Total number of pages
+          default: 1
+      type: object
+      required:
+      - clusters
+      - total_count
+      title: ClustersResponse
+      description: Response for listing clusters.
+    ClusterUtilizationResponse:
+      properties:
+        cluster_id:
+          type: string
+          title: Cluster Id
+        utilization:
+          $ref: '#/components/schemas/ClusterUtilization'
+        timeseries:
+          items:
+            $ref: '#/components/schemas/ClusterUtilizationPoint'
+          type: array
+          title: Timeseries
+          default: []
+      type: object
+      required:
+      - cluster_id
+      - utilization
+      title: ClusterUtilizationResponse
+      description: Response for cluster utilization metrics.
+    ClusterAutoTuneRecommendationsResponse:
+      properties:
+        recommendations:
+          items:
+            $ref: '#/components/schemas/ClusterAutoTuneRecommendationItem'
+          type: array
+          title: Recommendations
+        total_count:
+          type: integer
+          title: Total Count
+          description: Number of active recommendations for this cluster.
+          default: 0
+      type: object
+      required:
+      - recommendations
+      title: ClusterAutoTuneRecommendationsResponse
+      description: List response for cluster Auto Tune recommendations.
+    ClusterAutoTuneToggleRequest:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          description: Desired state for the toggle.
+        rec_type:
+          anyOf:
+          - type: string
+            enum:
+            - resize
+            - auto_terminate
+            - autoscale
+            - family_change
+          - type: 'null'
+          title: Rec Type
+          description: 'Which sub-toggle to flip. None = master toggle (flips all cluster axes: Worker Sizing, Auto Termination, Enable Autoscaling, Instance Family).'
+      type: object
+      required:
+      - enabled
+      title: ClusterAutoTuneToggleRequest
+      description: 'Request body for ``PATCH /databricks/clusters/{id}/auto-tune/toggle``.
+
+
+        ``rec_type=None`` is the master toggle — it flips ALL sub-toggles
+
+        (``resize`` + ``auto_terminate`` + ``autoscale`` + ``family_change``)
+
+        to ``enabled``. A specific ``rec_type`` flips only that sub-toggle.
+
+        Nothing is applied to Databricks; the call records the config change
+
+        + an audit event.'
+    ClusterUtilization:
+      properties:
+        avg_cpu:
+          type: number
+          title: Avg Cpu
+          default: 0
+        max_cpu:
+          type: number
+          title: Max Cpu
+          default: 0
+        min_cpu:
+          type: number
+          title: Min Cpu
+          default: 0
+        avg_memory:
+          type: number
+          title: Avg Memory
+          default: 0
+        max_memory:
+          type: number
+          title: Max Memory
+          default: 0
+        min_memory:
+          type: number
+          title: Min Memory
+          default: 0
+        sample_count:
+          type: integer
+          title: Sample Count
+          default: 0
+      type: object
+      title: ClusterUtilization
+      description: Utilization metrics for a cluster.
+    AutoTuneHistoryResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AutoTuneHistoryEvent'
+          type: array
+          title: Items
+        total_count:
+          type: integer
+          title: Total Count
+          default: 0
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        total_pages:
+          type: integer
+          title: Total Pages
+          default: 1
+      type: object
+      required:
+      - items
+      title: AutoTuneHistoryResponse
+      description: 'Paginated response wrapper for the Auto Tune history endpoint.
+
+
+        Matches the existing Databricks response convention
+
+        (``total_count`` / ``page`` / ``page_size`` / ``total_pages``)
+
+        rather than ``fastapi_pagination.Page[T]`` — none of the other
+
+        Databricks endpoints in this router use the latter.
+
+
+        Shared by the job-cluster history endpoint and the all-purpose-cluster
+
+        history endpoint (``cluster_auto_tune_api.py``). Both populate
+
+        ``reason_detail`` from stored audit evidence; a row with nothing to
+
+        explain carries ``reason_detail=None`` and the FE falls back to
+
+        ``actionable_message`` / ``reason``.'
     ClusterSummary:
       properties:
         cluster_id:
@@ -1465,445 +2970,15 @@ components:
       - workspace_id
       title: ClusterSummary
       description: Summary information for a cluster.
-    ClusterAutoTuneToggleResponse:
+    ClusterAutoTuneConfigRequest:
       properties:
-        auto_tune_mode:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Auto Tune Mode
-        audit_event_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Audit Event Id
-        entity_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Entity Name
-        preflight:
-          $ref: '#/components/schemas/ToggleAutoTunePreflight'
-        rolled_back_rec_types:
-          items:
-            type: string
-          type: array
-          title: Rolled Back Rec Types
+        backoff_policy:
+          $ref: '#/components/schemas/ClusterAutoTuneBackoffPolicy'
+        notification_config:
+          $ref: '#/components/schemas/ClusterAutoTuneNotificationConfigWrite'
       type: object
-      title: ClusterAutoTuneToggleResponse
-      description: 'Response for the cluster Auto Tune toggle endpoint.
-
-
-        Returns the resolved master ``auto_tune_mode`` so the FE can re-render
-
-        the header pill without a second round-trip.'
-    ClusterAutoTuneRecommendationItem:
-      properties:
-        entity_id:
-          type: string
-          title: Entity Id
-        entity_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Entity Name
-        rec_type:
-          type: string
-          title: Rec Type
-        rec_source:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rec Source
-        status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Status
-        owned_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Owned By
-        workspace_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Id
-        current_config:
-          additionalProperties: true
-          type: object
-          title: Current Config
-        recommended_config:
-          additionalProperties: true
-          type: object
-          title: Recommended Config
-        current_cost_per_hr_dbu:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Current Cost Per Hr Dbu
-        recommended_cost_per_hr_dbu:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Recommended Cost Per Hr Dbu
-        estimated_savings_pct:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Estimated Savings Pct
-        recommendation_summary:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Recommendation Summary
-        reasoning:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reasoning
-        inference_start_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Inference Start Date
-        inference_end_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Inference End Date
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        latest_action_event_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Latest Action Event Type
-        applied_config:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Applied Config
-      type: object
-      required:
-      - entity_id
-      - rec_type
-      title: ClusterAutoTuneRecommendationItem
-      description: 'A single all-purpose-cluster recommendation from
-
-        ``databricks_auto_tune_recommendation`` (``entity_type=''all_purpose''``).
-
-
-        The FE renders one drawer toggle per ``rec_type``. ``enabled`` is the
-
-        resolved sub-toggle state — read from the cluster''s
-
-        ``databricks_auto_tune_configuration.configuration`` JSONB
-
-        (``resize_enabled`` / ``auto_terminate_enabled``).'
-    ClusterAutoTuneRecommendationsResponse:
-      properties:
-        recommendations:
-          items:
-            $ref: '#/components/schemas/ClusterAutoTuneRecommendationItem'
-          type: array
-          title: Recommendations
-        total_count:
-          type: integer
-          title: Total Count
-          description: Number of active recommendations for this cluster.
-          default: 0
-      type: object
-      required:
-      - recommendations
-      title: ClusterAutoTuneRecommendationsResponse
-      description: List response for cluster Auto Tune recommendations.
-    ClustersResponse:
-      properties:
-        clusters:
-          items:
-            $ref: '#/components/schemas/ClusterSummary'
-          type: array
-          title: Clusters
-        total_count:
-          type: integer
-          title: Total Count
-          description: Total number of clusters
-        page:
-          type: integer
-          title: Page
-          description: Current page number
-          default: 1
-        page_size:
-          type: integer
-          title: Page Size
-          description: Number of items per page
-          default: 20
-        total_pages:
-          type: integer
-          title: Total Pages
-          description: Total number of pages
-          default: 1
-      type: object
-      required:
-      - clusters
-      - total_count
-      title: ClustersResponse
-      description: Response for listing clusters.
-    PaginatedNamesResponse:
-      properties:
-        items:
-          items:
-            type: string
-          type: array
-          title: Items
-        page:
-          type: integer
-          title: Page
-          description: Current page number (1-indexed)
-          default: 1
-        size:
-          type: integer
-          title: Size
-          description: Items per page
-          default: 20
-        total:
-          type: integer
-          title: Total
-          description: Total number of matching names
-          default: 0
-      type: object
-      title: PaginatedNamesResponse
-      description: Paginated list of distinct filter-option names.
-    ClusterCostPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          default: 0
-      type: object
-      required:
-      - period
-      title: ClusterCostPoint
-      description: Single data point for cluster cost timeseries.
-    ToggleAutoTunePreflight:
-      properties:
-        blocked:
-          type: boolean
-          title: Blocked
-          default: false
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-        actionable_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Actionable Message
-      type: object
-      title: ToggleAutoTunePreflight
-      description: 'Surfaced to the FE so it can render an actionable error inline.
-
-
-        When ``blocked=False`` the toggle pipeline ran. When ``blocked=True``
-
-        no DB writes happened and ``actionable_message`` should be shown to
-
-        the user verbatim (e.g. "ask your workspace admin to add r5.xlarge
-
-        to the policy allowlist").'
-    ClusterDetail:
-      properties:
-        cluster_id:
-          type: string
-          title: Cluster Id
-        cluster_name:
-          type: string
-          title: Cluster Name
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        instance_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Instance Id
-        driver_node_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Driver Node Type
-        worker_node_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Worker Node Type
-        worker_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Worker Count
-        min_autoscale_workers:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Min Autoscale Workers
-        max_autoscale_workers:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Autoscale Workers
-        cluster_source:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cluster Source
-        compute_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Compute Type
-          description: Derived compute classification ('all_purpose', 'jobs', 'dlt'). The Auto Tune tab is only available when this is 'all_purpose'.
-        state:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: State
-        last_state_change:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last State Change
-        creator_user_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Creator User Name
-        spark_version:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Spark Version
-        runtime_engine:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Runtime Engine
-        enable_photon:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enable Photon
-          description: Whether the cluster runs a Photon runtime, derived from the Databricks runtime version (dbr_version). None when the runtime version is unknown.
-        autotermination_minutes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Autotermination Minutes
-      type: object
-      required:
-      - cluster_id
-      - cluster_name
-      - workspace_id
-      title: ClusterDetail
-      description: Detailed information for a cluster.
-    ClusterStateChange:
-      properties:
-        cluster_id:
-          type: string
-          title: Cluster Id
-        cluster_name:
-          type: string
-          title: Cluster Name
-        state:
-          type: string
-          title: State
-        change_time:
-          type: string
-          format: date-time
-          title: Change Time
-        worker_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Worker Count
-      type: object
-      required:
-      - cluster_id
-      - cluster_name
-      - state
-      - change_time
-      title: ClusterStateChange
-      description: A single state change record.
-    ClusterUtilizationResponse:
-      properties:
-        cluster_id:
-          type: string
-          title: Cluster Id
-        utilization:
-          $ref: '#/components/schemas/ClusterUtilization'
-        timeseries:
-          items:
-            $ref: '#/components/schemas/ClusterUtilizationPoint'
-          type: array
-          title: Timeseries
-          default: []
-      type: object
-      required:
-      - cluster_id
-      - utilization
-      title: ClusterUtilizationResponse
-      description: Response for cluster utilization metrics.
-    ClusterAutoTuneToggleRequest:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          description: Desired state for the toggle.
-        rec_type:
-          anyOf:
-          - type: string
-            enum:
-            - resize
-            - auto_terminate
-          - type: 'null'
-          title: Rec Type
-          description: Which sub-toggle to flip. None = master toggle (flips both Worker Sizing and Auto Termination).
-      type: object
-      required:
-      - enabled
-      title: ClusterAutoTuneToggleRequest
-      description: 'Request body for ``PATCH /databricks/clusters/{id}/auto-tune/toggle``.
-
-
-        ``rec_type=None`` is the master toggle — it flips BOTH sub-toggles
-
-        (``resize`` + ``auto_terminate``) to ``enabled``. A specific
-
-        ``rec_type`` flips only that sub-toggle. Nothing is applied to
-
-        Databricks; the call records the config change + an audit event.'
+      title: ClusterAutoTuneConfigRequest
+      description: Request body for ``PATCH /databricks/clusters/{id}/auto-tune/config``.
     AutoTuneHistoryEvent:
       properties:
         event_id:
@@ -1936,6 +3011,11 @@ components:
           - type: string
           - type: 'null'
           title: Recommendation To
+        change_summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Change Summary
         recommendation_from_workers:
           anyOf:
           - type: string
@@ -1990,6 +3070,16 @@ components:
           type: string
           title: Event Message
           default: ''
+        reason_detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason Detail
+        rec_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rec Type
       type: object
       required:
       - event_id
@@ -2017,383 +3107,6 @@ components:
         carry a relationship to the user model — see PR #5070 for the future
 
         relationship-based approach.'
-    ClustersCostTrendsResponse:
-      properties:
-        trends:
-          items:
-            $ref: '#/components/schemas/ClusterCostTrendItem'
-          type: array
-          title: Trends
-          description: Cost trends broken down by compute type
-        compute_types:
-          items:
-            type: string
-          type: array
-          title: Compute Types
-          description: Distinct compute types present, ordered by total cost desc (legend order).
-        granularity:
-          type: string
-          title: Granularity
-          description: Time granularity (day, week, month)
-        total_dbus:
-          type: number
-          title: Total Dbus
-          description: Total DBUs in period
-          default: 0
-        total_cost:
-          type: number
-          title: Total Cost
-          description: Total estimated cost
-          default: 0
-      type: object
-      required:
-      - trends
-      - compute_types
-      - granularity
-      title: ClustersCostTrendsResponse
-      description: Response for all clusters cost trends (aggregated across all clusters).
-    ClusterStateHistoryResponse:
-      properties:
-        cluster_id:
-          type: string
-          title: Cluster Id
-        history:
-          items:
-            $ref: '#/components/schemas/ClusterStateChange'
-          type: array
-          title: History
-      type: object
-      required:
-      - cluster_id
-      - history
-      title: ClusterStateHistoryResponse
-      description: Response for cluster state history.
-    ClusterUtilization:
-      properties:
-        avg_cpu:
-          type: number
-          title: Avg Cpu
-          default: 0
-        max_cpu:
-          type: number
-          title: Max Cpu
-          default: 0
-        min_cpu:
-          type: number
-          title: Min Cpu
-          default: 0
-        avg_memory:
-          type: number
-          title: Avg Memory
-          default: 0
-        max_memory:
-          type: number
-          title: Max Memory
-          default: 0
-        min_memory:
-          type: number
-          title: Min Memory
-          default: 0
-        sample_count:
-          type: integer
-          title: Sample Count
-          default: 0
-      type: object
-      title: ClusterUtilization
-      description: Utilization metrics for a cluster.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    app__schemas__databricks__cluster__OversizedClustersResponse:
-      properties:
-        clusters:
-          items:
-            $ref: '#/components/schemas/OversizedCluster'
-          type: array
-          title: Clusters
-        cpu_threshold:
-          type: number
-          title: Cpu Threshold
-        memory_threshold:
-          type: number
-          title: Memory Threshold
-      type: object
-      required:
-      - clusters
-      - cpu_threshold
-      - memory_threshold
-      title: OversizedClustersResponse
-      description: Response for oversized clusters.
-    OversizedCluster:
-      properties:
-        cluster_id:
-          type: string
-          title: Cluster Id
-        cluster_name:
-          type: string
-          title: Cluster Name
-        workspace_id:
-          type: string
-          title: Workspace Id
-        workspace_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workspace Name
-        worker_count:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Worker Count
-        driver_node_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Driver Node Type
-        worker_node_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Worker Node Type
-        avg_cpu:
-          type: number
-          title: Avg Cpu
-        avg_memory:
-          type: number
-          title: Avg Memory
-        sample_count:
-          type: integer
-          title: Sample Count
-      type: object
-      required:
-      - cluster_id
-      - cluster_name
-      - workspace_id
-      - avg_cpu
-      - avg_memory
-      - sample_count
-      title: OversizedCluster
-      description: Information about an oversized cluster.
-    ClusterUtilizationPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        avg_cpu:
-          type: number
-          title: Avg Cpu
-          default: 0
-        avg_memory:
-          type: number
-          title: Avg Memory
-          default: 0
-        sample_count:
-          type: integer
-          title: Sample Count
-          default: 0
-      type: object
-      required:
-      - period
-      title: ClusterUtilizationPoint
-      description: Single point in utilization timeseries.
-    AutoTuneStatusResponse:
-      properties:
-        auto_tune_mode:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Auto Tune Mode
-          description: '"enabled" if any task on the job has Auto Tune turned on. "disabled" if all tasks are off or no config exists. None when there are no recommendations for this job at all.'
-        preflight:
-          $ref: '#/components/schemas/ToggleAutoTunePreflight'
-        recommendation_count:
-          type: integer
-          title: Recommendation Count
-          default: 0
-        at_scoped_spend_usd:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: At Scoped Spend Usd
-        tasks_enabled:
-          type: integer
-          title: Tasks Enabled
-          default: 0
-        tasks_total:
-          type: integer
-          title: Tasks Total
-          default: 0
-      type: object
-      title: AutoTuneStatusResponse
-      description: "Page-level status for the Auto Tune tab.\n\nReturned by GET /databricks/jobs/{job_id}/auto-tune/status. The FE\nuses this on JobDetail page mount to drive:\n\n- Master toggle position in the page header (auto_tune_mode).\n- Whether the toggle is interactive or disabled with a HoverCard\n  explaining why (preflight.blocked + actionable_message).\n- Whether the Auto Tune tab content renders the full panel or the\n  empty state (recommendation_count + auto_tune_mode).\n\nRead-only — no DB writes happen on this call."
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ClusterCostTrendItem:
-      properties:
-        period:
-          type: string
-          title: Period
-        compute_type:
-          type: string
-          title: Compute Type
-          description: 'Compute type bucket: ''all_purpose'', ''jobs'', or ''serverless''.'
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          default: 0
-      type: object
-      required:
-      - period
-      - compute_type
-      title: ClusterCostTrendItem
-      description: Single data point for cluster cost trends by compute type.
-    AutoTuneSavingsTrendsResponse:
-      properties:
-        actual:
-          items:
-            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
-          type: array
-          title: Actual
-        potential:
-          items:
-            $ref: '#/components/schemas/AutoTuneSavingsTrendPoint'
-          type: array
-          title: Potential
-        granularity:
-          type: string
-          title: Granularity
-      type: object
-      required:
-      - actual
-      - potential
-      - granularity
-      title: AutoTuneSavingsTrendsResponse
-      description: 'Per-day auto-tune savings for a job, split into realized and potential.
-
-
-        ``actual`` holds savings on runs where an applied recommendation was in
-
-        effect; ``potential`` holds the savings those runs would have earned from
-
-        the active recommendation had it been applied. Each series is bucketed by
-
-        the run window (``period_start_time``).'
-    ClusterCostResponse:
-      properties:
-        cluster_id:
-          type: string
-          title: Cluster Id
-        total_dbus:
-          type: number
-          title: Total Dbus
-          default: 0
-        estimated_cost:
-          type: number
-          title: Estimated Cost
-          default: 0
-        daily_average_dbus:
-          type: number
-          title: Daily Average Dbus
-          default: 0
-        daily_average_cost:
-          type: number
-          title: Daily Average Cost
-          default: 0
-        timeseries:
-          items:
-            $ref: '#/components/schemas/ClusterCostPoint'
-          type: array
-          title: Timeseries
-          default: []
-      type: object
-      required:
-      - cluster_id
-      title: ClusterCostResponse
-      description: Response for cluster cost data.
-    AutoTuneHistoryResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AutoTuneHistoryEvent'
-          type: array
-          title: Items
-        total_count:
-          type: integer
-          title: Total Count
-          default: 0
-        page:
-          type: integer
-          title: Page
-          default: 1
-        page_size:
-          type: integer
-          title: Page Size
-          default: 20
-        total_pages:
-          type: integer
-          title: Total Pages
-          default: 1
-      type: object
-      required:
-      - items
-      title: AutoTuneHistoryResponse
-      description: 'Paginated response wrapper for the Auto Tune history endpoint.
-
-
-        Matches the existing Databricks response convention
-
-        (``total_count`` / ``page`` / ``page_size`` / ``total_pages``)
-
-        rather than ``fastapi_pagination.Page[T]`` — none of the other
-
-        Databricks endpoints in this router use the latter.'
-    AutoTuneSavingsTrendPoint:
-      properties:
-        period:
-          type: string
-          title: Period
-        dbu_savings:
-          type: number
-          title: Dbu Savings
-          default: 0.0
-        infra_savings:
-          type: number
-          title: Infra Savings
-          default: 0.0
-      type: object
-      required:
-      - period
-      title: AutoTuneSavingsTrendPoint
-      description: One day's auto-tune savings, split into DBU and infra components.
   securitySchemes:
     HTTPBearer:
       type: http

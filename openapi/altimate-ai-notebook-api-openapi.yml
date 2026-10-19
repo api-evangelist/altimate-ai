@@ -583,68 +583,11 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AddUpdateNotebookRequest:
+    AllNotebookResponse:
       properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        data:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Data
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          default: ''
-        tags_list:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags List
-          default: []
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-      type: object
-      title: AddUpdateNotebookRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    PrivacySetting:
-      type: string
-      enum:
-      - public
-      - private
-      title: PrivacySetting
-    AddPreconfiguredNotebookRequest:
-      properties:
+        id:
+          type: integer
+          title: Id
         name:
           type: string
           title: Name
@@ -653,22 +596,37 @@ components:
           type: object
           title: Data
         description:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Description
-          default: ''
-        tags_list:
+        created_on:
+          type: string
+          format: date-time
+          title: Created On
+        updated_on:
+          type: string
+          format: date-time
+          title: Updated On
+        tags:
           items:
-            type: string
+            $ref: '#/components/schemas/NotebookTagResponse'
           type: array
-          title: Tags List
-          default: []
+          title: Tags
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+        created_by_user:
+          $ref: '#/components/schemas/UserIndexResponse'
       type: object
       required:
+      - id
       - name
       - data
-      title: AddPreconfiguredNotebookRequest
+      - description
+      - created_on
+      - updated_on
+      - tags
+      - privacy
+      - created_by_user
+      title: AllNotebookResponse
     Page_AllNotebookResponse_:
       properties:
         items:
@@ -707,6 +665,40 @@ components:
       - page
       - size
       title: Page[AllNotebookResponse]
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    NotebookTagResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        tag:
+          type: string
+          title: Tag
+      type: object
+      required:
+      - id
+      - tag
+      title: NotebookTagResponse
     AllPreconfiguredNotebookResponse:
       properties:
         id:
@@ -745,28 +737,12 @@ components:
       - updated_on
       - tags
       title: AllPreconfiguredNotebookResponse
-    NotebookTagResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        tag:
-          type: string
-          title: Tag
-      type: object
-      required:
-      - id
-      - tag
-      title: NotebookTagResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
     StandardResponse:
       properties:
         ok:
@@ -776,6 +752,39 @@ components:
       required:
       - ok
       title: StandardResponse
+    AddUpdateNotebookRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        tags_list:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags List
+          default: []
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+      type: object
+      title: AddUpdateNotebookRequest
     UserIndexResponse:
       properties:
         id:
@@ -877,11 +886,8 @@ components:
       - is_onboarded
       - created_at
       title: UserIndexResponse
-    AllNotebookResponse:
+    AddPreconfiguredNotebookRequest:
       properties:
-        id:
-          type: integer
-          title: Id
         name:
           type: string
           title: Name
@@ -890,37 +896,31 @@ components:
           type: object
           title: Data
         description:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Description
-        created_on:
-          type: string
-          format: date-time
-          title: Created On
-        updated_on:
-          type: string
-          format: date-time
-          title: Updated On
-        tags:
+          default: ''
+        tags_list:
           items:
-            $ref: '#/components/schemas/NotebookTagResponse'
+            type: string
           type: array
-          title: Tags
-        privacy:
-          $ref: '#/components/schemas/PrivacySetting'
-        created_by_user:
-          $ref: '#/components/schemas/UserIndexResponse'
+          title: Tags List
+          default: []
       type: object
       required:
-      - id
       - name
       - data
-      - description
-      - created_on
-      - updated_on
-      - tags
-      - privacy
-      - created_by_user
-      title: AllNotebookResponse
+      title: AddPreconfiguredNotebookRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

@@ -1,0 +1,329 @@
+openapi: 3.2.0
+info:
+  title: Fast COMPUTE POOLS V2 API
+  version: 0.1.0
+tags:
+- name: COMPUTE_POOLS_V2
+paths:
+  /compute-pools/v2/{pool_name}/utilization:
+    get:
+      tags:
+      - COMPUTE_POOLS_V2
+      summary: Compute Pool Utilization
+      description: 'CPU and memory utilization for one compute pool, hour by hour.
+
+
+        Hourly by default because that is the grain a sizing decision is made at: a
+
+        daily mean erases the short bursts that prove an application is in use.
+
+        `day` exists for windows too long to render at hour grain.
+
+
+        A bucket with no telemetry is **absent** from `data`, and a metric the
+
+        agent never served is **null**, not zero -- `coverage.has_cpu_telemetry` /
+
+        `has_mem_telemetry` say which case applies. Low utilization here is also
+
+        not on its own evidence a pool is unused: an SPCS container can render an
+
+        application at near-zero CPU while the substantive SQL runs on a warehouse.
+
+
+        Ratios are a fraction of the capacity **in that bucket**. A pool
+
+        autoscales, so capacity moves between buckets and a ratio is not comparable
+
+        across them on its own; `cpu_capacity_cores` / `mem_capacity_bytes` travel
+
+        with every point so a consumer can recover the absolute value.'
+      operationId: compute_pool_utilization_compute_pools_v2__pool_name__utilization_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: pool_name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Pool Name
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      - name: aggregation_level
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^(hour|day)$
+          default: hour
+          title: Aggregation Level
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          default: all
+          title: Instance Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComputePoolUtilizationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ComputePoolUtilizationCoverage:
+      properties:
+        has_cpu_telemetry:
+          type: boolean
+          title: Has Cpu Telemetry
+          default: false
+        has_mem_telemetry:
+          type: boolean
+          title: Has Mem Telemetry
+          default: false
+        node_count:
+          type: integer
+          title: Node Count
+          default: 0
+        node_hours:
+          type: integer
+          title: Node Hours
+          default: 0
+        measured_hours:
+          type: integer
+          title: Measured Hours
+          default: 0
+        sample_count:
+          type: integer
+          title: Sample Count
+          default: 0
+        cpu_sample_count:
+          type: integer
+          title: Cpu Sample Count
+          default: 0
+        mem_sample_count:
+          type: integer
+          title: Mem Sample Count
+          default: 0
+        peak_cpu_util:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Peak Cpu Util
+        peak_mem_util:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Peak Mem Util
+        cpu_quiet_node_hours:
+          type: integer
+          title: Cpu Quiet Node Hours
+          default: 0
+      type: object
+      title: ComputePoolUtilizationCoverage
+      description: 'What was actually measured over the window.
+
+
+        ``has_cpu_telemetry`` / ``has_mem_telemetry`` are the fields a client
+
+        should branch on before rendering a metric. False means the SPCS agent
+
+        served no such gauge for this pool, and the correct rendering is a stated
+
+        absence rather than a zero line.'
+    ComputePoolUtilizationPoint:
+      properties:
+        bucket:
+          type: string
+          format: date-time
+          title: Bucket
+        node_count:
+          type: integer
+          title: Node Count
+        sample_count:
+          type: integer
+          title: Sample Count
+        cpu_sample_count:
+          type: integer
+          title: Cpu Sample Count
+        mem_sample_count:
+          type: integer
+          title: Mem Sample Count
+        cpu_capacity_cores:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cpu Capacity Cores
+        mem_capacity_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Mem Capacity Bytes
+        cpu_used_avg:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cpu Used Avg
+        mem_used_avg:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Mem Used Avg
+        cpu_used_p95:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cpu Used P95
+        mem_used_p95:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Mem Used P95
+        cpu_used_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cpu Used Max
+        mem_used_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Mem Used Max
+        cpu_util_avg:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cpu Util Avg
+        cpu_util_p95:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cpu Util P95
+        cpu_util_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cpu Util Max
+        mem_util_avg:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Mem Util Avg
+        mem_util_p95:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Mem Util P95
+        mem_util_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Mem Util Max
+        cpu_quiet_node_hours:
+          type: integer
+          title: Cpu Quiet Node Hours
+          default: 0
+      type: object
+      required:
+      - bucket
+      - node_count
+      - sample_count
+      - cpu_sample_count
+      - mem_sample_count
+      title: ComputePoolUtilizationPoint
+      description: 'One bucket of pool-level SPCS utilization.
+
+
+        Every ratio is ``Optional`` on purpose and NULL means *not measured*,
+
+        never *measured at zero*. The agent writes an absent gauge as 0, so a
+
+        default of ``0.0`` anywhere on this model would resurrect exactly the
+
+        confusion the feed is built to avoid.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ComputePoolUtilizationResponse:
+      properties:
+        compute_pool_name:
+          type: string
+          title: Compute Pool Name
+        aggregation_level:
+          type: string
+          title: Aggregation Level
+        coverage:
+          $ref: '#/components/schemas/ComputePoolUtilizationCoverage'
+        data:
+          items:
+            $ref: '#/components/schemas/ComputePoolUtilizationPoint'
+          type: array
+          title: Data
+      type: object
+      required:
+      - compute_pool_name
+      - aggregation_level
+      - coverage
+      - data
+      title: ComputePoolUtilizationResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

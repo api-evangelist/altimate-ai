@@ -54,14 +54,41 @@ paths:
       tags:
       - Semantic Metrics
       summary: Execute Query
-      description: Compile and execute a semantic metric query.
+      description: 'Compile and execute a semantic metric query with the caller''s row scope.
+
+
+        ``user_group_id`` is the team the caller selected (``x-user-group-id``)
+
+        after membership validation; ``rbac_scope_enabled`` is the tenant RBAC
+
+        decision for this caller (False for owners with no team, True for
+
+        non-owners and for anyone who selected a team). Both are threaded into
+
+        the request context so ``query_metric`` executes through the same
+
+        row-policy settings as the Studio MCP path. ``require_team_or_owner_scope``
+
+        refuses a non-owner with no team before this body runs.'
       operationId: execute_query_copilot_semantic_metrics_query_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/MetricQueryRequest'
-        required: true
       responses:
         '200':
           description: Successful Response
@@ -74,9 +101,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
 components:
   schemas:
     MetricDetailsRequest:
@@ -90,15 +114,6 @@ components:
       required:
       - metric_names
       title: MetricDetailsRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -155,6 +170,15 @@ components:
       required:
       - metrics
       title: MetricQueryRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

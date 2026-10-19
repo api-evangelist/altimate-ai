@@ -39,6 +39,11 @@ paths:
       summary: Create Supertokens Tenant
       description: 'Creates a new tenant in SuperTokens
 
+
+        `new_tenant` must be the tenant the caller addressed (the SuperTokens
+
+        tenant id is the host as-is).
+
         :return: ok status and optional message.'
       operationId: create_supertokens_tenant_supertokens_create_tenant_post
       security:
@@ -58,7 +63,7 @@ paths:
             application/json:
               schema: {}
         '400':
-          description: Not supported for public user
+          description: Invalid request data
           content:
             application/json:
               schema:
@@ -66,7 +71,7 @@ paths:
                 additionalProperties: true
                 title: Response 400 Create Supertokens Tenant Supertokens Create Tenant Post
         '403':
-          description: Not supported for public user
+          description: '`new_tenant` is not the tenant the caller addressed'
           content:
             application/json:
               schema:
@@ -85,6 +90,13 @@ paths:
       - SUPERTOKENS
       summary: Update Tenant Thirdparty
       description: 'Updates the tenant with the third party config
+
+
+        This decides which identity provider is trusted to authenticate
+
+        `new_tenant`''s users, so `new_tenant` must be the tenant the caller addressed
+
+        (the SuperTokens tenant id is the host as-is).
 
         :return: ok status and optional message.'
       operationId: update_tenant_thirdparty_supertokens_update_tenant_thirdparty_post
@@ -128,7 +140,7 @@ paths:
             application/json:
               schema: {}
         '400':
-          description: Not supported for public user
+          description: Invalid request data
           content:
             application/json:
               schema:
@@ -136,7 +148,7 @@ paths:
                 additionalProperties: true
                 title: Response 400 Update Tenant Thirdparty Supertokens Update Tenant Thirdparty Post
         '403':
-          description: Not supported for public user
+          description: '`new_tenant` is not the tenant the caller addressed'
           content:
             application/json:
               schema:
@@ -155,6 +167,9 @@ paths:
       - SUPERTOKENS
       summary: Update Tenant Thirdparty Custom
       description: 'Updates the tenant with the custom third party config
+
+
+        Own tenant only — see `update_tenant_thirdparty`.
 
         :return: ok status and optional message.'
       operationId: update_tenant_thirdparty_custom_supertokens_update_tenant_thirdparty_custom_post
@@ -200,7 +215,7 @@ paths:
             application/json:
               schema: {}
         '400':
-          description: Not supported for public user
+          description: Invalid request data
           content:
             application/json:
               schema:
@@ -208,7 +223,7 @@ paths:
                 additionalProperties: true
                 title: Response 400 Update Tenant Thirdparty Custom Supertokens Update Tenant Thirdparty Custom Post
         '403':
-          description: Not supported for public user
+          description: '`new_tenant` is not the tenant the caller addressed'
           content:
             application/json:
               schema:
@@ -227,6 +242,9 @@ paths:
       - SUPERTOKENS
       summary: Update Tenant Saml
       description: 'Updates the tenant with the SAML config
+
+
+        Own tenant only — see `update_tenant_thirdparty`.
 
         :return: ok status and optional message.'
       operationId: update_tenant_saml_supertokens_update_tenant_saml_post
@@ -267,7 +285,7 @@ paths:
             application/json:
               schema: {}
         '400':
-          description: Not supported for public user
+          description: Invalid request data
           content:
             application/json:
               schema:
@@ -275,7 +293,7 @@ paths:
                 additionalProperties: true
                 title: Response 400 Update Tenant Saml Supertokens Update Tenant Saml Post
         '403':
-          description: Not supported for public user
+          description: '`new_tenant` is not the tenant the caller addressed'
           content:
             application/json:
               schema:
@@ -294,6 +312,11 @@ paths:
       - SUPERTOKENS
       summary: Delete Tenant Thirdparty
       description: 'Deletes the tenant''s third party config
+
+
+        Deleting a provider locks every SSO user of `new_tenant` out of the product,
+
+        so `new_tenant` must be the tenant the caller addressed.
 
         :return: ok status and optional message.'
       operationId: delete_tenant_thirdparty_supertokens_delete_tenant_thirdparty_delete
@@ -321,7 +344,7 @@ paths:
             application/json:
               schema: {}
         '400':
-          description: Not supported for public user
+          description: Invalid request data
           content:
             application/json:
               schema:
@@ -329,7 +352,7 @@ paths:
                 additionalProperties: true
                 title: Response 400 Delete Tenant Thirdparty Supertokens Delete Tenant Thirdparty Delete
         '403':
-          description: Not supported for public user
+          description: '`new_tenant` is not the tenant the caller addressed'
           content:
             application/json:
               schema:
@@ -348,6 +371,26 @@ paths:
       - SUPERTOKENS
       summary: Configure Sso
       description: 'Configures SSO by creating a tenant if needed and updating third-party config
+
+
+        Self-service: the target is the tenant the caller addressed, never a request
+
+        parameter, so this route was never the cross-tenant vector.
+
+
+        Uses `get_request_tenant`, not `get_tenant`: a SuperTokens tenant id is the
+
+        host as-is, so a caller on `pepsico.*` must configure the `pepsico`
+
+        SuperTokens tenant. Collapsing to the canonical `pepsiaws-us-east` wrote the
+
+        config to a tenant that login never reads, because the frontend SDK sets
+
+        `getTenantId: getTenant` (the subdomain) and SSO login calls
+
+        `/superauth/{subdomain}/authorisationurl`. Identical for the 38 tenants whose
+
+        host already is their canonical name.
 
         :return: ok status and optional message.'
       operationId: configure_sso_supertokens_configure__provider__post
@@ -423,6 +466,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ConfigureRequest:
       properties:
         client_id:
@@ -440,20 +492,20 @@ components:
       - client_secret
       - oidc_url
       title: ConfigureRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ConfigureProvider:
       type: string
       enum:
       - okta
+      - active-directory
       title: ConfigureProvider
+      description: 'Providers customers may configure themselves via `/configure/{provider}`.
+
+
+        Deliberately narrower than `ThirdPartySSO`: this is the self-service
+
+        allowlist, so a provider reachable through the support-assisted routes is
+
+        not automatically exposed here.'
   securitySchemes:
     HTTPBearer:
       type: http

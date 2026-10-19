@@ -619,62 +619,55 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SessionTransitionRequest:
+    CommandCreateRequest:
       properties:
-        status:
+        command:
           type: string
-          title: Status
+          title: Command
+        payload:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Payload
       type: object
       required:
-      - status
-      title: SessionTransitionRequest
-    AgentUpdateRequest:
+      - command
+      title: CommandCreateRequest
+    SessionUpdateRequest:
       properties:
-        name:
+        title:
           anyOf:
           - type: string
           - type: 'null'
-          title: Name
-        slug:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Slug
+          title: Title
         description:
           anyOf:
           - type: string
           - type: 'null'
           title: Description
-        instructions:
+        priority:
           anyOf:
           - type: string
           - type: 'null'
-          title: Instructions
-        model:
+          title: Priority
+        current_agent_id:
           anyOf:
           - type: string
           - type: 'null'
-          title: Model
-        model_config_:
+          title: Current Agent Id
+        assignee:
           anyOf:
-          - additionalProperties: true
-            type: object
+          - type: string
           - type: 'null'
-          title: Model Config
-        tools:
+          title: Assignee
+        next_action:
           anyOf:
-          - items:
-              type: string
-            type: array
+          - type: string
           - type: 'null'
-          title: Tools
-        enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enabled
+          title: Next Action
       type: object
-      title: AgentUpdateRequest
+      title: SessionUpdateRequest
     ValidationError:
       properties:
         loc:
@@ -696,21 +689,6 @@ components:
       - msg
       - type
       title: ValidationError
-    CommandCreateRequest:
-      properties:
-        command:
-          type: string
-          title: Command
-        payload:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Payload
-      type: object
-      required:
-      - command
-      title: CommandCreateRequest
     AgentCreateRequest:
       properties:
         name:
@@ -776,62 +754,62 @@ components:
       - key
       - value
       title: ConfigUpsertRequest
-    HTTPValidationError:
+    AgentUpdateRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    DashboardMessageRequest:
-      properties:
-        content:
-          type: string
-          title: Content
-        role:
-          type: string
-          title: Role
-          default: user
-      type: object
-      required:
-      - content
-      title: DashboardMessageRequest
-    SessionUpdateRequest:
-      properties:
-        title:
+        name:
           anyOf:
           - type: string
           - type: 'null'
-          title: Title
+          title: Name
+        slug:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Slug
         description:
           anyOf:
           - type: string
           - type: 'null'
           title: Description
-        priority:
+        instructions:
           anyOf:
           - type: string
           - type: 'null'
-          title: Priority
-        current_agent_id:
+          title: Instructions
+        model:
           anyOf:
           - type: string
           - type: 'null'
-          title: Current Agent Id
-        assignee:
+          title: Model
+        model_config_:
           anyOf:
-          - type: string
+          - additionalProperties: true
+            type: object
           - type: 'null'
-          title: Assignee
-        next_action:
+          title: Model Config
+        tools:
           anyOf:
-          - type: string
+          - items:
+              type: string
+            type: array
           - type: 'null'
-          title: Next Action
+          title: Tools
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
       type: object
-      title: SessionUpdateRequest
+      title: AgentUpdateRequest
+    SessionTransitionRequest:
+      properties:
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - status
+      title: SessionTransitionRequest
     SessionCreateRequest:
       properties:
         title:
@@ -862,6 +840,28 @@ components:
       required:
       - title
       title: SessionCreateRequest
+    DashboardMessageRequest:
+      properties:
+        content:
+          type: string
+          title: Content
+        role:
+          type: string
+          title: Role
+          default: user
+      type: object
+      required:
+      - content
+      title: DashboardMessageRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

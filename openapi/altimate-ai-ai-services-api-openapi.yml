@@ -262,6 +262,24 @@ paths:
               type: string
           - type: 'null'
           title: Warehouse Name
+      - name: snowflake_tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Snowflake Tags
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
       - name: x-tenant
         in: header
         required: true
@@ -494,6 +512,16 @@ paths:
               type: string
           - type: 'null'
           title: Warehouse Name
+      - name: snowflake_tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Snowflake Tags
       - name: cost_filter
         in: query
         required: false
@@ -513,6 +541,14 @@ paths:
           default: gt
           title: Cost Filter Mode
         description: 'Cost filter mode: gt (greater than) or lt (less than)'
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
       - name: x-tenant
         in: header
         required: true
@@ -604,6 +640,14 @@ paths:
           minimum: 1
           default: 50
           title: Size
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
       - name: x-tenant
         in: header
         required: true
@@ -814,6 +858,24 @@ paths:
               type: string
           - type: 'null'
           title: Warehouse Name
+      - name: snowflake_tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Snowflake Tags
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
       - name: x-tenant
         in: header
         required: true
@@ -833,48 +895,314 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /ai_services/{service_type}/conversations:
+    get:
+      tags:
+      - AI Services
+      summary: Get Conversations
+      description: List conversations for a conversational AI service.
+      operationId: get_conversations_ai_services__service_type__conversations_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: service_type
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/AIServiceType'
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          default: all
+          title: Instance Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          default: 50
+          title: Page Size
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          description: field or field:asc|desc — cost, credits, duration_ms, started_at, turns
+          default: cost
+          title: Sort
+        description: field or field:asc|desc — cost, credits, duration_ms, started_at, turns
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /ai_services/{service_type}/conversations/{conversation_id}/trace:
+    get:
+      tags:
+      - AI Services
+      summary: Get Conversation Trace
+      description: Get the turn/span waterfall and insights for one conversation.
+      operationId: get_conversation_trace_ai_services__service_type__conversations__conversation_id__trace_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: service_type
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/AIServiceType'
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conversation Id
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          default: all
+          title: Instance Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationTraceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /ai_services/{service_type}/trace_query:
+    get:
+      tags:
+      - AI Services
+      summary: Get Trace Query
+      description: Get a runnable query the customer executes in their own Snowflake.
+      operationId: get_trace_query_ai_services__service_type__trace_query_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: service_type
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/AIServiceType'
+      - name: request_id
+        in: query
+        required: true
+        schema:
+          type: string
+          description: A billed request id from the usage table
+          title: Request Id
+        description: A billed request id from the usage table
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          default: all
+          title: Instance Id
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraceQueryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /ai_caching/overview:
+    get:
+      tags:
+      - AI Services
+      summary: Get Cache Overview
+      description: Prompt-cache KPIs, a per-model breakdown and time series.
+      operationId: get_cache_overview_ai_caching_overview_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          title: End Date
+      - name: instance_id
+        in: query
+        required: false
+        schema:
+          type: string
+          default: all
+          title: Instance Id
+      - name: service_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/AIServiceType'
+          - type: 'null'
+          title: Service Type
+      - name: navigationSource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Navigationsource
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheOverviewResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    AIServiceBreakdownResponse:
+    PaginationInfo:
       properties:
-        service_type:
-          type: string
-          title: Service Type
-        dimension:
-          type: string
-          title: Dimension
-        available_dimensions:
-          items:
-            type: string
-          type: array
-          title: Available Dimensions
-        data:
-          items:
-            $ref: '#/components/schemas/AIServiceBreakdownPoint'
-          type: array
-          title: Data
-        pivoted_data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Pivoted Data
-        dimension_keys:
-          items:
-            type: string
-          type: array
-          title: Dimension Keys
-        currency:
-          type: string
-          title: Currency
+        page:
+          type: integer
+          title: Page
+        pages:
+          type: integer
+          title: Pages
+        size:
+          type: integer
+          title: Size
+        total:
+          type: integer
+          title: Total
       type: object
       required:
-      - service_type
-      - dimension
-      - available_dimensions
-      - data
-      - currency
-      title: AIServiceBreakdownResponse
+      - page
+      - pages
+      - size
+      - total
+      title: PaginationInfo
     ValidationError:
       properties:
         loc:
@@ -926,31 +1254,190 @@ components:
       - sortable
       - data_type
       title: ColumnDefinition
-    AIServiceUsageResponse:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ConversationTraceResponse:
       properties:
         service_type:
           type: string
           title: Service Type
+        conversation:
+          $ref: '#/components/schemas/ConversationRow'
+        turns:
+          items:
+            $ref: '#/components/schemas/TraceTurn'
+          type: array
+          title: Turns
+        insights:
+          items:
+            $ref: '#/components/schemas/TraceInsight'
+          type: array
+          title: Insights
+        trace_available:
+          type: boolean
+          title: Trace Available
+        currency:
+          type: string
+          title: Currency
+          default: $
+      type: object
+      required:
+      - service_type
+      - conversation
+      - trace_available
+      title: ConversationTraceResponse
+    SpanTokens:
+      properties:
+        input:
+          type: integer
+          title: Input
+          default: 0
+        output:
+          type: integer
+          title: Output
+          default: 0
+        cache_read:
+          type: integer
+          title: Cache Read
+          default: 0
+        cache_write:
+          type: integer
+          title: Cache Write
+          default: 0
+      type: object
+      title: SpanTokens
+    AIServiceBreakdownPoint:
+      properties:
+        date:
+          type: string
+          format: date-time
+          title: Date
+        dimension_value:
+          type: string
+          title: Dimension Value
+        cost:
+          type: number
+          title: Cost
+        credits:
+          type: number
+          title: Credits
+      type: object
+      required:
+      - date
+      - dimension_value
+      - cost
+      - credits
+      title: AIServiceBreakdownPoint
+    TraceInsight:
+      properties:
+        kind:
+          type: string
+          title: Kind
+        headline:
+          type: string
+          title: Headline
+        severity:
+          type: string
+          title: Severity
+          default: low
+        detail:
+          type: string
+          title: Detail
+          default: ''
+        impact_label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Impact Label
+        confidence:
+          type: number
+          title: Confidence
+          default: 1.0
+        score:
+          type: number
+          title: Score
+          default: 0.0
+        evidence_span_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evidence Span Id
+        evidence_turn:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Evidence Turn
+        evidence_turns:
+          items:
+            type: integer
+          type: array
+          title: Evidence Turns
+          default: []
+        guardrail:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Guardrail
+      type: object
+      required:
+      - kind
+      - headline
+      title: TraceInsight
+      description: 'One ranked finding about a conversation.
+
+
+        ``severity`` bands it, ``confidence`` separates a fact from a judgement,
+
+        and ``score`` is the product the UI orders by. Anything below 0.5
+
+        confidence is a guess and belongs in the collapsed section.'
+    AIServiceBreakdownResponse:
+      properties:
+        service_type:
+          type: string
+          title: Service Type
+        dimension:
+          type: string
+          title: Dimension
+        available_dimensions:
+          items:
+            type: string
+          type: array
+          title: Available Dimensions
         data:
+          items:
+            $ref: '#/components/schemas/AIServiceBreakdownPoint'
+          type: array
+          title: Data
+        pivoted_data:
           items:
             additionalProperties: true
             type: object
           type: array
-          title: Data
-        pagination:
-          $ref: '#/components/schemas/app__schemas__ai_services_detail__PaginationInfo'
-        columns:
+          title: Pivoted Data
+        dimension_keys:
           items:
-            $ref: '#/components/schemas/ColumnDefinition'
+            type: string
           type: array
-          title: Columns
+          title: Dimension Keys
+        currency:
+          type: string
+          title: Currency
       type: object
       required:
       - service_type
+      - dimension
+      - available_dimensions
       - data
-      - pagination
-      - columns
-      title: AIServiceUsageResponse
+      - currency
+      title: AIServiceBreakdownResponse
     AIServiceGraphPoint:
       properties:
         date:
@@ -973,6 +1460,222 @@ components:
       - credits
       - record_count
       title: AIServiceGraphPoint
+    AIServicesSummaryResponse:
+      properties:
+        services:
+          items:
+            $ref: '#/components/schemas/AIServiceSummaryItem'
+          type: array
+          title: Services
+        total_cost:
+          type: number
+          title: Total Cost
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - services
+      - total_cost
+      - currency
+      title: AIServicesSummaryResponse
+    ConversationKeySource:
+      type: string
+      enum:
+      - thread_id
+      - session_id
+      - request_id
+      title: ConversationKeySource
+      description: Which join shape produced the conversation id.
+    AIServiceUsageResponse:
+      properties:
+        service_type:
+          type: string
+          title: Service Type
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+        columns:
+          items:
+            $ref: '#/components/schemas/ColumnDefinition'
+          type: array
+          title: Columns
+      type: object
+      required:
+      - service_type
+      - data
+      - pagination
+      - columns
+      title: AIServiceUsageResponse
+    ConversationRow:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        conversation_key:
+          $ref: '#/components/schemas/ConversationKeySource'
+        sample_request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sample Request Id
+        user_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Name
+        client:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client
+        started_at:
+          type: string
+          format: date-time
+          title: Started At
+        ended_at:
+          type: string
+          format: date-time
+          title: Ended At
+        duration_ms:
+          type: integer
+          title: Duration Ms
+        agent_ms:
+          type: integer
+          title: Agent Ms
+        turns:
+          type: integer
+          title: Turns
+        steps:
+          type: integer
+          title: Steps
+        tool_calls:
+          type: integer
+          title: Tool Calls
+        tools_used:
+          items:
+            type: string
+          type: array
+          title: Tools Used
+        status:
+          type: string
+          title: Status
+        credits:
+          type: number
+          title: Credits
+        cost:
+          type: number
+          title: Cost
+        cache_read_tokens:
+          type: integer
+          title: Cache Read Tokens
+          default: 0
+        cache_write_tokens:
+          type: integer
+          title: Cache Write Tokens
+          default: 0
+        cached_pct:
+          type: number
+          title: Cached Pct
+          default: 0.0
+        peak_context_tokens:
+          type: integer
+          title: Peak Context Tokens
+          default: 0
+        trace_available:
+          type: boolean
+          title: Trace Available
+          default: false
+        query_cost:
+          type: number
+          title: Query Cost
+          default: 0.0
+        query_count:
+          type: integer
+          title: Query Count
+          default: 0
+      type: object
+      required:
+      - conversation_id
+      - conversation_key
+      - started_at
+      - ended_at
+      - duration_ms
+      - agent_ms
+      - turns
+      - steps
+      - tool_calls
+      - status
+      - credits
+      - cost
+      title: ConversationRow
+    CacheOverviewResponse:
+      properties:
+        kpis:
+          $ref: '#/components/schemas/CacheKpis'
+        models:
+          items:
+            $ref: '#/components/schemas/CacheModelRow'
+          type: array
+          title: Models
+        series:
+          items:
+            $ref: '#/components/schemas/CachePoint'
+          type: array
+          title: Series
+        bucket:
+          type: string
+          title: Bucket
+        covered_services:
+          items:
+            type: string
+          type: array
+          title: Covered Services
+      type: object
+      required:
+      - kpis
+      - bucket
+      title: CacheOverviewResponse
+    CachePoint:
+      properties:
+        bucket:
+          type: string
+          format: date-time
+          title: Bucket
+        model:
+          type: string
+          title: Model
+        input_tokens:
+          type: integer
+          title: Input Tokens
+        cache_read_tokens:
+          type: integer
+          title: Cache Read Tokens
+        cache_write_tokens:
+          type: integer
+          title: Cache Write Tokens
+        read_ratio:
+          type: number
+          title: Read Ratio
+        write_amortization:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Write Amortization
+      type: object
+      required:
+      - bucket
+      - model
+      - input_tokens
+      - cache_read_tokens
+      - cache_write_tokens
+      - read_ratio
+      title: CachePoint
     AIServiceGraphResponse:
       properties:
         service_type:
@@ -1004,6 +1707,31 @@ components:
       - total_credits
       - currency
       title: AIServiceGraphResponse
+    CacheKpi:
+      properties:
+        value:
+          type: number
+          title: Value
+        previous:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Previous
+        delta_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Delta Pct
+      type: object
+      required:
+      - value
+      title: CacheKpi
+      description: 'One headline number with its previous-period comparison.
+
+
+        ``previous`` and ``delta_pct`` are ``None`` when the earlier window holds no
+
+        data — a delta against zero is noise, not a trend.'
     AIServiceSummaryItem:
       properties:
         service_type:
@@ -1033,63 +1761,70 @@ components:
       - record_count
       - percentage_of_total
       title: AIServiceSummaryItem
-    SummaryAggregationType:
+    AIServiceType:
       type: string
       enum:
-      - day
-      - week
-      - month
-      title: SummaryAggregationType
-    AIServiceBreakdownPoint:
+      - cortex_analyst
+      - cortex_document_processing
+      - cortex_fine_tuning
+      - cortex_functions
+      - cortex_search
+      - cortex_code_cli
+      - cortex_code_snowsight
+      - cortex_agent
+      - snowflake_intelligence
+      - cortex_code_desktop
+      - snowflake_cowork
+      - reader_ai_services
+      - reader_ai_inference
+      - reader_cortex_code_snowsight
+      - ai_inference
+      - cortex_ai_guardrails
+      - ai_services_adjustments
+      - ai_services_other
+      title: AIServiceType
+    CacheModelRow:
       properties:
-        date:
+        model:
           type: string
-          format: date-time
-          title: Date
-        dimension_value:
+          title: Model
+        service_type:
           type: string
-          title: Dimension Value
-        cost:
+          title: Service Type
+        requests:
+          type: integer
+          title: Requests
+        input_tokens:
+          type: integer
+          title: Input Tokens
+        output_tokens:
+          type: integer
+          title: Output Tokens
+        cache_read_tokens:
+          type: integer
+          title: Cache Read Tokens
+        cache_write_tokens:
+          type: integer
+          title: Cache Write Tokens
+        read_ratio:
           type: number
-          title: Cost
-        credits:
-          type: number
-          title: Credits
+          title: Read Ratio
+        write_amortization:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Write Amortization
       type: object
       required:
-      - date
-      - dimension_value
-      - cost
-      - credits
-      title: AIServiceBreakdownPoint
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    AIServicesSummaryResponse:
-      properties:
-        services:
-          items:
-            $ref: '#/components/schemas/AIServiceSummaryItem'
-          type: array
-          title: Services
-        total_cost:
-          type: number
-          title: Total Cost
-        currency:
-          type: string
-          title: Currency
-      type: object
-      required:
-      - services
-      - total_cost
-      - currency
-      title: AIServicesSummaryResponse
+      - model
+      - service_type
+      - requests
+      - input_tokens
+      - output_tokens
+      - cache_read_tokens
+      - cache_write_tokens
+      - read_ratio
+      title: CacheModelRow
     AIServiceFilterValuesResponse:
       properties:
         column:
@@ -1109,46 +1844,251 @@ components:
       - values
       - total
       title: AIServiceFilterValuesResponse
-    AIServiceType:
-      type: string
-      enum:
-      - cortex_analyst
-      - cortex_document_processing
-      - cortex_fine_tuning
-      - cortex_functions
-      - cortex_search
-      - cortex_code_cli
-      - cortex_code_snowsight
-      - cortex_agent
-      - snowflake_intelligence
-      - cortex_code_desktop
-      - reader_ai_services
-      - reader_ai_inference
-      - reader_cortex_code_snowsight
-      - ai_inference
-      - ai_services_other
-      title: AIServiceType
-    app__schemas__ai_services_detail__PaginationInfo:
+    ConversationListResponse:
       properties:
-        page:
-          type: integer
-          title: Page
-        pages:
-          type: integer
-          title: Pages
-        size:
-          type: integer
-          title: Size
-        total:
-          type: integer
-          title: Total
+        service_type:
+          type: string
+          title: Service Type
+        conversations:
+          items:
+            $ref: '#/components/schemas/ConversationRow'
+          type: array
+          title: Conversations
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+        trace_available:
+          type: boolean
+          title: Trace Available
+        currency:
+          type: string
+          title: Currency
+          default: $
       type: object
       required:
-      - page
-      - pages
-      - size
-      - total
-      title: PaginationInfo
+      - service_type
+      - conversations
+      - pagination
+      - trace_available
+      title: ConversationListResponse
+    SummaryAggregationType:
+      type: string
+      enum:
+      - day
+      - week
+      - month
+      title: SummaryAggregationType
+    TraceSpan:
+      properties:
+        span_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Span Id
+        trace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trace Id
+        kind:
+          $ref: '#/components/schemas/SpanKind'
+        name:
+          type: string
+          title: Name
+        start_offset_ms:
+          type: integer
+          title: Start Offset Ms
+        duration_ms:
+          type: integer
+          title: Duration Ms
+        status:
+          type: string
+          title: Status
+        status_detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status Detail
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        step_number:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Step Number
+        tool:
+          anyOf:
+          - $ref: '#/components/schemas/SpanTool'
+          - type: 'null'
+        tokens:
+          anyOf:
+          - $ref: '#/components/schemas/SpanTokens'
+          - type: 'null'
+        tool_calls:
+          items:
+            $ref: '#/components/schemas/SpanToolCall'
+          type: array
+          title: Tool Calls
+      type: object
+      required:
+      - kind
+      - name
+      - start_offset_ms
+      - duration_ms
+      - status
+      title: TraceSpan
+    TurnTokens:
+      properties:
+        input_tokens:
+          type: integer
+          title: Input Tokens
+          default: 0
+        output_tokens:
+          type: integer
+          title: Output Tokens
+          default: 0
+        cache_read_tokens:
+          type: integer
+          title: Cache Read Tokens
+          default: 0
+        cache_write_tokens:
+          type: integer
+          title: Cache Write Tokens
+          default: 0
+      type: object
+      title: TurnTokens
+    SpanTool:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: SpanTool
+    SpanKind:
+      type: string
+      enum:
+      - llm_step
+      - tool_call
+      - request_event
+      - run
+      title: SpanKind
+    SpanToolCall:
+      properties:
+        name:
+          type: string
+          title: Name
+        arguments:
+          additionalProperties:
+            type: string
+          type: object
+          title: Arguments
+      type: object
+      required:
+      - name
+      title: SpanToolCall
+      description: 'One tool invocation with the arguments the agent passed it.
+
+
+        Arguments carry the SQL and shell commands that were run. Tool *results*
+
+        are deliberately absent — they are query output and may contain PII.'
+    TraceQueryResponse:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        sql:
+          type: string
+          title: Sql
+        snowsight_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Snowsight Url
+        note:
+          type: string
+          title: Note
+      type: object
+      required:
+      - request_id
+      - sql
+      - note
+      title: TraceQueryResponse
+      description: A copy-pasteable query the customer runs in their own Snowflake.
+    TraceTurn:
+      properties:
+        turn_number:
+          type: integer
+          title: Turn Number
+        message_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message Id
+        parent_message_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Message Id
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+        start_offset_ms:
+          type: integer
+          title: Start Offset Ms
+        duration_ms:
+          type: integer
+          title: Duration Ms
+        credits:
+          type: number
+          title: Credits
+        cost:
+          type: number
+          title: Cost
+        tokens:
+          $ref: '#/components/schemas/TurnTokens'
+        spans:
+          items:
+            $ref: '#/components/schemas/TraceSpan'
+          type: array
+          title: Spans
+        query_cost:
+          type: number
+          title: Query Cost
+          default: 0.0
+        query_count:
+          type: integer
+          title: Query Count
+          default: 0
+      type: object
+      required:
+      - turn_number
+      - start_offset_ms
+      - duration_ms
+      - credits
+      - cost
+      - tokens
+      title: TraceTurn
+    CacheKpis:
+      properties:
+        uncached_input_tokens:
+          $ref: '#/components/schemas/CacheKpi'
+        cache_read_tokens:
+          $ref: '#/components/schemas/CacheKpi'
+        cache_read_ratio:
+          $ref: '#/components/schemas/CacheKpi'
+      type: object
+      required:
+      - uncached_input_tokens
+      - cache_read_tokens
+      - cache_read_ratio
+      title: CacheKpis
   securitySchemes:
     HTTPBearer:
       type: http

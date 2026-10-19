@@ -652,39 +652,15 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SnowflakeStageResponse:
+    TestMetadata:
       properties:
-        rk:
-          type: string
-          title: Rk
         name:
           type: string
           title: Name
-        stage_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Stage Url
-        stage_region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Stage Region
-        stage_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Stage Type
-        stage_owner:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Stage Owner
       type: object
       required:
-      - rk
       - name
-      title: SnowflakeStageResponse
+      title: TestMetadata
     TableNodeResponse:
       properties:
         table:
@@ -750,17 +726,27 @@ components:
       - downstream_count
       - label
       title: TableNodeResponse
-    ConnectedTables:
+    ValidationError:
       properties:
-        tables:
+        loc:
           items:
-            $ref: '#/components/schemas/TableNodeResponse'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Tables
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - tables
-      title: ConnectedTables
+      - loc
+      - msg
+      - type
+      title: ValidationError
     ColumnLineageResponse:
       properties:
         highlight_edges:
@@ -772,62 +758,91 @@ components:
       required:
       - highlight_edges
       title: ColumnLineageResponse
-    DashboardAsset:
+    SchemaMetadata:
       properties:
-        asset_rk:
-          type: string
-          title: Asset Rk
-        asset_type:
-          type: string
-          title: Asset Type
-          default: dashboard
-        upstream_count:
-          type: integer
-          title: Upstream Count
-          default: 0
-        downstream_count:
-          type: integer
-          title: Downstream Count
-          default: 0
-        dashboard_id:
+        table_schema_id:
           anyOf:
-          - type: string
+          - type: integer
           - type: 'null'
-          title: Dashboard Id
-        dashboard_name:
+          title: Table Schema Id
+        rk:
           type: string
-          title: Dashboard Name
-        dashboard_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Dashboard Url
-        workbook_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Workbook Name
+          title: Rk
+        name:
+          type: string
+          title: Name
+        datatype:
+          type: string
+          title: Datatype
         description:
           anyOf:
           - type: string
           - type: 'null'
           title: Description
-        created_by:
+        tags:
+          items:
+            $ref: '#/components/schemas/app__schemas__lineage__Tag'
+          type: array
+          title: Tags
+        can_lineage_expand:
+          type: boolean
+          title: Can Lineage Expand
+        is_transformation:
           anyOf:
-          - type: string
+          - type: boolean
           - type: 'null'
-          title: Created By
-        last_modified:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Modified
+          title: Is Transformation
+          default: false
       type: object
       required:
-      - asset_rk
-      - dashboard_name
-      title: DashboardAsset
-      description: Dashboard asset with dashboard-specific fields
+      - rk
+      - name
+      - datatype
+      - tags
+      - can_lineage_expand
+      title: SchemaMetadata
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SnowflakeStageResponse:
+      properties:
+        rk:
+          type: string
+          title: Rk
+        name:
+          type: string
+          title: Name
+        stage_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Url
+        stage_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Region
+        stage_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Type
+        stage_owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stage Owner
+      type: object
+      required:
+      - rk
+      - name
+      title: SnowflakeStageResponse
     TableAsset:
       properties:
         asset_rk:
@@ -919,40 +934,62 @@ components:
           title: Last Run Duration
       type: object
       title: DbtInfo
-    TestMetadata:
+    DashboardAsset:
       properties:
-        name:
+        asset_rk:
           type: string
-          title: Name
-      type: object
-      required:
-      - name
-      title: TestMetadata
-    TableSchemaResponse:
-      properties:
-        table:
+          title: Asset Rk
+        asset_type:
           type: string
-          title: Table
-        columns:
-          items:
-            $ref: '#/components/schemas/SchemaMetadata'
-          type: array
-          title: Columns
-        purpose:
+          title: Asset Type
+          default: dashboard
+        upstream_count:
+          type: integer
+          title: Upstream Count
+          default: 0
+        downstream_count:
+          type: integer
+          title: Downstream Count
+          default: 0
+        dashboard_id:
           anyOf:
           - type: string
           - type: 'null'
-          title: Purpose
-        last_modified_by:
+          title: Dashboard Id
+        dashboard_name:
+          type: string
+          title: Dashboard Name
+        dashboard_url:
           anyOf:
-          - type: integer
+          - type: string
           - type: 'null'
-          title: Last Modified By
+          title: Dashboard Url
+        workbook_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workbook Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By
+        last_modified:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Modified
       type: object
       required:
-      - table
-      - columns
-      title: TableSchemaResponse
+      - asset_rk
+      - dashboard_name
+      title: DashboardAsset
+      description: Dashboard asset with dashboard-specific fields
     ConnectedColumnsRequest:
       properties:
         column_fqns:
@@ -992,6 +1029,47 @@ components:
       required:
       - column_fqns
       title: ConnectedColumnsRequest
+    DbtInfoResponse:
+      properties:
+        dbt_info:
+          anyOf:
+          - $ref: '#/components/schemas/DbtInfo'
+          - type: 'null'
+      type: object
+      title: DbtInfoResponse
+    ConnectedTables:
+      properties:
+        tables:
+          items:
+            $ref: '#/components/schemas/TableNodeResponse'
+          type: array
+          title: Tables
+      type: object
+      required:
+      - tables
+      title: ConnectedTables
+    Edge:
+      properties:
+        src:
+          type: string
+          title: Src
+        dst:
+          type: string
+          title: Dst
+      type: object
+      required:
+      - src
+      - dst
+      title: Edge
+    FQNRequest:
+      properties:
+        fqn:
+          type: string
+          title: Fqn
+      type: object
+      required:
+      - fqn
+      title: FQNRequest
     ColumnLineageEdge:
       properties:
         source:
@@ -1011,20 +1089,31 @@ components:
       - source
       - target
       title: ColumnLineageEdge
-    ConnectedAssets:
+    TableSchemaResponse:
       properties:
-        assets:
+        table:
+          type: string
+          title: Table
+        columns:
           items:
-            anyOf:
-            - $ref: '#/components/schemas/TableAsset'
-            - $ref: '#/components/schemas/DashboardAsset'
+            $ref: '#/components/schemas/SchemaMetadata'
           type: array
-          title: Assets
+          title: Columns
+        purpose:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Purpose
+        last_modified_by:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Modified By
       type: object
       required:
-      - assets
-      title: ConnectedAssets
-      description: Response containing list of connected assets
+      - table
+      - columns
+      title: TableSchemaResponse
     app__schemas__lineage__Tag:
       properties:
         name:
@@ -1043,109 +1132,20 @@ components:
       - name
       - description
       title: Tag
-    Edge:
+    ConnectedAssets:
       properties:
-        src:
-          type: string
-          title: Src
-        dst:
-          type: string
-          title: Dst
-      type: object
-      required:
-      - src
-      - dst
-      title: Edge
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    SchemaMetadata:
-      properties:
-        table_schema_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Table Schema Id
-        rk:
-          type: string
-          title: Rk
-        name:
-          type: string
-          title: Name
-        datatype:
-          type: string
-          title: Datatype
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        tags:
-          items:
-            $ref: '#/components/schemas/app__schemas__lineage__Tag'
-          type: array
-          title: Tags
-        can_lineage_expand:
-          type: boolean
-          title: Can Lineage Expand
-        is_transformation:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Transformation
-          default: false
-      type: object
-      required:
-      - rk
-      - name
-      - datatype
-      - tags
-      - can_lineage_expand
-      title: SchemaMetadata
-    ValidationError:
-      properties:
-        loc:
+        assets:
           items:
             anyOf:
-            - type: string
-            - type: integer
+            - $ref: '#/components/schemas/TableAsset'
+            - $ref: '#/components/schemas/DashboardAsset'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Assets
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DbtInfoResponse:
-      properties:
-        dbt_info:
-          anyOf:
-          - $ref: '#/components/schemas/DbtInfo'
-          - type: 'null'
-      type: object
-      title: DbtInfoResponse
-    FQNRequest:
-      properties:
-        fqn:
-          type: string
-          title: Fqn
-      type: object
-      required:
-      - fqn
-      title: FQNRequest
+      - assets
+      title: ConnectedAssets
+      description: Response containing list of connected assets
   securitySchemes:
     HTTPBearer:
       type: http

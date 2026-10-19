@@ -739,37 +739,99 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    DowngradeFeedback:
+    PaymentCheckoutRequest:
       properties:
-        feedback:
+        plan_type:
           type: string
-          title: Feedback
-      type: object
-      required:
-      - feedback
-      title: DowngradeFeedback
-    UpdateEnterprisePlanRequest:
-      properties:
-        num_executions:
+          title: Plan Type
+        tenure:
+          type: string
+          title: Tenure
+          default: month
+        discount:
           type: integer
-          title: Num Executions
-        total_cost:
-          type: number
-          title: Total Cost
-        tenant:
-          type: string
-          title: Tenant
-        end_date:
-          type: string
-          format: date-time
-          title: End Date
+          title: Discount
+          default: 20
       type: object
       required:
+      - plan_type
+      title: PaymentCheckoutRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WalletDepositRequest:
+      properties:
+        amount_cents:
+          type: integer
+          title: Amount Cents
+      type: object
+      required:
+      - amount_cents
+      title: WalletDepositRequest
+      description: Request to add funds via Stripe Checkout.
+    PaymentCheckoutResponse:
+      properties:
+        checkout_url:
+          type: string
+          title: Checkout Url
+      type: object
+      required:
+      - checkout_url
+      title: PaymentCheckoutResponse
+    app__schemas__payments__PlansResponse:
+      properties:
+        plan_name:
+          type: string
+          title: Plan Name
+        price:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Price
+        num_executions:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Num Executions
+        token_allowance:
+          anyOf:
+          - type: integer
+          - type: string
+          title: Token Allowance
+          default: 0
+      type: object
+      required:
+      - plan_name
+      - price
       - num_executions
-      - total_cost
-      - tenant
-      - end_date
-      title: UpdateEnterprisePlanRequest
+      title: PlansResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     CreateEnterprisePlanRequest:
       properties:
         num_executions:
@@ -797,34 +859,207 @@ components:
       - start_date
       - end_date
       title: CreateEnterprisePlanRequest
-    WalletResponse:
+    UpdateEnterprisePlanRequest:
       properties:
-        balance_cents:
-          type: number
-          title: Balance Cents
-        balance_tokens:
+        num_executions:
           type: integer
-          title: Balance Tokens
-          default: 0
-        spend_this_period_cents:
+          title: Num Executions
+        total_cost:
           type: number
-          title: Spend This Period Cents
+          title: Total Cost
+        tenant:
+          type: string
+          title: Tenant
+        end_date:
+          type: string
+          format: date-time
+          title: End Date
+      type: object
+      required:
+      - num_executions
+      - total_cost
+      - tenant
+      - end_date
+      title: UpdateEnterprisePlanRequest
+    AllPlansResponse:
+      properties:
+        plans:
+          items:
+            $ref: '#/components/schemas/app__schemas__payments__PlansResponse'
+          type: array
+          title: Plans
+        current_tenure:
+          type: string
+          title: Current Tenure
+        current_execuiton_count:
+          type: integer
+          title: Current Execuiton Count
+        current_price:
+          type: integer
+          title: Current Price
+        subscription_management_allowed:
+          type: boolean
+          title: Subscription Management Allowed
+      type: object
+      required:
+      - plans
+      - current_tenure
+      - current_execuiton_count
+      - current_price
+      - subscription_management_allowed
+      title: AllPlansResponse
+    TokenUsageResponse:
+      properties:
+        credit_type:
+          type: string
+          title: Credit Type
+        entitlement_type:
+          type: string
+          title: Entitlement Type
+          default: ''
+        unlimited:
+          type: boolean
+          title: Unlimited
+          default: false
+        total_tokens:
+          type: integer
+          title: Total Tokens
+          default: 0
+        total_consumed:
+          type: integer
+          title: Total Consumed
+          default: 0
+        total_remaining:
+          type: integer
+          title: Total Remaining
+          default: 0
+        tokens_consumed:
+          type: integer
+          title: Tokens Consumed
+          default: 0
+        tokens_included:
+          type: integer
+          title: Tokens Included
+          default: 0
+        tokens_remaining:
+          type: integer
+          title: Tokens Remaining
+          default: 0
+        overage_tokens:
+          type: integer
+          title: Overage Tokens
           default: 0
         overage_rate_cents_per_million:
           type: integer
           title: Overage Rate Cents Per Million
           default: 0
-        transactions:
-          items:
-            $ref: '#/components/schemas/WalletTransactionResponse'
-          type: array
-          title: Transactions
-          default: []
+        grant_tokens_total:
+          type: integer
+          title: Grant Tokens Total
+          default: 0
+        grant_tokens_consumed:
+          type: integer
+          title: Grant Tokens Consumed
+          default: 0
+        grant_tokens_remaining:
+          type: integer
+          title: Grant Tokens Remaining
+          default: 0
+        period_start:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period Start
+        period_end:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period End
+        wallet_balance_cents:
+          type: number
+          title: Wallet Balance Cents
+          default: 0
+        wallet_spend_this_period_cents:
+          type: number
+          title: Wallet Spend This Period Cents
+          default: 0
       type: object
       required:
-      - balance_cents
-      title: WalletResponse
-      description: Full wallet state for the UI.
+      - credit_type
+      title: TokenUsageResponse
+      description: Token usage data for UI progress bar + wallet state.
+    WalletSettingsRequest:
+      properties: {}
+      type: object
+      title: WalletSettingsRequest
+      description: Placeholder for future wallet settings.
+    WalletDepositConfirmRequest:
+      properties:
+        checkout_session_id:
+          type: string
+          title: Checkout Session Id
+      type: object
+      required:
+      - checkout_session_id
+      title: WalletDepositConfirmRequest
+      description: Frontend sends this after Stripe Checkout redirect.
+    WalletTransactionResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        transaction_type:
+          type: string
+          title: Transaction Type
+        amount_cents:
+          type: number
+          title: Amount Cents
+        balance_after_cents:
+          type: number
+          title: Balance After Cents
+        tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Tokens
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_on:
+          type: string
+          title: Created On
+      type: object
+      required:
+      - id
+      - transaction_type
+      - amount_cents
+      - balance_after_cents
+      - created_on
+      title: WalletTransactionResponse
+      description: Single wallet transaction for the ledger view.
+    DowngradeInfo:
+      properties:
+        plan_name:
+          type: string
+          title: Plan Name
+        plan_display_name:
+          type: string
+          title: Plan Display Name
+        current_subscription_end_date:
+          type: string
+          title: Current Subscription End Date
+        tenure:
+          type: string
+          title: Tenure
+      type: object
+      required:
+      - plan_name
+      - plan_display_name
+      - current_subscription_end_date
+      - tenure
+      title: DowngradeInfo
     UserCreditsResponse:
       properties:
         ok:
@@ -935,23 +1170,34 @@ components:
       - free_grant_remaining
       - plan_to_edition_map
       title: UserCreditsResponse
-    PaymentCheckoutRequest:
+    WalletResponse:
       properties:
-        plan_type:
-          type: string
-          title: Plan Type
-        tenure:
-          type: string
-          title: Tenure
-          default: month
-        discount:
+        balance_cents:
+          type: number
+          title: Balance Cents
+        balance_tokens:
           type: integer
-          title: Discount
-          default: 20
+          title: Balance Tokens
+          default: 0
+        spend_this_period_cents:
+          type: number
+          title: Spend This Period Cents
+          default: 0
+        overage_rate_cents_per_million:
+          type: integer
+          title: Overage Rate Cents Per Million
+          default: 0
+        transactions:
+          items:
+            $ref: '#/components/schemas/WalletTransactionResponse'
+          type: array
+          title: Transactions
+          default: []
       type: object
       required:
-      - plan_type
-      title: PaymentCheckoutRequest
+      - balance_cents
+      title: WalletResponse
+      description: Full wallet state for the UI.
     PostPaymentCheckoutRequest:
       properties:
         checkout_session_id:
@@ -965,138 +1211,6 @@ components:
       required:
       - checkout_session_id
       title: PostPaymentCheckoutRequest
-    WalletDepositConfirmRequest:
-      properties:
-        checkout_session_id:
-          type: string
-          title: Checkout Session Id
-      type: object
-      required:
-      - checkout_session_id
-      title: WalletDepositConfirmRequest
-      description: Frontend sends this after Stripe Checkout redirect.
-    AllPlansResponse:
-      properties:
-        plans:
-          items:
-            $ref: '#/components/schemas/app__schemas__payments__PlansResponse'
-          type: array
-          title: Plans
-        current_tenure:
-          type: string
-          title: Current Tenure
-        current_execuiton_count:
-          type: integer
-          title: Current Execuiton Count
-        current_price:
-          type: integer
-          title: Current Price
-        subscription_management_allowed:
-          type: boolean
-          title: Subscription Management Allowed
-      type: object
-      required:
-      - plans
-      - current_tenure
-      - current_execuiton_count
-      - current_price
-      - subscription_management_allowed
-      title: AllPlansResponse
-    WalletDepositRequest:
-      properties:
-        amount_cents:
-          type: integer
-          title: Amount Cents
-      type: object
-      required:
-      - amount_cents
-      title: WalletDepositRequest
-      description: Request to add funds via Stripe Checkout.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    TokenUsageResponse:
-      properties:
-        credit_type:
-          type: string
-          title: Credit Type
-        unlimited:
-          type: boolean
-          title: Unlimited
-          default: false
-        total_tokens:
-          type: integer
-          title: Total Tokens
-          default: 0
-        total_consumed:
-          type: integer
-          title: Total Consumed
-          default: 0
-        total_remaining:
-          type: integer
-          title: Total Remaining
-          default: 0
-        tokens_consumed:
-          type: integer
-          title: Tokens Consumed
-          default: 0
-        tokens_included:
-          type: integer
-          title: Tokens Included
-          default: 0
-        tokens_remaining:
-          type: integer
-          title: Tokens Remaining
-          default: 0
-        overage_tokens:
-          type: integer
-          title: Overage Tokens
-          default: 0
-        overage_rate_cents_per_million:
-          type: integer
-          title: Overage Rate Cents Per Million
-          default: 0
-        grant_tokens_total:
-          type: integer
-          title: Grant Tokens Total
-          default: 0
-        grant_tokens_consumed:
-          type: integer
-          title: Grant Tokens Consumed
-          default: 0
-        grant_tokens_remaining:
-          type: integer
-          title: Grant Tokens Remaining
-          default: 0
-        period_start:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period Start
-        period_end:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period End
-        wallet_balance_cents:
-          type: number
-          title: Wallet Balance Cents
-          default: 0
-        wallet_spend_this_period_cents:
-          type: number
-          title: Wallet Spend This Period Cents
-          default: 0
-      type: object
-      required:
-      - credit_type
-      title: TokenUsageResponse
-      description: Token usage data for UI progress bar + wallet state.
     StandardResponse:
       properties:
         ok:
@@ -1106,125 +1220,15 @@ components:
       required:
       - ok
       title: StandardResponse
-    WalletTransactionResponse:
+    DowngradeFeedback:
       properties:
-        id:
-          type: integer
-          title: Id
-        transaction_type:
+        feedback:
           type: string
-          title: Transaction Type
-        amount_cents:
-          type: number
-          title: Amount Cents
-        balance_after_cents:
-          type: number
-          title: Balance After Cents
-        tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Tokens
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        created_on:
-          type: string
-          title: Created On
+          title: Feedback
       type: object
       required:
-      - id
-      - transaction_type
-      - amount_cents
-      - balance_after_cents
-      - created_on
-      title: WalletTransactionResponse
-      description: Single wallet transaction for the ledger view.
-    WalletSettingsRequest:
-      properties: {}
-      type: object
-      title: WalletSettingsRequest
-      description: Placeholder for future wallet settings.
-    app__schemas__payments__PlansResponse:
-      properties:
-        plan_name:
-          type: string
-          title: Plan Name
-        price:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Price
-        num_executions:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Num Executions
-        token_allowance:
-          anyOf:
-          - type: integer
-          - type: string
-          title: Token Allowance
-          default: 0
-      type: object
-      required:
-      - plan_name
-      - price
-      - num_executions
-      title: PlansResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DowngradeInfo:
-      properties:
-        plan_name:
-          type: string
-          title: Plan Name
-        plan_display_name:
-          type: string
-          title: Plan Display Name
-        current_subscription_end_date:
-          type: string
-          title: Current Subscription End Date
-        tenure:
-          type: string
-          title: Tenure
-      type: object
-      required:
-      - plan_name
-      - plan_display_name
-      - current_subscription_end_date
-      - tenure
-      title: DowngradeInfo
-    PaymentCheckoutResponse:
-      properties:
-        checkout_url:
-          type: string
-          title: Checkout Url
-      type: object
-      required:
-      - checkout_url
-      title: PaymentCheckoutResponse
+      - feedback
+      title: DowngradeFeedback
   securitySchemes:
     HTTPBearer:
       type: http

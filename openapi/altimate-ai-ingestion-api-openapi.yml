@@ -162,6 +162,19 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    IngestionRequest:
+      properties:
+        dataset_type:
+          type: string
+          title: Dataset Type
+        data_store_id:
+          type: integer
+          title: Data Store Id
+      type: object
+      required:
+      - dataset_type
+      - data_store_id
+      title: IngestionRequest
     IngestionStateResponse:
       properties:
         state:
@@ -172,6 +185,33 @@ components:
           title: State
       type: object
       title: IngestionStateResponse
+    IngestionUrlResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+        task_id:
+          type: integer
+          title: Task Id
+        nonce:
+          type: string
+          format: uuid
+          title: Nonce
+      type: object
+      required:
+      - url
+      - task_id
+      - nonce
+      title: IngestionUrlResponse
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     ValidationError:
       properties:
         loc:
@@ -193,37 +233,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    IngestionRequest:
-      properties:
-        dataset_type:
-          type: string
-          title: Dataset Type
-        data_store_id:
-          type: integer
-          title: Data Store Id
-      type: object
-      required:
-      - dataset_type
-      - data_store_id
-      title: IngestionRequest
     IngestionCompleteRequest:
       properties:
         state:
@@ -244,24 +253,15 @@ components:
       - nonce
       - task_id
       title: IngestionCompleteRequest
-    IngestionUrlResponse:
+    HTTPValidationError:
       properties:
-        url:
-          type: string
-          title: Url
-        task_id:
-          type: integer
-          title: Task Id
-        nonce:
-          type: string
-          format: uuid
-          title: Nonce
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - url
-      - task_id
-      - nonce
-      title: IngestionUrlResponse
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

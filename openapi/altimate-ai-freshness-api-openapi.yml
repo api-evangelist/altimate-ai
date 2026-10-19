@@ -1,0 +1,291 @@
+openapi: 3.2.0
+info:
+  title: Fast FRESHNESS API
+  version: 0.1.0
+tags:
+- name: FRESHNESS
+paths:
+  /freshness:
+    get:
+      tags:
+      - FRESHNESS
+      summary: Get All Freshness
+      description: Freshness for every dataset the tenant has ingestion runs for.
+      operationId: get_all_freshness_freshness_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DatasetFreshness'
+                type: array
+                title: Response Get All Freshness Freshness Get
+        '400':
+          description: Invalid page parameter
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 400 Get All Freshness Freshness Get
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response 401 Get All Freshness Freshness Get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /freshness/{page}:
+    get:
+      tags:
+      - FRESHNESS
+      summary: Get Page Freshness
+      description: 'Freshness of the datasets a UI page depends on, plus a page rollup.
+
+
+        Returns 200 with null freshness (not 404) when a page''s datasets have not
+
+        loaded yet, so the frontend can render a "no data yet" state. ``missing_tables``
+
+        lists the page''s serving tables (``store:serving_table``) that have no freshness
+
+        row yet.'
+      operationId: get_page_freshness_freshness__page__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Page
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageFreshnessResponse'
+        '400':
+          description: Invalid page parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Get Page Freshness Freshness  Page  Get
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 401 Get Page Freshness Freshness  Page  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    DatasetFreshness:
+      properties:
+        dataset_type:
+          type: string
+          title: Dataset Type
+        last_update_ts:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Update Ts
+        last_attempt_ts:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Attempt Ts
+        freshness_watermark_ts:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Freshness Watermark Ts
+        freshness_age_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Freshness Age Seconds
+        measured_latency_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Measured Latency Seconds
+        last_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Status
+        source:
+          type: string
+          title: Source
+          default: global_tasks_window
+      type: object
+      required:
+      - dataset_type
+      title: DatasetFreshness
+      description: 'Freshness of a single dataset (one ingestion ``dataset_type``).
+
+
+        All timestamps are UTC. ``*_seconds`` are whole seconds. Any measured field
+
+        is ``None`` when the dataset has no completed run yet (see ``last_status``).'
+    TableFreshness:
+      properties:
+        store:
+          type: string
+          title: Store
+        serving_table:
+          type: string
+          title: Serving Table
+        pipeline:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pipeline
+        freshest_writer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Freshest Writer
+        last_update_ts:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Update Ts
+        freshness_watermark_ts:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Freshness Watermark Ts
+        freshness_age_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Freshness Age Seconds
+        measured_latency_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Measured Latency Seconds
+        last_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Status
+        source:
+          type: string
+          title: Source
+          default: global_tasks_window
+      type: object
+      required:
+      - store
+      - serving_table
+      title: TableFreshness
+      description: 'Freshness of one serving table, resolved to its freshest writer.
+
+
+        A table written by both pipelines takes the fresher of its writers
+
+        (``freshest_writer`` names the winning ``dataset_type``).'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PageFreshnessResponse:
+      properties:
+        page:
+          type: string
+          title: Page
+        oldest_watermark_ts:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Oldest Watermark Ts
+        max_freshness_age_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Freshness Age Seconds
+        last_update_ts:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Update Ts
+        tables:
+          items:
+            $ref: '#/components/schemas/TableFreshness'
+          type: array
+          title: Tables
+          default: []
+        datasets:
+          items:
+            $ref: '#/components/schemas/DatasetFreshness'
+          type: array
+          title: Datasets
+          default: []
+        missing_tables:
+          items:
+            type: string
+          type: array
+          title: Missing Tables
+          default: []
+      type: object
+      required:
+      - page
+      title: PageFreshnessResponse
+      description: 'Per-page rollup: the page is as fresh as its stalest serving table.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1548,92 +1548,220 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    QueryTag:
+    QueryJobDefinitionProcessedResponse:
       properties:
-        tag_rk:
+        job_id:
           type: string
-          title: Tag Rk
+          title: Job Id
+        step_id:
+          type: string
+          title: Step Id
+        query_parameterized_hash:
+          type: string
+          title: Query Parameterized Hash
+        query_text:
+          type: string
+          title: Query Text
+        query_name:
+          type: string
+          title: Query Name
+        query_trimmed:
+          type: string
+          title: Query Trimmed
+        avg_cost:
+          type: string
+          title: Avg Cost
+        avg_execution_time:
+          type: string
+          title: Avg Execution Time
+        p90_execution_time:
+          type: string
+          title: P90 Execution Time
+        avg_data_scanned:
+          type: string
+          title: Avg Data Scanned
+        avg_data_sent_over_network:
+          type: string
+          title: Avg Data Sent Over Network
+        avg_local_spill:
+          type: string
+          title: Avg Local Spill
+        avg_remote_spill:
+          type: string
+          title: Avg Remote Spill
+      type: object
+      required:
+      - job_id
+      - step_id
+      - query_parameterized_hash
+      - query_text
+      - query_name
+      - query_trimmed
+      - avg_cost
+      - avg_execution_time
+      - p90_execution_time
+      - avg_data_scanned
+      - avg_data_sent_over_network
+      - avg_local_spill
+      - avg_remote_spill
+      title: QueryJobDefinitionProcessedResponse
+    QueryJobExecutionProcessedResponse:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        session_id:
+          type: integer
+          title: Session Id
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        insights:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Insights
+        warehouse_name:
+          type: string
+          title: Warehouse Name
+        warehouse_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Size
+        user_name:
+          type: string
+          title: User Name
+        job_execution_time:
+          type: string
+          title: Job Execution Time
+        cost:
+          type: string
+          title: Cost
+        total_data_scanned:
+          type: string
+          title: Total Data Scanned
+        total_data_sent_over_network:
+          type: string
+          title: Total Data Sent Over Network
+        total_local_spill:
+          type: string
+          title: Total Local Spill
+        total_remote_spill:
+          type: string
+          title: Total Remote Spill
+      type: object
+      required:
+      - job_id
+      - session_id
+      - start_time
+      - end_time
+      - warehouse_name
+      - user_name
+      - job_execution_time
+      - cost
+      - total_data_scanned
+      - total_data_sent_over_network
+      - total_local_spill
+      - total_remote_spill
+      title: QueryJobExecutionProcessedResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    QueryJobFiltersFetchAllResponse:
+      properties:
+        warehouses:
+          anyOf:
+          - items:
+              anyOf:
+              - type: string
+              - type: 'null'
+            type: array
+          - type: 'null'
+          title: Warehouses
+        users:
+          anyOf:
+          - items:
+              anyOf:
+              - type: string
+              - type: 'null'
+            type: array
+          - type: 'null'
+          title: Users
+        environments:
+          anyOf:
+          - items:
+              anyOf:
+              - type: string
+              - type: 'null'
+            type: array
+          - type: 'null'
+          title: Environments
+        warehouse_sizes:
+          anyOf:
+          - items:
+              anyOf:
+              - type: string
+              - type: 'null'
+            type: array
+          - type: 'null'
+          title: Warehouse Sizes
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: QueryJobFiltersFetchAllResponse
+    QueryUpsertCustomTagRequest:
+      properties:
         reason:
           type: string
           title: Reason
-        reports:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/Report'
-            type: array
-          - type: 'null'
-          title: Reports
-        tag_icon_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Tag Icon Text
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
       type: object
       required:
-      - tag_rk
       - reason
-      title: QueryTag
-    QueryHashTextResponse:
-      properties:
-        query_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Text
-      type: object
-      title: QueryHashTextResponse
-    Report:
-      properties:
-        query_span:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Span
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        indices:
-          anyOf:
-          - items:
-              prefixItems:
-              - prefixItems:
-                - type: integer
-                - type: integer
-                type: array
-                maxItems: 2
-                minItems: 2
-              - prefixItems:
-                - type: integer
-                - type: integer
-                type: array
-                maxItems: 2
-                minItems: 2
-              type: array
-              maxItems: 2
-              minItems: 2
-            type: array
-          - type: 'null'
-          title: Indices
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-      type: object
-      title: Report
-    Page_QueryFetchAllPageResponse_:
+      title: QueryUpsertCustomTagRequest
+    Page_QueryJobExecutionProcessedResponse_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/QueryFetchAllPageResponse'
+            $ref: '#/components/schemas/QueryJobExecutionProcessedResponse'
           type: array
           title: Items
         total:
@@ -1666,111 +1794,127 @@ components:
       - total
       - page
       - size
-      title: Page[QueryFetchAllPageResponse]
-    QueryGraphDataResponse:
+      title: Page[QueryJobExecutionProcessedResponse]
+    HTTPValidationError:
       properties:
-        data:
+        detail:
           items:
-            additionalProperties: true
-            type: object
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Data
+          title: Detail
       type: object
-      required:
-      - data
-      title: QueryGraphDataResponse
-    QueryUpsertCustomTagRequest:
+      title: HTTPValidationError
+    QueryFiltersFetchAllResponse:
       properties:
-        reason:
-          type: string
-          title: Reason
-      type: object
-      required:
-      - reason
-      title: QueryUpsertCustomTagRequest
-    QueryJobProcessedResponse:
-      properties:
-        job_id:
-          type: string
-          title: Job Id
-        job_name:
+        tags:
           anyOf:
-          - type: string
+          - items:
+              $ref: '#/components/schemas/app__schemas__queries__TagObject'
+            type: array
           - type: 'null'
-          title: Job Name
-        number_of_runs:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Number Of Runs
-        annualized_cost:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Annualized Cost
-        number_of_steps:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Number Of Steps
+          title: Tags
         warehouses:
           anyOf:
           - items:
-              type: string
+              anyOf:
+              - type: string
+              - type: 'null'
             type: array
           - type: 'null'
           title: Warehouses
-        insights:
+        users:
           anyOf:
           - items:
-              type: string
+              anyOf:
+              - type: string
+              - type: 'null'
             type: array
           - type: 'null'
-          title: Insights
-        avg_total_execution_time:
+          title: Users
+        query_types:
+          anyOf:
+          - items:
+              anyOf:
+              - type: string
+              - type: 'null'
+            type: array
+          - type: 'null'
+          title: Query Types
+        roles:
+          anyOf:
+          - items:
+              anyOf:
+              - type: string
+              - type: 'null'
+            type: array
+          - type: 'null'
+          title: Roles
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
           anyOf:
           - type: string
           - type: 'null'
-          title: Avg Total Execution Time
-        median_total_execution_time:
+          title: Error Code
+        message:
           anyOf:
           - type: string
           - type: 'null'
-          title: Median Total Execution Time
-        max_total_execution_time:
+          title: Message
+        total:
           anyOf:
-          - type: string
+          - type: integer
           - type: 'null'
-          title: Max Total Execution Time
-        p90_total_execution_time:
+          title: Total
+        page:
           anyOf:
-          - type: string
+          - type: integer
           - type: 'null'
-          title: P90 Total Execution Time
-        job_frequency:
+          title: Page
+        size:
           anyOf:
-          - type: string
+          - type: integer
           - type: 'null'
-          title: Job Frequency
-        environment:
+          title: Size
+        total_pages:
           anyOf:
-          - type: string
+          - type: integer
           - type: 'null'
-          title: Environment
-        avg_local_spill:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Avg Local Spill
-        avg_remote_spill:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Avg Remote Spill
+          title: Total Pages
       type: object
       required:
-      - job_id
-      title: QueryJobProcessedResponse
+      - ok
+      title: QueryFiltersFetchAllResponse
+    QueryUpsertCustomTagResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - ok
+      title: QueryUpsertCustomTagResponse
+    Period:
+      type: integer
+      enum:
+      - 365
+      - 29
+      - 30
+      - 7
+      - 1
+      - 28
+      title: Period
     QueryGroupPageItem:
       properties:
         query_hash:
@@ -1852,6 +1996,44 @@ components:
       - users
       - warehouses
       title: QueryGroupPageItem
+    QueryGroupMetricsResponse:
+      properties:
+        num_runs:
+          type: integer
+          title: Num Runs
+        total_cost:
+          type: string
+          title: Total Cost
+        avg_execution_time:
+          type: string
+          title: Avg Execution Time
+        last_run_time:
+          type: string
+          title: Last Run Time
+        max_cost_savings:
+          type: string
+          title: Max Cost Savings
+        max_time_savings:
+          type: string
+          title: Max Time Savings
+      type: object
+      required:
+      - num_runs
+      - total_cost
+      - avg_execution_time
+      - last_run_time
+      - max_cost_savings
+      - max_time_savings
+      title: QueryGroupMetricsResponse
+    QueryHashTextResponse:
+      properties:
+        query_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Text
+      type: object
+      title: QueryHashTextResponse
     QueryObject:
       properties:
         id:
@@ -1955,88 +2137,11 @@ components:
       - query_id
       - query_type
       title: QueryObject
-    QueryJobExecutionProcessedResponse:
-      properties:
-        job_id:
-          type: string
-          title: Job Id
-        session_id:
-          type: integer
-          title: Session Id
-        start_time:
-          type: string
-          format: date-time
-          title: Start Time
-        end_time:
-          type: string
-          format: date-time
-          title: End Time
-        insights:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Insights
-        warehouse_name:
-          type: string
-          title: Warehouse Name
-        warehouse_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Size
-        user_name:
-          type: string
-          title: User Name
-        job_execution_time:
-          type: string
-          title: Job Execution Time
-        cost:
-          type: string
-          title: Cost
-        total_data_scanned:
-          type: string
-          title: Total Data Scanned
-        total_data_sent_over_network:
-          type: string
-          title: Total Data Sent Over Network
-        total_local_spill:
-          type: string
-          title: Total Local Spill
-        total_remote_spill:
-          type: string
-          title: Total Remote Spill
-      type: object
-      required:
-      - job_id
-      - session_id
-      - start_time
-      - end_time
-      - warehouse_name
-      - user_name
-      - job_execution_time
-      - cost
-      - total_data_scanned
-      - total_data_sent_over_network
-      - total_local_spill
-      - total_remote_spill
-      title: QueryJobExecutionProcessedResponse
-    Period:
-      type: integer
-      enum:
-      - 365
-      - 29
-      - 30
-      - 7
-      - 1
-      - 28
-      title: Period
-    Page_QueryJobExecutionProcessedResponse_:
+    Page_QueryGroupPageItem_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/QueryJobExecutionProcessedResponse'
+            $ref: '#/components/schemas/QueryGroupPageItem'
           type: array
           title: Items
         total:
@@ -2069,36 +2174,131 @@ components:
       - total
       - page
       - size
-      title: Page[QueryJobExecutionProcessedResponse]
-    QueryGroupMetricsResponse:
+      title: Page[QueryGroupPageItem]
+    QueryFetchResponse:
       properties:
-        num_runs:
-          type: integer
-          title: Num Runs
-        total_cost:
-          type: string
-          title: Total Cost
-        avg_execution_time:
-          type: string
-          title: Avg Execution Time
-        last_run_time:
-          type: string
-          title: Last Run Time
-        max_cost_savings:
-          type: string
-          title: Max Cost Savings
-        max_time_savings:
-          type: string
-          title: Max Time Savings
+        query:
+          anyOf:
+          - $ref: '#/components/schemas/QueryObject'
+          - type: 'null'
+        ok:
+          type: boolean
+          title: Ok
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
       type: object
       required:
-      - num_runs
-      - total_cost
-      - avg_execution_time
-      - last_run_time
-      - max_cost_savings
-      - max_time_savings
-      title: QueryGroupMetricsResponse
+      - ok
+      title: QueryFetchResponse
+    app__schemas__queries__TagObject:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        cost_savings:
+          type: boolean
+          title: Cost Savings
+        time_savings:
+          type: boolean
+          title: Time Savings
+      type: object
+      required:
+      - name
+      - description
+      - cost_savings
+      - time_savings
+      title: TagObject
+    QueryTag:
+      properties:
+        tag_rk:
+          type: string
+          title: Tag Rk
+        reason:
+          type: string
+          title: Reason
+        reports:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Report'
+            type: array
+          - type: 'null'
+          title: Reports
+        tag_icon_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tag Icon Text
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - tag_rk
+      - reason
+      title: QueryTag
+    QueryGraphDataResponse:
+      properties:
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+      type: object
+      required:
+      - data
+      title: QueryGraphDataResponse
+    Page_QueryJobProcessedResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/QueryJobProcessedResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[QueryJobProcessedResponse]
     UpdateQueryJobNameRequest:
       properties:
         job_name:
@@ -2108,6 +2308,58 @@ components:
       required:
       - job_name
       title: UpdateQueryJobNameRequest
+    Page_QueryFetchAllPageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/QueryFetchAllPageResponse'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[QueryFetchAllPageResponse]
+    QueryCustomTag:
+      properties:
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        user:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: User
+      type: object
+      title: QueryCustomTag
     QueryGroupResponse:
       properties:
         query_hash:
@@ -2170,174 +2422,89 @@ components:
       - distinct_users
       - tags
       title: QueryGroupResponse
-    QueryJobFiltersFetchAllResponse:
-      properties:
-        warehouses:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Warehouses
-        users:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Users
-        environments:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Environments
-        warehouse_sizes:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Warehouse Sizes
-        ok:
-          type: boolean
-          title: Ok
-        error_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Code
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: QueryJobFiltersFetchAllResponse
-    Page_QueryGroupPageItem_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/QueryGroupPageItem'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[QueryGroupPageItem]
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    QueryJobDefinitionProcessedResponse:
+    QueryJobProcessedResponse:
       properties:
         job_id:
           type: string
           title: Job Id
-        step_id:
-          type: string
-          title: Step Id
-        query_parameterized_hash:
-          type: string
-          title: Query Parameterized Hash
-        query_text:
-          type: string
-          title: Query Text
-        query_name:
-          type: string
-          title: Query Name
-        query_trimmed:
-          type: string
-          title: Query Trimmed
-        avg_cost:
-          type: string
-          title: Avg Cost
-        avg_execution_time:
-          type: string
-          title: Avg Execution Time
-        p90_execution_time:
-          type: string
-          title: P90 Execution Time
-        avg_data_scanned:
-          type: string
-          title: Avg Data Scanned
-        avg_data_sent_over_network:
-          type: string
-          title: Avg Data Sent Over Network
+        job_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Name
+        number_of_runs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Number Of Runs
+        annualized_cost:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Annualized Cost
+        number_of_steps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Number Of Steps
+        warehouses:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Warehouses
+        insights:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Insights
+        avg_total_execution_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avg Total Execution Time
+        median_total_execution_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Median Total Execution Time
+        max_total_execution_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Max Total Execution Time
+        p90_total_execution_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: P90 Total Execution Time
+        job_frequency:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Frequency
+        environment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Environment
         avg_local_spill:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Avg Local Spill
         avg_remote_spill:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Avg Remote Spill
       type: object
       required:
       - job_id
-      - step_id
-      - query_parameterized_hash
-      - query_text
-      - query_name
-      - query_trimmed
-      - avg_cost
-      - avg_execution_time
-      - p90_execution_time
-      - avg_data_scanned
-      - avg_data_sent_over_network
-      - avg_local_spill
-      - avg_remote_spill
-      title: QueryJobDefinitionProcessedResponse
+      title: QueryJobProcessedResponse
     UpdateQueryGroupRequest:
       properties:
         group_name:
@@ -2347,123 +2514,15 @@ components:
       required:
       - group_name
       title: UpdateQueryGroupRequest
-    QueryFiltersFetchAllResponse:
+    StandardResponse:
       properties:
-        tags:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/app__schemas__queries__TagObject'
-            type: array
-          - type: 'null'
-          title: Tags
-        warehouses:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Warehouses
-        users:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Users
-        query_types:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Query Types
-        roles:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Roles
         ok:
           type: boolean
           title: Ok
-        error_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Code
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        total:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size
-        total_pages:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total Pages
       type: object
       required:
       - ok
-      title: QueryFiltersFetchAllResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    QueryCustomTag:
-      properties:
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-        user:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: User
-      type: object
-      title: QueryCustomTag
+      title: StandardResponse
     QueryFetchAllPageResponse:
       properties:
         id:
@@ -2630,113 +2689,59 @@ components:
             type: object
           - type: 'null'
           title: Query Tag
+        execution_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Execution Status
       type: object
       required:
       - id
       - query_id
       - query_type
       title: QueryFetchAllPageResponse
-    QueryUpsertCustomTagResponse:
+    Report:
       properties:
-        ok:
-          type: boolean
-          title: Ok
-        error_code:
+        query_span:
           anyOf:
           - type: string
           - type: 'null'
-          title: Error Code
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: QueryUpsertCustomTagResponse
-    QueryFetchResponse:
-      properties:
-        query:
-          anyOf:
-          - $ref: '#/components/schemas/QueryObject'
-          - type: 'null'
-        ok:
-          type: boolean
-          title: Ok
-        error_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error Code
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      type: object
-      required:
-      - ok
-      title: QueryFetchResponse
-    app__schemas__queries__TagObject:
-      properties:
-        name:
-          type: string
-          title: Name
+          title: Query Span
         description:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Description
-        cost_savings:
-          type: boolean
-          title: Cost Savings
-        time_savings:
-          type: boolean
-          title: Time Savings
+        indices:
+          anyOf:
+          - items:
+              prefixItems:
+              - prefixItems:
+                - type: integer
+                - type: integer
+                type: array
+                maxItems: 2
+                minItems: 2
+              - prefixItems:
+                - type: integer
+                - type: integer
+                type: array
+                maxItems: 2
+                minItems: 2
+              type: array
+              maxItems: 2
+              minItems: 2
+            type: array
+          - type: 'null'
+          title: Indices
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
       type: object
-      required:
-      - name
-      - description
-      - cost_savings
-      - time_savings
-      title: TagObject
-    Page_QueryJobProcessedResponse_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/QueryJobProcessedResponse'
-          type: array
-          title: Items
-        total:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Total
-        page:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Page
-        size:
-          anyOf:
-          - type: integer
-            minimum: 1.0
-          - type: 'null'
-          title: Size
-        pages:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      title: Page[QueryJobProcessedResponse]
+      title: Report
   securitySchemes:
     HTTPBearer:
       type: http

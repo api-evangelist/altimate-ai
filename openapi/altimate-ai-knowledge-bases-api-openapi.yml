@@ -286,30 +286,48 @@ components:
       - msg
       - type
       title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
     PrivacySetting:
       type: string
       enum:
       - public
       - private
       title: PrivacySetting
-    PageModel:
+    KnowledgeBaseCreateRequest:
       properties:
-        content:
+        name:
           type: string
-          title: Content
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        content:
+          $ref: '#/components/schemas/ContentModel'
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
       type: object
       required:
+      - name
       - content
-      title: PageModel
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      title: KnowledgeBaseCreateRequest
     KnowledgeBaseResponse:
       properties:
         name:
@@ -370,6 +388,29 @@ components:
       - forked
       - is_deleted
       title: KnowledgeBaseResponse
+    ForkTemplateRequest:
+      properties:
+        template_name:
+          type: string
+          title: Template Name
+        new_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: New Name
+      type: object
+      required:
+      - template_name
+      title: ForkTemplateRequest
+    PageModel:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - content
+      title: PageModel
     KnowledgeBaseUpdateRequest:
       properties:
         name:
@@ -400,56 +441,6 @@ components:
           default: private
       type: object
       title: KnowledgeBaseUpdateRequest
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    ForkTemplateRequest:
-      properties:
-        template_name:
-          type: string
-          title: Template Name
-        new_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: New Name
-      type: object
-      required:
-      - template_name
-      title: ForkTemplateRequest
-    KnowledgeBaseCreateRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        icon:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Icon
-        content:
-          $ref: '#/components/schemas/ContentModel'
-        privacy:
-          anyOf:
-          - $ref: '#/components/schemas/PrivacySetting'
-          - type: 'null'
-          default: private
-      type: object
-      required:
-      - name
-      - content
-      title: KnowledgeBaseCreateRequest
     TemplateResponse:
       properties:
         name:
@@ -470,6 +461,15 @@ components:
       - icon
       - content
       title: TemplateResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

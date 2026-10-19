@@ -1,0 +1,363 @@
+openapi: 3.2.0
+info:
+  title: Fast INTERNAL PROMPT LIBRARY API
+  version: 0.1.0
+tags:
+- name: INTERNAL_PROMPT_LIBRARY
+paths:
+  /internal/prompts:
+    get:
+      tags:
+      - INTERNAL_PROMPT_LIBRARY
+      summary: List Prompts
+      description: 'List prompts across the global table and (optionally) one tenant.
+
+
+        MVP: cross-tenant fanout is not implemented — when `scope` needs tenant
+
+        data, `tenant` is required (the UI has a tenant selector). Results from the
+
+        global + one tenant source are merged, sorted newest-first, and paginated
+
+        in-process (bounded dataset).'
+      operationId: list_prompts_internal_prompts_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tenant
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant
+      - name: scope
+        in: query
+        required: false
+        schema:
+          type: string
+          default: all
+          title: Scope
+      - name: owner_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Type
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalListPromptsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - INTERNAL_PROMPT_LIBRARY
+      summary: Create Prompt
+      description: 'Create a global prompt or one prompt per tenant.
+
+
+        Returns a single row (frontend re-fetches the list). For multi-tenant, all
+
+        target tenants are validated up front so the write pass is effectively
+
+        all-or-nothing; the first created row is returned.'
+      operationId: create_prompt_internal_prompts_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalCreatePromptRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalPromptRow'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /internal/prompts/{prompt_id}:
+    delete:
+      tags:
+      - INTERNAL_PROMPT_LIBRARY
+      summary: Delete Prompt
+      description: Soft-delete a global or tenant prompt. 404 if not found.
+      operationId: delete_prompt_internal_prompts__prompt_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: prompt_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Prompt Id
+      - name: scope
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Scope
+      - name: tenant
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    InternalListPromptsResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/InternalPromptRow'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: InternalListPromptsResponse
+      description: Paginated list response (ListPromptsResponseSchema).
+    InternalCreatePromptRequest:
+      properties:
+        scope:
+          type: string
+          enum:
+          - global
+          - tenants
+          title: Scope
+        tenants:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tenants
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        prompt_text:
+          type: string
+          minLength: 1
+          title: Prompt Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        platform:
+          type: string
+          enum:
+          - snowflake
+          - dbt
+          - databricks
+          title: Platform
+          default: snowflake
+        placement:
+          type: string
+          enum:
+          - browse
+          - starter
+          title: Placement
+          default: browse
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+      type: object
+      required:
+      - scope
+      - prompt_text
+      title: InternalCreatePromptRequest
+      description: Create request for the superuser page (CreatePromptRequestSchema).
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    InternalPromptRow:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        prompt_text:
+          type: string
+          title: Prompt Text
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        is_public:
+          type: boolean
+          title: Is Public
+        tenant:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenant
+        created_by:
+          type: integer
+          title: Created By
+        created_by_email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created By Email
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Platform
+        placement:
+          type: string
+          enum:
+          - browse
+          - starter
+          title: Placement
+          default: browse
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+      type: object
+      required:
+      - id
+      - title
+      - prompt_text
+      - is_public
+      - created_by
+      - created_at
+      - updated_at
+      title: InternalPromptRow
+      description: One prompt row for the superuser Prompt Library page (PromptRowSchema).
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

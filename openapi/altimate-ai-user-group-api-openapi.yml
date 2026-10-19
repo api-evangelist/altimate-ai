@@ -119,56 +119,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    post:
-      tags:
-      - User Group
-      summary: Group Add
-      operationId: group_add_groups__post
-      security:
-      - HTTPBearer: []
-      - HTTPBearer: []
-      parameters:
-      - name: x-tenant
-        in: header
-        required: true
-        schema:
-          type: string
-          title: X-Tenant
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GroupAddIn'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GroupResponse'
-        '400':
-          description: Invalid data
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response 400 Group Add Groups  Post
-        '403':
-          description: Not supported for public user
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                title: Response 403 Group Add Groups  Post
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /groups/get_all:
     get:
       tags:
@@ -551,6 +501,59 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /groups/ownership_rule_file:
+    post:
+      tags:
+      - User Group
+      summary: Upload Ownership Rule File
+      operationId: upload_ownership_rule_file_groups_ownership_rule_file_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_ownership_rule_file_groups_ownership_rule_file_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Upload Ownership Rule File Groups Ownership Rule File Post
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 400 Upload Ownership Rule File Groups Ownership Rule File Post
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Upload Ownership Rule File Groups Ownership Rule File Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /groups/user_group_file:
     post:
       tags:
@@ -633,7 +636,8 @@ paths:
             application/json:
               schema:
                 type: array
-                items: {}
+                items:
+                  $ref: '#/components/schemas/AccessRuleResponse'
                 title: Response Upload File Groups Group Rules  Group Uuid  Get
         '400':
           description: Invalid data
@@ -964,7 +968,8 @@ paths:
             application/json:
               schema:
                 type: array
-                items: {}
+                items:
+                  $ref: '#/components/schemas/OwnershipRuleResponse'
                 title: Response Get Group Ownership Groups  User Group Id  Ownership Get
         '400':
           description: Invalid data
@@ -1676,34 +1681,80 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    TeamConflictDetailsResponse:
+    ValidationError:
       properties:
-        conflicts:
+        loc:
           items:
-            $ref: '#/components/schemas/TeamConflictDetailItem'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Conflicts
-        currency:
+          title: Location
+        msg:
           type: string
-          title: Currency
-        total:
-          type: integer
-          title: Total
-        page:
-          type: integer
-          title: Page
-        size:
-          type: integer
-          title: Size
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - conflicts
-      - currency
-      - total
-      - page
-      - size
-      title: TeamConflictDetailsResponse
-      description: "Response model for detailed team conflict information with pagination.\n\nSample:\n    {\n        \"conflicts\": [\n            {\n                \"team_name\": \"Team A\",\n                \"entity_type\": \"query\",\n                \"entity_name\": \"query_123\",\n                \"warehouse_name\": \"COMPUTE_WH\",\n                \"query_tag\": null,\n                \"database\": \"DB1\",\n                \"schema\": \"PUBLIC\",\n                \"query_cost\": 125.50\n            }\n        ],\n        \"currency\": \"USD\",\n        \"total\": 100,\n        \"page\": 1,\n        \"size\": 20\n    }"
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    GroupRuleRequest:
+      properties:
+        rules:
+          items:
+            $ref: '#/components/schemas/GroupRuleItem'
+          type: array
+          title: Rules
+      type: object
+      required:
+      - rules
+      title: GroupRuleRequest
+    TeamConflictDetailItem:
+      properties:
+        team_name:
+          type: string
+          title: Team Name
+        entity_type:
+          type: string
+          title: Entity Type
+        entity_name:
+          type: string
+          title: Entity Name
+        warehouse_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warehouse Name
+        query_tag:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Tag
+        database:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Database
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema
+        query_cost:
+          type: number
+          title: Query Cost
+          default: 0.0
+      type: object
+      required:
+      - team_name
+      - entity_type
+      - entity_name
+      title: TeamConflictDetailItem
+      description: Individual conflict detail item for table display.
     GroupSummaryResponse:
       properties:
         id:
@@ -1726,24 +1777,6 @@ components:
           - type: string
           - type: 'null'
           title: Description
-        users:
-          anyOf:
-          - items: {}
-            type: array
-          - type: 'null'
-          title: Users
-        user_group_rules:
-          anyOf:
-          - items: {}
-            type: array
-          - type: 'null'
-          title: User Group Rules
-        user_group_ownership:
-          anyOf:
-          - items: {}
-            type: array
-          - type: 'null'
-          title: User Group Ownership
         is_owner:
           anyOf:
           - type: boolean
@@ -1760,34 +1793,16 @@ components:
       - uuid
       - name
       title: GroupSummaryResponse
-    OwnershipConflictSummaryResponse:
+    GroupMemberRequest:
       properties:
-        conflicted_teams:
-          items:
-            type: string
-          type: array
-          title: Conflicted Teams
-        conflicted_team_count:
-          type: integer
-          title: Conflicted Team Count
-        conflicted_entity_count:
-          type: integer
-          title: Conflicted Entity Count
-        conflicted_amount:
-          type: number
-          title: Conflicted Amount
-        currency:
+        email:
           type: string
-          title: Currency
+          format: email
+          title: Email
       type: object
       required:
-      - conflicted_teams
-      - conflicted_team_count
-      - conflicted_entity_count
-      - conflicted_amount
-      - currency
-      title: OwnershipConflictSummaryResponse
-      description: "Response model for ownership rules conflict summary for a specific group.\n\nSample:\n    {\n        \"conflicted_teams\": [\"A\", \"B\"]\n        \"conflicted_team_count\": 13,\n        \"conflicted_entity_count\": 19,\n        \"conflicted_amount\": 100.0,\n        \"currency\": \"USD\"\n    }"
+      - email
+      title: GroupMemberRequest
     ConflictingTeamItem:
       properties:
         team_list:
@@ -1807,107 +1822,15 @@ components:
       - conflicting_entity_count
       - conflicting_cost
       title: ConflictingTeamItem
-    UserBasicResponse:
+    HTTPValidationError:
       properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Id
-        first_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: First Name
-        last_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Last Name
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-        is_active:
-          type: boolean
-          title: Is Active
-        is_invited:
-          type: boolean
-          title: Is Invited
-        is_onboarded:
-          type: boolean
-          title: Is Onboarded
-        is_verified:
-          type: boolean
-          title: Is Verified
-        deleted_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Deleted At
-      type: object
-      required:
-      - uuid
-      - is_active
-      - is_invited
-      - is_onboarded
-      - is_verified
-      title: UserBasicResponse
-    GroupOwnershipRequest:
-      properties:
-        ownership_rules:
+        detail:
           items:
-            $ref: '#/components/schemas/GroupOwnershipItem'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Ownership Rules
+          title: Detail
       type: object
-      required:
-      - ownership_rules
-      title: GroupOwnershipRequest
-    GroupAddIn:
-      properties:
-        name:
-          type: string
-          title: Name
-        symbol:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Symbol
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        users:
-          anyOf:
-          - items:
-              type: string
-              format: uuid
-            type: array
-          - type: 'null'
-          title: Users
-      type: object
-      required:
-      - name
-      title: GroupAddIn
-    GroupRuleRequest:
-      properties:
-        rules:
-          items:
-            $ref: '#/components/schemas/GroupRuleItem'
-          type: array
-          title: Rules
-      type: object
-      required:
-      - rules
-      title: GroupRuleRequest
+      title: HTTPValidationError
     GroupResponse:
       properties:
         id:
@@ -1939,13 +1862,15 @@ components:
           title: Users
         user_group_rules:
           anyOf:
-          - items: {}
+          - items:
+              $ref: '#/components/schemas/AccessRuleResponse'
             type: array
           - type: 'null'
           title: User Group Rules
         user_group_ownership:
           anyOf:
-          - items: {}
+          - items:
+              $ref: '#/components/schemas/OwnershipRuleResponse'
             type: array
           - type: 'null'
           title: User Group Ownership
@@ -1998,6 +1923,27 @@ components:
       - uuid
       - users
       title: GroupResponse
+    Body_upload_file_groups_user_group_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_file_groups_user_group_file_post
+    OwnershipCostPreviewRequest:
+      properties:
+        ownership_requests:
+          items:
+            $ref: '#/components/schemas/OwnershipCostPreviewItem'
+          type: array
+          title: Ownership Requests
+      type: object
+      required:
+      - ownership_requests
+      title: OwnershipCostPreviewRequest
     OwnershipConflictingTeamResponse:
       properties:
         conflicts:
@@ -2014,48 +1960,44 @@ components:
       - currency
       title: OwnershipConflictingTeamResponse
       description: "Response model for conflicting team ownership.\n\nSample:\n    {\n        \"conflicts\": [\n            {\n                \"team_list\": [\"teamA\", \"TeamB\"],\n                \"conflicting_entity_count\": 55,\n                \"conflicting_cost\": 150.90\n            }\n        ],\n        \"currency\": \"USD\"\n    }"
-    TeamConflictDetailItem:
+    TeamConflictDetailsResponse:
       properties:
-        team_name:
+        conflicts:
+          items:
+            $ref: '#/components/schemas/TeamConflictDetailItem'
+          type: array
+          title: Conflicts
+        currency:
           type: string
-          title: Team Name
-        entity_type:
-          type: string
-          title: Entity Type
-        entity_name:
-          type: string
-          title: Entity Name
-        warehouse_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Warehouse Name
-        query_tag:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Query Tag
-        database:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Database
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Schema
-        query_cost:
-          type: number
-          title: Query Cost
-          default: 0.0
+          title: Currency
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
       type: object
       required:
-      - team_name
-      - entity_type
-      - entity_name
-      title: TeamConflictDetailItem
-      description: Individual conflict detail item for table display.
+      - conflicts
+      - currency
+      - total
+      - page
+      - size
+      title: TeamConflictDetailsResponse
+      description: "Response model for detailed team conflict information with pagination.\n\nSample:\n    {\n        \"conflicts\": [\n            {\n                \"team_name\": \"Team A\",\n                \"entity_type\": \"query\",\n                \"entity_name\": \"query_123\",\n                \"warehouse_name\": \"COMPUTE_WH\",\n                \"query_tag\": null,\n                \"database\": \"DB1\",\n                \"schema\": \"PUBLIC\",\n                \"query_cost\": 125.50\n            }\n        ],\n        \"currency\": \"USD\",\n        \"total\": 100,\n        \"page\": 1,\n        \"size\": 20\n    }"
+    Body_upload_ownership_rule_file_groups_ownership_rule_file_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_ownership_rule_file_groups_ownership_rule_file_post
     GroupRuleItem:
       properties:
         entity_type:
@@ -2067,148 +2009,151 @@ components:
         type:
           type: string
           title: Type
+        tag_key:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Tag Key
       type: object
       required:
       - entity_type
       - entity
       - type
       title: GroupRuleItem
-    OwnershipCostPreviewResponse:
+    UserBasicResponse:
       properties:
-        amount:
-          type: number
-          title: Amount
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        is_active:
+          type: boolean
+          title: Is Active
+        is_invited:
+          type: boolean
+          title: Is Invited
+        is_onboarded:
+          type: boolean
+          title: Is Onboarded
+        is_verified:
+          type: boolean
+          title: Is Verified
+        deleted_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deleted At
+      type: object
+      required:
+      - uuid
+      - is_active
+      - is_invited
+      - is_onboarded
+      - is_verified
+      title: UserBasicResponse
+    OwnershipConflictSummaryResponse:
+      properties:
+        conflicted_teams:
+          items:
+            type: string
+          type: array
+          title: Conflicted Teams
+        conflicted_team_count:
+          type: integer
+          title: Conflicted Team Count
+        conflicted_entity_count:
+          type: integer
+          title: Conflicted Entity Count
         conflicted_amount:
           type: number
           title: Conflicted Amount
-        conflicted_entities_count:
-          type: integer
-          title: Conflicted Entities Count
         currency:
           type: string
           title: Currency
       type: object
       required:
-      - amount
+      - conflicted_teams
+      - conflicted_team_count
+      - conflicted_entity_count
       - conflicted_amount
-      - conflicted_entities_count
       - currency
-      title: OwnershipCostPreviewResponse
-    OwnershipCostPreviewItem:
+      title: OwnershipConflictSummaryResponse
+      description: "Response model for ownership rules conflict summary for a specific group.\n\nSample:\n    {\n        \"conflicted_teams\": [\"A\", \"B\"]\n        \"conflicted_team_count\": 13,\n        \"conflicted_entity_count\": 19,\n        \"conflicted_amount\": 100.0,\n        \"currency\": \"USD\"\n    }"
+    OwnershipRuleResponse:
       properties:
+        id:
+          type: integer
+          title: Id
+        user_group_id:
+          type: integer
+          title: User Group Id
         entity_type:
           type: string
           title: Entity Type
-        ownership_rules:
-          items:
-            $ref: '#/components/schemas/GroupOwnershipItem'
-          type: array
-          title: Ownership Rules
-      type: object
-      required:
-      - entity_type
-      - ownership_rules
-      title: OwnershipCostPreviewItem
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    StandardResponse:
-      properties:
-        ok:
+        ownership_rule:
+          additionalProperties: true
+          type: object
+          title: Ownership Rule
+        is_active:
           type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    GroupEditIn:
-      properties:
-        name:
+          title: Is Active
+        is_deleted:
+          type: boolean
+          title: Is Deleted
+        created_by:
+          type: string
+          title: Created By
+        updated_by:
+          type: string
+          title: Updated By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        grouping:
           anyOf:
           - type: string
           - type: 'null'
-          title: Name
-        symbol:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Symbol
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        users:
-          anyOf:
-          - items:
-              type: string
-              format: uuid
-            type: array
-          - type: 'null'
-          title: Users
-      type: object
-      title: GroupEditIn
-    Body_upload_file_groups_group_rule_file_post:
-      properties:
-        file:
-          type: string
-          format: binary
-          title: File
+          title: Grouping
       type: object
       required:
-      - file
-      title: Body_upload_file_groups_group_rule_file_post
-    OwnershipCostPreviewRequest:
-      properties:
-        ownership_requests:
-          items:
-            $ref: '#/components/schemas/OwnershipCostPreviewItem'
-          type: array
-          title: Ownership Requests
-      type: object
-      required:
-      - ownership_requests
-      title: OwnershipCostPreviewRequest
-    CreateGroupRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - name
-      - description
-      title: CreateGroupRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - id
+      - user_group_id
+      - entity_type
+      - ownership_rule
+      - is_active
+      - is_deleted
+      - created_by
+      - updated_by
+      - created_at
+      - updated_at
+      title: OwnershipRuleResponse
     Page_GroupSummaryResponse_:
       properties:
         items:
@@ -2247,16 +2192,6 @@ components:
       - page
       - size
       title: Page[GroupSummaryResponse]
-    GroupMemberRequest:
-      properties:
-        email:
-          type: string
-          format: email
-          title: Email
-      type: object
-      required:
-      - email
-      title: GroupMemberRequest
     GroupOwnershipItem:
       properties:
         entity_type:
@@ -2282,7 +2217,94 @@ components:
       - condition_value
       - condition_key_value
       title: GroupOwnershipItem
-    Body_upload_file_groups_user_group_file_post:
+    CreateGroupRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - name
+      - description
+      title: CreateGroupRequest
+    OwnershipCostPreviewResponse:
+      properties:
+        amount:
+          type: number
+          title: Amount
+        conflicted_amount:
+          type: number
+          title: Conflicted Amount
+        conflicted_entities_count:
+          type: integer
+          title: Conflicted Entities Count
+        currency:
+          type: string
+          title: Currency
+      type: object
+      required:
+      - amount
+      - conflicted_amount
+      - conflicted_entities_count
+      - currency
+      title: OwnershipCostPreviewResponse
+    AccessRuleResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        user_group_id:
+          type: integer
+          title: User Group Id
+        entity_type:
+          type: string
+          title: Entity Type
+        rule:
+          additionalProperties: true
+          type: object
+          title: Rule
+        is_active:
+          type: boolean
+          title: Is Active
+        is_deleted:
+          type: boolean
+          title: Is Deleted
+        created_by:
+          type: string
+          title: Created By
+        updated_by:
+          type: string
+          title: Updated By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        grouping:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Grouping
+      type: object
+      required:
+      - id
+      - user_group_id
+      - entity_type
+      - rule
+      - is_active
+      - is_deleted
+      - created_by
+      - updated_by
+      - created_at
+      - updated_at
+      title: AccessRuleResponse
+    Body_upload_file_groups_group_rule_file_post:
       properties:
         file:
           type: string
@@ -2291,7 +2313,69 @@ components:
       type: object
       required:
       - file
-      title: Body_upload_file_groups_user_group_file_post
+      title: Body_upload_file_groups_group_rule_file_post
+    OwnershipCostPreviewItem:
+      properties:
+        entity_type:
+          type: string
+          title: Entity Type
+        ownership_rules:
+          items:
+            $ref: '#/components/schemas/GroupOwnershipItem'
+          type: array
+          title: Ownership Rules
+      type: object
+      required:
+      - entity_type
+      - ownership_rules
+      title: OwnershipCostPreviewItem
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    GroupOwnershipRequest:
+      properties:
+        ownership_rules:
+          items:
+            $ref: '#/components/schemas/GroupOwnershipItem'
+          type: array
+          title: Ownership Rules
+      type: object
+      required:
+      - ownership_rules
+      title: GroupOwnershipRequest
+    GroupEditIn:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        symbol:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Symbol
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        users:
+          anyOf:
+          - items:
+              type: string
+              format: uuid
+            type: array
+          - type: 'null'
+          title: Users
+      type: object
+      title: GroupEditIn
   securitySchemes:
     HTTPBearer:
       type: http

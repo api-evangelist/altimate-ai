@@ -1,0 +1,3084 @@
+openapi: 3.2.0
+info:
+  title: Fast APPS V2 API
+  version: 0.1.0
+tags:
+- name: APPS_V2
+paths:
+  /api/v2/freshness/internal/tenants:
+    get:
+      tags:
+      - APPS_V2
+      summary: List Internal Tenants
+      description: 'Tenants the dashboard can inspect, for the selector.
+
+
+        Reads the company registry, not the freshness view: the registry is a
+
+        small table while a fleet-wide `DISTINCT` over the view is a full rollup
+
+        (~10s measured on prod).'
+      operationId: list_internal_tenants_api_v2_freshness_internal_tenants_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalTenantListResponse'
+        '403':
+          description: Internal dashboard — Altimate staff only
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Internal Tenants Api V2 Freshness Internal Tenants Get
+        '404':
+          description: Unknown tenant
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 List Internal Tenants Api V2 Freshness Internal Tenants Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/freshness/internal/detail:
+    get:
+      tags:
+      - APPS_V2
+      summary: Get Internal Freshness Detail
+      description: 'Both freshness grains for one tenant, in a single call.
+
+
+        `groups` is the FULL rollup, including the groups in
+
+        `apps.freshness.grouping.HIDDEN_FROM_TENANT_GROUPS`; the tenant-facing
+
+        feed filters those out at the endpoint, so this response is a superset of
+
+        what the tenant panel renders. `datasets` is every `dataset_type` behind
+
+        it, including the ones the taxonomy excludes (flagged `excluded`, with a
+
+        null `group_key`).'
+      operationId: get_internal_freshness_detail_api_v2_freshness_internal_detail_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: tenant_name
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+          description: Tenant to inspect. NOT named `tenant` — see module docstring.
+          title: Tenant Name
+        description: Tenant to inspect. NOT named `tenant` — see module docstring.
+      - name: x-tenant
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Tenant
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalFreshnessDetailResponse'
+        '403':
+          description: Internal dashboard — Altimate staff only
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Internal Freshness Detail Api V2 Freshness Internal Detail Get
+        '404':
+          description: Unknown tenant
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Internal Freshness Detail Api V2 Freshness Internal Detail Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/datasets:
+    get:
+      tags:
+      - APPS_V2
+      summary: List Datasets Endpoint
+      description: 'List datasets visible on the requesting tenant''s platform whose
+
+        feature flag (if any) is on for the tenant.'
+      operationId: list_datasets_endpoint_api_v2_datasets_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetDescriptor'
+                title: Response List Datasets Endpoint Api V2 Datasets Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Datasets Endpoint Api V2 Datasets Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/datasets/{name}:
+    get:
+      tags:
+      - APPS_V2
+      summary: Get Dataset Endpoint
+      description: 'Return a single dataset''s descriptor.
+
+
+        Resolved via `visible_dataset` — the SAME platform-visibility (and
+
+        feature-flag) gate `POST /datasets/{name}/query` uses — so a dataset
+
+        registered for another platform 404s (`DATASET_NOT_FOUND`), and a
+
+        flag-gated dataset with its flag off 404s (`FEATURE_NOT_ENABLED`),
+
+        rather than either confirming its existence to a caller who should not
+
+        see it. Route ordering matters here: this route is declared AFTER `GET
+
+        /datasets` (the bare-path list endpoint) but that is not what prevents
+
+        shadowing — `/datasets/{name}` requires an extra path segment that a
+
+        request for plain `/datasets` never supplies, so the two can never
+
+        collide regardless of registration order. Verified by the throwaway
+
+        script''s `TestClient` check that both still resolve.'
+      operationId: get_dataset_endpoint_api_v2_datasets__name__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetDescriptor'
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Dataset Endpoint Api V2 Datasets  Name  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/datasets/{name}/query:
+    post:
+      tags:
+      - APPS_V2
+      summary: Query Dataset Endpoint
+      description: 'Run a dataset query and return the engine''s column/row envelope.
+
+
+        `timezone` (from the `x-timezone` header, default `"UTC"`) buckets any
+
+        `granularity`-based trend in the caller''s timezone, matching v1''s `GET
+
+        /warehouse/cost/v2/` — see `apps.engine.sql_builder.SqlBuilder.date_trunc`
+
+        for how it stays a bound parameter rather than an interpolated value.'
+      operationId: query_dataset_endpoint_api_v2_datasets__name__query_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetQueryRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetEnvelope'
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Query Dataset Endpoint Api V2 Datasets  Name  Query Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/datasets/{name}/export:
+    post:
+      tags:
+      - APPS_V2
+      summary: Export Dataset Endpoint
+      description: 'Export a dataset''s full RBAC-scoped result as a CSV download.
+
+
+        Reuses the exact query pipeline `POST /datasets/{name}/query` runs
+
+        (`apps.engine.service.run_dataset_export`, via `run_dataset_query(...,
+
+        export_mode=True)`) — same RBAC resolve, same filter/sort/search
+
+        normalization — so an export can never disagree with what the table
+
+        endpoint would have shown for an identical request. No separate
+
+        freshness endpoint or field here: freshness is delivered on the query
+
+        endpoints'' own response metas, not on a one-shot CSV download.'
+      operationId: export_dataset_endpoint_api_v2_datasets__name__export_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetQueryRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Export Dataset Endpoint Api V2 Datasets  Name  Export Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/charts:
+    get:
+      tags:
+      - APPS_V2
+      summary: List Charts Endpoint
+      description: 'List charts whose dataset is visible on the requesting tenant''s
+
+        platform and whose dataset''s feature flag (if any) is on.'
+      operationId: list_charts_endpoint_api_v2_charts_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChartDescriptor'
+                title: Response List Charts Endpoint Api V2 Charts Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Charts Endpoint Api V2 Charts Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/charts/{name}/query:
+    post:
+      tags:
+      - APPS_V2
+      summary: Query Chart Endpoint
+      description: 'Run a chart''s underlying dataset query.
+
+
+        Returns the chart descriptor plus a chart-shaped envelope
+
+        (`columns`/`rows`/`meta`). `timezone` is threaded through exactly like
+
+        `apps.api.datasets.query_dataset_endpoint` — see that endpoint''s
+
+        docstring.
+
+
+        ONE execution path, per-endpoint PROJECTION: this endpoint never runs
+
+        its own query — it calls the exact same `run_dataset_query` a plain
+
+        dataset query uses, then reshapes that result''s `DatasetEnvelope` into
+
+        a `ChartEnvelope` (`chart_columns` instead of `columns_descriptors`,
+
+        `ChartMeta` instead of `DatasetMeta`). A chart and its dataset can never
+
+        disagree about RBAC, filters, or row data — only presentation differs.'
+      operationId: query_chart_endpoint_api_v2_charts__name__query_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChartQueryRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChartEnvelope'
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Query Chart Endpoint Api V2 Charts  Name  Query Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/filters:
+    get:
+      tags:
+      - APPS_V2
+      summary: List Filters Endpoint
+      description: 'List a dataset''s (or chart''s/summary''s underlying dataset''s) filter
+
+        descriptors.'
+      operationId: list_filters_endpoint_api_v2_filters_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: dataset
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dataset
+      - name: chart
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chart
+      - name: summary
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FilterDescriptor'
+                title: Response List Filters Endpoint Api V2 Filters Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Filters Endpoint Api V2 Filters Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/filters/{key}/options:
+    get:
+      tags:
+      - APPS_V2
+      summary: Filter Options Endpoint
+      description: 'List distinct values for one of a dataset''s (or a summary''s PRIMARY
+
+        dataset''s) filters, paginated.
+
+
+        `search` is a case-insensitive prefix match applied server-side in SQL.
+
+        Exactly one of `dataset`/`summary` is required (same rule as
+
+        `list_filters_endpoint`). Unknown `dataset`/`summary` -> 404.
+
+
+        For `summary`, `key` is checked against `summary.filters` — the
+
+        summary''s OWN published vocabulary, not the resolved dataset''s —
+
+        BEFORE anything else runs: a key the summary never declared must 400
+
+        `UNKNOWN_FILTER_KEY` even if it happens to also be a valid filter on
+
+        the summary''s primary dataset, mirroring the same-named gate in
+
+        `apps.engine.service.run_summary_query`. Once past that gate, options
+
+        are listed from the PRIMARY dataset via the existing
+
+        `distinct_filter_options` — the primary is authoritative because its
+
+        own RBAC gate (`apps.rbac.resolve_dataset_rbac`, applied inside that
+
+        call) scopes the option list, so the dropdown can never show a value
+
+        the caller may not see.
+
+
+        `filters` is a JSON object of the same shape the dataset query''s own
+
+        `filters` body field takes (`{"warehouse_id": ["abc"]}`) — a query
+
+        param rather than a body because this is a GET. Only the dataset''s
+
+        `required=True` filters are applied from it (see
+
+        `distinct_filter_options`); the rest are accepted and ignored so the
+
+        caller can send one filter map to both endpoints. Malformed JSON, a
+
+        non-object, or a value that is not a list of strings -> 400
+
+        `FILTER_PARAM_INVALID`; a MISSING required filter -> 400
+
+        `FILTER_REQUIRED` from the engine.
+
+
+        `timezone` (the `x-timezone` header, default `"UTC"`) cuts the option
+
+        scan''s window at the caller''s midnights — the same header the dataset
+
+        query honours, so both see the same rows.'
+      operationId: filter_options_endpoint_api_v2_filters__key__options_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Key
+      - name: dataset
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dataset
+      - name: summary
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+      - name: start_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          title: Start Date
+      - name: end_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          title: End Date
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Size
+      - name: filters
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filters
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterOptionsEnvelope'
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Filter Options Endpoint Api V2 Filters  Key  Options Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/summaries:
+    get:
+      tags:
+      - APPS_V2
+      summary: List Summaries Endpoint
+      description: 'List summaries visible on the requesting tenant''s platform whose
+
+        feature flag (if any) is on for the tenant.'
+      operationId: list_summaries_endpoint_api_v2_summaries_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SummaryDescriptor'
+                title: Response List Summaries Endpoint Api V2 Summaries Get
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 List Summaries Endpoint Api V2 Summaries Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/summaries/{name}:
+    get:
+      tags:
+      - APPS_V2
+      summary: Get Summary Endpoint
+      description: 'Return a single summary''s descriptor.
+
+
+        Resolved via `visible_summary` — the SAME platform-visibility (and
+
+        feature-flag) gate `POST /summaries/{name}/query` uses — so a summary
+
+        registered for another platform 404s (`SUMMARY_NOT_FOUND`), and a
+
+        flag-gated summary with its flag off 404s (`FEATURE_NOT_ENABLED`),
+
+        rather than either confirming its existence to a caller who should not
+
+        see it.'
+      operationId: get_summary_endpoint_api_v2_summaries__name__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryDescriptor'
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Summary Endpoint Api V2 Summaries  Name  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/summaries/{name}/query:
+    post:
+      tags:
+      - APPS_V2
+      summary: Query Summary Endpoint
+      description: 'Run a summary''s part datasets and return the merged metric envelope.
+
+
+        Reuses `DatasetQueryRequest` — a summary takes the same date window and
+
+        filters as a dataset query, applied identically to every part. `timezone`
+
+        is threaded through exactly like `apps.api.datasets.query_dataset_endpoint`
+
+        — see that endpoint''s docstring.'
+      operationId: query_summary_endpoint_api_v2_summaries__name__query_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetQueryRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryEnvelope'
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Query Summary Endpoint Api V2 Summaries  Name  Query Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v2/freshness/groups:
+    get:
+      tags:
+      - APPS_V2
+      summary: Get Grouped Freshness
+      description: 'Tenant''s datasets bucketed into UI display groups.
+
+
+        Every timestamp is unix epoch seconds; `generated_at` carries the server
+
+        clock so the client can render relative times against it. Internal
+
+        pipeline dataset_types (ingestion-plumbing sentinels, config-sync jobs)
+
+        are excluded from the response entirely; dbt transform runs classify to
+
+        "altimate_transforms", which is hidden from this feed. A databricks
+
+        tenant always gets `groups: []` —
+
+        the databricks taxonomy classifies every dataset_type to `None` until it
+
+        is authored. Groups in `HIDDEN_FROM_TENANT_GROUPS` are omitted from this
+
+        feed and remain visible only on the internal dashboard.
+
+
+        Gated by the `enableSystemStatus` tenant_info flag: a tenant without it
+
+        gets 404, not an empty payload, so a disabled feature is indistinguishable
+
+        from one that was never built.'
+      operationId: get_grouped_freshness_api_v2_freshness_groups_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: x-tenant
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Tenant
+      - name: x-user-group-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-User-Group-Id
+      - name: x-timezone
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Timezone
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupedFreshnessResponse'
+        '403':
+          description: Not supported for public user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 403 Get Grouped Freshness Api V2 Freshness Groups Get
+        '404':
+          description: System Status is not enabled for this tenant
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response 404 Get Grouped Freshness Api V2 Freshness Groups Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PaletteColorDescriptor:
+      properties:
+        light:
+          type: string
+          title: Light
+        dark:
+          type: string
+          title: Dark
+      type: object
+      required:
+      - light
+      - dark
+      title: PaletteColorDescriptor
+      description: 'Wire form of `apps.specs.palette.PaletteColor` — a color stepped per
+
+        surface. Colors live ONLY in descriptors; the frontend never hardcodes
+
+        a chart color.'
+    apps__freshness__schemas__InternalTenant:
+      properties:
+        name:
+          type: string
+          title: Name
+        platform:
+          type: string
+          title: Platform
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - name
+      - platform
+      - status
+      title: InternalTenant
+      description: One selectable tenant in the internal Freshness dashboard.
+    LinkDescriptor:
+      properties:
+        template:
+          type: string
+          title: Template
+      type: object
+      required:
+      - template
+      title: LinkDescriptor
+      description: 'Wire form of `apps.specs.links.LinkSpec` — the in-app route template
+
+        a header (or other) column''s row value resolves into, per that module''s
+
+        docstring.'
+    ChartDescriptor:
+      properties:
+        name:
+          type: string
+          title: Name
+        label:
+          type: string
+          title: Label
+        dataset:
+          type: string
+          title: Dataset
+        chart_type:
+          type: string
+          title: Chart Type
+        x:
+          type: string
+          title: X
+        series:
+          items:
+            type: string
+          type: array
+          title: Series
+        stacked:
+          type: boolean
+          title: Stacked
+        filters:
+          items:
+            $ref: '#/components/schemas/FilterDescriptor'
+          type: array
+          title: Filters
+        related:
+          $ref: '#/components/schemas/RelatedDescriptor'
+        reference:
+          anyOf:
+          - $ref: '#/components/schemas/ReferenceLineDescriptor'
+          - type: 'null'
+        series_colors:
+          additionalProperties:
+            $ref: '#/components/schemas/PaletteColorDescriptor'
+          type: object
+          title: Series Colors
+        series_from:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Series From
+        show_change:
+          type: boolean
+          title: Show Change
+          default: false
+        show_total:
+          type: boolean
+          title: Show Total
+          default: true
+        show_zero:
+          type: boolean
+          title: Show Zero
+          default: false
+        caption:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Caption
+        stack_offset:
+          type: string
+          title: Stack Offset
+          default: none
+        secondary_axis_series:
+          items:
+            type: string
+          type: array
+          title: Secondary Axis Series
+          default: []
+        estimate_pairs:
+          items:
+            $ref: '#/components/schemas/EstimatePairDescriptor'
+          type: array
+          title: Estimate Pairs
+          default: []
+        tooltip_series:
+          items:
+            type: string
+          type: array
+          title: Tooltip Series
+          default: []
+        tooltip_estimate_pairs:
+          items:
+            $ref: '#/components/schemas/EstimatePairDescriptor'
+          type: array
+          title: Tooltip Estimate Pairs
+          default: []
+        tooltip_decomposes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tooltip Decomposes
+      type: object
+      required:
+      - name
+      - label
+      - dataset
+      - chart_type
+      - x
+      - series
+      - stacked
+      - filters
+      - related
+      - reference
+      - series_colors
+      title: ChartDescriptor
+    GroupFreshness:
+      properties:
+        key:
+          type: string
+          title: Key
+        label:
+          type: string
+          title: Label
+        dataset_count:
+          type: integer
+          title: Dataset Count
+        retired_count:
+          type: integer
+          title: Retired Count
+          default: 0
+        last_refreshed_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Refreshed At
+        watermark_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Watermark At
+        oldest_watermark_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Oldest Watermark At
+        stalest_dataset_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stalest Dataset Type
+        has_failures:
+          type: boolean
+          title: Has Failures
+          default: false
+        datasets:
+          items:
+            $ref: '#/components/schemas/DatasetFreshnessItem'
+          type: array
+          title: Datasets
+          default: []
+      type: object
+      required:
+      - key
+      - label
+      - dataset_count
+      title: GroupFreshness
+      description: 'One tenant-facing bucket of dataset freshness.
+
+
+        `last_refreshed_at` (MAX over members) is the tile''s headline: when this
+
+        group last received data. `oldest_watermark_at` (MIN over members) plus
+
+        `stalest_dataset_type` expose the laggiest member so a client can show a
+
+        lag warning, WITHOUT that member''s age becoming the headline — a
+
+        decommissioned loader''s final run sits in `global_tasks` forever, so
+
+        gating the tile on it reports a retired pipeline as a stale one.
+
+
+        Every field except `retired_count` describes the group''s LIVE members
+
+        only. Retired ones are counted and otherwise ignored, so a group cannot
+
+        report the age, watermark, or failure of a pipeline that is no longer
+
+        scheduled. `dataset_count` is therefore what the tenant actually has
+
+        today, not what they have ever had.'
+    DecorationDescriptor:
+      properties:
+        display:
+          type: string
+          title: Display
+        tone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tone
+        values:
+          items:
+            $ref: '#/components/schemas/ValueStyleDescriptor'
+          type: array
+          title: Values
+        thresholds:
+          items:
+            $ref: '#/components/schemas/ThresholdDescriptor'
+          type: array
+          title: Thresholds
+        hash_column:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Hash Column
+      type: object
+      required:
+      - display
+      - values
+      - thresholds
+      title: DecorationDescriptor
+      description: 'Wire form of `apps.specs.decorations.Decoration` — see that module''s
+
+        docstring for the core design rule (semantic `Tone`, never a colour)
+
+        this descriptor carries onto the wire unchanged.'
+    InternalDatasetFreshness:
+      properties:
+        dataset_type:
+          type: string
+          title: Dataset Type
+        group_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group Key
+        group_label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group Label
+        excluded:
+          type: boolean
+          title: Excluded
+          default: false
+        retired:
+          type: boolean
+          title: Retired
+          default: false
+        last_refreshed_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Refreshed At
+        last_attempt_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Attempt At
+        watermark_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Watermark At
+        last_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Status
+        failed:
+          type: boolean
+          title: Failed
+          default: false
+      type: object
+      required:
+      - dataset_type
+      title: InternalDatasetFreshness
+      description: 'One `dataset_type`, with the classification the tenant view hides.
+
+
+        `group_key` is `None` for dataset_types the taxonomy deliberately excludes
+
+        (ingestion-plumbing sentinels, config-sync jobs). The tenant-facing feed
+
+        drops those rows entirely; the internal view keeps them and flags them via
+
+        `excluded`, because "why is this dataset missing from the panel" is the
+
+        question this dashboard exists to answer.
+
+
+        `excluded` does not cover every way a dataset can be absent from the
+
+        tenant panel: a dataset can be classified (`excluded=False`) into a group
+
+        that is itself in `apps.freshness.grouping.HIDDEN_FROM_TENANT_GROUPS`
+
+        (e.g. `snowflake_dbt_all`, `group_key="altimate_transforms"`), which the
+
+        tenant feed also never renders. A staff reader must check `group_key`
+
+        against `HIDDEN_FROM_TENANT_GROUPS`, not just `excluded`, to know whether
+
+        a tenant actually sees this dataset''s group.
+
+
+        `retired` marks a pipeline that is no longer scheduled, derived from
+
+        `last_attempt_at` rather than `last_refreshed_at`. These rows are kept
+
+        (an operator asking "where did this dataset go" needs to find it) but they
+
+        are not stale and must not be counted or coloured as such — `failed` is
+
+        likewise the LIVE failure flag, false for a retired pipeline whose final
+
+        attempt happened to fail.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    GroupedFreshnessResponse:
+      properties:
+        generated_at:
+          type: integer
+          title: Generated At
+        groups:
+          items:
+            $ref: '#/components/schemas/GroupFreshness'
+          type: array
+          title: Groups
+          default: []
+      type: object
+      required:
+      - generated_at
+      title: GroupedFreshnessResponse
+      description: 'Tenant''s datasets bucketed into UI display groups.
+
+
+        `generated_at` is the server clock (unix seconds) at response time — the
+
+        reference every relative rendering should be computed against, so a
+
+        client with a skewed clock cannot render "updated in 3 hours".'
+    FilterOptionsMeta:
+      properties:
+        count:
+          type: integer
+          title: Count
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - count
+      - page
+      - size
+      - has_more
+      title: FilterOptionsMeta
+      description: 'Metadata for a `FilterOptionsEnvelope`.
+
+
+        `count` is this PAGE''s option count (`len(options)`), never a total
+
+        across all pages — see `FilterOptionsEnvelope` for why no total is
+
+        computed. `page`/`size` echo back the resolved request values, the same
+
+        rule `DatasetMeta.page`/`size` follow.'
+    OptionDescriptor:
+      properties:
+        value:
+          type: string
+          title: Value
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+      type: object
+      required:
+      - value
+      title: OptionDescriptor
+      description: 'Wire form of one `apps.specs.filters.OptionDef` — a member of a
+
+        filter''s static, closed vocabulary. `label` is the display text
+
+        (`None` -> the client shows `value` itself).'
+    ThresholdDescriptor:
+      properties:
+        tone:
+          type: string
+          title: Tone
+        min:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min
+        max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Max
+      type: object
+      required:
+      - tone
+      title: ThresholdDescriptor
+      description: 'Wire form of `apps.specs.decorations.Threshold` — a `Tone` for a
+
+        numeric `[min, max)` range (`min` inclusive, `max` exclusive).'
+    ComposePartDescriptor:
+      properties:
+        column:
+          type: string
+          title: Column
+        tone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tone
+      type: object
+      required:
+      - column
+      title: ComposePartDescriptor
+      description: 'Wire form of `apps.specs.compose.ComposePart` — one value within a
+
+        composed line, from the row''s `column` entry, formatted with THAT
+
+        column''s type/unit; `tone` (a `Tone` `.value` string) emphasizes it.'
+    ChartEnvelope:
+      properties:
+        chart:
+          $ref: '#/components/schemas/ChartDescriptor'
+        columns:
+          items:
+            $ref: '#/components/schemas/ChartColumn'
+          type: array
+          title: Columns
+        rows:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Rows
+        meta:
+          $ref: '#/components/schemas/ChartMeta'
+      type: object
+      required:
+      - chart
+      - columns
+      - rows
+      - meta
+      title: ChartEnvelope
+      description: 'A chart query response: its descriptor plus a chart-shaped result.
+
+
+        `columns` is `list[ChartColumn]`, not `list[ColumnDescriptor]` — a chart
+
+        plots values, it never renders a table, so it does not carry the
+
+        table-only affordances (`sortable`/`filterable`/`edit`/`link`/...) a
+
+        `ColumnDescriptor` has. `meta` is `ChartMeta`, not `DatasetMeta`, for the
+
+        same reason: see that class''s docstring for why pagination and
+
+        `dataset` fields do not belong here.'
+    ReferenceValue:
+      properties:
+        label:
+          type: string
+          title: Label
+        of:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Of
+        value:
+          type: number
+          title: Value
+      type: object
+      required:
+      - label
+      - of
+      - value
+      title: ReferenceValue
+      description: 'A resolved `apps.specs.charts.ReferenceLine`, computed by
+
+        `resolve_reference` — from one chart query''s rows in percentile mode,
+
+        or directly from the declaration in fixed-value mode (see that
+
+        function''s docstring). `of` is `None` in fixed-value mode: there is no
+
+        column the value was computed over.'
+    SummaryEnvelope:
+      properties:
+        metrics:
+          additionalProperties:
+            $ref: '#/components/schemas/MetricValue'
+          type: object
+          title: Metrics
+        last_event_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Event Time
+      type: object
+      required:
+      - metrics
+      title: SummaryEnvelope
+      description: 'A summary response: just its metrics.
+
+
+        No `meta`: every field on `DatasetMeta` is a TABLE concept. `row_count`
+
+        is always 1, and `total`/`page`/`size`/`pages`/`prev`/`next` are always
+
+        `null` — a summary has no pagination to describe, because there is
+
+        nothing to page through. Emitting them invited a client to write
+
+        pagination handling for an endpoint that can never have any. The
+
+        dataset name is already known to the caller: it is in the URL they
+
+        requested.'
+    ComposeLineDescriptor:
+      properties:
+        parts:
+          items:
+            $ref: '#/components/schemas/ComposePartDescriptor'
+          type: array
+          title: Parts
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        separator:
+          type: string
+          title: Separator
+          default: ' '
+        when:
+          anyOf:
+          - $ref: '#/components/schemas/ComposeWhenDescriptor'
+          - type: 'null'
+      type: object
+      required:
+      - parts
+      title: ComposeLineDescriptor
+      description: 'Wire form of `apps.specs.compose.ComposeLine` — one line of a
+
+        composed cell: its `parts` joined by `separator`, optionally prefixed
+
+        with `label` (default-styled; tones live on the parts).'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    FilterDescriptor:
+      properties:
+        key:
+          type: string
+          title: Key
+        label:
+          type: string
+          title: Label
+        listable:
+          type: boolean
+          title: Listable
+        options:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/OptionDescriptor'
+            type: array
+          - type: 'null'
+          title: Options
+        required:
+          type: boolean
+          title: Required
+          default: false
+        comparison:
+          type: boolean
+          title: Comparison
+          default: false
+        comparison_default:
+          type: string
+          title: Comparison Default
+          default: gt
+      type: object
+      required:
+      - key
+      - label
+      - listable
+      title: FilterDescriptor
+      description: 'Wire form of one dataset filter — one entry per `DatasetSpec
+
+        .effective_filters` (declared `filters` plus one derived per
+
+        `filterable` column).
+
+
+        `listable` mirrors `FilterDef.listable` verbatim — `DatasetSpec
+
+        .__post_init__` already guarantees a `listable=True` filter resolves to
+
+        a real output column (see `DatasetSpec.resolve_filter_column`), so
+
+        there is nothing left to compute here. `True` tells the client it may
+
+        call `GET /api/v2/filters/{key}/options` to populate a dropdown;
+
+        `False` means that call always 400s (`apps.engine.service
+
+        ._lookup_output_column`) and the client should render a free-text input
+
+        instead of an empty dropdown.
+
+
+        `options`, when non-null, is the filter''s STATIC vocabulary
+
+        (`FilterDef.options`) — the client renders these directly and never
+
+        needs the options endpoint for this filter (that endpoint serves the
+
+        same declared list anyway, without a database query).
+
+
+        `required` mirrors `FilterDef.required` verbatim — a server-enforced
+
+        entity scope (`apps.engine.request.normalized_filter_values` 400s
+
+        `FILTER_REQUIRED` on every query path, including filter-options, if
+
+        this key is absent/`[]`/`["all"]`) versus a free-text/optional filter
+
+        the client may safely omit or clear. Without this on the wire, the
+
+        frontend cannot distinguish the two: an entity-scope filter would
+
+        render as an ordinary, clearable filter chip whose clearing 400s the
+
+        page instead of being locked to the page''s own entity.'
+    ValueStyleDescriptor:
+      properties:
+        value:
+          type: string
+          title: Value
+        tone:
+          type: string
+          title: Tone
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+      type: object
+      required:
+      - value
+      - tone
+      title: ValueStyleDescriptor
+      description: 'Wire form of `apps.specs.decorations.ValueStyle` — the presentation
+
+        for one discrete cell value. `tone` serializes as the `Tone` member''s
+
+        `.value` string (e.g. `"success"`), never a colour.'
+    DatasetDescriptor:
+      properties:
+        name:
+          type: string
+          title: Name
+        label:
+          type: string
+          title: Label
+        platform:
+          type: string
+          title: Platform
+        filters:
+          items:
+            $ref: '#/components/schemas/FilterDescriptor'
+          type: array
+          title: Filters
+        columns:
+          items:
+            $ref: '#/components/schemas/ColumnDescriptor'
+          type: array
+          title: Columns
+        row_key:
+          items:
+            type: string
+          type: array
+          title: Row Key
+        paginated:
+          type: boolean
+          title: Paginated
+        time_bounded:
+          type: boolean
+          title: Time Bounded
+        searchable:
+          type: boolean
+          title: Searchable
+        search_placeholder:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search Placeholder
+        downloadable:
+          type: boolean
+          title: Downloadable
+        related:
+          $ref: '#/components/schemas/RelatedDescriptor'
+      type: object
+      required:
+      - name
+      - label
+      - platform
+      - filters
+      - columns
+      - row_key
+      - paginated
+      - time_bounded
+      - searchable
+      - downloadable
+      - related
+      title: DatasetDescriptor
+      description: 'Public projection of a `DatasetSpec`.
+
+
+        Column-level capabilities (`sortable`/`filterable`/`searchable`/...) are
+
+        fully published per-column via `ColumnDescriptor`. These three fields are
+
+        the DATASET-level counterpart — without them a client cannot tell which
+
+        top-level request fields this dataset actually honours versus silently
+
+        ignores; both are the same status code (200) and the same shape of
+
+        envelope either way, so there is no other way to find out short of
+
+        reading the `build` SQL.
+
+
+        `paginated`: governs `DatasetQueryRequest.page`/`size`. `True` means
+
+        those fields select which page of rows comes back and
+
+        `DatasetMeta.total`/`pages` are populated. `False` means `page`/`size`
+
+        are IGNORED — the dataset''s own SQL renders a plain `LIMIT`, and every
+
+        request returns the same first slice regardless of what `page` was sent.
+
+
+        `time_bounded`: governs `DatasetQueryRequest.start_date`/`end_date`.
+
+        `True` means those fields scope the query''s time window. `False` means
+
+        they are IGNORED — the dataset''s source table has no time dimension at
+
+        all (a precomputed rollup, where the period IS the table), so every
+
+        window requested returns identical rows.
+
+
+        `searchable`: whether at least one column declares `searchable=True`.
+
+        `True` tells the client it may render a free-text search box for this
+
+        dataset. `False` means `DatasetQueryRequest.search` is not silently
+
+        ignored — a non-blank value is rejected with 400 — but the client should
+
+        not offer the control in the first place.
+
+
+        `search_placeholder`: end-user copy for the search box, present exactly
+
+        when `searchable` is `True`. Render it verbatim — it is authored per
+
+        dataset precisely so the client does not have to infer the wording from
+
+        a column label.
+
+
+        `downloadable`: mirrors `DatasetSpec.downloadable`. `True` means `POST
+
+        /datasets/{name}/export` will serve this dataset as a CSV download —
+
+        the frontend should render the Download button. `False` (the default
+
+        for every dataset that hasn''t opted in) means that same endpoint
+
+        refuses with 400 `DATASET_NOT_DOWNLOADABLE`, so the client should not
+
+        render the button in the first place.'
+    InternalTenantListResponse:
+      properties:
+        tenants:
+          items:
+            $ref: '#/components/schemas/apps__freshness__schemas__InternalTenant'
+          type: array
+          title: Tenants
+          default: []
+      type: object
+      title: InternalTenantListResponse
+      description: 'Tenants the internal dashboard can inspect, from the company registry.
+
+
+        Sourced from `public_companies` rather than from the freshness view: the
+
+        registry is a small table, whereas a `DISTINCT tenant_name` over the view
+
+        is a fleet-wide rollup. Listing a tenant here says it EXISTS, not that it
+
+        has ingestion runs — a tenant with none is exactly what an operator needs
+
+        to be able to see.'
+    ColumnDescriptor:
+      properties:
+        key:
+          type: string
+          title: Key
+        label:
+          type: string
+          title: Label
+        type:
+          type: string
+          title: Type
+        unit:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unit
+        sortable:
+          type: boolean
+          title: Sortable
+        filterable:
+          type: boolean
+          title: Filterable
+        searchable:
+          type: boolean
+          title: Searchable
+        hideable:
+          type: boolean
+          title: Hideable
+        hidden_by_default:
+          type: boolean
+          title: Hidden By Default
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+        edit:
+          anyOf:
+          - $ref: '#/components/schemas/EditDescriptor'
+          - type: 'null'
+        header:
+          type: boolean
+          title: Header
+        link:
+          anyOf:
+          - $ref: '#/components/schemas/LinkDescriptor'
+          - type: 'null'
+        icon:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Icon
+        decoration:
+          anyOf:
+          - $ref: '#/components/schemas/DecorationDescriptor'
+          - type: 'null'
+        width:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Width
+        compose:
+          anyOf:
+          - $ref: '#/components/schemas/ComposeDescriptor'
+          - type: 'null'
+        internal:
+          type: boolean
+          title: Internal
+          default: false
+        order:
+          type: integer
+          title: Order
+      type: object
+      required:
+      - key
+      - label
+      - type
+      - sortable
+      - filterable
+      - searchable
+      - hideable
+      - hidden_by_default
+      - header
+      - order
+      title: ColumnDescriptor
+      description: 'The one column shape emitted for every TABLE surface: `GET
+
+        /datasets`''s `DatasetDescriptor.columns` and `POST /datasets/{name}
+
+        /query`''s `DatasetEnvelope.columns`. A client that only ever calls the
+
+        dataset query endpoint still gets every capability flag — header, link,
+
+        sortable, filterable, searchable, info, icon — with no second call to
+
+        `GET /datasets` and no manual join by key.
+
+
+        `POST /charts/{name}/query` does NOT use this — a chart is not a table,
+
+        so it emits the lighter `ChartColumn` instead (see that class''s
+
+        docstring for why the table-only affordances here have no meaning on a
+
+        plot).'
+    ComposeWhenDescriptor:
+      properties:
+        column:
+          type: string
+          title: Column
+        equals:
+          type: string
+          title: Equals
+      type: object
+      required:
+      - column
+      - equals
+      title: ComposeWhenDescriptor
+      description: 'Wire form of `apps.specs.compose.ComposeWhen` — render the line only
+
+        when the row''s `column` value equals `equals` (string comparison).'
+    MetricValue:
+      properties:
+        value:
+          anyOf:
+          - type: number
+          - type: integer
+          - type: 'null'
+          title: Value
+        display:
+          type: boolean
+          title: Display
+        label:
+          type: string
+          title: Label
+        unit:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unit
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+        order:
+          type: integer
+          title: Order
+        tone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tone
+        compact:
+          type: boolean
+          title: Compact
+          default: false
+        precision:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Precision
+      type: object
+      required:
+      - value
+      - display
+      - label
+      - order
+      title: MetricValue
+      description: 'Wire form of one resolved summary metric — its value AND everything
+
+        needed to render it.
+
+
+        A summary is not a table, so this deliberately does NOT mirror the
+
+        dataset envelope''s `columns` + `rows` split. A dataset has N rows
+
+        sharing one column contract, so describing each column once and
+
+        repeating only values per row is what keeps the payload small. A
+
+        summary has exactly one "row", which makes a parallel `columns` array a
+
+        second collection carrying one entry per metric that a client must
+
+        re-join to `metrics` BY KEY just to render a label — the join is pure
+
+        overhead, and the two collections can fall out of sync. Everything is
+
+        therefore inlined on the metric itself, keyed by `MetricDef.key`, so a
+
+        client reads `metrics["realised_savings"]` and has the number, its
+
+        label, its unit, its tooltip, its position, and its colour in one
+
+        object.
+
+
+        `value` is `None` whenever the metric''s underlying data is legitimately
+
+        absent — a `PART` metric whose part dataset returned zero rows for the
+
+        request''s scope, or a `SUM` metric whose every input resolved to `None`
+
+        — never a sentinel for "something went wrong" (that raises instead; see
+
+        `apps.engine.service.run_summary_query`).
+
+
+        `display` mirrors `MetricDef.hidden_by_default` INVERTED — a metric
+
+        hidden by default is still computed and still present in `metrics` (a
+
+        `SUM` may depend on it), `display=False` only tells the client not to
+
+        show it by default, the summary equivalent of `ColumnDef
+
+        .hidden_by_default`.
+
+
+        `order` is the metric''s 0-based position in `SummarySpec.metrics`.
+
+        `metrics` is a JSON OBJECT, and object key order is not something a
+
+        client may rely on (many JSON parsers hand back an unordered map), so
+
+        unlike the dataset envelope''s `columns` ARRAY — where position alone is
+
+        authoritative — `order` is the ONLY signal of intended display order
+
+        here. It is not redundant; do not drop it.
+
+
+        `tone` is the metric''s semantic colour (`apps.specs.decorations.Tone`),
+
+        serialized as the member''s `.value` string (e.g. `"success"`), never a
+
+        hex code — the frontend owns the palette.'
+    DatasetEnvelope:
+      properties:
+        columns:
+          items:
+            $ref: '#/components/schemas/ColumnDescriptor'
+          type: array
+          title: Columns
+        rows:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Rows
+        meta:
+          $ref: '#/components/schemas/DatasetMeta'
+      type: object
+      required:
+      - columns
+      - rows
+      - meta
+      title: DatasetEnvelope
+    EditDescriptor:
+      properties:
+        action:
+          type: string
+          title: Action
+        options_from:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Options From
+      type: object
+      required:
+      - action
+      title: EditDescriptor
+    SummaryDescriptor:
+      properties:
+        name:
+          type: string
+          title: Name
+        label:
+          type: string
+          title: Label
+        platform:
+          type: string
+          title: Platform
+        dataset:
+          type: string
+          title: Dataset
+        parts:
+          items:
+            type: string
+          type: array
+          title: Parts
+        filters:
+          items:
+            $ref: '#/components/schemas/FilterDescriptor'
+          type: array
+          title: Filters
+        metrics:
+          items:
+            $ref: '#/components/schemas/MetricDescriptor'
+          type: array
+          title: Metrics
+        related:
+          $ref: '#/components/schemas/RelatedDescriptor'
+      type: object
+      required:
+      - name
+      - label
+      - platform
+      - dataset
+      - parts
+      - filters
+      - metrics
+      - related
+      title: SummaryDescriptor
+      description: 'Public projection of a `SummarySpec`. `parts` lists the underlying
+
+        dataset NAMES (never the full `DatasetDescriptor`s) — a summary''s public
+
+        contract is its metrics, not its parts'' own columns; a client that
+
+        wants a part''s full shape can still call `GET /datasets/{name}` with
+
+        one of these names.'
+    ChartMeta:
+      properties:
+        row_count:
+          type: integer
+          title: Row Count
+        reference:
+          anyOf:
+          - $ref: '#/components/schemas/ReferenceValue'
+          - type: 'null'
+        last_event_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Event Time
+      type: object
+      required:
+      - row_count
+      title: ChartMeta
+      description: 'Metadata for a `ChartEnvelope` (`apps.api.serializers`).
+
+
+        No pagination fields (`total`/`page`/`size`/`pages`): `apps.catalog
+
+        .registry.validate_charts_against_datasets` refuses a chart declared
+
+        over a `paginated=True` dataset (a chart needs the dataset''s ENTIRE
+
+        requested window in one response to render a full series), so those
+
+        four could never be non-`None` here — carrying them anyway would only
+
+        invite a client to write pagination-handling code for a response that
+
+        can never paginate.
+
+
+        No `dataset` field: the `ChartDescriptor` already embedded in the same
+
+        `ChartEnvelope` (`ChartEnvelope.chart.dataset`) already names it.'
+    ReferenceLineDescriptor:
+      properties:
+        of:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Of
+        percentile:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Percentile
+        label:
+          type: string
+          title: Label
+        color:
+          $ref: '#/components/schemas/PaletteColorDescriptor'
+        value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Value
+      type: object
+      required:
+      - of
+      - percentile
+      - label
+      - color
+      title: ReferenceLineDescriptor
+    apps__engine__envelope__FilterOption:
+      properties:
+        label:
+          type: string
+          title: Label
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: FilterOption
+    ChartColumn:
+      properties:
+        key:
+          type: string
+          title: Key
+        label:
+          type: string
+          title: Label
+        type:
+          type: string
+          title: Type
+        unit:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unit
+        order:
+          type: integer
+          title: Order
+      type: object
+      required:
+      - key
+      - label
+      - type
+      - order
+      title: ChartColumn
+      description: 'The wire shape of one column as a chart renders it.
+
+
+        A chart plots values, it does not render a table, so this deliberately
+
+        carries only what a plot needs: `label` for the axis/legend/tooltip
+
+        text, `type` to pick a date vs numeric axis, `unit` to format values.
+
+        Every other `ColumnDescriptor` field — `sortable`, `filterable`,
+
+        `searchable`, `hideable`, `hidden_by_default`, `edit`, `header`, `link`,
+
+        `icon`, `decoration`, `info` — is a TABLE affordance with no meaning on
+
+        a plot. A client that wants the table view queries the dataset endpoint
+
+        that `ChartDescriptor.dataset` names, rather than this one growing a
+
+        second, redundant surface for it.'
+    ChartQueryRequest:
+      properties:
+        filters:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+          title: Filters
+        start_date:
+          type: string
+          format: date
+          title: Start Date
+        end_date:
+          type: string
+          format: date
+          title: End Date
+        granularity:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          title: Granularity
+          default: day
+        limit:
+          type: integer
+          maximum: 50000.0
+          minimum: 1.0
+          title: Limit
+          default: 1000
+        sort:
+          anyOf:
+          - $ref: '#/components/schemas/SortSpec'
+          - type: 'null'
+        search:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          title: Search
+      type: object
+      required:
+      - start_date
+      - end_date
+      title: ChartQueryRequest
+      description: 'Request payload for `POST /charts/{name}/query`.
+
+
+        A chart is a plot, not a table — it can never paginate (`apps.catalog
+
+        .registry.validate_charts_against_datasets` refuses a chart declared
+
+        over a `paginated=True` dataset), so `page`/`size` are absent here
+
+        rather than accepted-and-ignored the way `DatasetQueryRequest` treats
+
+        them for a non-paginated dataset.
+
+
+        `sort` IS accepted: a categorical-x chart (e.g. a ranked bar chart) is
+
+        legitimately re-ranked by a client-supplied sort — there the sort key
+
+        determines the ranking, not just the display order. A sort that would
+
+        scramble a TEMPORAL x-axis is refused, but not by this model — that
+
+        check needs the chart''s `x` column and its declared type, which live in
+
+        the catalog, not the request. See
+
+        `apps.api.charts._reject_axis_breaking_sort`.'
+    ComposeDescriptor:
+      properties:
+        lines:
+          items:
+            $ref: '#/components/schemas/ComposeLineDescriptor'
+          type: array
+          title: Lines
+        badge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Badge
+        show_value:
+          type: boolean
+          title: Show Value
+          default: false
+      type: object
+      required:
+      - lines
+      title: ComposeDescriptor
+      description: 'Wire form of `apps.specs.compose.ComposeSpec` — the stacked-cell
+
+        declaration on a composed column. `show_value` renders the composed
+
+        column''s own value as the leading line; `badge` names a sibling
+
+        BADGE-decorated column whose badge renders under the lines.'
+    InternalFreshnessDetailResponse:
+      properties:
+        generated_at:
+          type: integer
+          title: Generated At
+        tenant_name:
+          type: string
+          title: Tenant Name
+        platform:
+          type: string
+          title: Platform
+        groups:
+          items:
+            $ref: '#/components/schemas/GroupFreshness'
+          type: array
+          title: Groups
+          default: []
+        datasets:
+          items:
+            $ref: '#/components/schemas/InternalDatasetFreshness'
+          type: array
+          title: Datasets
+          default: []
+      type: object
+      required:
+      - generated_at
+      - tenant_name
+      - platform
+      title: InternalFreshnessDetailResponse
+      description: 'Everything the internal dashboard shows for ONE tenant, in one call.
+
+
+        Carries both grains so the page never has to fan out: `groups` is the
+
+        FULL rollup, including the groups in
+
+        `apps.freshness.grouping.HIDDEN_FROM_TENANT_GROUPS`; the tenant-facing
+
+        feed filters those out at the endpoint, so this view is a superset of
+
+        what the tenant panel renders. `datasets` is every underlying
+
+        `dataset_type` including the excluded ones.'
+    DatasetFreshnessItem:
+      properties:
+        dataset_type:
+          type: string
+          title: Dataset Type
+        last_refreshed_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Last Refreshed At
+        watermark_at:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Watermark At
+        last_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Status
+        source:
+          type: string
+          title: Source
+          default: global_tasks_window
+      type: object
+      required:
+      - dataset_type
+      title: DatasetFreshnessItem
+      description: 'One dataset''s raw ingestion-run timestamps.
+
+
+        `last_refreshed_at` is when ingestion last FINISHED a load (SELECT''s
+
+        "last data refresh time"); `watermark_at` is the newest BUSINESS time
+
+        that load covered. Their difference is the pipeline''s landing lag — the
+
+        client subtracts them, the server does not.'
+    EstimatePairDescriptor:
+      properties:
+        actual:
+          type: string
+          title: Actual
+        estimate:
+          type: string
+          title: Estimate
+      type: object
+      required:
+      - actual
+      - estimate
+      title: EstimatePairDescriptor
+      description: 'Wire form of one `apps.specs.charts.ChartSpec.estimate_pairs` entry.
+
+
+        Pairs a chart''s ACTUAL series key with its ESTIMATE (projected) series
+
+        key. The frontend renders the estimate series at reduced opacity in the
+
+        actual series'' resolved color and legend-pairs the two — the backend
+
+        owns which columns are projections so the frontend stays a dumb
+
+        renderer, never inferring this from a naming convention.'
+    SortSpec:
+      properties:
+        key:
+          type: string
+          maxLength: 128
+          title: Key
+        direction:
+          type: string
+          enum:
+          - asc
+          - desc
+          title: Direction
+          default: asc
+      type: object
+      required:
+      - key
+      title: SortSpec
+      description: 'A request''s sort key + direction.
+
+
+        `key` is a declared column key, NEVER raw SQL — it is resolved against
+
+        the dataset''s `sortable` columns by `resolve_sort`, which is the only
+
+        thing that turns it into SQL text. `direction` is lowercase to match the
+
+        frontend''s `SortDirection` (`"asc" | "desc"`) exactly.'
+    DatasetQueryRequest:
+      properties:
+        filters:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+          title: Filters
+        start_date:
+          type: string
+          format: date
+          title: Start Date
+        end_date:
+          type: string
+          format: date
+          title: End Date
+        granularity:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          title: Granularity
+          default: day
+        limit:
+          type: integer
+          maximum: 50000.0
+          minimum: 1.0
+          title: Limit
+          default: 1000
+        sort:
+          anyOf:
+          - $ref: '#/components/schemas/SortSpec'
+          - type: 'null'
+        search:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          title: Search
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+          default: 1
+        size:
+          type: integer
+          maximum: 1000.0
+          minimum: 1.0
+          title: Size
+          default: 50
+      type: object
+      required:
+      - start_date
+      - end_date
+      title: DatasetQueryRequest
+      description: 'Request payload for `apps.engine.run_dataset_query`.
+
+
+        `start_date`/`end_date` are calendar dates, not datetimes — the frontend
+
+        always sends date-only `YYYY-MM-DD` values. `end_date` is INCLUSIVE for
+
+        the caller; see `half_open_window` for the half-open datetime conversion
+
+        the engine actually queries against. `granularity` buckets trend results
+
+        via `apps.engine.sql_builder.SqlBuilder.date_trunc`.
+
+
+        `group_by`/`order_by` are deliberately not accepted: free-text
+
+        grouping/ordering from a client would be an injection surface against
+
+        dataset-authored SQL. Datasets bake their own ordering, and grouping
+
+        comes from `granularity`. `sort` is the one narrow exception: it carries
+
+        a declared column key, resolved server-side via `resolve_sort` — never
+
+        a raw SQL fragment.
+
+
+        `search` is free-text substring search, ORed across the dataset''s
+
+        `searchable=True` columns (see `DatasetSpec.searchable_columns` and
+
+        `resolve_search`). This is distinct from `filters`, which are exact
+
+        IN-list matches against one named dimension each. The distinction
+
+        mirrors v1''s `/warehouse/` endpoint, which exposes BOTH a
+
+        `warehouseName` exact IN-list param and a separate `search` ILIKE param
+
+        (`app/service/warehouses.py:154-157`) — one endpoint, two independent
+
+        matching semantics, because "give me exactly these warehouses" and
+
+        "give me warehouses whose name contains this" are different questions.
+
+
+        `page`/`size` apply ONLY when `DatasetSpec.paginated` is `True` — for a
+
+        non-paginated (chart/trend) dataset they are accepted but ignored;
+
+        `limit` continues to govern how many rows THAT dataset''s `build`
+
+        renders. `page` is 1-based to match v1''s `GET /warehouse/?page=1&size=
+
+        20&...` and the frontend''s existing pagination controls exactly; the
+
+        engine (`apps.engine.sql_builder.SqlBuilder.limit_sql`) is what converts
+
+        it to a 0-based `OFFSET = (page - 1) * size`, so no caller of this
+
+        request model ever has to do that arithmetic itself.'
+    MetricDescriptor:
+      properties:
+        key:
+          type: string
+          title: Key
+        label:
+          type: string
+          title: Label
+        unit:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unit
+        info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Info
+        order:
+          type: integer
+          title: Order
+        tone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tone
+        compact:
+          type: boolean
+          title: Compact
+          default: false
+        precision:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Precision
+      type: object
+      required:
+      - key
+      - label
+      - order
+      title: MetricDescriptor
+      description: 'The summary counterpart of `ColumnDescriptor`: a metric''s shape
+
+        WITHOUT a value, for the catalog endpoints `GET /summaries` and `GET
+
+        /summaries/{name}`.
+
+
+        Omits `kind`/`part`/`column`/`of`: those are implementation details of
+
+        HOW a metric is computed, not part of its public contract — a client
+
+        only needs the label, unit, tooltip copy, colour, and display order to
+
+        render it.
+
+
+        A query response does NOT use this: `POST /summaries/{name}/query`
+
+        inlines these same fields onto each entry of its `metrics` object (see
+
+        `apps.engine.envelope.MetricValue`) rather than emitting a parallel
+
+        descriptor array a client would have to re-join by key. Keep the field
+
+        set here in sync with `MetricValue`''s presentation fields, so the two
+
+        describe a metric identically whether or not a value is attached.'
+    DatasetMeta:
+      properties:
+        row_count:
+          type: integer
+          title: Row Count
+        dataset:
+          type: string
+          title: Dataset
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pages
+        last_event_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Event Time
+        prev:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Prev
+          description: 'The previous page number, or `None` on the first page.
+
+
+            DERIVED, never passed in: `prev`/`next` are a pure function of
+
+            `page` and `pages`, so making them settable fields would create a
+
+            second source of truth that could disagree with them — a paginator
+
+            that greys out its "next" arrow on a page that really does have a
+
+            successor is a UI bug with no server-side symptom. As computed
+
+            fields they cannot drift, and they still serialize into the JSON
+
+            response exactly like plain fields.'
+          readOnly: true
+        next:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Next
+          description: 'The next page number, or `None` on the last page.
+
+
+            `None` whenever `page >= pages`, which also covers the two edge
+
+            cases worth being explicit about: a `total` of 0 gives `pages == 0`,
+
+            so there is no next page; and a caller who asks for a page past the
+
+            end gets `next=None` but a real `prev`, so the UI can walk back into
+
+            range rather than dead-ending.
+
+
+            Shadows the `next` builtin inside this class body only. That is
+
+            deliberate — the wire contract is what matters here, and the field
+
+            is named for the JSON key the frontend reads.'
+          readOnly: true
+      type: object
+      required:
+      - row_count
+      - dataset
+      - prev
+      - next
+      title: DatasetMeta
+      description: 'Metadata for a `DatasetEnvelope` — TABLE concepts only.
+
+
+        No `reference` field: a reference line is chart PRESENTATION (which
+
+        percentile line to draw over the series), not a fact about the queried
+
+        data itself — it never belongs to a plain dataset query''s result. See
+
+        `ChartMeta` for where it actually lives.'
+    RelatedDescriptor:
+      properties:
+        datasets:
+          items:
+            type: string
+          type: array
+          title: Datasets
+        charts:
+          items:
+            type: string
+          type: array
+          title: Charts
+        summaries:
+          items:
+            type: string
+          type: array
+          title: Summaries
+      type: object
+      required:
+      - datasets
+      - charts
+      - summaries
+      title: RelatedDescriptor
+      description: 'Wire form of `apps.catalog.relations.RelatedNames` — the symmetrised
+
+        page-affinity edges of one dataset/chart/summary, split by kind.
+
+
+        This module owns no catalog lookups (see the module docstring''s import
+
+        rules), so nothing here builds a `RelatedDescriptor` from a
+
+        `RelatedNames` — that projection lives in `apps.api.serializers`, the
+
+        layer that already resolves `apps.catalog.RELATIONS`.'
+    FilterOptionsEnvelope:
+      properties:
+        options:
+          items:
+            $ref: '#/components/schemas/apps__engine__envelope__FilterOption'
+          type: array
+          title: Options
+        meta:
+          $ref: '#/components/schemas/FilterOptionsMeta'
+      type: object
+      required:
+      - options
+      - meta
+      title: FilterOptionsEnvelope
+      description: 'A filter-options query response: one page of a dataset filter''s
+
+        distinct values, shaped like its siblings `DatasetEnvelope`/
+
+        `ChartEnvelope`/`SummaryEnvelope` — each shaped for what it actually is,
+
+        not forced into one shared envelope.
+
+
+        A paginated endpoint must tell its client whether another page exists.
+
+        `meta.has_more` is that signal, deliberately in place of a `total`: a
+
+        `total` needs a `COUNT(DISTINCT ...)` scan over the SAME population the
+
+        page query just scanned, and this endpoint is re-called on every
+
+        search-box keystroke of a filter dropdown — doubling the scan cost of
+
+        every keystroke for a number no "load more" affordance needs. See
+
+        `apps.engine.envelope.FilterOptionsPage` for how `has_more` is resolved
+
+        without that second scan.'
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

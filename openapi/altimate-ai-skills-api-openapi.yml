@@ -1,0 +1,1319 @@
+openapi: 3.2.0
+info:
+  title: Fast SKILLS API
+  version: 0.1.0
+tags:
+- name: SKILLS
+paths:
+  /skills:
+    get:
+      tags:
+      - SKILLS
+      summary: List Skills
+      description: 'One page of the skills visible to the caller. Postgres only — no S3 reads.
+
+
+        Paginated from the start rather than added later: the visibility filter also
+
+        matches every tenant-wide skill, so this response grows with the tenant''s
+
+        shared library, and changing the envelope once clients depend on it is a
+
+        breaking change.
+
+
+        ``page``/``size`` are not declared here on purpose — ``add_pagination(app)``
+
+        (``main.py``) supplies them, so this endpoint inherits the same defaults and
+
+        ceilings as every other paginated route instead of hard-coding its own. The
+
+        LIMIT/OFFSET and the COUNT run in SQL; ``_summary`` is applied to the page
+
+        rows only.
+
+
+        Both filters exist because the client cannot do them correctly. Narrowing a
+
+        *page* is not narrowing the *set*: the Skills page''s scope tabs filtered the
+
+        50 rows they had been handed, so a tab could report "no skills" while
+
+        matching skills sat on page 2. Anything a paginated list is filtered by has
+
+        to be filtered in SQL.
+
+
+        ``datamate_id`` answers "what does this workspace have?", which nothing could
+
+        ask before — attachments were only readable from the skill''s side, on the
+
+        detail response, one request and one S3 read at a time.
+
+
+        Note the two filters are asymmetric on purpose. ``privacy`` needs no
+
+        authorization: it only ever narrows what the visibility filter already
+
+        allows. ``datamate_id`` names another object, so the workspace is checked
+
+        first — see below.'
+      operationId: list_skills_skills_get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: privacy
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          description: 'Restrict to one scope: ''private'' or ''public''.'
+          title: Privacy
+        description: 'Restrict to one scope: ''private'' or ''public''.'
+      - name: datamate_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Restrict to skills attached to this workspace.
+          title: Datamate Id
+        description: Restrict to skills attached to this workspace.
+      - name: imported
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: 'true: only skills forked from the Altimate catalog; false: only uploads.'
+          title: Imported
+        description: 'true: only skills forked from the Altimate catalog; false: only uploads.'
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Page size
+          default: 50
+          title: Size
+        description: Page size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_CustomSkillSummary_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - SKILLS
+      summary: Create Custom Skill
+      description: 'Upload a skill bundle and create its metadata row.
+
+
+        The bundle is validated and uploaded before the row is committed, so a
+
+        committed skill never points at an empty prefix.'
+      operationId: create_custom_skill_skills_post
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomSkillRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomSkillResponse'
+        '400':
+          description: Invalid skill bundle
+        '404':
+          description: Workspace not found
+        '409':
+          description: Skill name already in use
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /skills/catalog:
+    get:
+      tags:
+      - SKILLS
+      summary: Browse Skill Catalog
+      description: 'List the skills published in the public data-engineering-skills repo.
+
+
+        Declared ahead of ``/{public_id}`` so that "catalog" is routed here rather
+
+        than being read as a skill identifier.
+
+
+        Each entry carries ``imported_public_id`` when the caller already imported
+
+        it, so the Browse list can link to their copy instead of offering a second
+
+        import. That is matched on the upstream path, not the name, so it survives
+
+        the user renaming their copy.'
+      operationId: browse_skill_catalog_skills_catalog_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillCatalogResponse'
+        '503':
+          description: Catalog unreachable
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /skills/catalog/import:
+    post:
+      tags:
+      - SKILLS
+      summary: Import Catalog Skills
+      description: 'Copy catalog skills into the caller''s library and attach them.
+
+
+        An import is a copy, not a link: the bundle is written to the caller''s own
+
+        prefix, so the result is an ordinary skill that can be edited, renamed and
+
+        deleted. ``source_ref`` records which upstream revision it came from.
+
+
+        Ordered in three phases, and the boundaries between them are the point:
+
+
+        1. **Resolve and validate**, touching neither S3 nor a transaction. A
+
+        rejected selection therefore leaves nothing behind at all.
+
+        2. **Upload every bundle**, still outside any transaction. Uploads used to
+
+        run inside it, which meant every workspace lock and every inserted row
+
+        was held across up to 50 sequential S3 round trips — the transaction was
+
+        open for as long as the slowest storage call took.
+
+        3. **Insert and attach**, in one short transaction.
+
+
+        Rows are inserted in ascending name order so two concurrent imports by the
+
+        same user take the unique index''s locks in the same sequence. Interleaved
+
+        orders deadlock, and a deadlock surfaces as ``OperationalError`` rather than
+
+        ``IntegrityError`` — so it would have escaped the 409 handler that exists for
+
+        exactly that collision and become a 500.'
+      operationId: import_catalog_skills_skills_catalog_import_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportCatalogSkillsRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomSkillListResponse'
+        '400':
+          description: Invalid skill bundle
+        '404':
+          description: Catalog entry or workspace
+        '409':
+          description: Skill name already in use
+        '503':
+          description: Catalog unreachable
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  /skills/{public_id}:
+    get:
+      tags:
+      - SKILLS
+      summary: Get Custom Skill
+      description: Fetch one skill's metadata plus its ``SKILL.md`` body.
+      operationId: get_custom_skill_skills__public_id__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomSkillResponse'
+        '404':
+          description: Skill not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - SKILLS
+      summary: Update Custom Skill
+      description: 'Update a skill''s name, description, bundle, privacy, or any combination.
+
+
+        Omitting ``files`` leaves S3 untouched, so a metadata-only change costs no
+
+        uploads.
+
+
+        ``files`` replaces the bundle rather than merging into it. A path the array
+
+        omits is therefore a deletion, and one that would delete anything is
+
+        refused with a 409 naming the paths unless ``replace_bundle`` is set. To
+
+        edit a single file, use ``PUT /skills/{public_id}/files/{path}``.'
+      operationId: update_custom_skill_skills__public_id__patch
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomSkillRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomSkillResponse'
+        '400':
+          description: Invalid skill bundle
+        '403':
+          description: Not the skill's creator
+        '404':
+          description: Skill not found
+        '409':
+          description: Skill name already in use, the skill changed while editing, or `files` would delete bundle files without `replace_bundle`
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - SKILLS
+      summary: Delete Custom Skill
+      description: 'Delete a skill: drop its attachments, its row, and its bundle.
+
+
+        The row is soft-deleted to keep an audit trail, but the bundle objects are
+
+        removed — there is no undelete, so retaining them would grow storage for a
+
+        recovery path that does not exist. The row is marked first so the user''s
+
+        delete is durable; a failed object delete is logged rather than raised,
+
+        since the skill is already gone from their view.
+
+
+        The row is read under ``FOR UPDATE`` because ``bundle_token`` and ``files``
+
+        are read here and then used to delete objects. Without the lock a concurrent
+
+        bundle write can land its compare-and-swap between the two, and this request
+
+        deletes the prefix that write just retired while the row now names one whose
+
+        objects nothing will ever remove.'
+      operationId: delete_custom_skill_skills__public_id__delete
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '403':
+          description: Not the skill's creator
+        '404':
+          description: Skill not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /skills/{public_id}/files/{path}:
+    get:
+      tags:
+      - SKILLS
+      summary: Get Custom Skill File
+      description: Read one file from a skill's bundle, e.g. ``references/patterns.md``.
+      operationId: get_custom_skill_file_skills__public_id__files__path__get
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      - name: path
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '404':
+          description: File not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - SKILLS
+      summary: Put Custom Skill File
+      description: 'Write one file in a skill''s bundle, leaving the other files untouched.
+
+
+        This is the operation an editor performs: change ``SKILL.md`` without
+
+        implying anything about ``references/`` or ``scripts/``. Use PATCH with
+
+        ``files`` to replace a whole bundle — and with ``replace_bundle`` when that
+
+        replacement drops files the bundle currently holds.'
+      operationId: put_custom_skill_file_skills__public_id__files__path__put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      - name: path
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomSkillFileRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomSkillResponse'
+        '400':
+          description: Invalid bundle path
+        '403':
+          description: Not the skill's creator
+        '404':
+          description: Skill not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /skills/{public_id}/datamates:
+    put:
+      tags:
+      - SKILLS
+      summary: Set Custom Skill Workspaces
+      description: 'Replace the set of workspaces a skill is attached to.
+
+
+        The whole desired set arrives in one request, so associating a skill with
+
+        several workspaces is atomic: every id is validated before anything is
+
+        written, and a bad id leaves the previous set untouched.
+
+
+        Three locks in a fixed order, and the order is the contract:
+
+
+        1. **The skill row.** ``set_datamates_for_skill`` is read-modify-write — it
+
+        reads the current set and applies a diff — so without this two requests
+
+        naming *disjoint* sets never contend on any workspace row, both read the
+
+        same current set, and both merge their own addition. Starting from ``{}``,
+
+        one asking for ``{1}`` and one for ``{2}`` commit ``{1, 2}``: a set
+
+        neither caller asked for, from an endpoint whose whole contract is
+
+        "replace". The same lock is what stops a concurrent ``DELETE`` leaving
+
+        attachments behind on a tombstoned skill.
+
+        2. **The workspaces**, ascending by id, in ``_lock_workspaces``.
+
+        3. **The attachment rows**, in ``set_datamates_for_skill``.
+
+
+        Workspaces before attachment rows is what keeps this from closing a cycle
+
+        with ``soft_delete_datamate``, which takes ``Datamate`` then
+
+        ``CustomSkillDatamate`` and never wants ``CustomSkill``.
+
+
+        The response describes the association and nothing else. It used to return
+
+        the whole skill, which meant reading ``SKILL.md`` from S3 *after* the commit
+
+        — so an S3 blip turned a write that had already landed into a 500, and the
+
+        client would retry an operation that had already succeeded. Nothing here
+
+        changes the bundle, so there is nothing to read.'
+      operationId: set_custom_skill_workspaces_skills__public_id__datamates_put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Public Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetCustomSkillWorkspacesRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillWorkspacesResponse'
+        '403':
+          description: Not the skill's creator
+        '404':
+          description: Skill or workspace not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datamates/{datamate_id}/skills:
+    put:
+      tags:
+      - SKILLS
+      summary: Set Datamate Skills
+      description: 'Replace the set of skills attached to one workspace.
+
+
+        The mirror of ``PUT /skills/{public_id}/datamates``, and it exists because
+
+        the two directions are not interchangeable. That one is scoped to a *skill*
+
+        and replaces its entire workspace set, so adding one skill to one workspace
+
+        through it means sending that skill''s complete set — which the caller must
+
+        first read, one request per skill, or silently detach it from every workspace
+
+        the client did not know about. This one is scoped to the workspace: it only
+
+        ever touches rows carrying this ``datamate_id``, so it needs no knowledge of
+
+        where else any of these skills is attached.
+
+
+        Locks, in the order the whole feature uses — ``Datamate``, then
+
+        ``CustomSkill`` by ascending id, then ``CustomSkillDatamate``:
+
+
+        1. **The workspace**, for update and requiring ownership. Attaching changes
+
+        what that workspace''s agent does, so it is a write against it; a
+
+        tenant-visible workspace says who may look, never who may reconfigure.
+
+        2. **Every named skill**, for update and requiring the caller created it.
+
+        The other direction already refuses a non-creator, and the two have to
+
+        agree or the same attachment would be allowed from one side and refused
+
+        from the other.
+
+        3. **The attachment rows**, in ``set_skills_for_datamate``.
+
+
+        Both misses report 404 rather than 403 — whether someone else''s workspace or
+
+        skill exists is not this endpoint''s to disclose, matching
+
+        ``app/api/bindings/api.py``.'
+      operationId: set_datamate_skills_datamates__datamate_id__skills_put
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+      parameters:
+      - name: datamate_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Datamate Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetDatamateSkillsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatamateSkillsResponse'
+        '403':
+          description: Not the workspace's owner
+        '404':
+          description: Workspace or skill not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    SetDatamateSkillsRequest:
+      properties:
+        skill_public_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 100
+          title: Skill Public Ids
+      type: object
+      title: SetDatamateSkillsRequest
+      description: 'Replace the whole set of skills attached to one workspace.
+
+
+        The mirror of ``SetCustomSkillWorkspacesRequest``. Scoped to the workspace,
+
+        so it needs no knowledge of where else any of these skills is attached —
+
+        which is exactly what the skill-scoped endpoint cannot offer, since its
+
+        payload replaces one skill''s *entire* workspace set.'
+    CustomSkillResponse:
+      properties:
+        skill:
+          $ref: '#/components/schemas/CustomSkillDetail'
+      type: object
+      required:
+      - skill
+      title: CustomSkillResponse
+    SetCustomSkillWorkspacesRequest:
+      properties:
+        datamate_ids:
+          items:
+            type: integer
+          type: array
+          maxItems: 100
+          title: Datamate Ids
+      type: object
+      title: SetCustomSkillWorkspacesRequest
+      description: 'Replace the whole set of workspaces a skill is attached to.
+
+
+        Expressing the desired set in one request keeps the association atomic:
+
+        attaching three workspaces one call at a time leaves a window where some
+
+        are applied and some are not if a later call fails.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CustomSkillFile:
+      properties:
+        path:
+          type: string
+          maxLength: 1024
+          title: Path
+        content:
+          type: string
+          maxLength: 10485760
+          title: Content
+      type: object
+      required:
+      - path
+      - content
+      title: CustomSkillFile
+      description: 'One file in an uploaded bundle.
+
+
+        ``content`` is text because every file in a skill bundle observed so far is
+
+        markdown, SQL, or Python. Binary assets would need a base64 variant.'
+    CustomSkillDetail:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+          default: private
+        file_count:
+          type: integer
+          title: File Count
+          default: 0
+        source_ref:
+          anyOf:
+          - $ref: '#/components/schemas/SkillSourceRef'
+          - type: 'null'
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        files:
+          items:
+            $ref: '#/components/schemas/CustomSkillFileMeta'
+          type: array
+          title: Files
+        content:
+          type: string
+          title: Content
+        attached_datamate_ids:
+          items:
+            type: integer
+          type: array
+          title: Attached Datamate Ids
+      type: object
+      required:
+      - public_id
+      - name
+      - created_by
+      - created_at
+      - updated_at
+      - content
+      title: CustomSkillDetail
+      description: 'A skill plus its ``SKILL.md`` body, read from S3 on the detail view.
+
+
+        The full ``files`` inventory lives here rather than on the summary: this is
+
+        the only view that renders paths and sizes.'
+    UpdateCustomSkillFileRequest:
+      properties:
+        content:
+          type: string
+          maxLength: 10485760
+          title: Content
+      type: object
+      required:
+      - content
+      title: UpdateCustomSkillFileRequest
+      description: 'Replace one file inside a skill''s bundle, leaving the rest alone.
+
+
+        ``UpdateCustomSkillRequest.files`` replaces the whole bundle, which is right
+
+        for a re-upload but not for editing one file. That path no longer destroys
+
+        the others silently — it refuses unless ``replace_bundle`` is set — so the
+
+        two operations are now distinguishable rather than merely documented.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UpdateCustomSkillRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 256
+            minLength: 1
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 4096
+          - type: 'null'
+          title: Description
+        files:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CustomSkillFile'
+            type: array
+            maxItems: 100
+          - type: 'null'
+          title: Files
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+        replace_bundle:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Replace Bundle
+          default: false
+      type: object
+      title: UpdateCustomSkillRequest
+      description: 'Update a skill''s name, description, bundle, privacy, or any combination.
+
+
+        Omitting ``files`` leaves the bundle untouched, which is how a metadata-only
+
+        change avoids re-uploading to S3.
+
+
+        ``files`` REPLACES the bundle — it is not merged into it. A caller that
+
+        sends one file the REST-conventional way means to *edit that file*; it is
+
+        this endpoint that reads the same payload as "make this the whole bundle".
+
+        That mismatch is the bug ``replace_bundle`` exists to close: without the
+
+        flag, a ``files`` array omitting paths the skill currently holds is refused
+
+        rather than silently deleting them (AI-8788).'
+    SkillCatalogResponse:
+      properties:
+        commit_sha:
+          type: string
+          title: Commit Sha
+        groups:
+          items:
+            $ref: '#/components/schemas/CatalogGroup'
+          type: array
+          title: Groups
+      type: object
+      required:
+      - commit_sha
+      - groups
+      title: SkillCatalogResponse
+    PrivacySetting:
+      type: string
+      enum:
+      - public
+      - private
+      title: PrivacySetting
+    SkillSourceRef:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        path:
+          type: string
+          title: Path
+        commit_sha:
+          type: string
+          title: Commit Sha
+        imported_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Imported At
+      type: object
+      required:
+      - repo
+      - path
+      - commit_sha
+      title: SkillSourceRef
+      description: 'Where an imported skill was copied from.
+
+
+        Present only on skills imported from the public catalog; ``None`` means the
+
+        skill was uploaded or written by hand. Carried on the list payload so the
+
+        Skills table can attribute a row to its upstream origin without a second
+
+        request, and so a renamed copy can still be traced back.'
+    ImportCatalogSkill:
+      properties:
+        catalog_id:
+          type: string
+          maxLength: 1024
+          title: Catalog Id
+        name:
+          anyOf:
+          - type: string
+            maxLength: 256
+            minLength: 1
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 4096
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - catalog_id
+      title: ImportCatalogSkill
+      description: 'One entry selected for import.
+
+
+        ``name`` is optional and defaults to the catalog slug, but it travels in the
+
+        request so the client can resolve a name collision without a second call.
+
+        ``description`` behaves the same way and defaults to the catalog summary —
+
+        an imported skill is an ordinary skill, so both of the fields an upload
+
+        controls must be settable at the moment it is created rather than only by a
+
+        follow-up PATCH.'
+    CreateCustomSkillRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 256
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 4096
+          - type: 'null'
+          title: Description
+        files:
+          items:
+            $ref: '#/components/schemas/CustomSkillFile'
+          type: array
+          maxItems: 100
+          minItems: 1
+          title: Files
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+      type: object
+      required:
+      - name
+      - files
+      title: CreateCustomSkillRequest
+      description: Upload a new skill bundle.
+    CatalogGroup:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        skills:
+          items:
+            $ref: '#/components/schemas/CatalogSkill'
+          type: array
+          title: Skills
+      type: object
+      required:
+      - name
+      - description
+      - skills
+      title: CatalogGroup
+      description: A named group of catalog skills, as ``marketplace.json`` curates them.
+    CustomSkillSummary:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        privacy:
+          $ref: '#/components/schemas/PrivacySetting'
+          default: private
+        file_count:
+          type: integer
+          title: File Count
+          default: 0
+        source_ref:
+          anyOf:
+          - $ref: '#/components/schemas/SkillSourceRef'
+          - type: 'null'
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - public_id
+      - name
+      - created_by
+      - created_at
+      - updated_at
+      title: CustomSkillSummary
+      description: A skill as the list page sees it — metadata only, no bundle content.
+    SkillWorkspacesResponse:
+      properties:
+        public_id:
+          type: string
+          title: Public Id
+        attached_datamate_ids:
+          items:
+            type: integer
+          type: array
+          title: Attached Datamate Ids
+      type: object
+      required:
+      - public_id
+      title: SkillWorkspacesResponse
+      description: 'The result of replacing a skill''s workspace attachments.
+
+
+        Shaped like what the endpoint changed rather than like the whole skill. The
+
+        skill''s own fields are unaffected by an attachment write, and returning them
+
+        forced a read of ``SKILL.md`` from S3 after the transaction had committed —
+
+        which turned a storage blip into a 500 on a write that had already landed.'
+    Page_CustomSkillSummary_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CustomSkillSummary'
+          type: array
+          title: Items
+        total:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+        page:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Page
+        size:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Size
+        pages:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      title: Page[CustomSkillSummary]
+    CustomSkillFileMeta:
+      properties:
+        path:
+          type: string
+          title: Path
+        size:
+          type: integer
+          title: Size
+      type: object
+      required:
+      - path
+      - size
+      title: CustomSkillFileMeta
+      description: One file in a bundle, as the detail view lists it.
+    CustomSkillListResponse:
+      properties:
+        skills:
+          items:
+            $ref: '#/components/schemas/CustomSkillSummary'
+          type: array
+          title: Skills
+      type: object
+      required:
+      - skills
+      title: CustomSkillListResponse
+      description: 'A fixed set of skills the caller just created.
+
+
+        Not the browse list — that is paginated (``Page[CustomSkillSummary]``). This
+
+        is the result of one import request, so its size is the caller''s selection
+
+        and pagination would be noise.'
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    ImportCatalogSkillsRequest:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ImportCatalogSkill'
+          type: array
+          maxItems: 50
+          minItems: 1
+          title: Items
+        privacy:
+          anyOf:
+          - $ref: '#/components/schemas/PrivacySetting'
+          - type: 'null'
+          default: private
+        datamate_ids:
+          items:
+            type: integer
+          type: array
+          maxItems: 100
+          title: Datamate Ids
+      type: object
+      required:
+      - items
+      title: ImportCatalogSkillsRequest
+      description: 'Import one or more catalog skills and attach them to workspaces.
+
+
+        The whole selection arrives in one request: importing seven dbt skills as
+
+        seven calls leaves a window where some are attached and some are not, and
+
+        the workspace choice applies to the selection as a whole.'
+    DatamateSkillsResponse:
+      properties:
+        datamate_id:
+          type: integer
+          title: Datamate Id
+        attached_skill_public_ids:
+          items:
+            type: string
+          type: array
+          title: Attached Skill Public Ids
+      type: object
+      required:
+      - datamate_id
+      title: DatamateSkillsResponse
+      description: 'The result of replacing a workspace''s skill attachments.
+
+
+        Shaped like what changed, for the same reason
+
+        ``SkillWorkspacesResponse`` is: the workspace''s own fields are untouched by
+
+        an attachment write, and returning them would invite a read this endpoint
+
+        has no reason to make.'
+    CatalogSkill:
+      properties:
+        catalog_id:
+          type: string
+          title: Catalog Id
+        slug:
+          type: string
+          title: Slug
+        summary:
+          type: string
+          title: Summary
+        description:
+          type: string
+          title: Description
+        file_count:
+          type: integer
+          title: File Count
+          default: 0
+        size:
+          type: integer
+          title: Size
+        imported_public_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Imported Public Id
+      type: object
+      required:
+      - catalog_id
+      - slug
+      - summary
+      - description
+      - size
+      title: CatalogSkill
+      description: 'One skill in the public catalog, as the Browse list renders it.
+
+
+        Metadata only. The built catalog carries every skill''s whole directory —
+
+        that is what an import writes — but none of those bytes are serialized here:
+
+        the response is a *list*, and the bundle is only ever read server-side, from
+
+        the cached catalog, by the import endpoint. Shipping it made this response
+
+        grow with the total size of the upstream repo for no consumer, and made the
+
+        payload something no cap bounded.'
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -187,21 +187,23 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    RuleRecommendationRequest:
+    CrossColumn:
       properties:
-        resource_id:
-          type: integer
-          title: Resource Id
-        column_ids:
+        columns:
           items:
-            type: integer
+            type: string
           type: array
-          title: Column Ids
+          title: Columns
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
       type: object
       required:
-      - resource_id
-      - column_ids
-      title: RuleRecommendationRequest
+      - columns
+      - rules
+      title: CrossColumn
     ValidationError:
       properties:
         loc:
@@ -223,6 +225,56 @@ components:
       - msg
       - type
       title: ValidationError
+    StandardResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+      type: object
+      required:
+      - ok
+      title: StandardResponse
+    TermGenerationRequest:
+      properties:
+        rule:
+          type: string
+          title: Rule
+        data_store_type:
+          type: string
+          title: Data Store Type
+      type: object
+      required:
+      - rule
+      - data_store_type
+      title: TermGenerationRequest
+    TermGenerationResponse:
+      properties:
+        term_generation_id:
+          type: string
+          title: Term Generation Id
+        term:
+          type: string
+          title: Term
+      type: object
+      required:
+      - term_generation_id
+      - term
+      title: TermGenerationResponse
+    RuleRecommendationRequest:
+      properties:
+        resource_id:
+          type: integer
+          title: Resource Id
+        column_ids:
+          items:
+            type: integer
+          type: array
+          title: Column Ids
+      type: object
+      required:
+      - resource_id
+      - column_ids
+      title: RuleRecommendationRequest
     RuleRecommendationResponse:
       properties:
         rule_recommendation_id:
@@ -261,58 +313,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    TermGenerationResponse:
-      properties:
-        term_generation_id:
-          type: string
-          title: Term Generation Id
-        term:
-          type: string
-          title: Term
-      type: object
-      required:
-      - term_generation_id
-      - term
-      title: TermGenerationResponse
-    StandardResponse:
-      properties:
-        ok:
-          type: boolean
-          title: Ok
-      type: object
-      required:
-      - ok
-      title: StandardResponse
-    CrossColumn:
-      properties:
-        columns:
-          items:
-            type: string
-          type: array
-          title: Columns
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-      type: object
-      required:
-      - columns
-      - rules
-      title: CrossColumn
-    TermGenerationRequest:
-      properties:
-        rule:
-          type: string
-          title: Rule
-        data_store_type:
-          type: string
-          title: Data Store Type
-      type: object
-      required:
-      - rule
-      - data_store_type
-      title: TermGenerationRequest
   securitySchemes:
     HTTPBearer:
       type: http

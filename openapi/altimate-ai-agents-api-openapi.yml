@@ -30,7 +30,7 @@ paths:
       description: 'Create a chat completion (OpenAI-compatible).
 
 
-        Uses litellm with provider fallback: Azure GPT-5.5 → Anthropic Sonnet 4.6.
+        Uses litellm with provider fallback: Anthropic Sonnet 5 → Azure GPT-5.5.
 
         The model in the request is ignored — provider selection is automatic.'
       operationId: create_chat_completion_agents_v1_chat_completions_post
@@ -99,65 +99,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    SystemMessage:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        role:
-          type: string
-          const: system
-          title: Role
-          default: system
-        content:
-          anyOf:
-          - type: string
-          - items:
-              $ref: '#/components/schemas/TextContent'
-            type: array
-          title: Content
-      type: object
-      required:
-      - content
-      title: SystemMessage
-    EmbeddingsResponse:
-      properties:
-        object:
-          type: string
-          const: list
-          title: Object
-          default: list
-        data:
-          items:
-            $ref: '#/components/schemas/Embedding'
-          type: array
-          title: Data
-        model:
-          type: string
-          title: Model
-        usage:
-          $ref: '#/components/schemas/EmbeddingsUsage'
-      type: object
-      required:
-      - data
-      - model
-      - usage
-      title: EmbeddingsResponse
-    Tool:
-      properties:
-        type:
-          type: string
-          const: function
-          title: Type
-          default: function
-        function:
-          $ref: '#/components/schemas/Function'
-      type: object
-      required:
-      - function
-      title: Tool
     ChatRequest:
       properties:
         messages:
@@ -277,21 +218,76 @@ components:
       required:
       - messages
       title: ChatRequest
-    ImageUrl:
+    Model:
       properties:
-        url:
+        id:
           type: string
-          title: Url
-        detail:
+          title: Id
+        created:
+          type: integer
+          title: Created
+        object:
           anyOf:
           - type: string
           - type: 'null'
-          title: Detail
-          default: auto
+          title: Object
+          default: model
+        owned_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owned By
+          default: bedrock
       type: object
       required:
-      - url
-      title: ImageUrl
+      - id
+      title: Model
+    UserMessage:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        role:
+          type: string
+          const: user
+          title: Role
+          default: user
+        content:
+          anyOf:
+          - type: string
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/TextContent'
+              - $ref: '#/components/schemas/ImageContent'
+            type: array
+          title: Content
+      type: object
+      required:
+      - content
+      title: UserMessage
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     ResponseFunction:
       properties:
         name:
@@ -306,14 +302,142 @@ components:
       required:
       - arguments
       title: ResponseFunction
-    StreamOptions:
+    AssistantMessage:
       properties:
-        include_usage:
-          type: boolean
-          title: Include Usage
-          default: true
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        role:
+          type: string
+          const: assistant
+          title: Role
+          default: assistant
+        content:
+          anyOf:
+          - type: string
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/TextContent'
+              - $ref: '#/components/schemas/ImageContent'
+            type: array
+          - type: 'null'
+          title: Content
+        tool_calls:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ToolCall'
+            type: array
+          - type: 'null'
+          title: Tool Calls
       type: object
-      title: StreamOptions
+      title: AssistantMessage
+    ToolCall:
+      properties:
+        index:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Index
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        type:
+          type: string
+          const: function
+          title: Type
+          default: function
+        function:
+          $ref: '#/components/schemas/ResponseFunction'
+      type: object
+      required:
+      - function
+      title: ToolCall
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Function:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        parameters:
+          title: Parameters
+      type: object
+      required:
+      - name
+      - parameters
+      title: Function
+    TextContent:
+      properties:
+        type:
+          type: string
+          const: text
+          title: Type
+          default: text
+        text:
+          type: string
+          title: Text
+        cache_control:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Cache Control
+      type: object
+      required:
+      - text
+      title: TextContent
+    EmbeddingsResponse:
+      properties:
+        object:
+          type: string
+          const: list
+          title: Object
+          default: list
+        data:
+          items:
+            $ref: '#/components/schemas/Embedding'
+          type: array
+          title: Data
+        model:
+          type: string
+          title: Model
+        usage:
+          $ref: '#/components/schemas/EmbeddingsUsage'
+      type: object
+      required:
+      - data
+      - model
+      - usage
+      title: EmbeddingsResponse
+    EmbeddingsUsage:
+      properties:
+        prompt_tokens:
+          type: integer
+          title: Prompt Tokens
+        total_tokens:
+          type: integer
+          title: Total Tokens
+      type: object
+      required:
+      - prompt_tokens
+      - total_tokens
+      title: EmbeddingsUsage
     EmbeddingsRequest:
       properties:
         input:
@@ -355,26 +479,7 @@ components:
       - input
       - model
       title: EmbeddingsRequest
-    ImageContent:
-      properties:
-        type:
-          type: string
-          const: image_url
-          title: Type
-          default: image
-        image_url:
-          $ref: '#/components/schemas/ImageUrl'
-        cache_control:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Cache Control
-      type: object
-      required:
-      - image_url
-      title: ImageContent
-    AssistantMessage:
+    SystemMessage:
       properties:
         name:
           anyOf:
@@ -383,70 +488,20 @@ components:
           title: Name
         role:
           type: string
-          const: assistant
+          const: system
           title: Role
-          default: assistant
+          default: system
         content:
           anyOf:
           - type: string
           - items:
-              anyOf:
-              - $ref: '#/components/schemas/TextContent'
-              - $ref: '#/components/schemas/ImageContent'
+              $ref: '#/components/schemas/TextContent'
             type: array
-          - type: 'null'
           title: Content
-        tool_calls:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ToolCall'
-            type: array
-          - type: 'null'
-          title: Tool Calls
-      type: object
-      title: AssistantMessage
-    Function:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        parameters:
-          title: Parameters
       type: object
       required:
-      - name
-      - parameters
-      title: Function
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Models:
-      properties:
-        object:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Object
-          default: list
-        data:
-          items:
-            $ref: '#/components/schemas/Model'
-          type: array
-          title: Data
-          default: []
-      type: object
-      title: Models
+      - content
+      title: SystemMessage
     ToolMessage:
       properties:
         role:
@@ -487,87 +542,64 @@ components:
       required:
       - text
       title: ToolContent
-    EmbeddingsUsage:
+    Models:
       properties:
-        prompt_tokens:
-          type: integer
-          title: Prompt Tokens
-        total_tokens:
-          type: integer
-          title: Total Tokens
-      type: object
-      required:
-      - prompt_tokens
-      - total_tokens
-      title: EmbeddingsUsage
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    Model:
-      properties:
-        id:
-          type: string
-          title: Id
-        created:
-          type: integer
-          title: Created
         object:
           anyOf:
           - type: string
           - type: 'null'
           title: Object
-          default: model
-        owned_by:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Owned By
-          default: bedrock
+          default: list
+        data:
+          items:
+            $ref: '#/components/schemas/Model'
+          type: array
+          title: Data
+          default: []
       type: object
-      required:
-      - id
-      title: Model
-    ToolCall:
+      title: Models
+    ImageContent:
       properties:
-        index:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Index
-        id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Id
         type:
           type: string
-          const: function
+          const: image_url
           title: Type
-          default: function
-        function:
-          $ref: '#/components/schemas/ResponseFunction'
+          default: image
+        image_url:
+          $ref: '#/components/schemas/ImageUrl'
+        cache_control:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Cache Control
       type: object
       required:
-      - function
-      title: ToolCall
+      - image_url
+      title: ImageContent
+    ImageUrl:
+      properties:
+        url:
+          type: string
+          title: Url
+        detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Detail
+          default: auto
+      type: object
+      required:
+      - url
+      title: ImageUrl
+    StreamOptions:
+      properties:
+        include_usage:
+          type: boolean
+          title: Include Usage
+          default: true
+      type: object
+      title: StreamOptions
     Embedding:
       properties:
         object:
@@ -591,51 +623,19 @@ components:
       - embedding
       - index
       title: Embedding
-    TextContent:
+    Tool:
       properties:
         type:
           type: string
-          const: text
+          const: function
           title: Type
-          default: text
-        text:
-          type: string
-          title: Text
-        cache_control:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Cache Control
+          default: function
+        function:
+          $ref: '#/components/schemas/Function'
       type: object
       required:
-      - text
-      title: TextContent
-    UserMessage:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        role:
-          type: string
-          const: user
-          title: Role
-          default: user
-        content:
-          anyOf:
-          - type: string
-          - items:
-              anyOf:
-              - $ref: '#/components/schemas/TextContent'
-              - $ref: '#/components/schemas/ImageContent'
-            type: array
-          title: Content
-      type: object
-      required:
-      - content
-      title: UserMessage
+      - function
+      title: Tool
   securitySchemes:
     HTTPBearer:
       type: http
